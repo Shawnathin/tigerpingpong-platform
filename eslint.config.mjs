@@ -5,11 +5,17 @@ export default [
   {
     ignores: [
       ".next/**",
-      "**/dist/**",
-      "coverage/**",
-      "dist/**",
+      "**/.next/**",
       "node_modules/**",
+      "**/node_modules/**",
+      "dist/**",
+      "**/dist/**",
+      "build/**",
+      "**/build/**",
+      "coverage/**",
+      "**/coverage/**",
       ".pnpm-store/**",
+      "**/.pnpm-store/**",
       "packages/db/generated/**"
     ]
   },

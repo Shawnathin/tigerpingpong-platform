@@ -1,0 +1,29 @@
+{
+  "name": "tigerpingpong-platform",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build && pnpm --parallel --filter @tigerpingpong/api --filter @tigerpingpong/web dev",
+    "dev:api": "pnpm --filter @tigerpingpong/api dev",
+    "dev:web": "pnpm --filter @tigerpingpong/web dev",
+    "build": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build && pnpm --filter @tigerpingpong/api build && pnpm --filter @tigerpingpong/web build",
+    "typecheck": "pnpm --filter @tigerpingpong/shared typecheck && pnpm --filter @tigerpingpong/db typecheck && pnpm --filter @tigerpingpong/api typecheck && pnpm --filter @tigerpingpong/web typecheck",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "db:generate": "pnpm --filter @tigerpingpong/db prisma:generate",
+    "db:validate": "pnpm --filter @tigerpingpong/db prisma:validate"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/node": "^20.14.0",
+    "eslint": "^9.15.0",
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^8.16.0",
+    "typescript": "^5.5.0"
+  }
+}

@@ -15,6 +15,8 @@
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
+    "scrape:tiger": "node tools/tiger-scraper/src/tiger-scraper.mjs",
+    "scrape:tiger:test": "node tools/tiger-scraper/src/tiger-scraper.mjs --seed=/tables/ --seed=/accessories/ --limit=12 --max-depth=2 --output=var/scrapes/tigerpingpong/test",
     "db:generate": "pnpm --filter @tigerpingpong/db prisma:generate",
     "db:validate": "pnpm --filter @tigerpingpong/db prisma:validate"
   },

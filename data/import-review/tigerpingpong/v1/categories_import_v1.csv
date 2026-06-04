@@ -1,0 +1,10 @@
+category_key,parent_category_key,name,slug,description,sort_order,v1_public_navigation,v1_checkout_scope,source_url,notes
+"tables","","Tables","tables","Ping pong tables catalog section.","10","true","true","https://tigerpingpong.ca/tables","Tables remain checkout candidates only after freight, curbside, tax, regional, and shipping policy review."
+"indoor-tables","tables","Indoor Tables","indoor-tables","Indoor table subcategory candidate.","20","true","true","https://tigerpingpong.ca/tables/indoor-tables","Can be modeled as a subcategory or table filter."
+"outdoor-tables","tables","Outdoor Tables","outdoor-tables","Outdoor table subcategory candidate.","30","true","true","https://tigerpingpong.ca/tables/outdoor-tables","Can be modeled as a subcategory or table filter."
+"accessories","","Accessories","accessories","Accessory catalog section.","40","true","true","https://tigerpingpong.ca/accessories","Broad public launch category and catch-all for non-table products."
+"paddles","accessories","Paddles","paddles","Ping pong paddle category.","50","true","true","https://tigerpingpong.ca/accessories/paddles","Public launch category after SKU and option review."
+"balls","accessories","Balls","balls","Ping pong ball category.","60","true","true","https://tigerpingpong.ca/accessories/ping-pong-balls","Normalizes legacy Ping Pong Balls wording to Balls."
+"nets","accessories","Nets","nets","Public net and post set category.","70","true","true","https://tigerpingpong.ca/accessories/nets","Public nets are separate from deferred replacement parts."
+"covers","accessories","Covers","covers","Table cover category.","80","true","true","https://tigerpingpong.ca/accessories/covers","Public launch category after missing SKU review."
+"replacement-parts","","Replacement Parts","replacement-parts","Replacement parts preserved for future review.","90","false","false","","Preserved for future planning and redirects, excluded from v1 public navigation and checkout."

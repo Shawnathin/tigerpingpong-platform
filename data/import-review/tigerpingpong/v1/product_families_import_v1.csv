@@ -1,0 +1,12 @@
+family_key,brand_key,primary_category_key,name,slug,description,source_evidence,notes
+"expo-table","tiger-pingpong","tables","Expo Table","expo-table","Expo indoor and outdoor table family.","Expo Indoor and Expo Outdoor table source URLs.","Indoor and outdoor are modeled as separate products under the family for v1 review."
+"portland-table","tiger-pingpong","tables","Portland Table","portland-table","Portland indoor and outdoor table family.","Portland Indoor and Portland Outdoor table source URLs.","Indoor and outdoor are modeled as separate products under the family for v1 review."
+"whistler-table","tiger-pingpong","tables","Whistler Table","whistler-table","Whistler indoor table family.","Whistler Indoor table source URL.","Color and missing SKU review required."
+"plaza-table","tiger-pingpong","tables","Plaza Table","plaza-table","Plaza outdoor table family.","Plaza Outdoor table source URL.","Single grey outdoor table found."
+"premium-3-star-balls","tiger-pingpong","balls","Premium 3-Star Balls","premium-3-star-balls","Tiger PingPong premium ball family.","6-pack orange, 6-pack white, and 140-pack white or orange source URLs.","Pack size and color variants require review before import."
+"newgy-robo-balls","tiger-pingpong","balls","Newgy Robo-Balls","newgy-robo-balls","Newgy Robo-Balls wording retained under the Tiger PingPong brand.","Newgy Table Tennis Balls 144 Balls Orange source URL.","Newgy is not a separate v1 brand."
+"vice-paddle","tiger-pingpong","paddles","Vice Paddle","vice-paddle","Vice paddle family.","Vice Ping Pong Paddle source URL.","Possible size option detected without values."
+"paddle-accessories","tiger-pingpong","accessories","Paddle Accessories","paddle-accessories","Paddle accessory family.","Ping Pong Paddle Case source URL.","Purchase mode needs manual review."
+"table-covers","tiger-pingpong","covers","Table Covers","table-covers","Protective table cover family.","Ping Pong Table Cover source URL.","Duplicate scrape row resolved to one reviewed product."
+"net-sets","tiger-pingpong","nets","Net Sets","net-sets","Public net and post set family.","Table Tennis Net & Post Set source URL.","Public checkout readiness needs manual review."
+"replacement-nets","tiger-pingpong","replacement-parts","Replacement Nets","replacement-nets","Replacement net family preserved for future review.","Replacement Net and Tiger PingPong Table Net Replacement Set source URLs.","Deferred from v1 public navigation and checkout."

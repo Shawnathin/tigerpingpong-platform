@@ -22,6 +22,12 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    files: ["tools/**/*.mjs"],
+    rules: {
+      "no-undef": "off"
+    }
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       parserOptions: {

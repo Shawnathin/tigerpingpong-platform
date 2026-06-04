@@ -28,6 +28,10 @@
 - Updated Whistler, Plaza, balls, Vice Paddle, cover, net, and replacement-net
   SKUs from the business correction.
 - Added Aqua paddle product rows for Coral, Ocean Blue, 4 Pack, and 2 Pack.
+- Updated Aqua product rows with confirmed prices: 4 Pack `8000`, 2 Pack
+  `4500`, Single Coral `2500`, and Single Ocean Blue `2500`.
+- Confirmed Table Tennis Net & Post Set SKU `6989-B` as checkout-ready, while
+  leaving global checkout policy review open.
 
 ## Source Material Inspected
 
@@ -87,7 +91,7 @@ are not seed data.
 
 - Confirm table freight, curbside, tax, regional, and shipping policy before
   public table checkout.
-- Confirm Aqua paddle source URLs, prices, and source media before checkout.
+- Confirm Aqua paddle source URLs and source media before checkout.
 - Confirm final route patterns before approving draft redirects.
 - Run a separate media dedupe/upload task before using Cloudinary URLs.
 - Crawl resource articles in a content-specific pass.

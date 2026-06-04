@@ -22,7 +22,7 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["tools/**/*.mjs"],
+    files: ["tools/**/*.mjs", "packages/db/scripts/**/*.mjs"],
     rules: {
       "no-undef": "off"
     }

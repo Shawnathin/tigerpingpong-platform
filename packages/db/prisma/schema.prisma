@@ -7,6 +7,118 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProductKind {
+  table
+  paddle
+  ball
+  net
+  cover
+  accessory
+  replacement_part
+
+  @@map("product_kind")
+}
+
+enum ProductStatus {
+  draft
+  active
+  archived
+
+  @@map("product_status")
+}
+
+enum PurchaseMode {
+  online_checkout_candidate
+  online_checkout
+  quote_required
+  dealer_contact
+  needs_manual_review
+  deferred_from_v1
+  coming_soon
+  disabled
+
+  @@map("purchase_mode")
+}
+
+enum SourceReviewStatus {
+  needs_review
+  approved_for_schema_planning
+  deferred
+
+  @@map("source_review_status")
+}
+
+enum MediaRole {
+  primary
+  gallery
+  detail
+  lifestyle
+  variant
+  source_reference
+
+  @@map("media_role")
+}
+
+enum MediaReviewStatus {
+  needs_review
+  approved
+  rejected
+  archived
+
+  @@map("media_review_status")
+}
+
+enum SourceProvider {
+  bigcommerce
+  cloudinary
+  manual
+  supplier
+  unknown
+
+  @@map("source_provider")
+}
+
+enum QuoteRequestStatus {
+  new
+  reviewing
+  contacted
+  closed
+
+  @@map("quote_request_status")
+}
+
+enum OrderStatus {
+  draft
+  pending_payment
+  paid
+  processing
+  shipped
+  delivered
+  cancelled
+  refunded
+
+  @@map("order_status")
+}
+
+enum RedirectStatus {
+  draft
+  approved
+  deferred
+
+  @@map("redirect_status")
+}
+
+enum RelationshipType {
+  upsell
+  cross_sell
+  accessory
+  replacement_part
+  similar
+  required_part
+
+  @@map("relationship_type")
+}
+
 model PlatformMetadata {
   id        String   @id @default(cuid())
   key       String   @unique
@@ -15,4 +127,440 @@ model PlatformMetadata {
   updatedAt DateTime @updatedAt
 
   @@map("platform_metadata")
+}
+
+model Brand {
+  id              String          @id @default(cuid())
+  key             String          @unique
+  name            String
+  slug            String          @unique
+  isActive        Boolean         @default(true) @map("is_active")
+  notes           String?         @db.Text
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  productFamilies ProductFamily[]
+  products        Product[]
+  media           ProductMedia[]
+
+  @@map("brands")
+}
+
+model Category {
+  id                 String          @id @default(cuid())
+  key                String          @unique
+  parentId           String?         @map("parent_id")
+  name               String
+  slug               String          @unique
+  description        String?         @db.Text
+  sortOrder          Int             @default(0) @map("sort_order")
+  v1PublicNavigation Boolean         @default(false) @map("v1_public_navigation")
+  v1CheckoutScope    Boolean         @default(false) @map("v1_checkout_scope")
+  sourceUrl          String?         @map("source_url")
+  seoTitle           String?         @map("seo_title")
+  seoDescription     String?         @map("seo_description") @db.Text
+  isActive           Boolean         @default(true) @map("is_active")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+  parent             Category?       @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children           Category[]      @relation("CategoryHierarchy")
+  productFamilies    ProductFamily[]
+  products           Product[]
+
+  @@index([parentId])
+  @@index([sourceUrl])
+  @@index([v1PublicNavigation])
+  @@index([v1CheckoutScope])
+  @@map("categories")
+}
+
+model ProductFamily {
+  id                String         @id @default(cuid())
+  key               String         @unique
+  brandId           String         @map("brand_id")
+  primaryCategoryId String         @map("primary_category_id")
+  name              String
+  slug              String         @unique
+  description       String?        @db.Text
+  sourceEvidence    String?        @map("source_evidence") @db.Text
+  sortOrder         Int            @default(0) @map("sort_order")
+  isActive          Boolean        @default(true) @map("is_active")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+  brand             Brand          @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  primaryCategory   Category       @relation(fields: [primaryCategoryId], references: [id], onDelete: Restrict)
+  products          Product[]
+  media             ProductMedia[]
+
+  @@index([brandId])
+  @@index([primaryCategoryId])
+  @@map("product_families")
+}
+
+model Product {
+  id                     String                  @id @default(cuid())
+  key                    String                  @unique
+  familyId               String                  @map("family_id")
+  brandId                String                  @map("brand_id")
+  primaryCategoryId      String                  @map("primary_category_id")
+  name                   String
+  slug                   String                  @unique
+  sourceUrl              String?                 @map("source_url")
+  legacyPath             String?                 @map("legacy_path")
+  sku                    String?
+  productKind            ProductKind             @map("product_kind")
+  status                 ProductStatus           @default(draft)
+  v1PublicNavigation     Boolean                 @default(false) @map("v1_public_navigation")
+  v1CheckoutScope        Boolean                 @default(false) @map("v1_checkout_scope")
+  purchaseMode           PurchaseMode            @default(needs_manual_review) @map("purchase_mode")
+  priceCents             Int?                    @map("price_cents")
+  currency               String                  @default("CAD") @db.Char(3)
+  shippingReviewRequired Boolean                 @default(false) @map("shipping_review_required")
+  shippingSummary        String?                 @map("shipping_summary") @db.Text
+  leadTimeText           String?                 @map("lead_time_text")
+  shortDescription       String?                 @map("short_description") @db.Text
+  description            String?                 @db.Text
+  sourceReviewStatus     SourceReviewStatus      @default(needs_review) @map("source_review_status")
+  importReviewStatus     SourceReviewStatus      @default(needs_review) @map("import_review_status")
+  notes                  String?                 @db.Text
+  seoTitle               String?                 @map("seo_title")
+  seoDescription         String?                 @map("seo_description") @db.Text
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @updatedAt @map("updated_at")
+  family                 ProductFamily           @relation(fields: [familyId], references: [id], onDelete: Restrict)
+  brand                  Brand                   @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  primaryCategory        Category                @relation(fields: [primaryCategoryId], references: [id], onDelete: Restrict)
+  options                ProductOption[]
+  variants               ProductVariant[]
+  media                  ProductMedia[]
+  contentSections        ProductContentSection[]
+  specGroups             ProductSpecGroup[]
+  specs                  ProductSpec[]
+  sourceRelationships    ProductRelationship[]   @relation("ProductRelationshipSource")
+  targetRelationships    ProductRelationship[]   @relation("ProductRelationshipTarget")
+  quoteRequestItems      QuoteRequestItem[]
+  orderItems             OrderItem[]
+
+  @@index([familyId])
+  @@index([brandId])
+  @@index([primaryCategoryId])
+  @@index([sourceUrl])
+  @@index([legacyPath])
+  @@index([sku])
+  @@index([productKind])
+  @@index([status])
+  @@index([purchaseMode])
+  @@index([v1PublicNavigation])
+  @@index([v1CheckoutScope])
+  @@map("products")
+}
+
+model ProductOption {
+  id           String               @id @default(cuid())
+  productId    String               @map("product_id")
+  name         String
+  displayName  String?              @map("display_name")
+  sortOrder    Int                  @default(0) @map("sort_order")
+  isRequired   Boolean              @default(true) @map("is_required")
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+  product      Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  optionValues ProductOptionValue[]
+
+  @@unique([productId, name])
+  @@index([productId])
+  @@map("product_options")
+}
+
+model ProductOptionValue {
+  id                  String                      @id @default(cuid())
+  optionId            String                      @map("option_id")
+  value               String
+  label               String?
+  sortOrder           Int                         @default(0) @map("sort_order")
+  createdAt           DateTime                    @default(now()) @map("created_at")
+  updatedAt           DateTime                    @updatedAt @map("updated_at")
+  option              ProductOption               @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  variantOptionValues ProductVariantOptionValue[]
+
+  @@unique([optionId, value])
+  @@index([optionId])
+  @@map("product_option_values")
+}
+
+model ProductVariant {
+  id                   String                      @id @default(cuid())
+  key                  String                      @unique
+  productId            String                      @map("product_id")
+  sku                  String?
+  name                 String?
+  priceCents           Int?                        @map("price_cents")
+  currency             String                      @default("CAD") @db.Char(3)
+  purchaseModeOverride PurchaseMode?               @map("purchase_mode_override")
+  isActive             Boolean                     @default(true) @map("is_active")
+  sourceUrl            String?                     @map("source_url")
+  notes                String?                     @db.Text
+  createdAt            DateTime                    @default(now()) @map("created_at")
+  updatedAt            DateTime                    @updatedAt @map("updated_at")
+  product              Product                     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  optionValues         ProductVariantOptionValue[]
+  media                ProductMedia[]
+  quoteRequestItems    QuoteRequestItem[]
+  orderItems           OrderItem[]
+
+  @@index([productId])
+  @@index([sku])
+  @@index([sourceUrl])
+  @@index([purchaseModeOverride])
+  @@map("product_variants")
+}
+
+model ProductVariantOptionValue {
+  productVariantId     String             @map("product_variant_id")
+  productOptionValueId String             @map("product_option_value_id")
+  productVariant       ProductVariant     @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  productOptionValue   ProductOptionValue @relation(fields: [productOptionValueId], references: [id], onDelete: Cascade)
+
+  @@id([productVariantId, productOptionValueId])
+  @@index([productOptionValueId])
+  @@map("product_variant_option_values")
+}
+
+model ProductMedia {
+  id                         String                  @id @default(cuid())
+  mediaKey                   String                  @unique @map("media_key")
+  brandId                    String?                 @map("brand_id")
+  productFamilyId            String?                 @map("product_family_id")
+  productId                  String?                 @map("product_id")
+  variantId                  String?                 @map("variant_id")
+  role                       MediaRole               @default(gallery)
+  cloudinaryAssetId          String?                 @unique @map("cloudinary_asset_id")
+  cloudinaryPublicId         String?                 @unique @map("cloudinary_public_id")
+  cloudinaryVersion          String?                 @map("cloudinary_version")
+  cloudinaryResourceType     String?                 @map("cloudinary_resource_type")
+  cloudinaryFormat           String?                 @map("cloudinary_format")
+  cloudinarySecureUrl        String?                 @map("cloudinary_secure_url")
+  cloudinaryOriginalFilename String?                 @map("cloudinary_original_filename")
+  cloudinaryAssetFolder      String?                 @map("cloudinary_asset_folder")
+  sourceUrl                  String?                 @map("source_url")
+  sourceProvider             SourceProvider          @default(unknown) @map("source_provider")
+  sourceBigcommerceUrl       String?                 @map("source_bigcommerce_url")
+  sourceHash                 String?                 @map("source_hash")
+  perceptualHash             String?                 @map("perceptual_hash")
+  altText                    String?                 @map("alt_text")
+  title                      String?
+  caption                    String?                 @db.Text
+  width                      Int?
+  height                     Int?
+  aspectRatio                Decimal?                @map("aspect_ratio") @db.Decimal(8, 4)
+  fileSizeBytes              BigInt?                 @map("file_size_bytes")
+  dominantColor              String?                 @map("dominant_color")
+  sortOrder                  Int                     @default(0) @map("sort_order")
+  isPrimary                  Boolean                 @default(false) @map("is_primary")
+  isActive                   Boolean                 @default(true) @map("is_active")
+  isPublic                   Boolean                 @default(false) @map("is_public")
+  reviewStatus               MediaReviewStatus       @default(needs_review) @map("review_status")
+  reviewNotes                String?                 @map("review_notes") @db.Text
+  uploadedAt                 DateTime?               @map("uploaded_at")
+  approvedAt                 DateTime?               @map("approved_at")
+  replacedByMediaId          String?                 @map("replaced_by_media_id")
+  createdAt                  DateTime                @default(now()) @map("created_at")
+  updatedAt                  DateTime                @updatedAt @map("updated_at")
+  brand                      Brand?                  @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  productFamily              ProductFamily?          @relation(fields: [productFamilyId], references: [id], onDelete: SetNull)
+  product                    Product?                @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant                    ProductVariant?         @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  replacedByMedia            ProductMedia?           @relation("ProductMediaReplacement", fields: [replacedByMediaId], references: [id], onDelete: SetNull)
+  replacementMedia           ProductMedia[]          @relation("ProductMediaReplacement")
+  contentSections            ProductContentSection[]
+
+  @@index([brandId])
+  @@index([productFamilyId])
+  @@index([productId])
+  @@index([variantId])
+  @@index([role])
+  @@index([sourceUrl])
+  @@index([sourceBigcommerceUrl])
+  @@index([sourceHash])
+  @@index([perceptualHash])
+  @@index([reviewStatus])
+  @@index([replacedByMediaId])
+  @@map("product_media")
+}
+
+model ProductContentSection {
+  id          String        @id @default(cuid())
+  productId   String        @map("product_id")
+  sectionType String        @map("section_type")
+  eyebrow     String?
+  heading     String?
+  body        String?       @db.Text
+  mediaId     String?       @map("media_id")
+  sortOrder   Int           @default(0) @map("sort_order")
+  isActive    Boolean       @default(true) @map("is_active")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  product     Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media       ProductMedia? @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+  @@index([mediaId])
+  @@index([sectionType])
+  @@map("product_content_sections")
+}
+
+model ProductSpecGroup {
+  id        String        @id @default(cuid())
+  productId String        @map("product_id")
+  name      String
+  sortOrder Int           @default(0) @map("sort_order")
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  specs     ProductSpec[]
+
+  @@unique([productId, name])
+  @@index([productId])
+  @@map("product_spec_groups")
+}
+
+model ProductSpec {
+  id                    String            @id @default(cuid())
+  productId             String            @map("product_id")
+  specGroupId           String?           @map("spec_group_id")
+  name                  String
+  value                 String            @db.Text
+  unit                  String?
+  comparisonKey         String?           @map("comparison_key")
+  sortOrder             Int               @default(0) @map("sort_order")
+  isHighlighted         Boolean           @default(false) @map("is_highlighted")
+  isComparisonAttribute Boolean           @default(false) @map("is_comparison_attribute")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+  product               Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  specGroup             ProductSpecGroup? @relation(fields: [specGroupId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+  @@index([specGroupId])
+  @@index([comparisonKey])
+  @@index([isHighlighted])
+  @@index([isComparisonAttribute])
+  @@map("product_specs")
+}
+
+model ProductRelationship {
+  id               String           @id @default(cuid())
+  sourceProductId  String           @map("source_product_id")
+  targetProductId  String           @map("target_product_id")
+  relationshipType RelationshipType @map("relationship_type")
+  sortOrder        Int              @default(0) @map("sort_order")
+  isActive         Boolean          @default(true) @map("is_active")
+  notes            String?          @db.Text
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  sourceProduct    Product          @relation("ProductRelationshipSource", fields: [sourceProductId], references: [id], onDelete: Cascade)
+  targetProduct    Product          @relation("ProductRelationshipTarget", fields: [targetProductId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceProductId, targetProductId, relationshipType])
+  @@index([sourceProductId])
+  @@index([targetProductId])
+  @@index([relationshipType])
+  @@map("product_relationships")
+}
+
+model QuoteRequest {
+  id                     String             @id @default(cuid())
+  status                 QuoteRequestStatus @default(new)
+  customerName           String?            @map("customer_name")
+  customerEmail          String?            @map("customer_email")
+  customerPhone          String?            @map("customer_phone")
+  postalCode             String?            @map("postal_code")
+  preferredContactMethod String?            @map("preferred_contact_method")
+  message                String?            @db.Text
+  sourcePage             String?            @map("source_page")
+  createdAt              DateTime           @default(now()) @map("created_at")
+  updatedAt              DateTime           @updatedAt @map("updated_at")
+  items                  QuoteRequestItem[]
+
+  @@index([status])
+  @@index([customerEmail])
+  @@map("quote_requests")
+}
+
+model QuoteRequestItem {
+  id             String          @id @default(cuid())
+  quoteRequestId String          @map("quote_request_id")
+  productId      String          @map("product_id")
+  variantId      String?         @map("variant_id")
+  quantity       Int             @default(1)
+  notes          String?         @db.Text
+  createdAt      DateTime        @default(now()) @map("created_at")
+  quoteRequest   QuoteRequest    @relation(fields: [quoteRequestId], references: [id], onDelete: Cascade)
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant        ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([quoteRequestId])
+  @@index([productId])
+  @@index([variantId])
+  @@map("quote_request_items")
+}
+
+model Order {
+  id                         String      @id @default(cuid())
+  status                     OrderStatus @default(draft)
+  customerEmail              String?     @map("customer_email")
+  customerName               String?     @map("customer_name")
+  subtotalCents              Int         @default(0) @map("subtotal_cents")
+  shippingCents              Int         @default(0) @map("shipping_cents")
+  taxCents                   Int         @default(0) @map("tax_cents")
+  totalCents                 Int         @default(0) @map("total_cents")
+  currency                   String      @default("CAD") @db.Char(3)
+  externalPaymentReference   String?     @map("external_payment_reference")
+  containsTableFreightItem   Boolean     @default(false) @map("contains_table_freight_item")
+  shippingReviewRequired     Boolean     @default(false) @map("shipping_review_required")
+  freightAcknowledgedAt      DateTime?   @map("freight_acknowledged_at")
+  damagePolicyAcknowledgedAt DateTime?   @map("damage_policy_acknowledged_at")
+  createdAt                  DateTime    @default(now()) @map("created_at")
+  updatedAt                  DateTime    @updatedAt @map("updated_at")
+  items                      OrderItem[]
+
+  @@index([status])
+  @@index([customerEmail])
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String          @id @default(cuid())
+  orderId         String          @map("order_id")
+  productId       String          @map("product_id")
+  variantId       String?         @map("variant_id")
+  skuSnapshot     String?         @map("sku_snapshot")
+  nameSnapshot    String          @map("name_snapshot")
+  quantity        Int             @default(1)
+  unitPriceCents  Int             @map("unit_price_cents")
+  totalPriceCents Int             @map("total_price_cents")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant         ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([productId])
+  @@index([variantId])
+  @@map("order_items")
+}
+
+model Redirect {
+  id               String         @id @default(cuid())
+  legacyPath       String         @unique @map("legacy_path")
+  newPathCandidate String         @map("new_path_candidate")
+  entityType       String         @map("entity_type")
+  entityKey        String?        @map("entity_key")
+  redirectStatus   RedirectStatus @default(draft) @map("redirect_status")
+  notes            String?        @db.Text
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@index([entityType, entityKey])
+  @@index([redirectStatus])
+  @@map("redirects")
 }

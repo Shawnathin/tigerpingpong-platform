@@ -955,7 +955,6 @@ async function importCategories(tx, importData, state, result) {
       },
       create: {
         key: value(row, "category_key"),
-        parentId: null,
         name: value(row, "name"),
         slug: value(row, "slug"),
         description: nullIfBlank(value(row, "description")),
@@ -981,7 +980,15 @@ async function importCategories(tx, importData, state, result) {
         key: value(row, "category_key")
       },
       data: {
-        parentId: parent?.id ?? null
+        parent: parent
+          ? {
+              connect: {
+                id: parent.id
+              }
+            }
+          : {
+              disconnect: true
+            }
       }
     });
 
@@ -1004,8 +1011,16 @@ async function importFamilies(tx, importData, state, result) {
         key: value(row, "family_key")
       },
       update: {
-        brandId: brand.id,
-        primaryCategoryId: primaryCategory.id,
+        brand: {
+          connect: {
+            id: brand.id
+          }
+        },
+        primaryCategory: {
+          connect: {
+            id: primaryCategory.id
+          }
+        },
         name: value(row, "name"),
         slug: value(row, "slug"),
         description: nullIfBlank(value(row, "description")),
@@ -1016,8 +1031,16 @@ async function importFamilies(tx, importData, state, result) {
       },
       create: {
         key: value(row, "family_key"),
-        brandId: brand.id,
-        primaryCategoryId: primaryCategory.id,
+        brand: {
+          connect: {
+            id: brand.id
+          }
+        },
+        primaryCategory: {
+          connect: {
+            id: primaryCategory.id
+          }
+        },
         name: value(row, "name"),
         slug: value(row, "slug"),
         description: nullIfBlank(value(row, "description")),
@@ -1045,9 +1068,21 @@ async function importProducts(tx, importData, state, result) {
         key: value(row, "product_key")
       },
       update: {
-        familyId: family.id,
-        brandId: brand.id,
-        primaryCategoryId: primaryCategory.id,
+        family: {
+          connect: {
+            id: family.id
+          }
+        },
+        brand: {
+          connect: {
+            id: brand.id
+          }
+        },
+        primaryCategory: {
+          connect: {
+            id: primaryCategory.id
+          }
+        },
         name: value(row, "name"),
         slug: value(row, "slug"),
         sourceUrl: nullIfBlank(value(row, "source_url")),
@@ -1069,9 +1104,21 @@ async function importProducts(tx, importData, state, result) {
       },
       create: {
         key: value(row, "product_key"),
-        familyId: family.id,
-        brandId: brand.id,
-        primaryCategoryId: primaryCategory.id,
+        family: {
+          connect: {
+            id: family.id
+          }
+        },
+        brand: {
+          connect: {
+            id: brand.id
+          }
+        },
+        primaryCategory: {
+          connect: {
+            id: primaryCategory.id
+          }
+        },
         name: value(row, "name"),
         slug: value(row, "slug"),
         sourceUrl: nullIfBlank(value(row, "source_url")),
@@ -1106,7 +1153,11 @@ async function importVariants(tx, importData, state, result) {
         key: value(row, "variant_key")
       },
       update: {
-        productId: product.id,
+        product: {
+          connect: {
+            id: product.id
+          }
+        },
         sku: nullIfBlank(value(row, "sku")),
         name: nullIfBlank(value(row, "name")),
         priceCents: optionalInteger(row, "price_cents"),
@@ -1118,7 +1169,11 @@ async function importVariants(tx, importData, state, result) {
       },
       create: {
         key: value(row, "variant_key"),
-        productId: product.id,
+        product: {
+          connect: {
+            id: product.id
+          }
+        },
         sku: nullIfBlank(value(row, "sku")),
         name: nullIfBlank(value(row, "name")),
         priceCents: optionalInteger(row, "price_cents"),
@@ -1150,7 +1205,11 @@ async function importVariants(tx, importData, state, result) {
           isRequired: true
         },
         create: {
-          productId: product.id,
+          product: {
+            connect: {
+              id: product.id
+            }
+          },
           name: optionPair.name,
           displayName: optionPair.name,
           sortOrder: optionPair.sortOrder,
@@ -1169,7 +1228,11 @@ async function importVariants(tx, importData, state, result) {
           sortOrder: optionPair.sortOrder
         },
         create: {
-          optionId: option.id,
+          option: {
+            connect: {
+              id: option.id
+            }
+          },
           value: optionPair.value,
           label: optionPair.value,
           sortOrder: optionPair.sortOrder
@@ -1178,8 +1241,16 @@ async function importVariants(tx, importData, state, result) {
 
       await tx.productVariantOptionValue.create({
         data: {
-          productVariantId: variant.id,
-          productOptionValueId: optionValue.id
+          productVariant: {
+            connect: {
+              id: variant.id
+            }
+          },
+          productOptionValue: {
+            connect: {
+              id: optionValue.id
+            }
+          }
         }
       });
 
@@ -1209,8 +1280,20 @@ async function importMedia(tx, importData, state, result) {
         mediaKey: value(row, "media_key")
       },
       update: {
-        productId: product.id,
-        variantId: variant?.id ?? null,
+        product: {
+          connect: {
+            id: product.id
+          }
+        },
+        variant: variant
+          ? {
+              connect: {
+                id: variant.id
+              }
+            }
+          : {
+              disconnect: true
+            },
         role: value(row, "role"),
         cloudinaryPublicId: nullIfBlank(value(row, "cloudinary_public_id")),
         cloudinarySecureUrl: null,
@@ -1232,8 +1315,20 @@ async function importMedia(tx, importData, state, result) {
       },
       create: {
         mediaKey: value(row, "media_key"),
-        productId: product.id,
-        variantId: variant?.id ?? null,
+        product: {
+          connect: {
+            id: product.id
+          }
+        },
+        ...(variant
+          ? {
+              variant: {
+                connect: {
+                  id: variant.id
+                }
+              }
+            }
+          : {}),
         role: value(row, "role"),
         cloudinaryPublicId: nullIfBlank(value(row, "cloudinary_public_id")),
         cloudinarySecureUrl: null,

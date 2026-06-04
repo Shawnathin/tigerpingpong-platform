@@ -17,6 +17,7 @@
     "format:write": "prettier --write .",
     "scrape:tiger": "node tools/tiger-scraper/src/tiger-scraper.mjs",
     "scrape:tiger:test": "node tools/tiger-scraper/src/tiger-scraper.mjs --seed=/tables/ --seed=/accessories/ --limit=12 --max-depth=2 --output=var/scrapes/tigerpingpong/test",
+    "validate:tiger-import": "node tools/tiger-import-validator/src/validate-tiger-import.mjs",
     "db:generate": "pnpm --filter @tigerpingpong/db prisma:generate",
     "db:validate": "pnpm --filter @tigerpingpong/db prisma:validate"
   },

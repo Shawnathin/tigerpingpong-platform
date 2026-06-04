@@ -61,7 +61,7 @@ upload images to Cloudinary.
 | `tiger-expo-outdoor-table` | Tiger PingPong | Expo Table | Expo Outdoor Ping Pong Table Grey, Green or Blue | Tables | `/tables/expo-outdoor-ping-pong-table-grey-green-blue` | `9477` | `$1300` | Environment: outdoor; colors: grey, green, blue | `online_checkout_candidate` after table policy review | Confirm if colors share SKU or require variants. |
 | `tiger-portland-outdoor-table` | Tiger PingPong | Portland Table | Portland Outdoor Ping Pong Table Grey or Blue | Tables | `/tables/portland-outdoor-ping-pong-table-grey-blue` | `7736` | `$1500` | Environment: outdoor; colors: grey, blue | `online_checkout_candidate` after table policy review | Confirm if colors share SKU or require variants. |
 | `tiger-replacement-net` | Tiger PingPong | Replacement Nets | Replacement Net | Replacement Parts | `/accessories/replacement-net` | `8367` | `$28` | Replacement net | `deferred_from_v1` | Preserve for redirects/future planning. |
-| `tiger-net-post-set` | Tiger PingPong | Net Sets | Table Tennis Net & Post Set | Nets | `/accessories/table-tennis-net-post-set` | `6989-B` | `$59` | Simple product | `needs_manual_review` | Public Nets candidate; replacement wording needs manual review. |
+| `tiger-net-post-set` | Tiger PingPong | Net Sets | Table Tennis Net & Post Set | Nets | `/accessories/table-tennis-net-post-set` | `6989-B` | `$59` | Simple product | `online_checkout_candidate` | Checkout-ready confirmed; global checkout policy review remains open. |
 | `newgy-robo-balls-144-orange` | Tiger PingPong | Newgy Robo-Balls | Newgy Table Tennis Balls 144 Balls Orange | Balls | `/accessories/newgy-table-tennis-balls-orange` | `11763` | `$100` | Pack size: 144; color: orange | `online_checkout_candidate` | Newgy retained in product/family/source wording only; normalized v1 brand is Tiger PingPong. |
 | `tiger-premium-balls-140` | Tiger PingPong | Premium 3-Star Balls | Premium 3-Star Ping Pong Balls 140 Balls White or Orange | Balls | `/accessories/ping-pong-balls-premium-3-star-140-balls-white-orange` | Missing | `$96` | Pack size: 140; color: white or orange | `online_checkout_candidate` after SKU/variant review | Confirm SKU and whether color is selectable. |
 
@@ -105,5 +105,4 @@ Rules:
 - Confirm ball color and pack-size variant strategy.
 - Confirm how Newgy wording should appear in product content, source evidence,
   manufacturer notes, and SEO fields.
-- Confirm whether `Table Tennis Net & Post Set` is public checkout-ready.
 - Confirm Cloudinary public ID naming before upload.

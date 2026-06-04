@@ -17,7 +17,7 @@ CREATE TYPE "media_role" AS ENUM ('primary', 'gallery', 'detail', 'lifestyle', '
 CREATE TYPE "media_review_status" AS ENUM ('needs_review', 'approved', 'rejected', 'archived');
 
 -- CreateEnum
-CREATE TYPE "source_provider" AS ENUM ('bigcommerce', 'cloudinary', 'manual', 'supplier', 'unknown');
+CREATE TYPE "media_source_provider" AS ENUM ('bigcommerce', 'cloudinary', 'manual', 'supplier', 'unknown');
 
 -- CreateEnum
 CREATE TYPE "quote_request_status" AS ENUM ('new', 'reviewing', 'contacted', 'closed');
@@ -29,7 +29,13 @@ CREATE TYPE "order_status" AS ENUM ('draft', 'pending_payment', 'paid', 'process
 CREATE TYPE "redirect_status" AS ENUM ('draft', 'approved', 'deferred');
 
 -- CreateEnum
-CREATE TYPE "relationship_type" AS ENUM ('upsell', 'cross_sell', 'accessory', 'replacement_part', 'similar', 'required_part');
+CREATE TYPE "relationship_type" AS ENUM ('related', 'upsell', 'cross_sell', 'accessory', 'replacement_part', 'compatible_with', 'similar', 'required_part');
+
+-- CreateEnum
+CREATE TYPE "review_severity" AS ENUM ('info', 'medium', 'high', 'blocker');
+
+-- CreateEnum
+CREATE TYPE "review_resolution_status" AS ENUM ('open', 'resolved', 'deferred');
 
 -- CreateTable
 CREATE TABLE "platform_metadata" (
@@ -68,6 +74,7 @@ CREATE TABLE "categories" (
     "v1_public_navigation" BOOLEAN NOT NULL DEFAULT false,
     "v1_checkout_scope" BOOLEAN NOT NULL DEFAULT false,
     "source_url" TEXT,
+    "legacy_path" TEXT,
     "seo_title" TEXT,
     "seo_description" TEXT,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
@@ -88,6 +95,7 @@ CREATE TABLE "product_families" (
     "description" TEXT,
     "source_evidence" TEXT,
     "sort_order" INTEGER NOT NULL DEFAULT 0,
+    "is_public" BOOLEAN NOT NULL DEFAULT false,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -188,41 +196,30 @@ CREATE TABLE "product_variant_option_values" (
 CREATE TABLE "product_media" (
     "id" TEXT NOT NULL,
     "media_key" TEXT NOT NULL,
-    "brand_id" TEXT,
-    "product_family_id" TEXT,
-    "product_id" TEXT,
+    "product_id" TEXT NOT NULL,
     "variant_id" TEXT,
     "role" "media_role" NOT NULL DEFAULT 'gallery',
     "cloudinary_asset_id" TEXT,
     "cloudinary_public_id" TEXT,
     "cloudinary_version" TEXT,
+    "cloudinary_secure_url" TEXT,
     "cloudinary_resource_type" TEXT,
     "cloudinary_format" TEXT,
-    "cloudinary_secure_url" TEXT,
-    "cloudinary_original_filename" TEXT,
-    "cloudinary_asset_folder" TEXT,
+    "width" INTEGER,
+    "height" INTEGER,
+    "bytes" BIGINT,
     "source_url" TEXT,
-    "source_provider" "source_provider" NOT NULL DEFAULT 'unknown',
-    "source_bigcommerce_url" TEXT,
-    "source_hash" TEXT,
-    "perceptual_hash" TEXT,
+    "source_provider" "media_source_provider" NOT NULL DEFAULT 'unknown',
+    "source_checksum" TEXT,
     "alt_text" TEXT,
     "title" TEXT,
     "caption" TEXT,
-    "width" INTEGER,
-    "height" INTEGER,
-    "aspect_ratio" DECIMAL(8,4),
-    "file_size_bytes" BIGINT,
-    "dominant_color" TEXT,
     "sort_order" INTEGER NOT NULL DEFAULT 0,
     "is_primary" BOOLEAN NOT NULL DEFAULT false,
-    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "is_public" BOOLEAN NOT NULL DEFAULT false,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "review_status" "media_review_status" NOT NULL DEFAULT 'needs_review',
-    "review_notes" TEXT,
-    "uploaded_at" TIMESTAMP(3),
-    "approved_at" TIMESTAMP(3),
-    "replaced_by_media_id" TEXT,
+    "notes" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -284,6 +281,7 @@ CREATE TABLE "product_relationships" (
     "relationship_type" "relationship_type" NOT NULL,
     "sort_order" INTEGER NOT NULL DEFAULT 0,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "is_public" BOOLEAN NOT NULL DEFAULT false,
     "notes" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -374,6 +372,23 @@ CREATE TABLE "redirects" (
     CONSTRAINT "redirects_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "import_review_flags" (
+    "id" TEXT NOT NULL,
+    "entity_type" TEXT NOT NULL,
+    "entity_key" TEXT NOT NULL,
+    "source_url" TEXT,
+    "flag" TEXT NOT NULL,
+    "severity" "review_severity" NOT NULL DEFAULT 'info',
+    "resolution_owner" TEXT,
+    "resolution_status" "review_resolution_status" NOT NULL DEFAULT 'open',
+    "notes" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "import_review_flags_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "platform_metadata_key_key" ON "platform_metadata"("key");
 
@@ -396,6 +411,9 @@ CREATE INDEX "categories_parent_id_idx" ON "categories"("parent_id");
 CREATE INDEX "categories_source_url_idx" ON "categories"("source_url");
 
 -- CreateIndex
+CREATE INDEX "categories_legacy_path_idx" ON "categories"("legacy_path");
+
+-- CreateIndex
 CREATE INDEX "categories_v1_public_navigation_idx" ON "categories"("v1_public_navigation");
 
 -- CreateIndex
@@ -412,6 +430,9 @@ CREATE INDEX "product_families_brand_id_idx" ON "product_families"("brand_id");
 
 -- CreateIndex
 CREATE INDEX "product_families_primary_category_id_idx" ON "product_families"("primary_category_id");
+
+-- CreateIndex
+CREATE INDEX "product_families_is_public_idx" ON "product_families"("is_public");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "products_key_key" ON "products"("key");
@@ -492,12 +513,6 @@ CREATE UNIQUE INDEX "product_media_cloudinary_asset_id_key" ON "product_media"("
 CREATE UNIQUE INDEX "product_media_cloudinary_public_id_key" ON "product_media"("cloudinary_public_id");
 
 -- CreateIndex
-CREATE INDEX "product_media_brand_id_idx" ON "product_media"("brand_id");
-
--- CreateIndex
-CREATE INDEX "product_media_product_family_id_idx" ON "product_media"("product_family_id");
-
--- CreateIndex
 CREATE INDEX "product_media_product_id_idx" ON "product_media"("product_id");
 
 -- CreateIndex
@@ -510,19 +525,16 @@ CREATE INDEX "product_media_role_idx" ON "product_media"("role");
 CREATE INDEX "product_media_source_url_idx" ON "product_media"("source_url");
 
 -- CreateIndex
-CREATE INDEX "product_media_source_bigcommerce_url_idx" ON "product_media"("source_bigcommerce_url");
-
--- CreateIndex
-CREATE INDEX "product_media_source_hash_idx" ON "product_media"("source_hash");
-
--- CreateIndex
-CREATE INDEX "product_media_perceptual_hash_idx" ON "product_media"("perceptual_hash");
+CREATE INDEX "product_media_source_checksum_idx" ON "product_media"("source_checksum");
 
 -- CreateIndex
 CREATE INDEX "product_media_review_status_idx" ON "product_media"("review_status");
 
 -- CreateIndex
-CREATE INDEX "product_media_replaced_by_media_id_idx" ON "product_media"("replaced_by_media_id");
+CREATE INDEX "product_media_is_public_idx" ON "product_media"("is_public");
+
+-- CreateIndex
+CREATE INDEX "product_media_is_active_idx" ON "product_media"("is_active");
 
 -- CreateIndex
 CREATE INDEX "product_content_sections_product_id_idx" ON "product_content_sections"("product_id");
@@ -562,6 +574,9 @@ CREATE INDEX "product_relationships_target_product_id_idx" ON "product_relations
 
 -- CreateIndex
 CREATE INDEX "product_relationships_relationship_type_idx" ON "product_relationships"("relationship_type");
+
+-- CreateIndex
+CREATE INDEX "product_relationships_is_public_idx" ON "product_relationships"("is_public");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "product_relationships_source_product_id_target_product_id_r_key" ON "product_relationships"("source_product_id", "target_product_id", "relationship_type");
@@ -605,6 +620,21 @@ CREATE INDEX "redirects_entity_type_entity_key_idx" ON "redirects"("entity_type"
 -- CreateIndex
 CREATE INDEX "redirects_redirect_status_idx" ON "redirects"("redirect_status");
 
+-- CreateIndex
+CREATE INDEX "import_review_flags_entity_type_entity_key_idx" ON "import_review_flags"("entity_type", "entity_key");
+
+-- CreateIndex
+CREATE INDEX "import_review_flags_source_url_idx" ON "import_review_flags"("source_url");
+
+-- CreateIndex
+CREATE INDEX "import_review_flags_flag_idx" ON "import_review_flags"("flag");
+
+-- CreateIndex
+CREATE INDEX "import_review_flags_severity_idx" ON "import_review_flags"("severity");
+
+-- CreateIndex
+CREATE INDEX "import_review_flags_resolution_status_idx" ON "import_review_flags"("resolution_status");
+
 -- AddForeignKey
 ALTER TABLE "categories" ADD CONSTRAINT "categories_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "categories"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -639,19 +669,10 @@ ALTER TABLE "product_variant_option_values" ADD CONSTRAINT "product_variant_opti
 ALTER TABLE "product_variant_option_values" ADD CONSTRAINT "product_variant_option_values_product_option_value_id_fkey" FOREIGN KEY ("product_option_value_id") REFERENCES "product_option_values"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "product_media" ADD CONSTRAINT "product_media_brand_id_fkey" FOREIGN KEY ("brand_id") REFERENCES "brands"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "product_media" ADD CONSTRAINT "product_media_product_family_id_fkey" FOREIGN KEY ("product_family_id") REFERENCES "product_families"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "product_media" ADD CONSTRAINT "product_media_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "product_media" ADD CONSTRAINT "product_media_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "product_media" ADD CONSTRAINT "product_media_variant_id_fkey" FOREIGN KEY ("variant_id") REFERENCES "product_variants"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "product_media" ADD CONSTRAINT "product_media_replaced_by_media_id_fkey" FOREIGN KEY ("replaced_by_media_id") REFERENCES "product_media"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "product_content_sections" ADD CONSTRAINT "product_content_sections_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;

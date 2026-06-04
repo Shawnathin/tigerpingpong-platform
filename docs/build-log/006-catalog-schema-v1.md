@@ -8,12 +8,17 @@
 - Product media model for Cloudinary references, review metadata, and
   BigCommerce/source URL traceability.
 - Product content sections, spec groups, specs, and product relationships.
-- Planning tables for quote requests, orders, order items, and redirects.
+- Draft redirect and import review flag models for legacy-route planning and
+  pre-import review workflow.
+- Planning tables for quote requests, quote request items, orders, and order
+  items.
 - Controlled Prisma enums for product kind/status, purchase mode, review
-  status, media role/provider, quote status, order status, redirect status, and
-  relationship type.
+  status, media role/provider, quote status, order status, redirect status,
+  relationship type, review severity, and review resolution status.
 - Migration folder:
   `packages/db/prisma/migrations/20260604190000_catalog_schema_v1/`.
+- Schema reference:
+  `docs/database/TIGER_PINGPONG_CATALOG_SCHEMA_V1.md`.
 
 The existing `PlatformMetadata` model was kept. Because this repository did not
 previously contain a Prisma migration, the generated migration also creates the
@@ -32,6 +37,7 @@ existing `platform_metadata` table.
 - No admin screens.
 - No Cloudinary upload scripts or uploaded image records.
 - No production Supabase migration application.
+- No API, frontend, checkout, auth, admin, or Stripe implementation work.
 
 ## Migration Name
 
@@ -65,6 +71,7 @@ migrated.
   before public table checkout.
 - Run a separate Cloudinary media dedupe/upload/review task.
 - Decide final frontend route patterns before approving redirects.
+- Create and review normalized import CSV artifacts in a separate task.
 - Build backend API routes only in a later task.
 - Build frontend catalog pages only in a later task.
 - Implement checkout only after policy and payment decisions are approved.

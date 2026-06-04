@@ -68,14 +68,14 @@ enum MediaReviewStatus {
   @@map("media_review_status")
 }
 
-enum SourceProvider {
+enum MediaSourceProvider {
   bigcommerce
   cloudinary
   manual
   supplier
   unknown
 
-  @@map("source_provider")
+  @@map("media_source_provider")
 }
 
 enum QuoteRequestStatus {
@@ -109,14 +109,33 @@ enum RedirectStatus {
 }
 
 enum RelationshipType {
+  related
   upsell
   cross_sell
   accessory
   replacement_part
+  compatible_with
   similar
   required_part
 
   @@map("relationship_type")
+}
+
+enum ReviewSeverity {
+  info
+  medium
+  high
+  blocker
+
+  @@map("review_severity")
+}
+
+enum ReviewResolutionStatus {
+  open
+  resolved
+  deferred
+
+  @@map("review_resolution_status")
 }
 
 model PlatformMetadata {
@@ -140,7 +159,6 @@ model Brand {
   updatedAt       DateTime        @updatedAt @map("updated_at")
   productFamilies ProductFamily[]
   products        Product[]
-  media           ProductMedia[]
 
   @@map("brands")
 }
@@ -156,6 +174,7 @@ model Category {
   v1PublicNavigation Boolean         @default(false) @map("v1_public_navigation")
   v1CheckoutScope    Boolean         @default(false) @map("v1_checkout_scope")
   sourceUrl          String?         @map("source_url")
+  legacyPath         String?         @map("legacy_path")
   seoTitle           String?         @map("seo_title")
   seoDescription     String?         @map("seo_description") @db.Text
   isActive           Boolean         @default(true) @map("is_active")
@@ -168,31 +187,33 @@ model Category {
 
   @@index([parentId])
   @@index([sourceUrl])
+  @@index([legacyPath])
   @@index([v1PublicNavigation])
   @@index([v1CheckoutScope])
   @@map("categories")
 }
 
 model ProductFamily {
-  id                String         @id @default(cuid())
-  key               String         @unique
-  brandId           String         @map("brand_id")
-  primaryCategoryId String         @map("primary_category_id")
+  id                String    @id @default(cuid())
+  key               String    @unique
+  brandId           String    @map("brand_id")
+  primaryCategoryId String    @map("primary_category_id")
   name              String
-  slug              String         @unique
-  description       String?        @db.Text
-  sourceEvidence    String?        @map("source_evidence") @db.Text
-  sortOrder         Int            @default(0) @map("sort_order")
-  isActive          Boolean        @default(true) @map("is_active")
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @updatedAt @map("updated_at")
-  brand             Brand          @relation(fields: [brandId], references: [id], onDelete: Restrict)
-  primaryCategory   Category       @relation(fields: [primaryCategoryId], references: [id], onDelete: Restrict)
+  slug              String    @unique
+  description       String?   @db.Text
+  sourceEvidence    String?   @map("source_evidence") @db.Text
+  sortOrder         Int       @default(0) @map("sort_order")
+  isPublic          Boolean   @default(false) @map("is_public")
+  isActive          Boolean   @default(true) @map("is_active")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  brand             Brand     @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  primaryCategory   Category  @relation(fields: [primaryCategoryId], references: [id], onDelete: Restrict)
   products          Product[]
-  media             ProductMedia[]
 
   @@index([brandId])
   @@index([primaryCategoryId])
+  @@index([isPublic])
   @@map("product_families")
 }
 
@@ -326,64 +347,46 @@ model ProductVariantOptionValue {
 }
 
 model ProductMedia {
-  id                         String                  @id @default(cuid())
-  mediaKey                   String                  @unique @map("media_key")
-  brandId                    String?                 @map("brand_id")
-  productFamilyId            String?                 @map("product_family_id")
-  productId                  String?                 @map("product_id")
-  variantId                  String?                 @map("variant_id")
-  role                       MediaRole               @default(gallery)
-  cloudinaryAssetId          String?                 @unique @map("cloudinary_asset_id")
-  cloudinaryPublicId         String?                 @unique @map("cloudinary_public_id")
-  cloudinaryVersion          String?                 @map("cloudinary_version")
-  cloudinaryResourceType     String?                 @map("cloudinary_resource_type")
-  cloudinaryFormat           String?                 @map("cloudinary_format")
-  cloudinarySecureUrl        String?                 @map("cloudinary_secure_url")
-  cloudinaryOriginalFilename String?                 @map("cloudinary_original_filename")
-  cloudinaryAssetFolder      String?                 @map("cloudinary_asset_folder")
-  sourceUrl                  String?                 @map("source_url")
-  sourceProvider             SourceProvider          @default(unknown) @map("source_provider")
-  sourceBigcommerceUrl       String?                 @map("source_bigcommerce_url")
-  sourceHash                 String?                 @map("source_hash")
-  perceptualHash             String?                 @map("perceptual_hash")
-  altText                    String?                 @map("alt_text")
-  title                      String?
-  caption                    String?                 @db.Text
-  width                      Int?
-  height                     Int?
-  aspectRatio                Decimal?                @map("aspect_ratio") @db.Decimal(8, 4)
-  fileSizeBytes              BigInt?                 @map("file_size_bytes")
-  dominantColor              String?                 @map("dominant_color")
-  sortOrder                  Int                     @default(0) @map("sort_order")
-  isPrimary                  Boolean                 @default(false) @map("is_primary")
-  isActive                   Boolean                 @default(true) @map("is_active")
-  isPublic                   Boolean                 @default(false) @map("is_public")
-  reviewStatus               MediaReviewStatus       @default(needs_review) @map("review_status")
-  reviewNotes                String?                 @map("review_notes") @db.Text
-  uploadedAt                 DateTime?               @map("uploaded_at")
-  approvedAt                 DateTime?               @map("approved_at")
-  replacedByMediaId          String?                 @map("replaced_by_media_id")
-  createdAt                  DateTime                @default(now()) @map("created_at")
-  updatedAt                  DateTime                @updatedAt @map("updated_at")
-  brand                      Brand?                  @relation(fields: [brandId], references: [id], onDelete: SetNull)
-  productFamily              ProductFamily?          @relation(fields: [productFamilyId], references: [id], onDelete: SetNull)
-  product                    Product?                @relation(fields: [productId], references: [id], onDelete: SetNull)
-  variant                    ProductVariant?         @relation(fields: [variantId], references: [id], onDelete: SetNull)
-  replacedByMedia            ProductMedia?           @relation("ProductMediaReplacement", fields: [replacedByMediaId], references: [id], onDelete: SetNull)
-  replacementMedia           ProductMedia[]          @relation("ProductMediaReplacement")
-  contentSections            ProductContentSection[]
+  id                     String                  @id @default(cuid())
+  mediaKey               String                  @unique @map("media_key")
+  productId              String                  @map("product_id")
+  variantId              String?                 @map("variant_id")
+  role                   MediaRole               @default(gallery)
+  cloudinaryAssetId      String?                 @unique @map("cloudinary_asset_id")
+  cloudinaryPublicId     String?                 @unique @map("cloudinary_public_id")
+  cloudinaryVersion      String?                 @map("cloudinary_version")
+  cloudinarySecureUrl    String?                 @map("cloudinary_secure_url")
+  cloudinaryResourceType String?                 @map("cloudinary_resource_type")
+  cloudinaryFormat       String?                 @map("cloudinary_format")
+  width                  Int?
+  height                 Int?
+  bytes                  BigInt?
+  sourceUrl              String?                 @map("source_url")
+  sourceProvider         MediaSourceProvider     @default(unknown) @map("source_provider")
+  sourceChecksum         String?                 @map("source_checksum")
+  altText                String?                 @map("alt_text")
+  title                  String?
+  caption                String?                 @db.Text
+  sortOrder              Int                     @default(0) @map("sort_order")
+  isPrimary              Boolean                 @default(false) @map("is_primary")
+  isPublic               Boolean                 @default(false) @map("is_public")
+  isActive               Boolean                 @default(true) @map("is_active")
+  reviewStatus           MediaReviewStatus       @default(needs_review) @map("review_status")
+  notes                  String?                 @db.Text
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @updatedAt @map("updated_at")
+  product                Product                 @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant                ProductVariant?         @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  contentSections        ProductContentSection[]
 
-  @@index([brandId])
-  @@index([productFamilyId])
   @@index([productId])
   @@index([variantId])
   @@index([role])
   @@index([sourceUrl])
-  @@index([sourceBigcommerceUrl])
-  @@index([sourceHash])
-  @@index([perceptualHash])
+  @@index([sourceChecksum])
   @@index([reviewStatus])
-  @@index([replacedByMediaId])
+  @@index([isPublic])
+  @@index([isActive])
   @@map("product_media")
 }
 
@@ -454,6 +457,7 @@ model ProductRelationship {
   relationshipType RelationshipType @map("relationship_type")
   sortOrder        Int              @default(0) @map("sort_order")
   isActive         Boolean          @default(true) @map("is_active")
+  isPublic         Boolean          @default(false) @map("is_public")
   notes            String?          @db.Text
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")
@@ -464,6 +468,7 @@ model ProductRelationship {
   @@index([sourceProductId])
   @@index([targetProductId])
   @@index([relationshipType])
+  @@index([isPublic])
   @@map("product_relationships")
 }
 
@@ -563,4 +568,25 @@ model Redirect {
   @@index([entityType, entityKey])
   @@index([redirectStatus])
   @@map("redirects")
+}
+
+model ImportReviewFlag {
+  id               String                 @id @default(cuid())
+  entityType       String                 @map("entity_type")
+  entityKey        String                 @map("entity_key")
+  sourceUrl        String?                @map("source_url")
+  flag             String
+  severity         ReviewSeverity         @default(info)
+  resolutionOwner  String?                @map("resolution_owner")
+  resolutionStatus ReviewResolutionStatus @default(open) @map("resolution_status")
+  notes            String?                @db.Text
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @updatedAt @map("updated_at")
+
+  @@index([entityType, entityKey])
+  @@index([sourceUrl])
+  @@index([flag])
+  @@index([severity])
+  @@index([resolutionStatus])
+  @@map("import_review_flags")
 }

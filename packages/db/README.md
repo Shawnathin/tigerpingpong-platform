@@ -6,9 +6,14 @@ This package owns Prisma setup for the Supabase Postgres database. The backend
 API will use this package for database access once application models are
 introduced.
 
-Only a neutral `PlatformMetadata` foundation model is defined so Prisma Client
-generation works. Product, cart, checkout, auth, and admin schema decisions
-should be added in later tasks.
+The schema includes the v1 catalog planning models for Brand -> Product Family
+-> Product -> Variant, product media references, draft redirects, import review
+flags, quote request planning, and order planning. It does not include seed
+data, product imports, API routes, frontend pages, checkout implementation,
+Stripe, auth, admin screens, or Cloudinary upload code.
+
+See `docs/database/TIGER_PINGPONG_CATALOG_SCHEMA_V1.md` for the catalog schema
+summary and Supabase migration warnings.
 
 ## Commands
 

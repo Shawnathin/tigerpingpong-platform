@@ -213,7 +213,7 @@ Recommended normalized purchase states:
 | Balls | `online_checkout_candidate` | Confirm SKU and variant mapping first. |
 | Covers | `online_checkout_candidate` | Confirm missing SKU first. |
 | Paddles | `online_checkout_candidate` | Confirm missing SKU and size option first. |
-| Nets | `online_checkout_candidate` or `needs_manual_review` | Confirm whether the net/post set is public checkout-ready. |
+| Nets | `online_checkout_candidate` | Table Tennis Net & Post Set checkout readiness is confirmed; global checkout policy review remains open. |
 | Accessories | `online_checkout_candidate` or `needs_manual_review` | Confirm add-to-cart and SKU behavior. |
 | Replacement Parts | `deferred_from_v1` | Preserve but exclude from public navigation and checkout. |
 

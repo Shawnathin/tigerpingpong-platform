@@ -7,13 +7,27 @@
 - One v1 brand row for Tiger PingPong only.
 - Reviewed category, family, product, variant, media, redirect, and review-flag
   CSVs following `docs/catalog/TIGER_PINGPONG_IMPORT_CSV_SPEC_V1.md`.
-- Sixteen reviewed unique product rows after deduplicating the duplicate table
-  cover source row.
-- Conservative variant candidates for table colors, ball color/pack sizes, and
-  the Vice Paddle size placeholder.
+- Seventeen reviewed current/deferred product rows after applying Shawn's
+  catalog and SKU corrections.
+- Conservative variant candidates for table colors, current and legacy Portland
+  Outdoor models, and ball color/pack sizes.
 - Primary source-media candidates from the scrape manifest with planned
   Cloudinary folders/public IDs and blank `cloudinary_secure_url` fields.
 - Draft redirects only.
+
+## Business Corrections Applied
+
+- Removed Expo Indoor, Newgy Robo-Balls, and Ping Pong Paddle Case from current
+  v1 review rows.
+- Removed Expo Outdoor Green and Portland Indoor Blue variants.
+- Updated Portland Indoor to Grey SKU `9476` and Green SKU `7012`.
+- Updated Expo Outdoor to Grey SKU `15224` and Blue SKU `15225`.
+- Updated Portland Outdoor current V2 to Grey SKU `14445` and Blue SKU `14446`.
+- Preserved Portland Outdoor legacy V1 Grey SKU `15223` and Blue SKU `15222` as
+  inactive/deferred variants only.
+- Updated Whistler, Plaza, balls, Vice Paddle, cover, net, and replacement-net
+  SKUs from the business correction.
+- Added Aqua paddle product rows for Coral, Ocean Blue, 4 Pack, and 2 Pack.
 
 ## Source Material Inspected
 
@@ -34,12 +48,12 @@ Counts exclude header rows.
 | --- | ---: |
 | `brands_import_v1.csv` | 1 |
 | `categories_import_v1.csv` | 9 |
-| `product_families_import_v1.csv` | 11 |
-| `products_import_v1.csv` | 16 |
-| `product_variants_import_v1.csv` | 20 |
-| `product_media_import_v1.csv` | 16 |
-| `redirects_draft_v1.csv` | 28 |
-| `import_review_flags_v1.csv` | 24 |
+| `product_families_import_v1.csv` | 10 |
+| `products_import_v1.csv` | 17 |
+| `product_variants_import_v1.csv` | 15 |
+| `product_media_import_v1.csv` | 13 |
+| `redirects_draft_v1.csv` | 29 |
+| `import_review_flags_v1.csv` | 14 |
 
 ## Review Artifact Boundary
 
@@ -71,13 +85,9 @@ are not seed data.
 
 ## Open Review Items
 
-- Confirm missing SKUs before checkout.
 - Confirm table freight, curbside, tax, regional, and shipping policy before
   public table checkout.
-- Confirm table color variant values and SKU mapping.
-- Confirm whether the 140-pack balls color is selectable.
-- Confirm Vice Paddle size values.
-- Confirm whether `Table Tennis Net & Post Set` is public checkout-ready.
+- Confirm Aqua paddle source URLs, prices, and source media before checkout.
+- Confirm final route patterns before approving draft redirects.
 - Run a separate media dedupe/upload task before using Cloudinary URLs.
 - Crawl resource articles in a content-specific pass.
-- Approve frontend route patterns before redirect import.

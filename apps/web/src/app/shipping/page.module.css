@@ -1,0 +1,88 @@
+.page {
+  display: grid;
+  gap: 28px;
+  min-height: 100vh;
+  padding: 34px 20px 64px;
+}
+
+.backBar,
+.header,
+.section {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.backBar a {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  color: #17633a;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.backBar a:hover {
+  text-decoration: underline;
+}
+
+.header {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #d7ded2;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #52656d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #101820;
+  font-size: clamp(2rem, 5vw, 3.7rem);
+  line-height: 1;
+}
+
+.intro {
+  max-width: 720px;
+  margin: 0;
+  color: #44535c;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.section {
+  display: grid;
+  gap: 14px;
+}
+
+.section h2 {
+  margin: 0;
+  color: #1d252c;
+  font-size: 1.18rem;
+}
+
+.ruleList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 18px 18px 18px 36px;
+  border: 1px solid #d7ded2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #26343a;
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding-top: 24px;
+  }
+}

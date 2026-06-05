@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CatalogApiError, getProductBySlug } from "../../../../lib/catalog-api";
+import { getV1ShippingMessage } from "../../../../lib/shipping";
 import type {
   CatalogProductDetail,
   CatalogSummary,
@@ -139,6 +140,14 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaSummary[] {
           isPrimary: true
         }
       ];
+}
+
+function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
+  return (
+    <>
+      {getV1ShippingMessage(priceCents)} <a href="/shipping">See shipping terms.</a>
+    </>
+  );
 }
 
 function isPublicRecord(value: unknown): value is PublicRecord {
@@ -313,11 +322,9 @@ function ProductFacts({ product }: { product: CatalogProductDetail }) {
         <dd>{product.family.name}</dd>
       </div>
       <div>
-        <dt>Freight details</dt>
-        <dd>
-          {product.shippingReviewRequired
-            ? "Freight details confirmed before checkout"
-            : "Standard product detail pending"}
+        <dt>Shipping</dt>
+        <dd className={styles.shippingFact}>
+          <ShippingTermsCopy priceCents={product.priceCents} />
         </dd>
       </div>
     </dl>
@@ -536,9 +543,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             <p className={styles.summary}>{product.shortDescription}</p>
           ) : null}
         </div>
-        {product.shippingReviewRequired ? (
-          <span className={styles.shippingBadge}>Freight details confirmed before checkout</span>
-        ) : null}
+        <p className={styles.shippingNote}>
+          <ShippingTermsCopy priceCents={product.priceCents} />
+        </p>
       </section>
 
       <section className={styles.mediaSection} aria-labelledby="product-media-title">
@@ -557,7 +564,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         <div className={styles.detailPanel}>
           <h2>V1 Checkout</h2>
-          <p>Checkout connection planned for V1.</p>
+          <p>Stripe hosted checkout is planned for V1.</p>
           <p>No cart, checkout, Stripe link, or payment flow is live on this page.</p>
         </div>
       </section>

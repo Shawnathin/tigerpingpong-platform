@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "predev": "pnpm --filter @tigerpingpong/shared build",
+    "predev": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build",
     "dev": "nest start --watch",
-    "prebuild": "pnpm --filter @tigerpingpong/shared build",
+    "prebuild": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build",
     "build": "nest build",
     "start": "node dist/main.js",
-    "pretypecheck": "pnpm --filter @tigerpingpong/shared build",
+    "pretypecheck": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint src --max-warnings=0"
   },
@@ -16,6 +16,7 @@
     "@nestjs/common": "^10.4.0",
     "@nestjs/core": "^10.4.0",
     "@nestjs/platform-express": "^10.4.0",
+    "@tigerpingpong/db": "workspace:*",
     "@tigerpingpong/shared": "workspace:*",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"

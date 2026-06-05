@@ -950,7 +950,6 @@ async function importCategories(tx, importData, state, result) {
         v1CheckoutScope: asBoolean(row, "v1_checkout_scope"),
         sourceUrl,
         legacyPath: pathFromUrl(sourceUrl),
-        notes: nullIfBlank(value(row, "notes")),
         isActive: true
       },
       create: {
@@ -963,7 +962,6 @@ async function importCategories(tx, importData, state, result) {
         v1CheckoutScope: asBoolean(row, "v1_checkout_scope"),
         sourceUrl,
         legacyPath: pathFromUrl(sourceUrl),
-        notes: nullIfBlank(value(row, "notes")),
         isActive: true
       }
     });

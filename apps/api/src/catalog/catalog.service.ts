@@ -19,10 +19,29 @@ interface CategoryNode {
   v1PublicNavigation: boolean;
 }
 
+interface CategoryRecord extends Omit<CategoryNode, "children"> {
+  legacyPath: string | null;
+  sourceUrl: string | null;
+}
+
 interface SummaryRecord {
   key: string;
   slug: string;
   name: string;
+}
+
+interface FamilyRecord extends SummaryRecord {
+  id: string;
+  description: string | null;
+  sortOrder: number;
+  isPublic: boolean;
+  isActive: boolean;
+  sourceEvidence: string | null;
+  brand: SummaryRecord;
+  primaryCategory: SummaryRecord & {
+    v1CheckoutScope: boolean;
+    v1PublicNavigation: boolean;
+  };
 }
 
 interface ProductSummaryRecord extends SummaryRecord {
@@ -242,7 +261,7 @@ export class CatalogService implements OnModuleDestroy {
   }
 
   async getCategories(options: CatalogRequestOptions): Promise<unknown> {
-    const categories = await this.getPrisma().category.findMany({
+    const categories: CategoryRecord[] = await this.getPrisma().category.findMany({
       where: {
         isActive: true,
         v1PublicNavigation: true
@@ -259,7 +278,7 @@ export class CatalogService implements OnModuleDestroy {
     });
 
     const byId = new Map<string, CategoryNode>(
-      categories.map((category) => [
+      categories.map((category: CategoryRecord) => [
         category.id,
         {
           id: category.id,
@@ -294,14 +313,14 @@ export class CatalogService implements OnModuleDestroy {
     }
 
     return {
-      categories: roots.map((category) =>
+      categories: roots.map((category: CategoryNode) =>
         this.serializeCategoryNode(category, options.includeInternal)
       )
     };
   }
 
   async getProductFamilies(options: CatalogRequestOptions): Promise<unknown> {
-    const productFamilies = await this.getPrisma().productFamily.findMany({
+    const productFamilies: FamilyRecord[] = await this.getPrisma().productFamily.findMany({
       where: {
         isActive: true,
         isPublic: true,
@@ -321,7 +340,7 @@ export class CatalogService implements OnModuleDestroy {
     });
 
     return {
-      productFamilies: productFamilies.map((family) =>
+      productFamilies: productFamilies.map((family: FamilyRecord) =>
         this.serializeFamily(family, options.includeInternal)
       )
     };
@@ -396,7 +415,7 @@ export class CatalogService implements OnModuleDestroy {
     return {
       productFamily: {
         ...this.serializeFamily(family, options.includeInternal),
-        products: family.products.map((product) =>
+        products: family.products.map((product: ProductListRecord) =>
           this.serializeProductListItem(product, options.includeInternal)
         )
       }
@@ -404,7 +423,7 @@ export class CatalogService implements OnModuleDestroy {
   }
 
   async getProducts(options: CatalogRequestOptions): Promise<unknown> {
-    const products = await this.getPrisma().product.findMany({
+    const products: ProductListRecord[] = await this.getPrisma().product.findMany({
       where: this.getPublicProductWhere(options),
       orderBy: [
         {
@@ -449,7 +468,7 @@ export class CatalogService implements OnModuleDestroy {
     });
 
     return {
-      products: products.map((product) =>
+      products: products.map((product: ProductListRecord) =>
         this.serializeProductListItem(product, options.includeInternal)
       )
     };
@@ -459,7 +478,7 @@ export class CatalogService implements OnModuleDestroy {
     slug: string,
     options: CatalogRequestOptions
   ): Promise<unknown> {
-    const product = await this.getPrisma().product.findFirst({
+    const product: ProductDetailRecord | null = await this.getPrisma().product.findFirst({
       where: {
         slug,
         ...this.getPublicProductWhere(options)
@@ -694,10 +713,7 @@ export class CatalogService implements OnModuleDestroy {
     };
   }
 
-  private serializeFamily(
-    family: Prisma.ProductFamilyGetPayload<{ select: typeof familySelect }>,
-    includeInternal: boolean
-  ) {
+  private serializeFamily(family: FamilyRecord, includeInternal: boolean) {
     return {
       id: family.id,
       key: family.key,

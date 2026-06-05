@@ -1,10 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "outDir": "./dist",
+    "paths": {
+      "@tigerpingpong/db": ["../../packages/db/dist"]
+    },
     "rootDir": "./src",
     "sourceMap": true
   },

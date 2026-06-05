@@ -253,7 +253,7 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
       <a
         className={styles.productLink}
         href={`/catalog/products/${product.slug}`}
-        aria-label={`Future product page for ${product.name}`}
+        aria-label={`View product details for ${product.name}`}
       >
         <ProductMedia product={product} />
         <div className={styles.productBody}>

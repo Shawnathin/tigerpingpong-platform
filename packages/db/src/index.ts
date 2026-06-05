@@ -9,6 +9,8 @@ export interface DatabaseConfig {
 
 export const databaseProvider: DatabaseProvider = "supabase-postgres";
 
+export { Prisma, PrismaClient } from "@prisma/client";
+
 export function createDatabaseConfig(env: Record<string, string | undefined>): DatabaseConfig {
   const databaseUrl = env.DATABASE_URL;
 

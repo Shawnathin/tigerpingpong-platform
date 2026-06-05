@@ -6,6 +6,7 @@ import {
   getProductFamilies,
   getProducts
 } from "../../lib/catalog-api";
+import { getV1ShippingMessage } from "../../lib/shipping";
 import type {
   CatalogCategory,
   CatalogFamily,
@@ -247,6 +248,14 @@ function ProductMedia({ product }: { product: CatalogProductSummary }) {
   );
 }
 
+function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
+  return (
+    <>
+      {getV1ShippingMessage(priceCents)} <a href="/shipping">See shipping terms.</a>
+    </>
+  );
+}
+
 function ProductCard({ product }: { product: CatalogProductSummary }) {
   return (
     <article className={styles.productCard}>
@@ -284,12 +293,11 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
               <dd>{getMediaLabel(product)}</dd>
             </div>
           </dl>
-
-          {product.shippingReviewRequired ? (
-            <span className={styles.shippingBadge}>Freight details confirmed before checkout</span>
-          ) : null}
         </div>
       </a>
+      <p className={styles.shippingNote}>
+        <ShippingTermsCopy priceCents={product.priceCents} />
+      </p>
     </article>
   );
 }

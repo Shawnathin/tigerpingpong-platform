@@ -73,8 +73,7 @@
 }
 
 .count,
-.groupHeader span,
-.shippingBadge {
+.groupHeader span {
   display: inline-flex;
   align-items: center;
   min-height: 30px;
@@ -204,6 +203,8 @@
 }
 
 .productCard {
+  display: grid;
+  grid-template-rows: 1fr auto;
   overflow: hidden;
 }
 
@@ -276,11 +277,21 @@
   font-size: 1.06rem;
 }
 
-.shippingBadge {
-  justify-self: start;
-  min-height: 34px;
-  background: #fff0d8;
-  color: #8a4b00;
+.shippingNote {
+  margin: -2px 18px 18px;
+  color: #44535c;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.shippingNote a {
+  color: #17633a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.shippingNote a:hover {
+  text-decoration: underline;
 }
 
 .error {

@@ -1,0 +1,278 @@
+.page {
+  display: grid;
+  gap: 28px;
+  min-height: 100vh;
+  padding: 40px 20px 56px;
+}
+
+.header,
+.section {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #d7ded2;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #52656d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #101820;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  line-height: 1;
+}
+
+.endpoint {
+  min-width: min(100%, 360px);
+  margin: 0;
+  color: #44535c;
+  font-size: 0.92rem;
+}
+
+.endpoint div {
+  display: grid;
+  gap: 6px;
+}
+
+.endpoint dt {
+  color: #6a7780;
+  font-weight: 700;
+}
+
+.endpoint dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.section {
+  display: grid;
+  gap: 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionHeader h2,
+.summaryPanel h3 {
+  margin: 0;
+  color: #1d252c;
+}
+
+.sectionHeader h2 {
+  font-size: 1.2rem;
+}
+
+.summaryPanel h3 {
+  font-size: 1rem;
+}
+
+.statusBadge,
+.reviewBadge,
+.total {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #e6f4ea;
+  color: #17633a;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.statusBadge[data-status="unreachable"],
+.reviewBadge[data-required="true"] {
+  background: #fff0d8;
+  color: #8a4b00;
+}
+
+.total {
+  background: #e9eff5;
+  color: #2e4657;
+}
+
+.countGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.countCard,
+.summaryPanel {
+  border: 1px solid #d7ded2;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.countCard {
+  display: grid;
+  gap: 8px;
+  min-height: 92px;
+  padding: 16px;
+}
+
+.countCard span {
+  color: #60717a;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.countCard strong {
+  color: #101820;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.summaryPanel {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 18px;
+}
+
+.categoryList,
+.categoryList ul,
+.familyList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.categoryList ul {
+  margin-top: 10px;
+  padding-left: 18px;
+}
+
+.categoryList li,
+.familyList li {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.categoryList span,
+.familyList span {
+  color: #1f2a30;
+  font-weight: 700;
+}
+
+.familyList small,
+.meta,
+.empty {
+  margin: 0;
+  color: #60717a;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid #d7ded2;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.productTable {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+}
+
+.productTable th,
+.productTable td {
+  padding: 14px;
+  border-bottom: 1px solid #e5e9e1;
+  text-align: left;
+  vertical-align: top;
+}
+
+.productTable th {
+  color: #52656d;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.productTable td {
+  color: #26343a;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.productTable tr:last-child td {
+  border-bottom: 0;
+}
+
+.categoryList code,
+.familyList code,
+.productTable code {
+  color: #3f5968;
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.error {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid #f0b8b2;
+  border-radius: 8px;
+  background: #fff6f5;
+  color: #8d2d25;
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .header,
+  .sectionHeader {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .countGrid,
+  .summaryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding-top: 28px;
+  }
+
+  .countGrid,
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+}

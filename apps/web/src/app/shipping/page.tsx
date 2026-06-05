@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Shipping | Tiger Ping Pong Platform",
-  description: "V1 Tiger Ping Pong online order shipping terms placeholder."
+  description: "V1 Tiger Ping Pong online order shipping terms."
 };
 
 export default function ShippingPage() {
@@ -20,8 +20,8 @@ export default function ShippingPage() {
           Shipping
         </h1>
         <p className={styles.intro}>
-          This V1 placeholder summarizes the shipping rule for Tiger Ping Pong online orders.
-          Final wording should be reviewed before public launch.
+          This V1 page summarizes the cart and order-based shipping rule for Tiger Ping Pong
+          online orders. Final wording should be reviewed before public launch.
         </p>
       </section>
 
@@ -29,7 +29,8 @@ export default function ShippingPage() {
         <h2 id="shipping-rules-title">V1 Online Order Shipping</h2>
         <ul className={styles.ruleList}>
           <li>Free shipping across Canada on orders over $100.</li>
-          <li>$15 flat rate shipping across Canada on orders under or equal to $100.</li>
+          <li>Flat rate shipping applies to orders under or equal to $100.</li>
+          <li>Exact cart shipping will be confirmed during checkout.</li>
           <li>Applies to Tiger Ping Pong V1 online orders.</li>
           <li>Additional terms and conditions may apply.</li>
           <li>Final wording should be reviewed before public launch.</li>

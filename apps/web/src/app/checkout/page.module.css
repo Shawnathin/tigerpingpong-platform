@@ -1,0 +1,182 @@
+.page {
+  display: grid;
+  gap: 28px;
+  min-height: 100vh;
+  padding: 34px 20px 64px;
+}
+
+.backBar,
+.header,
+.panel {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.backBar a,
+.actions a,
+.secondaryLink {
+  color: #17633a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.backBar a {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  font-size: 0.92rem;
+}
+
+.backBar a:hover,
+.actions a:hover,
+.secondaryLink:hover {
+  text-decoration: underline;
+}
+
+.header {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #d7ded2;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #52656d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #101820;
+  font-size: clamp(2rem, 5vw, 3.7rem);
+  line-height: 1;
+}
+
+.intro {
+  max-width: 720px;
+  margin: 0;
+  color: #44535c;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.panel {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid #d7ded2;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.panel h2 {
+  margin: 0;
+  color: #1d252c;
+  font-size: 1.18rem;
+}
+
+.panel p {
+  max-width: 720px;
+  margin: 0;
+  color: #44535c;
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.statusList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.statusList div {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) 1fr;
+  gap: 14px;
+  min-width: 0;
+}
+
+.statusList dt {
+  color: #60717a;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.statusList dd {
+  margin: 0;
+  color: #26343a;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.reference {
+  display: grid;
+  gap: 4px;
+  padding-top: 4px;
+  color: #60717a;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.reference span {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.reference code {
+  color: #44535c;
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.primaryAction {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: #17633a;
+  color: #ffffff;
+  font-size: 0.94rem;
+}
+
+.primaryAction:hover {
+  background: #124f2e;
+  text-decoration: none;
+}
+
+.secondaryLink {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  font-size: 0.94rem;
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding-top: 24px;
+  }
+
+  .statusList div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

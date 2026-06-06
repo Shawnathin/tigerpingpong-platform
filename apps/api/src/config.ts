@@ -3,6 +3,13 @@ export interface ApiConfig {
   port: number;
 }
 
+export interface CheckoutConfig {
+  appEnv: string;
+  cancelUrl: string;
+  stripeSecretKey: string;
+  successUrl: string;
+}
+
 function readCsv(value: string | undefined, fallback: string[]): string[] {
   if (!value) {
     return fallback;
@@ -30,5 +37,24 @@ export function getApiConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   return {
     corsOrigins: readCsv(env.CORS_ORIGIN, ["http://localhost:3000"]),
     port: readPort(env.PORT, 3001)
+  };
+}
+
+function readRequiredString(value: string | undefined, name: string): string {
+  const normalized = value?.trim();
+
+  if (!normalized) {
+    throw new Error(`${name} is required.`);
+  }
+
+  return normalized;
+}
+
+export function getCheckoutConfig(env: NodeJS.ProcessEnv = process.env): CheckoutConfig {
+  return {
+    appEnv: env.APP_ENV?.trim() || env.NODE_ENV?.trim() || "development",
+    cancelUrl: readRequiredString(env.CHECKOUT_CANCEL_URL, "CHECKOUT_CANCEL_URL"),
+    stripeSecretKey: readRequiredString(env.STRIPE_SECRET_KEY, "STRIPE_SECRET_KEY"),
+    successUrl: readRequiredString(env.CHECKOUT_SUCCESS_URL, "CHECKOUT_SUCCESS_URL")
   };
 }

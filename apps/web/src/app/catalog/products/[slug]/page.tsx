@@ -9,6 +9,7 @@ import type {
   ProductMediaSummary
 } from "../../../../types/catalog";
 
+import { CheckoutButton } from "./CheckoutButton";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +44,7 @@ const HIDDEN_PUBLIC_KEYS = [
   "cloudinaryResource",
   "cloudinaryOriginal"
 ];
+const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
 
 async function loadProduct(slug: string): Promise<ProductResource> {
   let product: CatalogProductDetail;
@@ -98,6 +100,17 @@ function isReplacementPartsProduct(product: CatalogProductDetail): boolean {
     hasReplacementPartsMarker(product.productKind, product.key, product.slug, product.name) ||
     isReplacementPartsSummary(product.category) ||
     isReplacementPartsSummary(product.family)
+  );
+}
+
+function isProductCheckoutEligible(product: CatalogProductDetail): boolean {
+  return (
+    product.v1PublicNavigation &&
+    product.v1CheckoutScope &&
+    CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
+    product.priceCents !== null &&
+    product.priceCents > 0 &&
+    product.currency.trim().toLowerCase() === "cad"
   );
 }
 
@@ -564,8 +577,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         <div className={styles.detailPanel}>
           <h2>V1 Checkout</h2>
-          <p>Stripe hosted checkout is planned for V1.</p>
-          <p>No cart, checkout, Stripe link, or payment flow is live on this page.</p>
+          <CheckoutButton
+            isCheckoutEligible={isProductCheckoutEligible(product)}
+            productSlug={product.slug}
+          />
         </div>
       </section>
 

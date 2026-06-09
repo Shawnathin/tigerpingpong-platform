@@ -3,9 +3,10 @@ import { Module } from "@nestjs/common";
 import { CatalogModule } from "./catalog/catalog.module";
 import { CheckoutModule } from "./checkout/checkout.module";
 import { HealthController } from "./health.controller";
+import { StripeWebhookModule } from "./webhooks/stripe-webhook.module";
 
 @Module({
-  imports: [CatalogModule, CheckoutModule],
+  imports: [CatalogModule, CheckoutModule, StripeWebhookModule],
   controllers: [HealthController]
 })
 export class AppModule {}

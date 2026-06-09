@@ -10,6 +10,10 @@ export interface CheckoutConfig {
   successUrl: string;
 }
 
+export interface StripeWebhookConfig {
+  stripeWebhookSecret: string;
+}
+
 function readCsv(value: string | undefined, fallback: string[]): string[] {
   if (!value) {
     return fallback;
@@ -56,5 +60,16 @@ export function getCheckoutConfig(env: NodeJS.ProcessEnv = process.env): Checkou
     cancelUrl: readRequiredString(env.CHECKOUT_CANCEL_URL, "CHECKOUT_CANCEL_URL"),
     stripeSecretKey: readRequiredString(env.STRIPE_SECRET_KEY, "STRIPE_SECRET_KEY"),
     successUrl: readRequiredString(env.CHECKOUT_SUCCESS_URL, "CHECKOUT_SUCCESS_URL")
+  };
+}
+
+export function getStripeWebhookConfig(
+  env: NodeJS.ProcessEnv = process.env
+): StripeWebhookConfig {
+  return {
+    stripeWebhookSecret: readRequiredString(
+      env.STRIPE_WEBHOOK_SECRET,
+      "STRIPE_WEBHOOK_SECRET"
+    )
   };
 }

@@ -11,6 +11,7 @@ export interface CheckoutConfig {
 }
 
 export interface StripeWebhookConfig {
+  expectedLivemode?: boolean;
   stripeWebhookSecret: string;
 }
 
@@ -54,6 +55,24 @@ function readRequiredString(value: string | undefined, name: string): string {
   return normalized;
 }
 
+function readOptionalBoolean(value: string | undefined, name: string): boolean | undefined {
+  const normalized = value?.trim().toLowerCase();
+
+  if (!normalized) {
+    return undefined;
+  }
+
+  if (normalized === "true" || normalized === "1") {
+    return true;
+  }
+
+  if (normalized === "false" || normalized === "0") {
+    return false;
+  }
+
+  throw new Error(`${name} must be true or false when set.`);
+}
+
 export function getCheckoutConfig(env: NodeJS.ProcessEnv = process.env): CheckoutConfig {
   return {
     appEnv: env.APP_ENV?.trim() || env.NODE_ENV?.trim() || "development",
@@ -63,13 +82,9 @@ export function getCheckoutConfig(env: NodeJS.ProcessEnv = process.env): Checkou
   };
 }
 
-export function getStripeWebhookConfig(
-  env: NodeJS.ProcessEnv = process.env
-): StripeWebhookConfig {
+export function getStripeWebhookConfig(env: NodeJS.ProcessEnv = process.env): StripeWebhookConfig {
   return {
-    stripeWebhookSecret: readRequiredString(
-      env.STRIPE_WEBHOOK_SECRET,
-      "STRIPE_WEBHOOK_SECRET"
-    )
+    expectedLivemode: readOptionalBoolean(env.STRIPE_EXPECTED_LIVEMODE, "STRIPE_EXPECTED_LIVEMODE"),
+    stripeWebhookSecret: readRequiredString(env.STRIPE_WEBHOOK_SECRET, "STRIPE_WEBHOOK_SECRET")
   };
 }

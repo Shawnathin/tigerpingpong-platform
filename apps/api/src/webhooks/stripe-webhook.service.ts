@@ -5,17 +5,86 @@ import {
   OnModuleDestroy,
   ServiceUnavailableException
 } from "@nestjs/common";
-import { createDatabaseConfig, PrismaClient } from "@tigerpingpong/db";
+import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
 import StripeConstructor from "stripe";
 
-import { getStripeWebhookConfig } from "../config";
+import { StripeWebhookConfig, getStripeWebhookConfig } from "../config";
 
-const SUPPORTED_EVENTS = new Set<string>(["checkout.session.completed"]);
+const CHECKOUT_SESSION_COMPLETED_EVENT = "checkout.session.completed";
+const FLAT_SHIPPING_CENTS = 1500;
+const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
+const SHIPPING_RULE = "canada_free_over_100_flat_15";
+const SUPPORTED_EVENTS = new Set<string>([CHECKOUT_SESSION_COMPLETED_EVENT]);
+const V1_CURRENCY = "cad";
 
 interface StripeWebhookResponse {
   received: true;
-  status: "duplicate" | "ignored" | "recorded";
+  status:
+    | "already_paid"
+    | "duplicate_in_progress"
+    | "duplicate_processed"
+    | "ignored"
+    | "manual_review"
+    | "paid";
   type: string;
+}
+
+type StripeWebhookProcessStatus = StripeWebhookResponse["status"];
+
+type StripeWebhookProcessResult = {
+  reason?: string;
+  status: StripeWebhookProcessStatus;
+};
+
+type StripeWebhookTransaction = Prisma.TransactionClient;
+
+type CheckoutOrder = Prisma.OrderGetPayload<{
+  include: {
+    items: true;
+  };
+}>;
+
+interface ShippingDetailsSnapshot {
+  address: Record<string, unknown>;
+  name: string | null;
+}
+
+interface VerifiedStripeEvent {
+  data: {
+    object: unknown;
+  };
+  id: string;
+  livemode: boolean;
+  type: string;
+}
+
+interface StripeCheckoutSessionPayload {
+  amount_subtotal: number | null;
+  amount_total: number | null;
+  client_reference_id: string | null;
+  collected_information?: {
+    shipping_details?: unknown;
+  } | null;
+  currency: string | null;
+  customer: unknown;
+  customer_details?: {
+    email?: unknown;
+    name?: unknown;
+    phone?: unknown;
+  } | null;
+  id: string;
+  livemode: boolean;
+  metadata?: {
+    orderId?: string;
+  } | null;
+  mode: string | null;
+  object: "checkout.session";
+  payment_intent: unknown;
+  payment_status: string | null;
+  shipping_cost?: {
+    amount_total?: unknown;
+  } | null;
+  status: string | null;
 }
 
 @Injectable()
@@ -39,7 +108,7 @@ export class StripeWebhookService implements OnModuleDestroy {
       });
     }
 
-    const webhookSecret = this.readWebhookSecret();
+    const config = this.readWebhookConfig();
 
     if (!rawBody || !Buffer.isBuffer(rawBody)) {
       throw new BadRequestException({
@@ -47,25 +116,21 @@ export class StripeWebhookService implements OnModuleDestroy {
       });
     }
 
-    const event = this.verifyWebhookEvent(rawBody, signature, webhookSecret);
-    const supported = SUPPORTED_EVENTS.has(event.type);
-    const duplicate = await this.recordWebhookEvent(event.id, event.type);
-    const status = duplicate ? "duplicate" : supported ? "recorded" : "ignored";
+    const event = this.verifyWebhookEvent(rawBody, signature, config.stripeWebhookSecret);
+    const result = await this.recordAndProcessWebhookEvent(event, config);
 
-    this.logger.log(
-      `Stripe webhook ${status}: eventId=${event.id} eventType=${event.type}`
-    );
+    this.logWebhookResult(event, result);
 
     return {
       received: true,
-      status,
+      status: result.status,
       type: event.type
     };
   }
 
-  private readWebhookSecret(): string {
+  private readWebhookConfig(): StripeWebhookConfig {
     try {
-      return getStripeWebhookConfig().stripeWebhookSecret;
+      return getStripeWebhookConfig();
     } catch {
       throw new ServiceUnavailableException({
         message: "Stripe webhook is not configured."
@@ -73,9 +138,17 @@ export class StripeWebhookService implements OnModuleDestroy {
     }
   }
 
-  private verifyWebhookEvent(rawBody: Buffer, signature: string | string[], webhookSecret: string) {
+  private verifyWebhookEvent(
+    rawBody: Buffer,
+    signature: string | string[],
+    webhookSecret: string
+  ): VerifiedStripeEvent {
     try {
-      return StripeConstructor.webhooks.constructEvent(rawBody, signature, webhookSecret);
+      return StripeConstructor.webhooks.constructEvent(
+        rawBody,
+        signature,
+        webhookSecret
+      ) as VerifiedStripeEvent;
     } catch {
       throw new BadRequestException({
         message: "Stripe webhook signature verification failed."
@@ -83,25 +156,408 @@ export class StripeWebhookService implements OnModuleDestroy {
     }
   }
 
-  private async recordWebhookEvent(stripeEventId: string, type: string): Promise<boolean> {
-    try {
-      await this.getPrisma().stripeWebhookEvent.create({
-        data: {
-          stripeEventId,
-          type
-        }
+  private async recordAndProcessWebhookEvent(
+    event: VerifiedStripeEvent,
+    config: StripeWebhookConfig
+  ): Promise<StripeWebhookProcessResult> {
+    if (!event.id) {
+      throw new BadRequestException({
+        message: "Stripe webhook event is invalid."
       });
+    }
 
-      return false;
+    try {
+      return await this.getPrisma().$transaction(async (transaction) => {
+        await transaction.stripeWebhookEvent.create({
+          data: {
+            stripeEventId: event.id,
+            type: event.type
+          }
+        });
+
+        if (!SUPPORTED_EVENTS.has(event.type)) {
+          return {
+            status: "ignored"
+          };
+        }
+
+        return this.processCheckoutSessionCompleted(transaction, event, config);
+      });
     } catch (error) {
       if (this.isUniqueConstraintError(error)) {
-        return true;
+        return this.resolveDuplicateWebhookEvent(event.id);
       }
 
       throw new ServiceUnavailableException({
         message: "Stripe webhook event could not be recorded."
       });
     }
+  }
+
+  private async resolveDuplicateWebhookEvent(
+    stripeEventId: string
+  ): Promise<StripeWebhookProcessResult> {
+    try {
+      const existingEvent = await this.getPrisma().stripeWebhookEvent.findUnique({
+        where: {
+          stripeEventId
+        },
+        select: {
+          processedAt: true
+        }
+      });
+
+      return {
+        status: existingEvent?.processedAt ? "duplicate_processed" : "duplicate_in_progress"
+      };
+    } catch {
+      throw new ServiceUnavailableException({
+        message: "Stripe webhook event could not be recorded."
+      });
+    }
+  }
+
+  private async processCheckoutSessionCompleted(
+    transaction: StripeWebhookTransaction,
+    event: VerifiedStripeEvent,
+    config: StripeWebhookConfig
+  ): Promise<StripeWebhookProcessResult> {
+    const session = this.readCheckoutSession(event);
+
+    if (!session) {
+      return this.manualReview("invalid_checkout_session_payload");
+    }
+
+    const sessionId = this.normalizeOptionalString(session.id);
+
+    if (!sessionId) {
+      return this.manualReview("checkout_session_id_missing");
+    }
+
+    const orders = await transaction.order.findMany({
+      where: {
+        stripeCheckoutSessionId: sessionId
+      },
+      include: {
+        items: true
+      },
+      take: 2
+    });
+
+    if (orders.length === 0) {
+      return this.manualReview("order_not_found_for_session");
+    }
+
+    if (orders.length > 1) {
+      return this.manualReview("multiple_orders_for_session");
+    }
+
+    const order = orders[0];
+    const validationIssue = this.validateSessionForOrder(event, session, order, config);
+
+    if (validationIssue) {
+      return this.manualReview(validationIssue);
+    }
+
+    const paymentIntentId = this.readStripeId(session.payment_intent);
+
+    if (order.status === "paid") {
+      if (this.isAlreadyPaidOrderMatch(order, paymentIntentId)) {
+        await this.markWebhookEventProcessed(transaction, event.id, new Date());
+
+        return {
+          status: "already_paid"
+        };
+      }
+
+      return this.manualReview("paid_order_payment_intent_mismatch");
+    }
+
+    if (order.status !== "checkout_pending") {
+      return this.manualReview("order_not_payable");
+    }
+
+    const processedAt = new Date();
+
+    await transaction.order.update({
+      where: {
+        id: order.id
+      },
+      data: this.createPaidOrderUpdate(session, paymentIntentId, processedAt)
+    });
+
+    await this.markWebhookEventProcessed(transaction, event.id, processedAt);
+
+    return {
+      status: "paid"
+    };
+  }
+
+  private readCheckoutSession(event: VerifiedStripeEvent): StripeCheckoutSessionPayload | null {
+    const dataObject = event.data.object;
+
+    if (!this.isRecord(dataObject) || dataObject.object !== "checkout.session") {
+      return null;
+    }
+
+    return dataObject as unknown as StripeCheckoutSessionPayload;
+  }
+
+  private validateSessionForOrder(
+    event: VerifiedStripeEvent,
+    session: StripeCheckoutSessionPayload,
+    order: CheckoutOrder,
+    config: StripeWebhookConfig
+  ): string | null {
+    if (session.id !== order.stripeCheckoutSessionId) {
+      return "checkout_session_id_mismatch";
+    }
+
+    if (session.client_reference_id !== order.id) {
+      return "client_reference_id_mismatch";
+    }
+
+    if (session.metadata?.orderId !== order.id) {
+      return "metadata_order_id_mismatch";
+    }
+
+    if (session.mode !== "payment") {
+      return "checkout_session_mode_mismatch";
+    }
+
+    if (session.status !== "complete") {
+      return "checkout_session_status_not_complete";
+    }
+
+    if (session.payment_status !== "paid") {
+      return "checkout_session_payment_status_not_paid";
+    }
+
+    if (session.currency?.trim().toLowerCase() !== V1_CURRENCY) {
+      return "checkout_session_currency_mismatch";
+    }
+
+    if (session.amount_total !== order.totalCents) {
+      return "checkout_session_total_mismatch";
+    }
+
+    if (
+      typeof session.amount_subtotal === "number" &&
+      session.amount_subtotal !== order.subtotalCents
+    ) {
+      return "checkout_session_subtotal_mismatch";
+    }
+
+    if (session.shipping_cost) {
+      if (typeof session.shipping_cost.amount_total !== "number") {
+        return "checkout_session_shipping_cost_missing_amount";
+      }
+
+      if (session.shipping_cost.amount_total !== order.shippingCents) {
+        return "checkout_session_shipping_cost_mismatch";
+      }
+    }
+
+    const shippingDetails = this.readShippingDetails(session);
+
+    if (!shippingDetails) {
+      return "checkout_session_shipping_details_missing";
+    }
+
+    const shippingCountry = this.normalizeOptionalString(shippingDetails.address.country);
+
+    if (shippingCountry?.toUpperCase() !== "CA") {
+      return "checkout_session_shipping_country_mismatch";
+    }
+
+    if (order.currency.trim().toLowerCase() !== V1_CURRENCY) {
+      return "order_currency_mismatch";
+    }
+
+    if (order.totalCents !== order.subtotalCents + order.shippingCents) {
+      return "order_total_mismatch";
+    }
+
+    if (order.items.length === 0) {
+      return "order_items_missing";
+    }
+
+    const orderItemSubtotal = order.items.reduce(
+      (subtotal, item) => subtotal + item.lineTotalCents,
+      0
+    );
+
+    if (orderItemSubtotal !== order.subtotalCents) {
+      return "order_item_subtotal_mismatch";
+    }
+
+    if (order.items.some((item) => item.currency.trim().toLowerCase() !== V1_CURRENCY)) {
+      return "order_item_currency_mismatch";
+    }
+
+    if (order.shippingRule !== SHIPPING_RULE) {
+      return "order_shipping_rule_mismatch";
+    }
+
+    const expectedShippingCents =
+      order.subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS ? 0 : FLAT_SHIPPING_CENTS;
+
+    if (order.shippingCents !== expectedShippingCents) {
+      return "order_shipping_rule_total_mismatch";
+    }
+
+    if (typeof config.expectedLivemode === "boolean") {
+      if (event.livemode !== config.expectedLivemode) {
+        return "stripe_event_livemode_mismatch";
+      }
+
+      if (session.livemode !== config.expectedLivemode) {
+        return "checkout_session_livemode_mismatch";
+      }
+    }
+
+    return null;
+  }
+
+  private createPaidOrderUpdate(
+    session: StripeCheckoutSessionPayload,
+    paymentIntentId: string | null,
+    paidAt: Date
+  ): Prisma.OrderUpdateInput {
+    const data: Prisma.OrderUpdateInput = {
+      paidAt,
+      status: "paid"
+    };
+
+    const customerId = this.readStripeId(session.customer);
+    const customerEmail = this.normalizeOptionalString(session.customer_details?.email);
+    const customerName = this.normalizeOptionalString(session.customer_details?.name);
+    const customerPhone = this.normalizeOptionalString(session.customer_details?.phone);
+    const shippingDetails = this.readShippingDetails(session);
+
+    if (paymentIntentId) {
+      data.stripePaymentIntentId = paymentIntentId;
+    }
+
+    if (customerId) {
+      data.stripeCustomerId = customerId;
+    }
+
+    if (customerEmail) {
+      data.customerEmail = customerEmail;
+    }
+
+    if (customerName) {
+      data.customerName = customerName;
+    }
+
+    if (customerPhone) {
+      data.customerPhone = customerPhone;
+      data.shippingPhone = customerPhone;
+    }
+
+    if (shippingDetails?.name) {
+      data.shippingName = shippingDetails.name;
+    }
+
+    if (shippingDetails) {
+      data.shippingAddressJson = this.createShippingAddressJson(shippingDetails.address);
+    }
+
+    return data;
+  }
+
+  private async markWebhookEventProcessed(
+    transaction: StripeWebhookTransaction,
+    stripeEventId: string,
+    processedAt: Date
+  ): Promise<void> {
+    await transaction.stripeWebhookEvent.update({
+      where: {
+        stripeEventId
+      },
+      data: {
+        processedAt
+      }
+    });
+  }
+
+  private isAlreadyPaidOrderMatch(order: CheckoutOrder, paymentIntentId: string | null): boolean {
+    const existingPaymentIntentId = this.normalizeOptionalString(order.stripePaymentIntentId);
+
+    return existingPaymentIntentId === paymentIntentId;
+  }
+
+  private readStripeId(value: unknown): string | null {
+    if (typeof value === "string") {
+      return this.normalizeOptionalString(value);
+    }
+
+    if (this.isRecord(value) && typeof value.id === "string") {
+      return this.normalizeOptionalString(value.id);
+    }
+
+    return null;
+  }
+
+  private readShippingDetails(
+    session: StripeCheckoutSessionPayload
+  ): ShippingDetailsSnapshot | null {
+    const collectedShippingDetails = session.collected_information?.shipping_details;
+    const legacyShippingDetails = (session as unknown as Record<string, unknown>).shipping_details;
+    const shippingDetails = collectedShippingDetails ?? legacyShippingDetails;
+
+    if (!this.isRecord(shippingDetails) || !this.isRecord(shippingDetails.address)) {
+      return null;
+    }
+
+    return {
+      address: shippingDetails.address,
+      name: this.normalizeOptionalString(shippingDetails.name)
+    };
+  }
+
+  private createShippingAddressJson(address: Record<string, unknown>): Prisma.InputJsonObject {
+    const addressJson: Record<string, string> = {};
+    const addressFields = ["line1", "line2", "city", "state", "postal_code", "country"];
+
+    for (const field of addressFields) {
+      const value = this.normalizeOptionalString(address[field]);
+
+      if (value) {
+        addressJson[field] = value;
+      }
+    }
+
+    return addressJson;
+  }
+
+  private normalizeOptionalString(value: unknown): string | null {
+    if (typeof value !== "string") {
+      return null;
+    }
+
+    const normalized = value.trim();
+
+    return normalized || null;
+  }
+
+  private manualReview(reason: string): StripeWebhookProcessResult {
+    return {
+      reason,
+      status: "manual_review"
+    };
+  }
+
+  private logWebhookResult(event: VerifiedStripeEvent, result: StripeWebhookProcessResult): void {
+    const baseMessage = `Stripe webhook ${result.status}: eventId=${event.id} eventType=${event.type}`;
+
+    if (result.reason) {
+      this.logger.warn(`${baseMessage} reason=${result.reason}`);
+      return;
+    }
+
+    this.logger.log(baseMessage);
   }
 
   private getPrisma(): PrismaClient {

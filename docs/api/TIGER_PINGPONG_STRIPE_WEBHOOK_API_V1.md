@@ -2,15 +2,14 @@
 
 ## Purpose
 
-This document describes the first Stripe webhook scaffold for Tiger Ping Pong
-V1.
+This document describes the V1 Stripe webhook endpoint for Tiger Ping Pong.
 
-The endpoint verifies Stripe webhook signatures with the raw request body and
-records Stripe event IDs idempotently in `StripeWebhookEvent`.
+The endpoint verifies Stripe webhook signatures with the raw request body,
+records Stripe event IDs idempotently in `StripeWebhookEvent`, and handles the
+verified `checkout.session.completed` paid order transition.
 
-This API does not confirm payment, mark orders paid, update fulfillment state,
-or trust the checkout success redirect as payment truth. The paid order
-transition remains a separate follow-up task.
+The checkout success redirect is not payment truth. Only this verified webhook
+path can mark an order paid.
 
 ## Endpoint
 
@@ -44,12 +43,7 @@ NestFactory.create(AppModule, {
 ```
 
 This keeps the normal NestJS/Express JSON parser active for existing endpoints
-while also registering `req.rawBody` for webhook verification. The app does not
-globally disable JSON parsing.
-
-Existing endpoints such as `GET /health`, `GET /catalog/health`, and
-`POST /checkout/sessions` should continue to receive parsed JSON bodies as
-before.
+while also registering `req.rawBody` for webhook verification.
 
 ## Signature Verification
 
@@ -68,27 +62,57 @@ data, or customer-sensitive payload details.
 
 ## Success Responses
 
-Recognized event example:
+Paid transition:
 
 ```json
 {
   "received": true,
-  "status": "recorded",
+  "status": "paid",
   "type": "checkout.session.completed"
 }
 ```
 
-Duplicate event example:
+Already-paid idempotent success:
 
 ```json
 {
   "received": true,
-  "status": "duplicate",
+  "status": "already_paid",
   "type": "checkout.session.completed"
 }
 ```
 
-Ignored event example:
+Duplicate already processed event:
+
+```json
+{
+  "received": true,
+  "status": "duplicate_processed",
+  "type": "checkout.session.completed"
+}
+```
+
+Duplicate recorded but not processed event:
+
+```json
+{
+  "received": true,
+  "status": "duplicate_in_progress",
+  "type": "checkout.session.completed"
+}
+```
+
+Valid but unsafe event requiring manual review:
+
+```json
+{
+  "received": true,
+  "status": "manual_review",
+  "type": "checkout.session.completed"
+}
+```
+
+Ignored event:
 
 ```json
 {
@@ -108,7 +132,7 @@ Missing signature:
 }
 ```
 
-Missing webhook secret:
+Missing webhook secret or invalid webhook config:
 
 ```json
 {
@@ -149,59 +173,99 @@ After a webhook is verified, the service writes one `StripeWebhookEvent` row:
 
 - `stripeEventId`: Stripe event ID, unique.
 - `type`: Stripe event type.
-- `processedAt`: intentionally left `null` in this scaffold.
+- `processedAt`: set only after the order paid transition, or an already-paid
+  idempotent success, is safely complete.
 
-`processedAt` stays null because this task records receipt only. It does not
-apply a business side effect such as marking an order paid. A later payment
-confirmation task can define when `processedAt` means the order transition was
-fully applied.
+For `checkout.session.completed`, event creation, order validation, order
+update, and `processedAt` update run in one Prisma transaction. If the database
+fails during the transition, the transaction rolls back so Stripe can retry.
 
 If Stripe retries an already recorded event, the unique `stripeEventId`
-constraint raises a duplicate write. The route treats that as successful
-idempotent receipt and returns HTTP 200 with:
+constraint prevents a second processing attempt:
 
-```json
-{
-  "received": true,
-  "status": "duplicate",
-  "type": "..."
-}
-```
+- `processedAt` present: returns `duplicate_processed`.
+- `processedAt` null: returns `duplicate_in_progress`.
 
-This prevents Stripe retries from causing duplicate processing.
+Unsupported verified events are recorded for audit/idempotency and return
+`ignored`. Their `processedAt` remains null because no business side effect was
+applied.
 
 ## Supported Events
 
-The scaffold recognizes:
+V1 handles:
 
 ```text
 checkout.session.completed
 ```
 
-For V1 scaffold behavior, recognition means:
+No other Stripe event type marks an order paid in V1.
 
-- the event signature was verified,
-- the event ID and type were recorded,
-- the route returned a safe success response.
+## Paid Order Transition
 
-Recognition does not mean the related `Order` was paid or fulfilled.
+The service finds the order by the verified Checkout Session ID:
 
-## Ignored Events
+```text
+session.id == Order.stripeCheckoutSessionId
+```
 
-Unsupported event types are still verified first. When the database write is
-available, the event ID and type are recorded for audit/idempotency, and the
-route returns HTTP 200 with `status: "ignored"`.
+It also verifies:
 
-The route does not throw just because Stripe sends an event Tiger Ping Pong does
-not currently use.
+- `session.client_reference_id == Order.id`
+- `session.metadata.orderId == Order.id`
+- exactly one order matches the session ID
+- `Order.status` is `checkout_pending` for a new paid transition
 
-## Payment Truth Rule
+If the order is already `paid`, the event is treated as idempotent success only
+when the same checkout session and payment intent match.
 
-The checkout success redirect is not payment truth. A browser redirect can be
-visited without proving that Stripe confirmed payment.
+Orders in `checkout_failed`, `canceled`, `expired`, `refunded`, or any other
+non-payable state are not marked paid automatically. The endpoint returns HTTP
+200 with `manual_review` for valid but unsafe events to avoid repeated Stripe
+retries while preserving a diagnostic audit record.
 
-Payment truth must come from verified Stripe webhooks. This scaffold is the
-secure receipt layer only; it does not yet contain the order update logic.
+## Strict Verification
+
+Before marking an order paid, the service verifies:
+
+- session object is a Checkout Session
+- session mode is `payment`
+- session status is `complete`
+- session payment status is `paid`
+- session currency is `cad`
+- session total equals `Order.totalCents`
+- session subtotal equals `Order.subtotalCents` when Stripe provides it
+- session shipping cost equals `Order.shippingCents` when Stripe provides it
+- shipping details exist and shipping country is `CA`
+- order currency is CAD
+- order total equals subtotal plus shipping
+- order has at least one item
+- item line totals equal the order subtotal
+- item currencies are CAD
+- order shipping rule is `canada_free_over_100_flat_15`
+- order subtotal/shipping still satisfy the V1 Canada shipping threshold
+- event/session livemode matches `STRIPE_EXPECTED_LIVEMODE` when that env var is
+  set
+
+Shipping details are intentionally strict for production because all V1 checkout
+orders are physical goods and the Checkout Session collects a Canadian shipping
+address. Stripe CLI fixture payloads that do not include shipping details will
+record as `manual_review` rather than marking an order paid.
+
+## Stored Order Fields
+
+After validation succeeds, the service updates `Order`:
+
+- `status: paid`
+- `paidAt`
+- `stripePaymentIntentId` when available
+- `stripeCustomerId` when available
+- `customerEmail`, `customerName`, `customerPhone` when available
+- `shippingName` when available
+- `shippingPhone` from the customer phone when available
+- `shippingAddressJson` with selected address fields
+
+The service does not store the raw Stripe event payload and does not store card
+data. Existing customer fields are not overwritten with null values.
 
 ## Environment Variables
 
@@ -209,6 +273,20 @@ Required when the webhook endpoint is called:
 
 ```text
 STRIPE_WEBHOOK_SECRET
+```
+
+Optional:
+
+```text
+APP_ENV
+STRIPE_EXPECTED_LIVEMODE
+```
+
+`STRIPE_EXPECTED_LIVEMODE` accepts `true`, `false`, `1`, or `0`. When unset, the
+webhook does not block on livemode. For local Stripe CLI testing, use:
+
+```text
+STRIPE_EXPECTED_LIVEMODE=false
 ```
 
 Still required by checkout session creation:
@@ -219,20 +297,43 @@ CHECKOUT_SUCCESS_URL
 CHECKOUT_CANCEL_URL
 ```
 
-Optional:
-
-```text
-APP_ENV
-```
-
-`.env.example` includes:
-
-```text
-STRIPE_WEBHOOK_SECRET=
-```
-
 The API process can still start when `STRIPE_WEBHOOK_SECRET` is empty. Only
 calls to `POST /webhooks/stripe` require it.
+
+## Safe Logging
+
+The service logs only:
+
+- event ID
+- event type
+- receipt/processing status
+- sanitized manual-review reason codes
+
+It does not log:
+
+- Stripe secret key
+- Stripe webhook secret
+- raw webhook payload
+- card data
+- customer-sensitive webhook details
+
+## Intentionally Excluded
+
+This endpoint does not add:
+
+- frontend checkout buttons
+- cart UI
+- custom checkout
+- auth or admin
+- Prisma schema changes
+- migrations
+- seed or import data
+- Cloudinary uploads
+- site redesign
+- broad fulfillment automation
+- email sending
+- refund handling
+- support for every Stripe event
 
 ## Local Stripe CLI Testing Notes
 
@@ -246,63 +347,9 @@ Copy the printed `whsec_...` value into:
 
 ```text
 STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_EXPECTED_LIVEMODE=false
 ```
 
-Then trigger a sample event:
-
-```bash
-stripe trigger checkout.session.completed
-```
-
-For a full local record-write test, the API also needs a development
-`DATABASE_URL` pointing at a safe database. The scaffold does not need a real
-`STRIPE_SECRET_KEY` for webhook signature verification because webhook
-verification uses `STRIPE_WEBHOOK_SECRET`.
-
-## Safe Logging
-
-The service logs only:
-
-- event ID,
-- event type,
-- receipt status.
-
-It does not log:
-
-- `STRIPE_SECRET_KEY`,
-- `STRIPE_WEBHOOK_SECRET`,
-- raw webhook payloads,
-- card data,
-- customer-sensitive webhook details.
-
-## Intentionally Excluded
-
-This scaffold does not add:
-
-- paid order marking,
-- `checkout.session.completed` order transition,
-- `paidAt` updates,
-- `stripePaymentIntentId` storage,
-- customer or shipping detail storage,
-- fulfillment behavior,
-- frontend checkout buttons,
-- cart UI,
-- custom checkout,
-- auth or admin,
-- Prisma schema changes,
-- migrations,
-- seed or import data,
-- Cloudinary uploads,
-- site redesign.
-
-## Next Recommended Task
-
-Add the verified `checkout.session.completed` order transition:
-
-1. Use the verified event object.
-2. Find the Stripe Checkout Session and pending `Order`.
-3. Confirm the event/session represents completed payment.
-4. Update the order to `paid`.
-5. Store payment/customer/shipping fields selected for V1.
-6. Set `processedAt` only after the order transition succeeds.
-7. Preserve idempotency for Stripe retries.
+The API also needs a safe development `DATABASE_URL`. A real
+`STRIPE_SECRET_KEY` is not needed for webhook signature verification because
+webhook verification uses `STRIPE_WEBHOOK_SECRET`.

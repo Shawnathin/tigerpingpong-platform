@@ -87,6 +87,33 @@
   line-height: 1.55;
 }
 
+.statusBadge {
+  width: fit-content;
+  padding: 5px 10px;
+  border: 1px solid #d7ded2;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.paidTone {
+  border-color: #9cc8ac;
+  background: #e8f5ec;
+  color: #17633a;
+}
+
+.pendingTone {
+  border-color: #decf91;
+  background: #fbf5dc;
+  color: #76620f;
+}
+
+.problemTone {
+  border-color: #ddb3aa;
+  background: #fff0ec;
+  color: #8a2d1d;
+}
+
 .statusList {
   display: grid;
   gap: 10px;
@@ -131,11 +158,7 @@
 
 .reference code {
   color: #44535c;
-  font-family:
-    "SFMono-Regular",
-    Consolas,
-    "Liberation Mono",
-    monospace;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   overflow-wrap: anywhere;
 }
 
@@ -156,6 +179,10 @@
   background: #17633a;
   color: #ffffff;
   font-size: 0.94rem;
+}
+
+.actions .primaryAction {
+  color: #ffffff;
 }
 
 .primaryAction:hover {

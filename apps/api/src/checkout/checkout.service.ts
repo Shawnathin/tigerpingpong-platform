@@ -63,10 +63,49 @@ interface CheckoutSessionResponse {
   totalCents: number;
 }
 
+type CheckoutSessionPublicStatus =
+  | "canceled"
+  | "checkout_failed"
+  | "checkout_pending"
+  | "expired"
+  | "manual_review"
+  | "not_found"
+  | "paid";
+
+interface CheckoutSessionStatusResponse {
+  found: boolean;
+  status: CheckoutSessionPublicStatus;
+  publicReference?: string;
+  currency?: string;
+  subtotalCents?: number;
+  shippingCents?: number;
+  totalCents?: number;
+  customerEmail?: string;
+  paidAt?: string;
+  createdAt?: string;
+  message?: string;
+}
+
 type CreatedCheckoutOrder = Prisma.OrderGetPayload<{
   include: {
     items: true;
   };
+}>;
+
+const checkoutStatusOrderSelect = {
+  status: true,
+  publicReference: true,
+  currency: true,
+  subtotalCents: true,
+  shippingCents: true,
+  totalCents: true,
+  customerEmail: true,
+  paidAt: true,
+  createdAt: true
+} satisfies Prisma.OrderSelect;
+
+type CheckoutStatusOrder = Prisma.OrderGetPayload<{
+  select: typeof checkoutStatusOrderSelect;
 }>;
 
 const checkoutProductSelect = {
@@ -190,6 +229,36 @@ export class CheckoutService implements OnModuleDestroy {
     }
   }
 
+  async getCheckoutSessionStatus(sessionIdParam: string): Promise<CheckoutSessionStatusResponse> {
+    const sessionId = this.validateCheckoutSessionId(sessionIdParam);
+
+    try {
+      const order = await this.getPrisma().order.findUnique({
+        where: {
+          stripeCheckoutSessionId: sessionId
+        },
+        select: checkoutStatusOrderSelect
+      });
+
+      if (!order) {
+        return {
+          found: false,
+          status: "not_found"
+        };
+      }
+
+      return this.toCheckoutSessionStatusResponse(order);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new ServiceUnavailableException({
+        message: "Checkout status is unavailable."
+      });
+    }
+  }
+
   private validateRequest(body: unknown): ValidatedCheckoutRequest {
     if (!this.isRecord(body)) {
       throw new BadRequestException({
@@ -297,6 +366,71 @@ export class CheckoutService implements OnModuleDestroy {
     }
 
     return email;
+  }
+
+  private validateCheckoutSessionId(value: string): string {
+    const sessionId = value.trim();
+
+    if (!/^cs_(test|live)_[A-Za-z0-9_]{3,255}$/.test(sessionId)) {
+      throw new BadRequestException({
+        message: "sessionId is invalid."
+      });
+    }
+
+    return sessionId;
+  }
+
+  private toCheckoutSessionStatusResponse(
+    order: CheckoutStatusOrder
+  ): CheckoutSessionStatusResponse {
+    const status = this.toPublicOrderStatus(order.status);
+
+    return {
+      found: true,
+      status,
+      publicReference: order.publicReference,
+      currency: order.currency.trim().toLowerCase(),
+      subtotalCents: order.subtotalCents,
+      shippingCents: order.shippingCents,
+      totalCents: order.totalCents,
+      customerEmail: order.customerEmail ?? undefined,
+      paidAt: order.paidAt?.toISOString(),
+      createdAt: order.createdAt.toISOString(),
+      message: this.getStatusMessage(status)
+    };
+  }
+
+  private toPublicOrderStatus(status: string): CheckoutSessionPublicStatus {
+    if (
+      status === "checkout_pending" ||
+      status === "checkout_failed" ||
+      status === "paid" ||
+      status === "canceled" ||
+      status === "expired"
+    ) {
+      return status;
+    }
+
+    return "manual_review";
+  }
+
+  private getStatusMessage(status: CheckoutSessionPublicStatus): string {
+    switch (status) {
+      case "paid":
+        return "Payment is confirmed by backend order state.";
+      case "checkout_pending":
+        return "Payment confirmation is still pending.";
+      case "checkout_failed":
+        return "Checkout did not complete successfully.";
+      case "canceled":
+        return "Checkout was canceled.";
+      case "expired":
+        return "Checkout session expired.";
+      case "manual_review":
+        return "Order status needs support review.";
+      case "not_found":
+        return "No matching order was found.";
+    }
   }
 
   private async loadCheckoutProducts(

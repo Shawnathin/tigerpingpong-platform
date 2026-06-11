@@ -67,7 +67,9 @@ export default function ShippingPage() {
             <h2 id="shipping-support-title">Need help before or after checkout?</h2>
             <p>
               Contact Tiger Ping Pong for shipping questions, order/payment help, product details,
-              or dealer and setup support from Vancouver, BC across Canada.
+              or dealer and setup support from Vancouver, BC across Canada. For order questions,
+              include your order reference if available, checkout email, and product name if
+              relevant.
             </p>
           </div>
           <a className={styles.primaryAction} href="/contact">

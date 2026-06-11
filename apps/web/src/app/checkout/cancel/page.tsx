@@ -47,8 +47,9 @@ export default function CheckoutCancelPage() {
           </dl>
 
           <p className={styles.supportNote}>
-            If checkout failed, a product detail is unclear, or you have payment questions,{" "}
-            <a href="/contact">contact support</a> before trying again.
+            If you canceled because checkout was unclear, a product detail is unclear, or you have
+            payment questions, <a href="/contact">contact support</a> before trying again. Include
+            your order reference if available, checkout email, and product name if relevant.
           </p>
 
           <div className={styles.actions}>

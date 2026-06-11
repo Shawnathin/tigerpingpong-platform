@@ -35,8 +35,8 @@ const SUPPORT_TOPICS = [
 
 const ORDER_GUIDANCE = [
   "Include your order reference if available.",
-  "Include the email used at checkout.",
-  "Include the product name if asking about a product."
+  "Include your checkout email.",
+  "Include the product name if relevant."
 ];
 
 export default function ContactPage() {

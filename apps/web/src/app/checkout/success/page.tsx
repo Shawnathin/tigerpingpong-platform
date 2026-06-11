@@ -275,8 +275,8 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
           <p className={styles.supportNote}>
             Need help with this order? <a href="/contact">Contact support</a>
             {publicReference
-              ? ` and include order reference ${publicReference} plus the email used at checkout.`
-              : " and include the email used at checkout plus any Stripe receipt details."}
+              ? ` and include order reference ${publicReference}, your checkout email, and the product name if relevant.`
+              : " and include your order reference if available, checkout email, and product name if relevant."}
           </p>
 
           <div className={styles.actions}>

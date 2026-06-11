@@ -37,8 +37,8 @@ Added a frontend-only customer support/contact flow for TigerPingPong.ca so shop
   - Dealer or setup help
 - Order-question guidance:
   - Include your order reference if available.
-  - Include the email used at checkout.
-  - Include product name if asking about a product.
+  - Include your checkout email.
+  - Include product name if relevant.
 
 ## Intentionally Not Added
 

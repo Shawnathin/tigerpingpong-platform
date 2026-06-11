@@ -1,4 +1,8 @@
-type PublicStorefrontNavItem = "home" | "catalog" | "shipping" | "contact";
+"use client";
+
+import { useCart } from "../lib/use-cart";
+
+type PublicStorefrontNavItem = "home" | "catalog" | "shipping" | "contact" | "cart";
 
 const NAV_ITEMS: Array<{
   href: string;
@@ -24,6 +28,11 @@ const NAV_ITEMS: Array<{
     href: "/contact",
     id: "contact",
     label: "Contact"
+  },
+  {
+    href: "/cart",
+    id: "cart",
+    label: "Cart"
   }
 ];
 
@@ -32,6 +41,8 @@ interface PublicStorefrontNavProps {
 }
 
 export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
+  const { itemCount } = useCart();
+
   return (
     <header className="publicHeader" aria-label="Tiger Ping Pong public header">
       <nav className="glassNav" aria-label="Public navigation">
@@ -55,7 +66,12 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
               href={item.href}
               key={item.id}
             >
-              {item.label}
+              <span>{item.label}</span>
+              {item.id === "cart" ? (
+                <span className="publicCartCount" aria-label={`${itemCount} items in cart`}>
+                  {itemCount}
+                </span>
+              ) : null}
             </a>
           ))}
         </div>

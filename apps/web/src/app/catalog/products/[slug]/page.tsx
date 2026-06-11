@@ -2,15 +2,18 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PublicStorefrontNav } from "../../../PublicStorefrontNav";
-import { CatalogApiError, getProductBySlug } from "../../../../lib/catalog-api";
+import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
+import type { CartProductInput } from "../../../../lib/cart";
 import {
   getProductDescriptionCopy,
   getProductMediaFallbacks,
+  getPrimaryProductMediaFallback,
   getProductShortCopy
 } from "../../../../lib/public-storefront-demo";
 import { getV1ShippingMessage } from "../../../../lib/shipping";
 import type {
   CatalogProductDetail,
+  CatalogProductSummary,
   CatalogSummary
 } from "../../../../types/catalog";
 
@@ -50,6 +53,34 @@ const HIDDEN_PUBLIC_KEYS = [
   "cloudinaryOriginal"
 ];
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
+const TABLE_RECOMMENDATION_SLUGS = [
+  "tiger-vice-paddle",
+  "tiger-premium-balls-6-white",
+  "tiger-premium-balls-6-orange",
+  "tiger-premium-balls-140",
+  "tiger-table-cover-black-polyester",
+  "tiger-net-post-set"
+];
+const PADDLE_RECOMMENDATION_SLUGS = [
+  "tiger-premium-balls-6-white",
+  "tiger-premium-balls-6-orange",
+  "tiger-premium-balls-140"
+];
+const BALL_RECOMMENDATION_SLUGS = [
+  "tiger-vice-paddle",
+  "tiger-net-post-set",
+  "tiger-table-cover-black-polyester"
+];
+const COVER_RECOMMENDATION_SLUGS = [
+  "tiger-portland-outdoor-table",
+  "tiger-expo-outdoor-table",
+  "tiger-portland-indoor-table"
+];
+const NET_RECOMMENDATION_SLUGS = [
+  "tiger-vice-paddle",
+  "tiger-premium-balls-6-white",
+  "tiger-premium-balls-6-orange"
+];
 
 interface DisplayMediaItem {
   altText: string | null;
@@ -112,6 +143,17 @@ function isReplacementPartsProduct(product: CatalogProductDetail): boolean {
 }
 
 function isProductCheckoutEligible(product: CatalogProductDetail): boolean {
+  return (
+    product.v1PublicNavigation &&
+    product.v1CheckoutScope &&
+    CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
+    product.priceCents !== null &&
+    product.priceCents > 0 &&
+    product.currency.trim().toLowerCase() === "cad"
+  );
+}
+
+function isSummaryCheckoutEligible(product: CatalogProductSummary): boolean {
   return (
     product.v1PublicNavigation &&
     product.v1CheckoutScope &&
@@ -186,6 +228,81 @@ function getMediaItems(product: CatalogProductDetail): DisplayMediaItem[] {
       isPrimary: true
     }
   ];
+}
+
+function getCartImage(product: CatalogProductDetail): string | null {
+  return getMediaItems(product)[0]?.src ?? null;
+}
+
+function getSummaryCartImage(product: CatalogProductSummary): string | null {
+  if (product.primaryMedia?.cloudinarySecureUrl) {
+    return product.primaryMedia.cloudinarySecureUrl;
+  }
+
+  return getPrimaryProductMediaFallback(product.slug)?.src ?? null;
+}
+
+function toCartProductInput(
+  product: CatalogProductDetail | CatalogProductSummary
+): CartProductInput {
+  return {
+    categoryName: product.category.name,
+    currency: product.currency,
+    imageUrl: "media" in product ? getCartImage(product) : getSummaryCartImage(product),
+    name: product.name,
+    productKind: product.productKind,
+    productSlug: product.slug,
+    unitPriceCents: product.priceCents ?? 0
+  };
+}
+
+function getRecommendationSlugs(product: CatalogProductDetail): string[] {
+  const productKind = product.productKind.trim().toLowerCase();
+
+  if (productKind === "table") {
+    return TABLE_RECOMMENDATION_SLUGS;
+  }
+
+  if (productKind === "paddle") {
+    return PADDLE_RECOMMENDATION_SLUGS;
+  }
+
+  if (productKind === "ball") {
+    return BALL_RECOMMENDATION_SLUGS;
+  }
+
+  if (productKind === "cover") {
+    return COVER_RECOMMENDATION_SLUGS;
+  }
+
+  if (productKind === "net") {
+    return NET_RECOMMENDATION_SLUGS;
+  }
+
+  return PADDLE_RECOMMENDATION_SLUGS;
+}
+
+async function loadRecommendedAddOns(product: CatalogProductDetail): Promise<CartProductInput[]> {
+  let products: CatalogProductSummary[];
+
+  try {
+    products = await getProducts();
+  } catch {
+    return [];
+  }
+
+  const productsBySlug = new Map(
+    products.map((catalogProduct) => [catalogProduct.slug, catalogProduct])
+  );
+
+  return getRecommendationSlugs(product)
+    .filter((slug) => slug !== product.slug)
+    .map((slug) => productsBySlug.get(slug))
+    .filter((catalogProduct): catalogProduct is CatalogProductSummary =>
+      Boolean(catalogProduct && isSummaryCheckoutEligible(catalogProduct))
+    )
+    .map(toCartProductInput)
+    .slice(0, 4);
 }
 
 function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
@@ -580,6 +697,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const isCheckoutEligible = isProductCheckoutEligible(product);
   const descriptionCopy = getProductDescriptionCopy(product);
   const shortDescription = getProductShortCopy(product);
+  const recommendedProducts = await loadRecommendedAddOns(product);
 
   return (
     <>
@@ -613,8 +731,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             <div className={styles.checkoutPanel}>
-              <h2>Checkout</h2>
-              <CheckoutButton isCheckoutEligible={isCheckoutEligible} productSlug={product.slug} />
+              <h2>Add to cart</h2>
+              <CheckoutButton
+                isCheckoutEligible={isCheckoutEligible}
+                product={toCartProductInput(product)}
+                recommendedProducts={recommendedProducts}
+              />
             </div>
 
             <ProductFacts product={product} />

@@ -11,13 +11,34 @@ No production code, checkout code, webhook code, internal orders code, Prisma
 schema, migrations, cart, admin, customer accounts, email, fulfillment, or
 refund behavior was changed.
 
-## Production Targets Checked
+## Production URL Structure
 
-- Current Render storefront: `https://tigerpingpong-web.onrender.com`
-- Current Render API: `https://tigerpingpong-platform.onrender.com`
-- Custom domain observation: `https://www.tigerpingpong.com` and
-  `https://tigerpingpong.com` redirect to `https://tigerpingpong.ca/`, which is
-  the legacy storefront and not the current Render app from this repository.
+- Browser-facing production storefront and staff app:
+  `https://tigerpingpong-web.onrender.com`
+- Backend/API/webhook service:
+  `https://tigerpingpong-platform.onrender.com`
+
+Use `https://tigerpingpong-web.onrender.com` for public storefront and protected
+staff page checks:
+
+- `https://tigerpingpong-web.onrender.com/`
+- `https://tigerpingpong-web.onrender.com/catalog`
+- `https://tigerpingpong-web.onrender.com/catalog/products/<product-slug>`
+- `https://tigerpingpong-web.onrender.com/shipping`
+- `https://tigerpingpong-web.onrender.com/contact`
+- `https://tigerpingpong-web.onrender.com/checkout/success`
+- `https://tigerpingpong-web.onrender.com/checkout/cancel`
+- `https://tigerpingpong-web.onrender.com/internal/orders`
+- `https://tigerpingpong-web.onrender.com/internal/orders/<order-reference>`
+
+Do not use `https://tigerpingpong-platform.onrender.com` as the
+browser-facing staff/internal URL unless the deployment structure is
+intentionally changed. That origin is the backend/API/webhook service in the
+current production setup.
+
+Custom domain observation: `https://www.tigerpingpong.com` and
+`https://tigerpingpong.com` redirect to `https://tigerpingpong.ca/`, which is
+the legacy storefront and not the current Render app from this repository.
 
 ## PR 35 Preflight
 
@@ -49,25 +70,64 @@ PR #35 was confirmed merged before starting this branch.
 | --- | --- | --- |
 | `/internal/orders` without credentials | Pass | Render storefront returned `401 text/plain` with `Authentication required.` |
 | `/internal/orders` with wrong Basic Auth | Pass | Render storefront returned `401 text/plain` with `Authentication required.` |
-| `/internal/orders` with valid Basic Auth | Blocked | Valid production credentials were not available in this QA session. This still needs a staff credential smoke test after Render env vars are confirmed. |
+| `/internal/orders` with valid Basic Auth | Pass | Human-assisted Chrome QA opened the protected order list at `https://tigerpingpong-web.onrender.com/internal/orders`. |
 | API `/internal/orders` without token | Pass | Render API returned `401` with `Unauthorized.` |
 | API `/internal/orders` with wrong token | Pass | Render API returned `401` with `Unauthorized.` |
-| API `/internal/orders` with valid token | Blocked | Valid `INTERNAL_ORDERS_API_TOKEN` was not available in this QA session. |
+| API `/internal/orders` with valid token | Not directly checked | Staff page success confirms the web app could call the internal orders API with the server-side token. The raw token was not exposed or used directly in QA. |
 
 ## Checkout Flow Checklist
 
 | Step | Result | Evidence |
 | --- | --- | --- |
-| Product page checkout button is present | Pass | Checked the three requested product pages; each rendered `Buy with Stripe`. |
-| Product page checkout button click works | Partial | The live API path used by the button created a Stripe Checkout Session successfully. Browser click automation was blocked by the local browser sandbox before Chromium could launch. |
-| Stripe Checkout opens | Pass | A production API-created session loaded `https://checkout.stripe.com` with title `Stripe Checkout`. Session ID shape was `cs_test_...`, confirming Stripe test mode. |
-| Test payment completes | Blocked | Could not complete the hosted Stripe form because both available browser paths were blocked in this environment: the in-app browser could not navigate to the external Render URL, and downloaded Chromium could not launch under the local macOS sandbox. |
-| Success redirect returns to storefront | Blocked | Not reached from a completed test payment because payment completion was blocked. |
-| Success page reads backend-confirmed status | Pass | Visiting `/checkout/success?session_id=<created cs_test session>` rendered `Payment confirmation is pending` and did not render paid confirmation. |
-| Stripe webhook marks order paid | Blocked | No completed Stripe test payment was available to emit the real `checkout.session.completed` webhook. |
-| Supabase order row shows paid | Blocked | No completed payment was available. The backend status endpoint did find the created order and reported `checkout_pending`. |
-| Internal orders page shows paid order | Blocked | Requires a completed paid order plus valid Basic Auth credentials. |
-| Order detail page shows customer/shipping/totals/items/Stripe refs | Blocked | Requires a completed paid order plus valid Basic Auth credentials. |
+| Product page checkout button is present | Pass | Checked the requested product pages; each rendered `Buy with Stripe`. |
+| Product page checkout button click works | Pass | Human-assisted Chrome QA used the browser-facing Render storefront and reached Stripe Checkout from the product page. |
+| Stripe Checkout opens | Pass | Stripe Checkout opened in test mode. Checkout Session ID was redacted and starts with `cs_test_`. |
+| Test payment completes | Pass | Stripe test payment completed in Chrome. |
+| Success redirect returns to storefront | Pass | Stripe redirected back to the browser-facing Render storefront success page. |
+| Success page reads backend-confirmed status | Pass | Success page displayed `Payment confirmed` and backend order status `Paid`. |
+| Stripe webhook marks order paid | Pass | `checkout.session.completed` webhook delivery succeeded with HTTP `201` / `201 OK`. |
+| Supabase order row shows paid | Pass | Matching Supabase order row was found with paid status/order_status. |
+| Internal orders page shows paid order | Pass | Latest paid order appeared in the read-only paid order review table. |
+| Order detail page shows customer/shipping/totals/items/Stripe refs | Pass | Order detail opened at `https://tigerpingpong-web.onrender.com/internal/orders/<redacted-order-reference>` and showed backend-confirmed paid summary, customer/shipping section, totals, and order data. |
+
+## Human-Assisted Production Verification
+
+- Browser used: Chrome.
+- Browser-facing production URL tested:
+  `https://tigerpingpong-web.onrender.com`.
+- Product tested: `Tiger PingPong Vice Ping Pong Paddle`
+  (`tiger-vice-paddle`).
+- Stripe Checkout Session ID: redacted, starts with `cs_test_`.
+- Stripe test payment result: Passed.
+- Success redirect result: Passed.
+- Success page backend status result: Passed. The success page displayed
+  `Payment confirmed` and backend order status `Paid`.
+- Stripe webhook event checked: `checkout.session.completed`.
+- Stripe webhook delivery status: Passed. Stripe event destination delivered
+  with HTTP `201` / `201 OK`.
+- Current Stripe webhook destination observed:
+  `https://tigerpingpong-platform.onrender.com/webhooks/stripe`.
+- Supabase order row result: Passed. Matching order row found with paid
+  status/order_status.
+- Internal orders 401 without credentials result: Passed from earlier QA.
+- Internal orders valid Basic Auth result: Passed. Protected order list opened
+  at `https://tigerpingpong-web.onrender.com/internal/orders`.
+- Internal order list result: Passed. Latest paid order appeared in the
+  read-only paid order review table.
+- Internal order detail result: Passed. Order detail opened at
+  `https://tigerpingpong-web.onrender.com/internal/orders/<redacted-order-reference>`
+  and showed backend-confirmed paid summary, customer/shipping section, totals,
+  and order data.
+- If item and Stripe reference sections are below the fold on the order detail
+  page, capture a separate lower-page screenshot showing those sections.
+
+## Launch Confidence Summary
+
+Render production checkout/order foundation is verified. A customer can
+complete Stripe Checkout, return to a success page that reads backend-confirmed
+paid status, Stripe webhook delivery is confirmed, Supabase stores the paid
+order, and staff can review the paid order behind protected Basic Auth at the
+browser-facing web URL.
 
 ## Checkout Session Evidence
 
@@ -106,8 +166,8 @@ Result:
 ```
 
 This confirms the webhook route is live and `STRIPE_WEBHOOK_SECRET` is present.
-It does not prove the paid transition because no valid Stripe webhook was
-available without completing a payment.
+The separate human-assisted production verification confirmed the paid
+transition with a real `checkout.session.completed` delivery.
 
 ## Security Checks
 
@@ -129,31 +189,34 @@ available without completing a payment.
 | `DATABASE_URL` | Pass | Catalog reads, checkout session creation, and checkout status lookup all used production database-backed API paths successfully. |
 | `STRIPE_SECRET_KEY` | Pass | Checkout session creation succeeded and returned a `cs_test_...` Stripe Checkout Session. |
 | `STRIPE_WEBHOOK_SECRET` | Pass | Invalid signed webhook request reached signature verification and returned signature failure rather than missing-config failure. |
-| `INTERNAL_ORDERS_API_TOKEN` | Needs credentialed confirmation | Missing/wrong token checks returned `401`; valid token was not available to prove the configured success path. |
-| `INTERNAL_ORDERS_BASIC_AUTH_USER` | Needs credentialed confirmation | No-credential and wrong-credential checks returned `401`; valid username was not available. |
-| `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD` | Needs credentialed confirmation | No-credential and wrong-credential checks returned `401`; valid password was not available. |
+| `INTERNAL_ORDERS_API_TOKEN` | Pass, indirectly | Missing/wrong token checks returned `401`; valid staff page access loaded paid orders through the server-side token without exposing it. |
+| `INTERNAL_ORDERS_BASIC_AUTH_USER` | Pass | No-credential and wrong-credential checks returned `401`; valid Basic Auth opened the protected staff page. |
+| `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD` | Pass | No-credential and wrong-credential checks returned `401`; valid Basic Auth opened the protected staff page. |
 
-## Screenshots To Capture
+## Screenshots Captured
 
-Capture these during the follow-up manual or authorized browser QA run:
+Human-assisted QA captured:
 
-- Render storefront home page.
-- Render catalog page.
-- Each requested product detail page with `Buy with Stripe`.
-- Stripe Checkout open for a `cs_test_...` session.
-- Stripe Checkout completed with test card.
-- Storefront success page showing `Payment confirmed`, order reference, total,
-  paid timestamp, and customer email.
-- Stripe Dashboard test-mode payment and Checkout Session.
-- Supabase `Order` row showing `paid`, `paidAt`,
-  `stripeCheckoutSessionId`, and `stripePaymentIntentId`.
-- `/internal/orders` `401` without credentials.
-- `/internal/orders` with valid Basic Auth showing the paid order.
-- `/internal/orders/[publicReference]` showing customer, shipping, totals,
-  items, and Stripe references.
+- Checkout success page with backend-confirmed paid status.
+- Stripe webhook delivery showing `checkout.session.completed` and HTTP `201` /
+  `201 OK`.
+- Supabase orders table showing paid order row.
+- Internal orders list showing paid order.
+- Internal order detail showing paid order.
 
-Screenshots were not captured in this automated run because local browser launch
-was blocked before page interaction could begin.
+Screenshot redaction required before sharing outside the launch review group:
+
+- Redact customer email.
+- Redact address.
+- Redact full order references where appropriate.
+- Redact full PaymentIntent / Stripe references where appropriate.
+- Do not include Basic Auth credentials.
+- Do not include API tokens.
+- Do not include Stripe secrets.
+
+If the order detail page has item or Stripe reference sections below the fold,
+include a separate lower-page screenshot for those sections, with the same
+redaction rules.
 
 ## What Passed
 
@@ -164,53 +227,42 @@ was blocked before page interaction could begin.
 - Wrong Basic Auth also returned `401`.
 - API internal orders endpoint returned `401` for missing and wrong tokens.
 - Product pages rendered `Buy with Stripe`.
-- The production API created a Stripe test Checkout Session.
-- The Stripe Checkout URL loaded.
-- Success page read backend state for the created session and showed
-  `checkout_pending`, not paid.
+- A Chrome production checkout run completed a Stripe test payment.
+- Success redirect returned to the browser-facing Render storefront.
+- Success page displayed backend-confirmed paid status.
+- Stripe delivered `checkout.session.completed` to the Render API webhook with
+  HTTP `201` / `201 OK`.
+- Supabase showed the matching paid order row.
+- Valid Basic Auth opened the protected order list.
+- The latest paid order appeared in the read-only internal orders table.
+- The internal order detail page showed backend-confirmed paid summary,
+  customer/shipping section, totals, and order data.
 - Invalid signed webhook request confirmed webhook secret/config presence.
 - Public pages and public scripts did not expose internal order routes or
   internal-order API token strings.
 
 ## What Failed Or Remained Blocked
 
-- Full browser click-through and Stripe payment completion could not be run in
-  this environment.
-- No real `checkout.session.completed` webhook was produced.
-- No order from this run was marked `paid`.
-- Supabase paid-row confirmation was not possible.
-- Valid Basic Auth `/internal/orders` check was not possible without
-  production credentials.
-- Internal paid order list/detail verification was not possible without a paid
-  test order and valid credentials.
 - Custom domains currently route to the legacy `tigerpingpong.ca` storefront
   rather than the Render web app.
+- None for Render production checkout/order proof.
 
 ## Remaining Blockers Before Wider Launch
 
 1. Point the public launch domain to the current Render storefront, or document
    the intended cutover if Render is not yet the customer-facing production
    domain.
-2. Run a manual or authorized browser QA pass that completes Stripe test
-   Checkout end to end.
-3. Confirm the resulting Stripe webhook marks the order `paid`.
-4. Confirm the paid order row directly in Supabase.
-5. Confirm `/internal/orders` with valid Basic Auth shows the paid order.
-6. Confirm the internal order detail page shows customer, shipping, totals,
-   items, and Stripe references.
-7. Confirm staff access credentials and the internal API token are set in
-   Render for the intended production services.
+2. None for Render production checkout/order proof.
 
 ## Recommended Next Build Task
 
-Create a launch-domain and production-order-ops verification task that runs a
-human-assisted Stripe test payment through the customer-facing domain, verifies
-the Stripe webhook/Supabase/internal-orders chain with credentials, and records
-the final evidence screenshots before wider launch.
+Create a launch-domain cutover verification task that confirms the intended
+customer-facing custom domain serves the current Render storefront and preserves
+the verified checkout, webhook, Supabase, and protected staff review behavior.
 
 ## Validation Results
 
-Validation was run after this documentation was created:
+Initial validation was run after this documentation was created:
 
 - `pnpm db:generate`: passed.
 - `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tigerpingpong_validation pnpm db:validate`: passed.
@@ -219,3 +271,14 @@ Validation was run after this documentation was created:
 - `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com pnpm build`: passed.
 - `git diff --check`: passed.
 - `git status`: showed only the two expected documentation files before commit.
+
+Latest validation after the human-assisted QA update:
+
+- `pnpm lint`: passed.
+- `pnpm typecheck`: passed.
+- `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com pnpm build`:
+  passed on rerun after a transient local `fork: Resource temporarily
+  unavailable` failure during Prisma generation.
+- `git diff --check`: passed.
+- `git status`: showed only the two expected documentation files modified
+  before commit.

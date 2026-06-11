@@ -618,6 +618,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             <ProductFacts product={product} />
+
+            <div className={styles.supportNote}>
+              <strong>Questions before checkout?</strong>
+              <span>
+                Contact us with the product name for product, shipping, dealer, or setup help.
+              </span>
+              <a href="/contact">Contact support</a>
+            </div>
           </aside>
         </section>
 

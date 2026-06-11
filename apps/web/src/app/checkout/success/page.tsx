@@ -190,6 +190,7 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
   const badgeClassName = [styles.statusBadge, styles[content.tone]].join(" ");
   const isPaid = status?.found && status.status === "paid";
   const currency = status?.currency ?? "cad";
+  const publicReference = status?.found ? status.publicReference : null;
 
   return (
     <>
@@ -271,12 +272,22 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
             </p>
           ) : null}
 
+          <p className={styles.supportNote}>
+            Need help with this order? <a href="/contact">Contact support</a>
+            {publicReference
+              ? ` and include order reference ${publicReference}, your checkout email, and the product name if relevant.`
+              : " and include your order reference if available, checkout email, and product name if relevant."}
+          </p>
+
           <div className={styles.actions}>
             <a className={styles.primaryAction} href="/catalog">
               Return to catalog
             </a>
             <a className={styles.secondaryLink} href="/shipping">
               Review shipping
+            </a>
+            <a className={styles.secondaryLink} href="/contact">
+              Contact support
             </a>
           </div>
         </section>

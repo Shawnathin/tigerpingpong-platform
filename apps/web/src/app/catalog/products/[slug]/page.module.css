@@ -207,7 +207,8 @@
 
 .priceRow,
 .shippingNote,
-.checkoutPanel {
+.checkoutPanel,
+.supportNote {
   display: grid;
   gap: 8px;
   border-radius: 22px;
@@ -236,10 +237,18 @@
   line-height: 1.5;
 }
 
-.shippingNote strong {
+.shippingNote strong,
+.supportNote strong {
   color: #222a42;
   font-size: 1rem;
   font-weight: 950;
+}
+
+.supportNote span {
+  color: #596174;
+  font-size: 0.96rem;
+  font-weight: 730;
+  line-height: 1.5;
 }
 
 .checkoutPanel h2 {
@@ -329,14 +338,17 @@
 
 .shippingFact a,
 .cardLink,
-.shippingNote a {
+.shippingNote a,
+.supportNote a {
   color: var(--tiger-orange-deep);
   font-weight: 900;
   text-decoration: none;
 }
 
 .shippingFact a:hover,
-.shippingFact a:focus-visible {
+.shippingFact a:focus-visible,
+.supportNote a:hover,
+.supportNote a:focus-visible {
   text-decoration: underline;
 }
 

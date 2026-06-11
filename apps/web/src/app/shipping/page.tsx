@@ -60,6 +60,22 @@ export default function ShippingPage() {
             <li>Checkout calculates the final shipping total before payment.</li>
           </ul>
         </section>
+
+        <section className={styles.supportBand} aria-labelledby="shipping-support-title">
+          <div>
+            <p className={styles.eyebrow}>Shipping questions</p>
+            <h2 id="shipping-support-title">Need help before or after checkout?</h2>
+            <p>
+              Contact Tiger Ping Pong for shipping questions, order/payment help, product details,
+              or dealer and setup support from Vancouver, BC across Canada. For order questions,
+              include your order reference if available, checkout email, and product name if
+              relevant.
+            </p>
+          </div>
+          <a className={styles.primaryAction} href="/contact">
+            Contact support
+          </a>
+        </section>
       </main>
     </>
   );

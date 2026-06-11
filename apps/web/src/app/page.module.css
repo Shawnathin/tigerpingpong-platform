@@ -355,6 +355,17 @@
   flex: 0 0 auto;
 }
 
+.supportBand p a {
+  color: var(--tiger-orange-deep);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.supportBand p a:hover,
+.supportBand p a:focus-visible {
+  text-decoration: underline;
+}
+
 @media (max-width: 1120px) {
   .hero {
     grid-template-columns: 1fr;

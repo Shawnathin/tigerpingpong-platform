@@ -3,11 +3,15 @@ import { notFound } from "next/navigation";
 
 import { PublicStorefrontNav } from "../../../PublicStorefrontNav";
 import { CatalogApiError, getProductBySlug } from "../../../../lib/catalog-api";
+import {
+  getProductDescriptionCopy,
+  getProductMediaFallbacks,
+  getProductShortCopy
+} from "../../../../lib/public-storefront-demo";
 import { getV1ShippingMessage } from "../../../../lib/shipping";
 import type {
   CatalogProductDetail,
-  CatalogSummary,
-  ProductMediaSummary
+  CatalogSummary
 } from "../../../../types/catalog";
 
 import { CheckoutButton } from "./CheckoutButton";
@@ -46,6 +50,17 @@ const HIDDEN_PUBLIC_KEYS = [
   "cloudinaryOriginal"
 ];
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
+
+interface DisplayMediaItem {
+  altText: string | null;
+  caption: string | null;
+  isPrimary: boolean;
+  mediaKey: string;
+  role: string;
+  sortOrder: number;
+  src: string | null;
+  title: string | null;
+}
 
 async function loadProduct(slug: string): Promise<ProductResource> {
   let product: CatalogProductDetail;
@@ -126,26 +141,51 @@ function formatLabel(value: string): string {
     .join(" ");
 }
 
-function getMediaLabel(media: ProductMediaSummary, fallback: string): string {
+function getMediaLabel(media: DisplayMediaItem, fallback: string): string {
   const mediaText = [media.altText, media.title].filter(Boolean).join(" / ");
   return mediaText || media.caption || fallback;
 }
 
-function getMediaItems(product: CatalogProductDetail): ProductMediaSummary[] {
-  return product.media.length > 0
-    ? [...product.media].sort((left, right) => left.sortOrder - right.sortOrder)
-    : [
-        {
-          mediaKey: `${product.key}-pending`,
-          role: "primary",
-          cloudinarySecureUrl: null,
-          altText: `${product.name} image pending`,
-          title: product.name,
-          caption: null,
-          sortOrder: 0,
-          isPrimary: true
-        }
-      ];
+function getMediaItems(product: CatalogProductDetail): DisplayMediaItem[] {
+  const sortedCatalogMedia = [...product.media].sort(
+    (left, right) => left.sortOrder - right.sortOrder
+  );
+  const hasLiveMedia = sortedCatalogMedia.some((media) => media.cloudinarySecureUrl);
+
+  if (hasLiveMedia) {
+    return sortedCatalogMedia.map((media) => ({
+      ...media,
+      src: media.cloudinarySecureUrl
+    }));
+  }
+
+  const fallbackMedia = getProductMediaFallbacks(product.slug);
+
+  if (fallbackMedia.length > 0) {
+    return fallbackMedia.map((media, index) => ({
+      altText: media.alt,
+      caption: media.caption,
+      isPrimary: index === 0,
+      mediaKey: `${product.key}-fallback-${index + 1}`,
+      role: media.role,
+      sortOrder: index,
+      src: media.src,
+      title: media.title
+    }));
+  }
+
+  return [
+    {
+      mediaKey: `${product.key}-pending`,
+      role: "primary",
+      src: null,
+      altText: `${product.name} image pending`,
+      title: product.name,
+      caption: null,
+      sortOrder: 0,
+      isPrimary: true
+    }
+  ];
 }
 
 function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
@@ -282,8 +322,8 @@ function ProductMediaGallery({ product }: { product: CatalogProductDetail }) {
   return (
     <div className={styles.gallery}>
       <figure className={styles.mainMedia}>
-        {heroMedia.cloudinarySecureUrl ? (
-          <img src={heroMedia.cloudinarySecureUrl} alt={heroMedia.altText ?? product.name} />
+        {heroMedia.src ? (
+          <img src={heroMedia.src} alt={heroMedia.altText ?? product.name} />
         ) : (
           <div className={styles.mediaPlaceholder} aria-label={label}>
             <span>{product.category.name}</span>
@@ -300,8 +340,8 @@ function ProductMediaGallery({ product }: { product: CatalogProductDetail }) {
 
             return (
               <figure className={styles.thumbnail} key={media.mediaKey}>
-                {media.cloudinarySecureUrl ? (
-                  <img src={media.cloudinarySecureUrl} alt={media.altText ?? product.name} />
+                {media.src ? (
+                  <img src={media.src} alt={media.altText ?? product.name} />
                 ) : (
                   <div className={styles.thumbnailPlaceholder} aria-label={thumbnailLabel} />
                 )}
@@ -538,6 +578,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   const variants = product.variants ?? [];
   const isCheckoutEligible = isProductCheckoutEligible(product);
+  const descriptionCopy = getProductDescriptionCopy(product);
+  const shortDescription = getProductShortCopy(product);
 
   return (
     <>
@@ -558,9 +600,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
             <div className={styles.priceRow}>
               <strong>{formatPrice(product.priceCents, product.currency)}</strong>
-              <span>
-                {product.shortDescription ?? `Part of the ${product.family.name} lineup.`}
-              </span>
+              <span>{shortDescription}</span>
             </div>
 
             <div className={styles.shippingNote}>
@@ -581,13 +621,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </aside>
         </section>
 
-        {product.description ? (
-          <section className={styles.descriptionBand} aria-labelledby="product-description-title">
-            <p className={styles.eyebrow}>Product story</p>
-            <h2 id="product-description-title">Built for the next match.</h2>
-            <p>{product.description}</p>
-          </section>
-        ) : null}
+        <section className={styles.descriptionBand} aria-labelledby="product-description-title">
+          <p className={styles.eyebrow}>Product story</p>
+          <h2 id="product-description-title">Built for the next match.</h2>
+          <p>{descriptionCopy}</p>
+        </section>
 
         <VariantsSection product={product} variants={variants} />
         <SpecGroups specGroups={product.specGroups} />

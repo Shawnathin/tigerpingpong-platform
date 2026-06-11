@@ -19,36 +19,139 @@ type StorefrontSummaryProduct = Pick<
 >;
 
 const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
+  // Temporary frontend-only fallback media until canonical catalog/Cloudinary media is complete.
+  "tiger-expo-outdoor-table": [
+    {
+      alt: "Expo Outdoor table",
+      caption: "Expo Outdoor table",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/114/601/expo_outdoor-01__84166.1651174263.jpg?c=1",
+      title: "Expo Outdoor table"
+    }
+  ],
+  "tiger-net-post-set": [
+    {
+      alt: "Tiger Ping Pong net and post set",
+      caption: "Net and post set",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/128/images/644/home_accessories-net_post_set__11719.1650711219__23376.1659982669.386.513.png?c=1",
+      title: "Net and post set"
+    }
+  ],
+  "tiger-plaza-outdoor-table-grey": [
+    {
+      alt: "Plaza Outdoor table in grey",
+      caption: "Plaza Outdoor table",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/117/409/plaza_outdoor-01__91454.1659978562.jpg?c=1",
+      title: "Plaza Outdoor table"
+    }
+  ],
+  "tiger-portland-indoor-table": [
+    {
+      alt: "Portland Indoor table",
+      caption: "Portland Indoor table",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/115/609/portland_indoor-04__35084.1665858559.jpg?c=1",
+      title: "Portland Indoor table"
+    }
+  ],
+  "tiger-portland-outdoor-table": [
+    {
+      alt: "Portland Outdoor table",
+      caption: "Portland Outdoor table",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1",
+      title: "Portland Outdoor table"
+    },
+    {
+      alt: "Portland Outdoor table folded for solo play",
+      caption: "Playback position",
+      role: "alternate",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-outdoor-black-grey-top.jpg?t=1685557874",
+      title: "Portland Outdoor playback position"
+    },
+    {
+      alt: "Portland Outdoor adjustable net detail",
+      caption: "Adjustable net",
+      role: "detail",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/adjustable-net.jpg?t=1685557091",
+      title: "Portland Outdoor adjustable net"
+    },
+    {
+      alt: "Portland Outdoor wheel detail",
+      caption: "Wheel detail",
+      role: "detail",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-wheel2.jpg?t=1685558011",
+      title: "Portland Outdoor wheels"
+    }
+  ],
+  "tiger-premium-balls-140": [
+    {
+      alt: "Tiger Ping Pong balls 140 pack",
+      caption: "140 pack balls",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/126/images/655/Asset_63__05208__66402.1659978470.386.513.jpg?c=1",
+      title: "Tiger Ping Pong balls"
+    }
+  ],
+  "tiger-premium-balls-6-orange": [
+    {
+      alt: "Tiger Ping Pong orange balls 6 pack",
+      caption: "Orange 6 pack balls",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/135/images/688/Asset_34__95063_600x600__38848.1652347243.386.513.jpg?c=1",
+      title: "Orange ping pong balls"
+    }
+  ],
+  "tiger-premium-balls-6-white": [
+    {
+      alt: "Tiger Ping Pong white balls 6 pack",
+      caption: "White 6 pack balls",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/125/images/687/Asset_33__87672.1650713962_600x600__66303.1659982572.386.513.jpg?c=1",
+      title: "White ping pong balls"
+    }
+  ],
   "tiger-table-cover-black-polyester": [
     {
-      alt: "Ping pong table cover product image",
+      alt: "Tiger Ping Pong table cover",
       caption: "Protective table cover",
       role: "primary",
       src: "/storefront/prototype/table-cover-transparent.png",
-      title: "Table cover"
+      title: "Tiger Ping Pong table cover"
     }
   ],
   "tiger-vice-paddle": [
     {
-      alt: "Ping pong paddle product image",
-      caption: "Paddle demo image",
+      alt: "Aqua paddle set red paddle",
+      caption: "Red paddle",
       role: "primary",
       src: "/storefront/prototype/aqua-paddle/red-paddle-single-cutout.png",
-      title: "Paddle"
+      title: "Aqua paddle set"
     },
     {
-      alt: "Alternate ping pong paddle product image",
-      caption: "Alternate paddle demo image",
+      alt: "Aqua paddle set blue paddle",
+      caption: "Blue paddle",
       role: "alternate",
       src: "/storefront/prototype/aqua-paddle/blue-paddle-single-cutout.png",
-      title: "Alternate paddle"
+      title: "Blue paddle"
     },
     {
-      alt: "Paddle box product image",
-      caption: "Paddle box demo image",
+      alt: "Aqua paddle set box",
+      caption: "Paddle set box",
       role: "packaging",
       src: "/storefront/prototype/aqua-paddle/aqua-4count-box-angle.jpg",
-      title: "Paddle box"
+      title: "Paddle set box"
+    }
+  ],
+  "tiger-whistler-indoor-table": [
+    {
+      alt: "Whistler Indoor table",
+      caption: "Whistler Indoor table",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/116/623/whistler_indoor-04__70000.1665858593.jpg?c=1",
+      title: "Whistler Indoor table"
     }
   ]
 };

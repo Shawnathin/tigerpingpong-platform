@@ -181,11 +181,20 @@ function getProductImage(product: CatalogProductSummary): {
   alt: string;
   src: string | null;
 } {
+  const livePrimaryMedia = product.primaryMedia?.cloudinarySecureUrl ? product.primaryMedia : null;
+
+  if (livePrimaryMedia) {
+    return {
+      alt: livePrimaryMedia.altText ?? product.name,
+      src: livePrimaryMedia.cloudinarySecureUrl
+    };
+  }
+
   const fallbackMedia = getPrimaryProductMediaFallback(product.slug);
 
   return {
-    alt: product.primaryMedia?.altText ?? fallbackMedia?.alt ?? product.name,
-    src: product.primaryMedia?.cloudinarySecureUrl ?? fallbackMedia?.src ?? null
+    alt: fallbackMedia?.alt ?? product.name,
+    src: fallbackMedia?.src ?? null
   };
 }
 
@@ -193,13 +202,25 @@ function getHeroImage(products: CatalogProductSummary[]): {
   alt: string;
   src: string;
 } {
-  const featuredProduct =
-    products.find((product) => product.primaryMedia?.cloudinarySecureUrl) ?? products[0];
+  const liveFeaturedProduct = products.find((product) => product.primaryMedia?.cloudinarySecureUrl);
+
+  if (liveFeaturedProduct?.primaryMedia?.cloudinarySecureUrl) {
+    return {
+      alt: liveFeaturedProduct.primaryMedia.altText ?? liveFeaturedProduct.name,
+      src: liveFeaturedProduct.primaryMedia.cloudinarySecureUrl
+    };
+  }
+
+  const fallbackFeaturedProduct =
+    products.find((product) => product.slug === "tiger-portland-outdoor-table") ??
+    products.find((product) => getPrimaryProductMediaFallback(product.slug));
+  const fallbackMedia = fallbackFeaturedProduct
+    ? getPrimaryProductMediaFallback(fallbackFeaturedProduct.slug)
+    : null;
 
   return {
-    alt:
-      featuredProduct?.primaryMedia?.altText ?? featuredProduct?.name ?? "Portland Outdoor table",
-    src: featuredProduct?.primaryMedia?.cloudinarySecureUrl ?? PORTLAND_IMAGE
+    alt: fallbackMedia?.alt ?? "Portland Outdoor table",
+    src: fallbackMedia?.src ?? PORTLAND_IMAGE
   };
 }
 

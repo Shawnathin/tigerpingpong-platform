@@ -303,11 +303,11 @@
 .cartModalOverlay {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 1000;
   display: grid;
   place-items: center;
-  overflow-y: auto;
-  padding: 26px;
+  overflow: hidden auto;
+  padding: 28px;
   background: rgb(23 27 46 / 42%);
   backdrop-filter: blur(18px) saturate(1.1);
 }
@@ -315,13 +315,13 @@
 .cartModal {
   position: relative;
   display: grid;
-  width: min(860px, 100%);
-  max-height: calc(100vh - 52px);
-  gap: 22px;
-  overflow-y: auto;
+  width: min(880px, calc(100vw - 56px));
+  max-height: calc(100vh - 56px);
+  gap: 20px;
+  overflow: hidden auto;
   border: 1px solid rgb(255 255 255 / 84%);
   border-radius: 30px;
-  padding: 30px;
+  padding: 32px;
   background:
     linear-gradient(135deg, rgb(255 255 255 / 94%), rgb(255 255 255 / 78%)),
     linear-gradient(120deg, rgb(242 138 46 / 12%), rgb(81 210 191 / 12%));
@@ -394,8 +394,10 @@
 
 .cartModalHeader h2 {
   max-width: 700px;
-  font-size: 2.5rem;
-  line-height: 1;
+  font-size: 2.25rem;
+  line-height: 1.05;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .addedItemSummary {
@@ -441,7 +443,8 @@
   font-weight: 950;
 }
 
-.addedItemSummary div {
+.addedItemBody,
+.addOnBody {
   min-width: 0;
 }
 
@@ -451,16 +454,17 @@
   color: #20283f;
   font-weight: 950;
   line-height: 1.2;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .addedItemSummary span,
 .addOnBody span {
   display: block;
-  margin-top: 4px;
   color: #596174;
-  font-size: 0.9rem;
-  font-weight: 760;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .addedItemSummary p {
@@ -487,25 +491,42 @@
 
 .addOnGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
 .addOnCard {
   display: grid;
-  grid-template-columns: 84px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  min-width: 0;
   border: 1px solid rgb(255 255 255 / 82%);
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
   background: rgb(255 255 255 / 70%);
 }
 
 .addOnImage {
-  width: 84px;
-  aspect-ratio: 1;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   border-radius: 8px;
+}
+
+.addOnBody {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.addOnBody strong {
+  font-size: 0.9rem;
+}
+
+.addOnBody p {
+  margin: 0;
+  color: var(--tiger-ink);
+  font-size: 0.95rem;
+  font-weight: 950;
 }
 
 .addOnButton {
@@ -531,7 +552,7 @@
 
 .cartModalActions {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 10px;
   align-items: center;
 }
@@ -743,6 +764,10 @@
   .mediaPlaceholder {
     min-height: 430px;
   }
+
+  .addOnGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 680px) {
@@ -796,11 +821,12 @@
   }
 
   .cartModalOverlay {
-    align-items: end;
+    align-items: center;
     padding: 12px;
   }
 
   .cartModal {
+    width: min(100%, calc(100vw - 24px));
     max-height: calc(100vh - 24px);
     border-radius: 24px;
     padding: 24px 16px 18px;
@@ -815,15 +841,13 @@
   }
 
   .addedItemSummary,
-  .addOnCard,
   .cartModalActions {
     grid-template-columns: 1fr;
   }
 
-  .addedItemImage,
-  .addOnImage {
+  .addedItemImage {
     width: 100%;
-    max-width: 120px;
+    max-width: 126px;
   }
 
   .addedItemSummary p {

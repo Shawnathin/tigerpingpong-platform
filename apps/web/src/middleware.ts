@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const BASIC_AUTH_REALM = "Tiger Ping Pong Internal";
+const INTERNAL_RESPONSE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Expires: "0",
+  Pragma: "no-cache",
+  "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet"
+};
 
 export const config = {
   matcher: ["/internal/:path*"]
@@ -18,17 +24,30 @@ export function middleware(request: NextRequest) {
     return unauthorized();
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  setInternalResponseHeaders(response.headers);
+
+  return response;
 }
 
 function unauthorized(): NextResponse {
-  return new NextResponse("Authentication required.", {
+  const response = new NextResponse("Authentication required.", {
     headers: {
-      "Cache-Control": "no-store",
       "WWW-Authenticate": `Basic realm="${BASIC_AUTH_REALM}", charset="UTF-8"`
     },
     status: 401
   });
+
+  setInternalResponseHeaders(response.headers);
+
+  return response;
+}
+
+function setInternalResponseHeaders(headers: Headers): void {
+  for (const [key, value] of Object.entries(INTERNAL_RESPONSE_HEADERS)) {
+    headers.set(key, value);
+  }
 }
 
 function isBasicAuthMatch(

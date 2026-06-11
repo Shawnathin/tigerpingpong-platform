@@ -1,0 +1,13 @@
+{
+  "name": "server-only",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Workspace-local marker package for server-only imports.",
+  "main": "index.js",
+  "exports": {
+    ".": {
+      "react-server": "./empty.js",
+      "default": "./index.js"
+    }
+  }
+}

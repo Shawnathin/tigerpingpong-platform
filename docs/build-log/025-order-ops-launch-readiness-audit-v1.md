@@ -56,8 +56,9 @@ Reviewed:
 - Current checkout creation response includes `orderId`; current UI does not
   display it, but the public response contract should be reviewed before
   launch hardening.
-- Table shipping/freight/tax/regional policy remains an open blocker in import
-  review flags.
+- The V1 shipping rule is locked for all products, including tables; older
+  import-review shipping flags should be treated as stale catalog cleanup work
+  to reconcile with that decision.
 - Cloudinary media upload is not implemented; media import rows intentionally
   keep `cloudinary_secure_url` blank.
 - Render setup docs predate checkout/webhook/status env requirements and need

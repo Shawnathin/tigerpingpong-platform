@@ -314,7 +314,8 @@ The next build should remain small:
 - Pending or manual-review webhook cases can sit unnoticed.
 - Customers may contact support with no clear lookup path.
 - Shipping address/customer data may be copied from the wrong system.
-- Table shipping policy blockers may be overlooked.
+- Stale catalog/import review flags may be mistaken for current business-policy
+  blockers instead of cleanup work against the locked V1 shipping rule.
 - Refund, cancellation, or payment mismatch cases have no staff workflow.
 
 ## What Not To Build Yet

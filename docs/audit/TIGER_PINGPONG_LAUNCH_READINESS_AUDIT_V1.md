@@ -100,39 +100,46 @@ Blocked:
 
 ## Shipping Rule/Copy
 
-Status: Blocked for table launch, Needs review for copy.
+Status: Needs review.
 
 Ready:
 
+- The V1 shipping business rule is locked for all products, including tables.
 - Backend V1 shipping rule is implemented as
   `canada_free_over_100_flat_15`.
+- Shipping is Canada-only and cart/order-based.
 - Backend shipping calculation is:
   - subtotal over 10000 cents: free shipping
   - subtotal at or under 10000 cents: 1500 cents
+- Exactly 10000 cents still receives the 1500 cent flat-rate shipping charge.
 - Stripe Checkout restricts shipping address collection to Canada.
 - Product/catalog copy links to `/shipping`.
 - Product-level copy is cart-aware and avoids implying a low-priced product
   always has a product-specific flat shipping charge.
+- High-priced products, including tables, should say "Free shipping across
+  Canada."
+- Lower-priced products should say "Free shipping on orders over $100."
 
 Needs review:
 
 - `/shipping` says final wording should be reviewed before public launch.
-- Final legal/business shipping terms are not approved in repo docs.
-- Tax, regional restrictions, damage policy, curbside/freight, and table
-  delivery handling are not fully resolved.
-
-Blocked:
-
-- Import review flags still mark table shipping/freight policy as open
-  blockers for several table products.
-- `checkout_policy_required` remains open for all V1 checkout candidates.
+- Final shipping page copy should be reviewed against the locked V1 rule.
+- Import review data still includes stale `shipping_review_required` and
+  `checkout_policy_required` flags from earlier planning. Treat these as
+  catalog cleanup/reconciliation work so checkout eligibility matches the
+  locked executive shipping and checkout decision, not as new business-policy
+  blockers.
+- Tax behavior, live Stripe mode, deployment config, and end-to-end checkout QA
+  still need launch verification.
 
 Recommendation:
 
-- Do not make table products broadly checkout-live until table shipping,
-  freight/curbside, regional, tax, and support policy are approved.
-- If launching a tiny non-table checkout rehearsal, explicitly exclude table
-  products or mark them non-checkout until policy is closed.
+- Keep all products, including tables, on the locked V1 Canada-only
+  cart/order-based shipping rule.
+- Reconcile catalog checkout flags and review notes so stale planning language
+  does not reintroduce old table-specific exception language.
+- Verify deployed checkout, shipping, tax, and Stripe behavior before live
+  launch.
 
 ## Catalog Data Readiness
 
@@ -153,15 +160,12 @@ Needs review:
 
 - CSVs contain active checkout candidates, drafts, deferred replacement parts,
   and open review flags.
-- Active table checkout candidates still have `shipping_review_required=true`
-  and open blocker flags.
+- Some active checkout candidates still carry stale review flags such as
+  `shipping_review_required` and `checkout_policy_required`; these need cleanup
+  so catalog readiness matches the locked V1 all-product shipping decision.
 - Aqua paddle rows remain draft/manual-review with source/media review open.
 - Redirect rows are draft/deferred, not launch-approved.
 - Current deployed database contents were not proven by this repo-only audit.
-
-Blocked:
-
-- Final checkout policy and table shipping policy remain open blockers.
 
 Defer:
 
@@ -376,8 +380,10 @@ Status: Blocked.
 
 - No internal order visibility beyond manual Supabase/database review.
 - No customer-facing support/contact path after checkout.
-- Table shipping/freight/tax/regional policy remains open.
-- Global checkout policy review remains open in import review flags.
+- Catalog/import review flags need cleanup so checkout eligibility matches the
+  locked V1 shipping and checkout decision.
+- Final shipping page copy should be reviewed against the locked V1 rule.
+- Tax, live Stripe mode, and deployment QA still need launch verification.
 - Cloudinary media upload workflow is not implemented.
 - Deployed Stripe webhook/config has not been proven by this audit.
 - Render deployment docs are outdated for current checkout/webhook env vars.
@@ -403,9 +409,11 @@ Status: Defer.
 3. Update deployment/runbook docs for current Render, Stripe, webhook, and env
    requirements.
 4. Run deployed test-mode checkout/webhook/status QA end to end.
-5. Resolve table shipping/freight/tax/regional policy or disable table checkout.
-6. Lock launch catalog data and purchase modes.
-7. Upload/review Cloudinary product media.
-8. Add staff email notification after paid webhook, if still needed.
-9. Defer cart, full admin, customer accounts, refunds, and fulfillment
+5. Reconcile catalog checkout flags with the locked V1 shipping policy.
+6. Verify deployed checkout, shipping, tax, and Stripe behavior before live
+   launch.
+7. Lock launch catalog data and purchase modes.
+8. Upload/review Cloudinary product media.
+9. Add staff email notification after paid webhook, if still needed.
+10. Defer cart, full admin, customer accounts, refunds, and fulfillment
    automation until the operational spine is stable.

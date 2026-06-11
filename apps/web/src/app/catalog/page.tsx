@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { getCategories, getProductFamilies, getProducts } from "../../lib/catalog-api";
+import {
+  getPrimaryProductMediaFallback,
+  getProductCardPitch
+} from "../../lib/public-storefront-demo";
 import { getV1ShippingMessage } from "../../lib/shipping";
 import type {
   CatalogCategory,
@@ -177,9 +181,11 @@ function getProductImage(product: CatalogProductSummary): {
   alt: string;
   src: string | null;
 } {
+  const fallbackMedia = getPrimaryProductMediaFallback(product.slug);
+
   return {
-    alt: product.primaryMedia?.altText ?? product.name,
-    src: product.primaryMedia?.cloudinarySecureUrl ?? null
+    alt: product.primaryMedia?.altText ?? fallbackMedia?.alt ?? product.name,
+    src: product.primaryMedia?.cloudinarySecureUrl ?? fallbackMedia?.src ?? null
   };
 }
 
@@ -195,11 +201,6 @@ function getHeroImage(products: CatalogProductSummary[]): {
       featuredProduct?.primaryMedia?.altText ?? featuredProduct?.name ?? "Portland Outdoor table",
     src: featuredProduct?.primaryMedia?.cloudinarySecureUrl ?? PORTLAND_IMAGE
   };
-}
-
-function getProductPitch(product: CatalogProductSummary): string {
-  const kind = formatProductKind(product.productKind).toLowerCase();
-  return `Explore this ${kind} from the ${product.family.name} lineup.`;
 }
 
 function ResourceError({ error }: { error: string | null }) {
@@ -285,7 +286,7 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
             <h3>{product.name}</h3>
             <strong>{formatPrice(product.priceCents, product.currency)}</strong>
           </div>
-          <p className={styles.productPitch}>{getProductPitch(product)}</p>
+          <p className={styles.productPitch}>{getProductCardPitch(product)}</p>
           <dl className={styles.productFacts}>
             <div>
               <dt>Lineup</dt>

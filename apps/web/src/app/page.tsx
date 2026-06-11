@@ -1,87 +1,145 @@
-import type { ApiHealthResponse } from "@tigerpingpong/shared";
+import type { Metadata } from "next";
 
+import { PublicStorefrontNav } from "./PublicStorefrontNav";
 import styles from "./page.module.css";
 
-type HealthState = ApiHealthResponse & { error?: string };
+export const metadata: Metadata = {
+  title: "Tiger Ping Pong | Tables, Paddles, Balls, and Accessories",
+  description:
+    "Shop Tiger Ping Pong tables, paddles, balls, and accessories with Canada-wide shipping."
+};
 
-export const dynamic = "force-dynamic";
+const PORTLAND_IMAGE =
+  "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-
-async function loadApiHealth(): Promise<HealthState> {
-  try {
-    const response = await fetch(`${apiBaseUrl}/health`, {
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      return {
-        status: "unreachable",
-        service: "tigerpingpong-api",
-        timestamp: new Date().toISOString(),
-        error: `API returned HTTP ${response.status}`
-      };
-    }
-
-    return response.json() as Promise<ApiHealthResponse>;
-  } catch (error) {
-    return {
-      status: "unreachable",
-      service: "tigerpingpong-api",
-      timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : "API health check failed"
-    };
+const CATEGORY_CARDS = [
+  {
+    body: "Weather-ready outdoor builds and polished indoor tables for home, school, and club play.",
+    cta: "Explore tables",
+    href: "/catalog",
+    imageAlt: "Portland Outdoor table",
+    imageSrc: PORTLAND_IMAGE,
+    label: "Tables",
+    title: "From rec room to rain-ready."
+  },
+  {
+    body: "Aqua outdoor paddle sets and play-ready options for the first match out of the box.",
+    cta: "Shop paddles",
+    href: "/catalog/products/tiger-vice-paddle",
+    imageAlt: "Aqua paddle set box",
+    imageSrc: "/storefront/prototype/aqua-paddle/aqua-4count-box-angle.jpg",
+    label: "Paddles",
+    title: "Add a clean, fast first serve."
+  },
+  {
+    body: "Covers and simple setup extras keep the table ready between matches.",
+    cta: "View accessories",
+    href: "/catalog",
+    imageAlt: "Tiger Ping Pong outdoor table cover",
+    imageSrc: "/storefront/prototype/table-cover-transparent.png",
+    label: "Accessories",
+    title: "Protection that still looks party-ready."
   }
-}
+];
 
-export default async function Home() {
-  const health = await loadApiHealth();
-
+export default function Home() {
   return (
-    <main className={styles.page}>
-      <section className={styles.shell} aria-labelledby="home-title">
-        <div>
-          <p className={styles.eyebrow}>TigerPingPong.ca</p>
-          <h1 className={styles.title} id="home-title">
-            Tiger Ping Pong platform foundation is running.
-          </h1>
-        </div>
-
-        <p className={styles.copy}>
-          The Next.js web app is connected to the NestJS API health endpoint. No ecommerce features
-          have been added yet.
-        </p>
-
-        <div className={styles.statusPanel}>
-          <div className={styles.statusHeader}>
-            <h2 className={styles.statusTitle}>API health</h2>
-            <span className={styles.badge} data-status={health.status}>
-              {health.status}
-            </span>
+    <>
+      <PublicStorefrontNav activeItem="home" />
+      <main className={styles.page}>
+        <section className={styles.hero} aria-labelledby="home-title">
+          <div className={styles.heroCopy}>
+            <p className={styles.eyebrow}>TigerPingPong.ca</p>
+            <h1 className={styles.title} id="home-title">
+              Tables, paddles, and game-night gear for the next rally.
+            </h1>
+            <p className={styles.intro}>
+              Shop the Tiger Ping Pong lineup with sellable product pages, Stripe Checkout, and
+              simple Canada-wide shipping.
+            </p>
+            <div className={styles.heroActions}>
+              <a className={styles.primaryAction} href="/catalog">
+                Shop catalog
+              </a>
+              <a className={styles.secondaryAction} href="/shipping">
+                See shipping
+              </a>
+            </div>
           </div>
 
-          <dl className={styles.details}>
-            <div className={styles.row}>
-              <dt>Service</dt>
-              <dd>{health.service}</dd>
-            </div>
-            <div className={styles.row}>
-              <dt>Checked</dt>
-              <dd>{health.timestamp}</dd>
-            </div>
-            <div className={styles.row}>
-              <dt>Endpoint</dt>
-              <dd>{apiBaseUrl}/health</dd>
-            </div>
-            {health.error ? (
-              <div className={styles.row}>
-                <dt>Error</dt>
-                <dd>{health.error}</dd>
-              </div>
-            ) : null}
-          </dl>
-        </div>
-      </section>
-    </main>
+          <div className={styles.heroVisual} aria-label="Featured Portland Outdoor table">
+            <span className={styles.heroBadge}>
+              <small>Featured setup</small>
+              <strong>Portland Outdoor</strong>
+              <em>Free shipping across Canada</em>
+            </span>
+            <img src={PORTLAND_IMAGE} alt="Portland Outdoor table in grey" />
+          </div>
+        </section>
+
+        <section className={styles.positioning} aria-label="Tiger Ping Pong promise">
+          <div>
+            <span>Canada only</span>
+            <strong>Ships across Canada with a simple order rule.</strong>
+          </div>
+          <div>
+            <span>Stripe Checkout</span>
+            <strong>Product pages send shoppers straight to checkout.</strong>
+          </div>
+          <div>
+            <span>Demo catalog</span>
+            <strong>Live catalog data powers the storefront pages.</strong>
+          </div>
+        </section>
+
+        <section className={styles.featured} aria-labelledby="featured-title">
+          <div className={styles.sectionHeader}>
+            <p className={styles.eyebrow}>Shop the lineup</p>
+            <h2 id="featured-title">Everything for the next match.</h2>
+          </div>
+
+          <div className={styles.categoryGrid}>
+            {CATEGORY_CARDS.map((card) => (
+              <a className={styles.categoryCard} href={card.href} key={card.label}>
+                <span className={styles.cardCopy}>
+                  <small>{card.label}</small>
+                  <strong>{card.title}</strong>
+                  <span>{card.body}</span>
+                  <em>{card.cta}</em>
+                </span>
+                <img src={card.imageSrc} alt={card.imageAlt} />
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.shippingBand} aria-labelledby="shipping-promise-title">
+          <div>
+            <p className={styles.eyebrow}>Shipping promise</p>
+            <h2 id="shipping-promise-title">Free shipping over $100 across Canada.</h2>
+            <p>
+              Orders over $100 CAD ship free. Orders $100 CAD or under use $15 flat-rate shipping.
+              Tables qualify for free shipping across Canada.
+            </p>
+          </div>
+          <a className={styles.secondaryAction} href="/shipping">
+            Shipping details
+          </a>
+        </section>
+
+        <section className={styles.supportBand} aria-labelledby="support-title">
+          <div>
+            <p className={styles.eyebrow}>Need a local hand?</p>
+            <h2 id="support-title">
+              Ask about tables, paddles, or the right setup for your space.
+            </h2>
+            <p>Call 1-888-552-5259 or email info@tigerpingpong.com.</p>
+          </div>
+          <a className={styles.primaryAction} href="mailto:info@tigerpingpong.com">
+            Contact us
+          </a>
+        </section>
+      </main>
+    </>
   );
 }

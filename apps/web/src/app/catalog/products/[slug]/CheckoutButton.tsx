@@ -40,7 +40,9 @@ export function CheckoutButton({ isCheckoutEligible, productSlug }: CheckoutButt
 
   if (!isCheckoutEligible) {
     return (
-      <p className={styles.checkoutUnavailable}>Checkout is not available for this product yet.</p>
+      <p className={styles.checkoutUnavailable}>
+        This product is not available for online checkout yet.
+      </p>
     );
   }
 
@@ -53,7 +55,7 @@ export function CheckoutButton({ isCheckoutEligible, productSlug }: CheckoutButt
         onClick={() => void handleStartCheckout()}
         type="button"
       >
-        {isSubmitting ? "Starting checkout..." : "Checkout with Stripe"}
+        {isSubmitting ? "Starting checkout..." : "Buy with Stripe"}
       </button>
       {error ? (
         <p className={styles.checkoutError} role="status">

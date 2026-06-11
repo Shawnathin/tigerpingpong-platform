@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { PublicStorefrontNav } from "../../../PublicStorefrontNav";
 import { CatalogApiError, getProductBySlug } from "../../../../lib/catalog-api";
 import { getV1ShippingMessage } from "../../../../lib/shipping";
 import type {
@@ -15,8 +16,8 @@ import styles from "./page.module.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Product Detail | Tiger Ping Pong Platform",
-  description: "Minimal Tiger Ping Pong public product detail skeleton."
+  title: "Product Detail | Tiger Ping Pong",
+  description: "Tiger Ping Pong public product detail and checkout page."
 };
 
 interface ProductPageProps {
@@ -58,7 +59,7 @@ async function loadProduct(slug: string): Promise<ProductResource> {
 
     return {
       product: null,
-      error: formatError(error)
+      error: "Product details are temporarily unavailable."
     };
   }
 
@@ -70,14 +71,6 @@ async function loadProduct(slug: string): Promise<ProductResource> {
     product,
     error: null
   };
-}
-
-function formatError(error: unknown): string {
-  if (error instanceof CatalogApiError) {
-    return `${error.message} (${error.url})`;
-  }
-
-  return error instanceof Error ? error.message : "Catalog API request failed.";
 }
 
 function hasReplacementPartsMarker(...values: Array<string | null | undefined>): boolean {
@@ -116,7 +109,7 @@ function isProductCheckoutEligible(product: CatalogProductDetail): boolean {
 
 function formatPrice(priceCents: number | null, currency: string): string {
   if (priceCents === null) {
-    return "Price pending";
+    return "Price coming soon";
   }
 
   return new Intl.NumberFormat("en-CA", {
@@ -158,7 +151,7 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaSummary[] {
 function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
   return (
     <>
-      {getV1ShippingMessage(priceCents)} <a href="/shipping">See shipping terms.</a>
+      {getV1ShippingMessage(priceCents)} <a href="/shipping">Shipping details</a>
     </>
   );
 }
@@ -240,22 +233,22 @@ function getVariantOptions(variant: PublicRecord): string {
   const optionValues = variant.optionValues;
 
   if (!Array.isArray(optionValues) || optionValues.length === 0) {
-    return "Options pending";
+    return "Standard option";
   }
 
   const labels = optionValues
     .map((optionValue) => formatOptionValue(optionValue))
     .filter((label): label is string => Boolean(label));
 
-  return labels.length > 0 ? labels.join(", ") : "Options returned";
+  return labels.length > 0 ? labels.join(", ") : "Standard option";
 }
 
 function getVariantName(variant: unknown, index: number): string {
   if (!isPublicRecord(variant)) {
-    return `Variant ${index + 1}`;
+    return `Option ${index + 1}`;
   }
 
-  return getStringValue(variant, ["name", "sku", "key"]) ?? `Variant ${index + 1}`;
+  return getStringValue(variant, ["name", "sku", "key"]) ?? `Option ${index + 1}`;
 }
 
 function renderPublicFields(record: PublicRecord): Array<{ key: string; value: string }> {
@@ -271,7 +264,7 @@ function renderPublicFields(record: PublicRecord): Array<{ key: string; value: s
         };
       }
 
-      if (Array.isArray(value)) {
+      if (Array.isArray(value) && value.length > 0) {
         return {
           key,
           value: `${value.length} item${value.length === 1 ? "" : "s"}`
@@ -284,29 +277,43 @@ function renderPublicFields(record: PublicRecord): Array<{ key: string; value: s
 }
 
 function ProductMediaGallery({ product }: { product: CatalogProductDetail }) {
-  return (
-    <div className={styles.mediaGrid}>
-      {getMediaItems(product).map((media) => {
-        const label = getMediaLabel(media, `${product.name} image pending`);
+  const mediaItems = getMediaItems(product);
+  const heroMedia = mediaItems[0];
+  const label = getMediaLabel(heroMedia, `${product.name} image pending`);
+  const thumbnails = mediaItems.slice(1, 5);
 
-        return (
-          <figure className={styles.mediaItem} key={media.mediaKey}>
-            {media.cloudinarySecureUrl ? (
-              <img src={media.cloudinarySecureUrl} alt={media.altText ?? product.name} />
-            ) : (
-              <div className={styles.mediaPlaceholder} aria-label={label}>
-                <span>Image pending</span>
-                <small>{label}</small>
-              </div>
-            )}
-            <figcaption>
-              <strong>{formatLabel(media.role)}</strong>
-              <span>{label}</span>
-              {media.isPrimary ? <small>Primary media</small> : null}
-            </figcaption>
-          </figure>
-        );
-      })}
+  return (
+    <div className={styles.gallery}>
+      <figure className={styles.mainMedia}>
+        {heroMedia.cloudinarySecureUrl ? (
+          <img src={heroMedia.cloudinarySecureUrl} alt={heroMedia.altText ?? product.name} />
+        ) : (
+          <div className={styles.mediaPlaceholder} aria-label={label}>
+            <span>{product.category.name}</span>
+            <strong>{product.name}</strong>
+          </div>
+        )}
+        <figcaption>{label}</figcaption>
+      </figure>
+
+      {thumbnails.length > 0 ? (
+        <div className={styles.thumbnailGrid} aria-label="More product images">
+          {thumbnails.map((media) => {
+            const thumbnailLabel = getMediaLabel(media, product.name);
+
+            return (
+              <figure className={styles.thumbnail} key={media.mediaKey}>
+                {media.cloudinarySecureUrl ? (
+                  <img src={media.cloudinarySecureUrl} alt={media.altText ?? product.name} />
+                ) : (
+                  <div className={styles.thumbnailPlaceholder} aria-label={thumbnailLabel} />
+                )}
+                <figcaption>{formatLabel(media.role)}</figcaption>
+              </figure>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -315,24 +322,16 @@ function ProductFacts({ product }: { product: CatalogProductDetail }) {
   return (
     <dl className={styles.factList}>
       <div>
-        <dt>Slug</dt>
-        <dd>{product.slug}</dd>
-      </div>
-      <div>
-        <dt>Product kind</dt>
-        <dd>{formatLabel(product.productKind)}</dd>
-      </div>
-      <div>
-        <dt>Purchase mode</dt>
-        <dd>{formatLabel(product.purchaseMode)}</dd>
-      </div>
-      <div>
         <dt>Category</dt>
         <dd>{product.category.name}</dd>
       </div>
       <div>
-        <dt>Family</dt>
+        <dt>Lineup</dt>
         <dd>{product.family.name}</dd>
+      </div>
+      <div>
+        <dt>Product type</dt>
+        <dd>{formatLabel(product.productKind)}</dd>
       </div>
       <div>
         <dt>Shipping</dt>
@@ -356,21 +355,20 @@ function VariantsSection({
   }
 
   return (
-    <section className={styles.section} aria-labelledby="product-variants-title">
+    <section className={styles.section} aria-labelledby="product-options-title">
       <div className={styles.sectionHeader}>
-        <h2 id="product-variants-title">Variants</h2>
-        <span>{variants.length} returned</span>
+        <p className={styles.eyebrow}>Choices</p>
+        <h2 id="product-options-title">Available options.</h2>
       </div>
       <div className={styles.tableWrap}>
         <table className={styles.variantTable}>
           <thead>
             <tr>
-              <th scope="col">Variant</th>
+              <th scope="col">Option</th>
               <th scope="col">SKU</th>
               <th scope="col">Price</th>
-              <th scope="col">Purchase mode</th>
-              <th scope="col">Status</th>
-              <th scope="col">Options</th>
+              <th scope="col">Availability</th>
+              <th scope="col">Details</th>
             </tr>
           </thead>
           <tbody>
@@ -378,25 +376,23 @@ function VariantsSection({
               const record = isPublicRecord(variant) ? variant : null;
               const priceCents = record ? getNumberValue(record, "priceCents") : null;
               const currency = record ? getStringValue(record, ["currency"]) : null;
-              const purchaseMode = record
-                ? getStringValue(record, ["purchaseModeOverride", "purchaseMode"])
-                : null;
               const isActive = record ? getBooleanValue(record, "isActive") : null;
 
               return (
                 <tr key={record ? (getStringValue(record, ["key", "sku"]) ?? index) : index}>
                   <td>{getVariantName(variant, index)}</td>
                   <td>
-                    {record ? (getStringValue(record, ["sku"]) ?? "SKU pending") : "SKU pending"}
+                    {record
+                      ? (getStringValue(record, ["sku"]) ?? "SKU coming soon")
+                      : "SKU coming soon"}
                   </td>
                   <td>
                     {priceCents === null
-                      ? "Uses product price"
+                      ? formatPrice(product.priceCents, product.currency)
                       : formatPrice(priceCents, currency ?? product.currency)}
                   </td>
-                  <td>{purchaseMode ? formatLabel(purchaseMode) : "Uses product purchase mode"}</td>
-                  <td>{isActive === null ? "Status pending" : isActive ? "Active" : "Inactive"}</td>
-                  <td>{record ? getVariantOptions(record) : "Options returned"}</td>
+                  <td>{isActive === false ? "Unavailable" : "Available"}</td>
+                  <td>{record ? getVariantOptions(record) : "Standard option"}</td>
                 </tr>
               );
             })}
@@ -407,18 +403,18 @@ function VariantsSection({
   );
 }
 
-function ContentSections({ sections }: { sections: unknown[] | undefined }) {
+function HighlightsSection({ sections }: { sections: unknown[] | undefined }) {
   if (!sections || sections.length === 0) {
     return null;
   }
 
   return (
-    <section className={styles.section} aria-labelledby="product-content-title">
+    <section className={styles.section} aria-labelledby="product-highlights-title">
       <div className={styles.sectionHeader}>
-        <h2 id="product-content-title">Content Sections</h2>
-        <span>{sections.length} returned</span>
+        <p className={styles.eyebrow}>Highlights</p>
+        <h2 id="product-highlights-title">Why it stands out.</h2>
       </div>
-      <div className={styles.simpleList}>
+      <div className={styles.storyGrid}>
         {sections.map((section, index) => {
           const record = isPublicRecord(section) ? section : null;
           const heading = record
@@ -428,8 +424,8 @@ function ContentSections({ sections }: { sections: unknown[] | undefined }) {
 
           return (
             <article key={heading ?? index}>
-              <h3>{heading ? formatLabel(heading) : `Section ${index + 1}`}</h3>
-              {body ? <p>{body}</p> : <p>Content details returned by API.</p>}
+              <h3>{heading ? formatLabel(heading) : `Highlight ${index + 1}`}</h3>
+              {body ? <p>{body}</p> : <p>More detail is being prepared for this highlight.</p>}
             </article>
           );
         })}
@@ -446,10 +442,10 @@ function SpecGroups({ specGroups }: { specGroups: unknown[] | undefined }) {
   return (
     <section className={styles.section} aria-labelledby="product-specs-title">
       <div className={styles.sectionHeader}>
-        <h2 id="product-specs-title">Specs</h2>
-        <span>{specGroups.length} groups returned</span>
+        <p className={styles.eyebrow}>Specifications</p>
+        <h2 id="product-specs-title">Details for comparison.</h2>
       </div>
-      <div className={styles.simpleList}>
+      <div className={styles.storyGrid}>
         {specGroups.map((group, index) => {
           const record = isPublicRecord(group) ? group : null;
           const name = record ? getStringValue(record, ["name", "heading", "key"]) : null;
@@ -457,7 +453,7 @@ function SpecGroups({ specGroups }: { specGroups: unknown[] | undefined }) {
 
           return (
             <article key={name ?? index}>
-              <h3>{name ?? `Spec group ${index + 1}`}</h3>
+              <h3>{name ? formatLabel(name) : `Specification group ${index + 1}`}</h3>
               {specs.length > 0 ? (
                 <dl className={styles.fieldList}>
                   {specs.map((spec, specIndex) => {
@@ -473,14 +469,14 @@ function SpecGroups({ specGroups }: { specGroups: unknown[] | undefined }) {
 
                     return (
                       <div key={specName ?? specIndex}>
-                        <dt>{specName ?? `Spec ${specIndex + 1}`}</dt>
-                        <dd>{[specValue ?? "Value returned", unit].filter(Boolean).join(" ")}</dd>
+                        <dt>{specName ? formatLabel(specName) : `Detail ${specIndex + 1}`}</dt>
+                        <dd>{[specValue ?? "Coming soon", unit].filter(Boolean).join(" ")}</dd>
                       </div>
                     );
                   })}
                 </dl>
               ) : (
-                <p>Spec group returned by API.</p>
+                <p>More specifications are being prepared.</p>
               )}
             </article>
           );
@@ -495,13 +491,20 @@ function Relationships({ relationships }: { relationships: Record<string, unknow
     return null;
   }
 
+  const fields = renderPublicFields(relationships);
+
+  if (fields.length === 0) {
+    return null;
+  }
+
   return (
-    <section className={styles.section} aria-labelledby="product-relationships-title">
+    <section className={styles.section} aria-labelledby="product-details-title">
       <div className={styles.sectionHeader}>
-        <h2 id="product-relationships-title">Relationships</h2>
+        <p className={styles.eyebrow}>More details</p>
+        <h2 id="product-details-title">Useful product notes.</h2>
       </div>
       <dl className={styles.fieldList}>
-        {renderPublicFields(relationships).map((field) => (
+        {fields.map((field) => (
           <div key={field.key}>
             <dt>{formatLabel(field.key)}</dt>
             <dd>{field.value}</dd>
@@ -514,15 +517,18 @@ function Relationships({ relationships }: { relationships: Record<string, unknow
 
 function ErrorState({ error }: { error: string }) {
   return (
-    <main className={styles.page}>
-      <div className={styles.backBar}>
-        <a href="/catalog">Back to catalog</a>
-      </div>
-      <section className={styles.error} role="status">
-        <strong>Product detail failed.</strong>
-        <span>{error}</span>
-      </section>
-    </main>
+    <>
+      <PublicStorefrontNav activeItem="catalog" />
+      <main className={styles.page}>
+        <div className={styles.backBar}>
+          <a href="/catalog">Back to catalog</a>
+        </div>
+        <section className={styles.error} role="status">
+          <strong>We could not load this product.</strong>
+          <span>{error}</span>
+        </section>
+      </main>
+    </>
   );
 }
 
@@ -530,73 +536,67 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { product, error } = await loadProduct(params.slug);
 
   if (error || !product) {
-    return <ErrorState error={error ?? "Product was not returned by the catalog API."} />;
+    return <ErrorState error={error ?? "Product details are temporarily unavailable."} />;
   }
 
   const variants = product.variants ?? [];
+  const isCheckoutEligible = isProductCheckoutEligible(product);
 
   return (
-    <main className={styles.page}>
-      <div className={styles.backBar}>
-        <a href="/catalog">Back to catalog</a>
-      </div>
-
-      <section className={styles.header} aria-labelledby="product-title">
-        <div className={styles.headerText}>
-          <p className={styles.eyebrow}>TigerPingPong.ca product</p>
-          <h1 className={styles.title} id="product-title">
-            {product.name}
-          </h1>
-          <div className={styles.headerMeta}>
-            <strong>{formatPrice(product.priceCents, product.currency)}</strong>
-            <span>{product.category.name}</span>
-            <span>{product.family.name}</span>
-          </div>
-          {product.shortDescription ? (
-            <p className={styles.summary}>{product.shortDescription}</p>
-          ) : null}
-        </div>
-        <p className={styles.shippingNote}>
-          <ShippingTermsCopy priceCents={product.priceCents} />
-        </p>
-      </section>
-
-      <section className={styles.mediaSection} aria-labelledby="product-media-title">
-        <div className={styles.sectionHeader}>
-          <h2 id="product-media-title">Media</h2>
-          <span>{product.media.length} records</span>
-        </div>
-        <ProductMediaGallery product={product} />
-      </section>
-
-      <section className={styles.detailGrid} aria-label="Product detail summary">
-        <div className={styles.detailPanel}>
-          <h2>Product Details</h2>
-          <ProductFacts product={product} />
+    <>
+      <PublicStorefrontNav activeItem="catalog" />
+      <main className={styles.page}>
+        <div className={styles.backBar}>
+          <a href="/catalog">Back to catalog</a>
         </div>
 
-        <div className={styles.detailPanel}>
-          <h2>V1 Checkout</h2>
-          <CheckoutButton
-            isCheckoutEligible={isProductCheckoutEligible(product)}
-            productSlug={product.slug}
-          />
-        </div>
-      </section>
+        <section className={styles.productHero} aria-labelledby="product-title">
+          <ProductMediaGallery product={product} />
 
-      {product.description ? (
-        <section className={styles.section} aria-labelledby="product-description-title">
-          <div className={styles.sectionHeader}>
-            <h2 id="product-description-title">Description</h2>
-          </div>
-          <p className={styles.description}>{product.description}</p>
+          <aside className={styles.purchasePanel} aria-label={`${product.name} purchase panel`}>
+            <p className={styles.eyebrow}>{product.category.name}</p>
+            <h1 className={styles.title} id="product-title">
+              {product.name}
+            </h1>
+
+            <div className={styles.priceRow}>
+              <strong>{formatPrice(product.priceCents, product.currency)}</strong>
+              <span>
+                {product.shortDescription ?? `Part of the ${product.family.name} lineup.`}
+              </span>
+            </div>
+
+            <div className={styles.shippingNote}>
+              <strong>
+                {product.priceCents !== null && product.priceCents > 10000
+                  ? "Free shipping across Canada."
+                  : "Free shipping on orders over $100."}
+              </strong>
+              <span>Canada only. Orders $100 CAD or under use $15 flat-rate shipping.</span>
+            </div>
+
+            <div className={styles.checkoutPanel}>
+              <h2>Checkout</h2>
+              <CheckoutButton isCheckoutEligible={isCheckoutEligible} productSlug={product.slug} />
+            </div>
+
+            <ProductFacts product={product} />
+          </aside>
         </section>
-      ) : null}
 
-      <VariantsSection product={product} variants={variants} />
-      <SpecGroups specGroups={product.specGroups} />
-      <ContentSections sections={product.contentSections} />
-      <Relationships relationships={product.relationships} />
-    </main>
+        {product.description ? (
+          <section className={styles.descriptionBand} aria-labelledby="product-description-title">
+            <p className={styles.eyebrow}>Product story</p>
+            <h2 id="product-description-title">Built for the next match.</h2>
+            <p>{product.description}</p>
+          </section>
+        ) : null}
+
+        <VariantsSection product={product} variants={variants} />
+        <SpecGroups specGroups={product.specGroups} />
+        <HighlightsSection sections={product.contentSections} />
+        <Relationships relationships={product.relationships} />
+      </main>
+    </>
   );
 }

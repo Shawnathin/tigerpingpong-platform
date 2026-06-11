@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 
-import {
-  CatalogApiError,
-  getCategories,
-  getProductFamilies,
-  getProducts
-} from "../../lib/catalog-api";
+import { PublicStorefrontNav } from "../PublicStorefrontNav";
+import { getCategories, getProductFamilies, getProducts } from "../../lib/catalog-api";
 import { getV1ShippingMessage } from "../../lib/shipping";
 import type {
   CatalogCategory,
@@ -19,9 +15,12 @@ import styles from "./page.module.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Catalog | Tiger Ping Pong Platform",
-  description: "Browse the public Tiger Ping Pong catalog skeleton."
+  title: "Catalog | Tiger Ping Pong",
+  description: "Shop Tiger Ping Pong tables, paddles, balls, and accessories."
 };
+
+const PORTLAND_IMAGE =
+  "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1";
 
 interface CatalogResource<TData> {
   data: TData | null;
@@ -45,10 +44,10 @@ async function loadResource<TData>(loader: () => Promise<TData>): Promise<Catalo
       data: await loader(),
       error: null
     };
-  } catch (error) {
+  } catch {
     return {
       data: null,
-      error: formatError(error)
+      error: "Live catalog data is temporarily unavailable."
     };
   }
 }
@@ -76,14 +75,6 @@ async function loadPublicCatalog(): Promise<PublicCatalogData> {
   };
 }
 
-function formatError(error: unknown): string {
-  if (error instanceof CatalogApiError) {
-    return `${error.message} (${error.url})`;
-  }
-
-  return error instanceof Error ? error.message : "Catalog API request failed.";
-}
-
 function hasReplacementPartsMarker(...values: Array<string | null | undefined>): boolean {
   return values.some((value) => {
     if (!value) {
@@ -99,13 +90,9 @@ function isReplacementPartsSummary(summary: CatalogSummary): boolean {
   return hasReplacementPartsMarker(summary.key, summary.slug, summary.name);
 }
 
-function isReplacementPartsCategory(category: CatalogCategory): boolean {
-  return isReplacementPartsSummary(category);
-}
-
 function filterPublicCategories(categories: CatalogCategory[]): CatalogCategory[] {
   return categories
-    .filter((category) => !isReplacementPartsCategory(category))
+    .filter((category) => !isReplacementPartsSummary(category))
     .map((category) => ({
       ...category,
       children: filterPublicCategories(category.children)
@@ -169,7 +156,7 @@ function groupProductsByCategory(
 
 function formatPrice(priceCents: number | null, currency: string): string {
   if (priceCents === null) {
-    return "Price pending";
+    return "Price coming soon";
   }
 
   return new Intl.NumberFormat("en-CA", {
@@ -186,64 +173,81 @@ function formatProductKind(productKind: string): string {
     .join(" ");
 }
 
-function getMediaLabel(product: CatalogProductSummary): string {
-  if (!product.primaryMedia) {
-    return `${product.name} image pending`;
-  }
-
-  const mediaText = [product.primaryMedia.altText, product.primaryMedia.title]
-    .filter(Boolean)
-    .join(" / ");
-
-  return mediaText || product.primaryMedia.mediaKey;
+function getProductImage(product: CatalogProductSummary): {
+  alt: string;
+  src: string | null;
+} {
+  return {
+    alt: product.primaryMedia?.altText ?? product.name,
+    src: product.primaryMedia?.cloudinarySecureUrl ?? null
+  };
 }
 
-function ResourceError({ label, error }: { label: string; error: string | null }) {
+function getHeroImage(products: CatalogProductSummary[]): {
+  alt: string;
+  src: string;
+} {
+  const featuredProduct =
+    products.find((product) => product.primaryMedia?.cloudinarySecureUrl) ?? products[0];
+
+  return {
+    alt:
+      featuredProduct?.primaryMedia?.altText ?? featuredProduct?.name ?? "Portland Outdoor table",
+    src: featuredProduct?.primaryMedia?.cloudinarySecureUrl ?? PORTLAND_IMAGE
+  };
+}
+
+function getProductPitch(product: CatalogProductSummary): string {
+  const kind = formatProductKind(product.productKind).toLowerCase();
+  return `Explore this ${kind} from the ${product.family.name} lineup.`;
+}
+
+function ResourceError({ error }: { error: string | null }) {
   if (!error) {
     return null;
   }
 
   return (
     <div className={styles.error} role="status">
-      <strong>{label} failed.</strong>
+      <strong>Catalog connection issue</strong>
       <span>{error}</span>
     </div>
   );
 }
 
-function CategoryTree({ categories }: { categories: CatalogCategory[] }) {
-  if (categories.length === 0) {
-    return <p className={styles.empty}>No public categories returned.</p>;
+function CategoryNav({ categories }: { categories: CatalogCategory[] }) {
+  const flatCategories = flattenCategories(categories);
+
+  if (flatCategories.length === 0) {
+    return null;
   }
 
   return (
-    <ul className={styles.categoryList}>
-      {categories.map((category) => (
-        <li key={category.key}>
-          <a href={`#category-${category.slug}`}>{category.name}</a>
-          {category.children.length > 0 ? <CategoryTree categories={category.children} /> : null}
-        </li>
+    <nav className={styles.categoryNav} aria-label="Catalog categories">
+      {flatCategories.map((category) => (
+        <a href={`#category-${category.slug}`} key={category.key}>
+          {category.name}
+        </a>
       ))}
-    </ul>
+    </nav>
   );
 }
 
 function ProductMedia({ product }: { product: CatalogProductSummary }) {
-  const label = getMediaLabel(product);
-  const cloudinaryUrl = product.primaryMedia?.cloudinarySecureUrl;
+  const image = getProductImage(product);
 
-  if (cloudinaryUrl) {
+  if (image.src) {
     return (
       <div className={styles.mediaFrame}>
-        <img src={cloudinaryUrl} alt={product.primaryMedia?.altText ?? product.name} />
+        <img src={image.src} alt={image.alt} />
       </div>
     );
   }
 
   return (
-    <div className={styles.mediaPlaceholder} aria-label={label}>
-      <span>Image pending</span>
-      <small>{label}</small>
+    <div className={styles.mediaPlaceholder} aria-label={`${product.name} image pending`}>
+      <span>{product.category.name}</span>
+      <strong>{product.name}</strong>
     </div>
   );
 }
@@ -251,8 +255,18 @@ function ProductMedia({ product }: { product: CatalogProductSummary }) {
 function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
   return (
     <>
-      {getV1ShippingMessage(priceCents)} <a href="/shipping">See shipping terms.</a>
+      {getV1ShippingMessage(priceCents)} <a href="/shipping">Shipping details</a>
     </>
+  );
+}
+
+function FamilyCard({ family }: { family: CatalogFamily }) {
+  return (
+    <a className={styles.familyCard} href={`#category-${family.primaryCategory.slug}`}>
+      <small>{family.primaryCategory.name}</small>
+      <strong>{family.name}</strong>
+      <span>{family.description ?? "Explore this Tiger Ping Pong product family."}</span>
+    </a>
   );
 }
 
@@ -267,37 +281,29 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
         <ProductMedia product={product} />
         <div className={styles.productBody}>
           <div className={styles.productHeader}>
+            <p>{product.category.name}</p>
             <h3>{product.name}</h3>
             <strong>{formatPrice(product.priceCents, product.currency)}</strong>
           </div>
-
+          <p className={styles.productPitch}>{getProductPitch(product)}</p>
           <dl className={styles.productFacts}>
             <div>
-              <dt>Slug</dt>
-              <dd>{product.slug}</dd>
-            </div>
-            <div>
-              <dt>Category</dt>
-              <dd>{product.category.name}</dd>
-            </div>
-            <div>
-              <dt>Family</dt>
+              <dt>Lineup</dt>
               <dd>{product.family.name}</dd>
             </div>
             <div>
-              <dt>Kind</dt>
+              <dt>Type</dt>
               <dd>{formatProductKind(product.productKind)}</dd>
-            </div>
-            <div>
-              <dt>Primary media</dt>
-              <dd>{getMediaLabel(product)}</dd>
             </div>
           </dl>
         </div>
       </a>
-      <p className={styles.shippingNote}>
-        <ShippingTermsCopy priceCents={product.priceCents} />
-      </p>
+      <div className={styles.cardFooter}>
+        <p>
+          <ShippingTermsCopy priceCents={product.priceCents} />
+        </p>
+        <a href={`/catalog/products/${product.slug}`}>View product</a>
+      </div>
     </article>
   );
 }
@@ -308,77 +314,69 @@ export default async function CatalogPage() {
   const families = catalog.families.data ?? [];
   const products = catalog.products.data ?? [];
   const productGroups = groupProductsByCategory(products, categories);
+  const heroImage = getHeroImage(products);
 
   return (
-    <main className={styles.page}>
-      <section className={styles.header} aria-labelledby="catalog-title">
-        <p className={styles.eyebrow}>TigerPingPong.ca</p>
-        <h1 className={styles.title} id="catalog-title">
-          Tiger Ping Pong Catalog
-        </h1>
-        <p className={styles.intro}>
-          Browse the first public catalog skeleton for Tiger Ping Pong tables, paddles, balls, nets,
-          and covers. Checkout is not live on this page.
-        </p>
-      </section>
+    <>
+      <PublicStorefrontNav activeItem="catalog" />
+      <main className={styles.page}>
+        <section className={styles.hero} aria-labelledby="catalog-title">
+          <div className={styles.heroText}>
+            <p className={styles.eyebrow}>TigerPingPong.ca catalog</p>
+            <h1 className={styles.title} id="catalog-title">
+              Shop tables, paddles, balls, and accessories.
+            </h1>
+            <p className={styles.intro}>
+              Browse the Tiger Ping Pong product lineup, then open any product page for details,
+              shipping terms, and secure checkout.
+            </p>
+            <div className={styles.heroActions}>
+              <a className={styles.primaryAction} href="#products">
+                Browse products
+              </a>
+              <a className={styles.secondaryAction} href="/shipping">
+                Shipping terms
+              </a>
+            </div>
+          </div>
+          <div className={styles.heroVisual}>
+            <img src={heroImage.src} alt={heroImage.alt} />
+          </div>
+        </section>
 
-      <section className={styles.section} aria-labelledby="catalog-navigation-title">
-        <div className={styles.sectionHeader}>
-          <h2 id="catalog-navigation-title">Categories</h2>
-          {categories.length > 0 ? (
-            <span className={styles.count}>{flattenCategories(categories).length} public</span>
-          ) : null}
-        </div>
-        <ResourceError label="Categories" error={catalog.categories.error} />
-        {catalog.categories.data ? <CategoryTree categories={categories} /> : null}
-      </section>
+        <ResourceError
+          error={catalog.categories.error ?? catalog.families.error ?? catalog.products.error}
+        />
 
-      <section className={styles.section} aria-labelledby="catalog-families-title">
-        <div className={styles.sectionHeader}>
-          <h2 id="catalog-families-title">Product Families</h2>
-          {families.length > 0 ? (
-            <span className={styles.count}>{families.length} public</span>
-          ) : null}
-        </div>
-        <ResourceError label="Product families" error={catalog.families.error} />
-        {catalog.families.data ? (
-          families.length > 0 ? (
+        <section className={styles.section} aria-labelledby="catalog-navigation-title">
+          <div className={styles.sectionHeader}>
+            <p className={styles.eyebrow}>Find your match</p>
+            <h2 id="catalog-navigation-title">Jump into the lineup.</h2>
+          </div>
+          <CategoryNav categories={categories} />
+        </section>
+
+        {families.length > 0 ? (
+          <section className={styles.section} aria-labelledby="catalog-families-title">
+            <div className={styles.sectionHeader}>
+              <p className={styles.eyebrow}>Product stories</p>
+              <h2 id="catalog-families-title">Choose by style of play.</h2>
+            </div>
             <div className={styles.familyGrid}>
-              {families.map((family) => (
-                <article className={styles.familyCard} key={family.key}>
-                  <div>
-                    <h3>{family.name}</h3>
-                    <p>{family.description ?? "Catalog family summary pending."}</p>
-                  </div>
-                  <dl className={styles.familyMeta}>
-                    <div>
-                      <dt>Slug</dt>
-                      <dd>{family.slug}</dd>
-                    </div>
-                    <div>
-                      <dt>Category</dt>
-                      <dd>{family.primaryCategory.name}</dd>
-                    </div>
-                  </dl>
-                </article>
+              {families.slice(0, 6).map((family) => (
+                <FamilyCard family={family} key={family.key} />
               ))}
             </div>
-          ) : (
-            <p className={styles.empty}>No public product families returned.</p>
-          )
+          </section>
         ) : null}
-      </section>
 
-      <section className={styles.section} aria-labelledby="catalog-products-title">
-        <div className={styles.sectionHeader}>
-          <h2 id="catalog-products-title">Products</h2>
-          {products.length > 0 ? (
-            <span className={styles.count}>{products.length} public</span>
-          ) : null}
-        </div>
-        <ResourceError label="Products" error={catalog.products.error} />
-        {catalog.products.data ? (
-          products.length > 0 ? (
+        <section className={styles.section} id="products" aria-labelledby="catalog-products-title">
+          <div className={styles.sectionHeader}>
+            <p className={styles.eyebrow}>Products</p>
+            <h2 id="catalog-products-title">Ready for the next match.</h2>
+          </div>
+
+          {catalog.products.data && products.length > 0 ? (
             <div className={styles.productGroups}>
               {productGroups.map((group) => (
                 <section
@@ -389,7 +387,6 @@ export default async function CatalogPage() {
                 >
                   <div className={styles.groupHeader}>
                     <h3 id={`category-${group.category.slug}-title`}>{group.category.name}</h3>
-                    <span>{group.products.length} products</span>
                   </div>
                   <div className={styles.productGrid}>
                     {group.products.map((product) => (
@@ -400,10 +397,12 @@ export default async function CatalogPage() {
               ))}
             </div>
           ) : (
-            <p className={styles.empty}>No public products returned.</p>
-          )
-        ) : null}
-      </section>
-    </main>
+            <p className={styles.empty}>
+              Product cards will appear here as soon as the product lineup is available.
+            </p>
+          )}
+        </section>
+      </main>
+    </>
   );
 }

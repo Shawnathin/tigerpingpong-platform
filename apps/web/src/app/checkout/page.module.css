@@ -2,7 +2,7 @@
   display: grid;
   gap: 28px;
   min-height: 100vh;
-  padding: 34px 20px 64px;
+  padding: 28px 20px 72px;
 }
 
 .backBar,
@@ -15,85 +15,107 @@
 .backBar a,
 .actions a,
 .secondaryLink {
-  color: #17633a;
-  font-weight: 700;
+  color: var(--tiger-orange-deep);
+  font-weight: 900;
   text-decoration: none;
 }
 
 .backBar a {
   display: inline-flex;
-  min-height: 36px;
+  min-height: 38px;
   align-items: center;
-  font-size: 0.92rem;
+  border-radius: 999px;
+  padding: 0 14px;
+  color: #303544;
+  font-size: 0.88rem;
+  background: rgb(255 255 255 / 70%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 86%);
 }
 
 .backBar a:hover,
 .actions a:hover,
-.secondaryLink:hover {
+.secondaryLink:hover,
+.backBar a:focus-visible,
+.actions a:focus-visible,
+.secondaryLink:focus-visible {
+  color: var(--tiger-orange-deep);
   text-decoration: underline;
 }
 
 .header {
   display: grid;
-  gap: 14px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #d7ded2;
+  gap: 16px;
+  overflow: hidden;
+  border-radius: 30px;
+  padding: 42px;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 88%), rgb(255 255 255 / 44%)),
+    linear-gradient(120deg, rgb(242 138 46 / 12%), rgb(116 200 242 / 16%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 92%),
+    0 24px 70px rgb(27 36 65 / 8%);
 }
 
 .eyebrow {
   margin: 0;
-  color: #52656d;
-  font-size: 0.82rem;
-  font-weight: 700;
+  color: var(--tiger-orange-deep);
+  font-size: 0.8rem;
+  font-weight: 950;
   letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .title {
   margin: 0;
-  color: #101820;
-  font-size: clamp(2rem, 5vw, 3.7rem);
-  line-height: 1;
+  color: var(--tiger-ink);
+  font-size: 3.2rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 0.98;
 }
 
 .intro {
   max-width: 720px;
   margin: 0;
-  color: #44535c;
-  font-size: 1rem;
-  line-height: 1.55;
+  color: #4f586c;
+  font-size: 1.05rem;
+  font-weight: 720;
+  line-height: 1.58;
 }
 
 .panel {
   display: grid;
   gap: 18px;
-  padding: 22px;
-  border: 1px solid #d7ded2;
+  border: 1px solid rgb(255 255 255 / 82%);
   border-radius: 8px;
-  background: #ffffff;
+  padding: 24px;
+  background: rgb(255 255 255 / 76%);
+  box-shadow: 0 18px 48px rgb(27 36 65 / 7%);
 }
 
 .panel h2 {
   margin: 0;
-  color: #1d252c;
-  font-size: 1.18rem;
+  color: var(--tiger-ink);
+  font-size: 1.28rem;
+  font-weight: 950;
 }
 
 .panel p {
   max-width: 720px;
   margin: 0;
-  color: #44535c;
+  color: #4f586c;
   font-size: 0.96rem;
+  font-weight: 720;
   line-height: 1.55;
 }
 
 .statusBadge {
   width: fit-content;
-  padding: 5px 10px;
-  border: 1px solid #d7ded2;
+  border: 1px solid rgb(255 255 255 / 82%);
   border-radius: 999px;
+  padding: 6px 11px;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 950;
 }
 
 .paidTone {
@@ -128,16 +150,17 @@
 }
 
 .statusList dt {
-  color: #60717a;
+  color: #687080;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 950;
   text-transform: uppercase;
 }
 
 .statusList dd {
   margin: 0;
-  color: #26343a;
+  color: #263049;
   font-size: 0.95rem;
+  font-weight: 730;
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
@@ -146,13 +169,13 @@
   display: grid;
   gap: 4px;
   padding-top: 4px;
-  color: #60717a;
+  color: #687080;
   font-size: 0.82rem;
   line-height: 1.45;
 }
 
 .reference span {
-  font-weight: 700;
+  font-weight: 950;
   text-transform: uppercase;
 }
 
@@ -171,35 +194,46 @@
 
 .primaryAction {
   display: inline-flex;
-  min-height: 40px;
+  min-height: 46px;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
-  border-radius: 8px;
-  background: #17633a;
+  border-radius: 999px;
+  padding: 0 18px;
   color: #ffffff;
   font-size: 0.94rem;
+  background: linear-gradient(135deg, #ffad5d, var(--tiger-orange-deep));
+  box-shadow: 0 18px 34px rgb(232 111 24 / 22%);
 }
 
 .actions .primaryAction {
   color: #ffffff;
 }
 
-.primaryAction:hover {
-  background: #124f2e;
+.primaryAction:hover,
+.primaryAction:focus-visible {
+  color: #ffffff;
   text-decoration: none;
 }
 
 .secondaryLink {
   display: inline-flex;
-  min-height: 40px;
+  min-height: 46px;
   align-items: center;
   font-size: 0.94rem;
 }
 
 @media (max-width: 560px) {
   .page {
-    padding-top: 24px;
+    padding: 20px 12px 54px;
+  }
+
+  .header {
+    border-radius: 24px;
+    padding: 30px 22px;
+  }
+
+  .title {
+    font-size: 2.3rem;
   }
 
   .statusList div {

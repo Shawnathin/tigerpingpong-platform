@@ -5,14 +5,15 @@ import {
   type CheckoutSessionPublicStatus,
   type CheckoutSessionStatus
 } from "../../../lib/checkout-api";
+import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 
 import styles from "../page.module.css";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Checkout Status | Tiger Ping Pong Platform",
-  description: "V1 Stripe checkout redirect status page for Tiger Ping Pong."
+  title: "Checkout Status | Tiger Ping Pong",
+  description: "Tiger Ping Pong checkout redirect status page."
 };
 
 interface CheckoutSuccessPageProps {
@@ -191,92 +192,95 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
   const currency = status?.currency ?? "cad";
 
   return (
-    <main className={styles.page}>
-      <div className={styles.backBar}>
-        <a href="/catalog">Back to catalog</a>
-      </div>
-
-      <section className={styles.header} aria-labelledby="checkout-success-title">
-        <p className={styles.eyebrow}>TigerPingPong.ca checkout</p>
-        <h1 className={styles.title} id="checkout-success-title">
-          {content.heading}
-        </h1>
-        <p className={styles.intro}>{content.intro}</p>
-      </section>
-
-      <section className={styles.panel} aria-labelledby="checkout-success-status-title">
-        <span className={badgeClassName}>{content.badge}</span>
-        <h2 id="checkout-success-status-title">Backend checkout status</h2>
-        <p>
-          This page reads the current Tiger Ping Pong order status. A Stripe success redirect is
-          only a redirect; it does not update payment state.
-        </p>
-
-        <dl className={styles.statusList}>
-          <div>
-            <dt>Redirect result</dt>
-            <dd>
-              {sessionId
-                ? "Stripe checkout returned a session reference."
-                : "No session reference was included."}
-            </dd>
-          </div>
-          <div>
-            <dt>Backend status</dt>
-            <dd>{status ? formatStatusLabel(status.status) : content.badge}</dd>
-          </div>
-          <div>
-            <dt>Payment truth</dt>
-            <dd>{content.paymentTruth}</dd>
-          </div>
-          {status?.message ? (
-            <div>
-              <dt>Status note</dt>
-              <dd>{status.message}</dd>
-            </div>
-          ) : null}
-          {status?.found && status.publicReference ? (
-            <div>
-              <dt>Order reference</dt>
-              <dd>{status.publicReference}</dd>
-            </div>
-          ) : null}
-          {isPaid && typeof status.totalCents === "number" ? (
-            <div>
-              <dt>Total</dt>
-              <dd>{formatMoney(status.totalCents, currency)}</dd>
-            </div>
-          ) : null}
-          {isPaid && status.paidAt ? (
-            <div>
-              <dt>Paid at</dt>
-              <dd>{formatDateTime(status.paidAt)}</dd>
-            </div>
-          ) : null}
-          {isPaid && status.customerEmail ? (
-            <div>
-              <dt>Email</dt>
-              <dd>{status.customerEmail}</dd>
-            </div>
-          ) : null}
-        </dl>
-
-        {sessionId ? (
-          <p className={styles.reference}>
-            <span>Stripe session reference</span>
-            <code>{sessionId}</code>
-          </p>
-        ) : null}
-
-        <div className={styles.actions}>
-          <a className={styles.primaryAction} href="/catalog">
-            Return to catalog
-          </a>
-          <a className={styles.secondaryLink} href="/shipping">
-            Review shipping
-          </a>
+    <>
+      <PublicStorefrontNav activeItem="catalog" />
+      <main className={styles.page}>
+        <div className={styles.backBar}>
+          <a href="/catalog">Back to catalog</a>
         </div>
-      </section>
-    </main>
+
+        <section className={styles.header} aria-labelledby="checkout-success-title">
+          <p className={styles.eyebrow}>TigerPingPong.ca checkout</p>
+          <h1 className={styles.title} id="checkout-success-title">
+            {content.heading}
+          </h1>
+          <p className={styles.intro}>{content.intro}</p>
+        </section>
+
+        <section className={styles.panel} aria-labelledby="checkout-success-status-title">
+          <span className={badgeClassName}>{content.badge}</span>
+          <h2 id="checkout-success-status-title">Checkout status</h2>
+          <p>
+            This page reads the current Tiger Ping Pong order status. A Stripe success redirect is
+            only a redirect; it does not update payment state.
+          </p>
+
+          <dl className={styles.statusList}>
+            <div>
+              <dt>Redirect result</dt>
+              <dd>
+                {sessionId
+                  ? "Stripe checkout returned a session reference."
+                  : "No session reference was included."}
+              </dd>
+            </div>
+            <div>
+              <dt>Order status</dt>
+              <dd>{status ? formatStatusLabel(status.status) : content.badge}</dd>
+            </div>
+            <div>
+              <dt>Payment truth</dt>
+              <dd>{content.paymentTruth}</dd>
+            </div>
+            {status?.message ? (
+              <div>
+                <dt>Status note</dt>
+                <dd>{status.message}</dd>
+              </div>
+            ) : null}
+            {status?.found && status.publicReference ? (
+              <div>
+                <dt>Order reference</dt>
+                <dd>{status.publicReference}</dd>
+              </div>
+            ) : null}
+            {isPaid && typeof status.totalCents === "number" ? (
+              <div>
+                <dt>Total</dt>
+                <dd>{formatMoney(status.totalCents, currency)}</dd>
+              </div>
+            ) : null}
+            {isPaid && status.paidAt ? (
+              <div>
+                <dt>Paid at</dt>
+                <dd>{formatDateTime(status.paidAt)}</dd>
+              </div>
+            ) : null}
+            {isPaid && status.customerEmail ? (
+              <div>
+                <dt>Email</dt>
+                <dd>{status.customerEmail}</dd>
+              </div>
+            ) : null}
+          </dl>
+
+          {sessionId ? (
+            <p className={styles.reference}>
+              <span>Stripe session reference</span>
+              <code>{sessionId}</code>
+            </p>
+          ) : null}
+
+          <div className={styles.actions}>
+            <a className={styles.primaryAction} href="/catalog">
+              Return to catalog
+            </a>
+            <a className={styles.secondaryLink} href="/shipping">
+              Review shipping
+            </a>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }

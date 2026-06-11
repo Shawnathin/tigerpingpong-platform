@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Tiger Ping Pong Platform",
-  description: "Platform foundation for TigerPingPong.ca."
+  title: "Tiger Ping Pong",
+  description: "TigerPingPong.ca public storefront."
 };
 
 export default function RootLayout({

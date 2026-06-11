@@ -54,7 +54,7 @@ export default function Home() {
               Tables, paddles, and game-night gear for the next rally.
             </h1>
             <p className={styles.intro}>
-              Shop the Tiger Ping Pong lineup with sellable product pages, Stripe Checkout, and
+              Shop the Tiger Ping Pong product lineup with clear product pages, secure checkout, and
               simple Canada-wide shipping.
             </p>
             <div className={styles.heroActions}>
@@ -83,12 +83,12 @@ export default function Home() {
             <strong>Ships across Canada with a simple order rule.</strong>
           </div>
           <div>
-            <span>Stripe Checkout</span>
-            <strong>Product pages send shoppers straight to checkout.</strong>
+            <span>Secure checkout</span>
+            <strong>Product pages keep the path to purchase simple.</strong>
           </div>
           <div>
-            <span>Demo catalog</span>
-            <strong>Live catalog data powers the storefront pages.</strong>
+            <span>Product lineup</span>
+            <strong>Shop tables, paddles, balls, and accessories.</strong>
           </div>
         </section>
 

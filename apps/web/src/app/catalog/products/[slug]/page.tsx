@@ -230,9 +230,13 @@ function formatOptionValue(value: unknown): string | null {
 }
 
 function getVariantOptions(variant: PublicRecord): string {
-  const optionValues = variant.optionValues;
+  const optionValues = Array.isArray(variant.options)
+    ? variant.options
+    : Array.isArray(variant.optionValues)
+      ? variant.optionValues
+      : [];
 
-  if (!Array.isArray(optionValues) || optionValues.length === 0) {
+  if (optionValues.length === 0) {
     return "Standard option";
   }
 
@@ -261,13 +265,6 @@ function renderPublicFields(record: PublicRecord): Array<{ key: string; value: s
         return {
           key,
           value: primitive
-        };
-      }
-
-      if (Array.isArray(value) && value.length > 0) {
-        return {
-          key,
-          value: `${value.length} item${value.length === 1 ? "" : "s"}`
         };
       }
 

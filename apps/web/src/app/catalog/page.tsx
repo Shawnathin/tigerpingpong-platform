@@ -327,8 +327,8 @@ export default async function CatalogPage() {
               Shop tables, paddles, balls, and accessories.
             </h1>
             <p className={styles.intro}>
-              Browse the live public catalog, then open any product page to checkout with Stripe.
-              Every product card keeps the path simple: view details, confirm shipping, and buy.
+              Browse the Tiger Ping Pong product lineup, then open any product page for details,
+              shipping terms, and secure checkout.
             </p>
             <div className={styles.heroActions}>
               <a className={styles.primaryAction} href="#products">
@@ -398,7 +398,7 @@ export default async function CatalogPage() {
             </div>
           ) : (
             <p className={styles.empty}>
-              Product cards will appear here as soon as the public catalog data is available.
+              Product cards will appear here as soon as the product lineup is available.
             </p>
           )}
         </section>

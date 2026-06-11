@@ -4,8 +4,8 @@ import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = {
-  title: "Checkout Canceled | Tiger Ping Pong Platform",
-  description: "V1 Stripe checkout cancellation redirect page for Tiger Ping Pong."
+  title: "Checkout Canceled | Tiger Ping Pong",
+  description: "Tiger Ping Pong checkout cancellation page."
 };
 
 export default function CheckoutCancelPage() {
@@ -31,8 +31,8 @@ export default function CheckoutCancelPage() {
         <section className={styles.panel} aria-labelledby="checkout-cancel-status-title">
           <h2 id="checkout-cancel-status-title">No checkout confirmation</h2>
           <p>
-            This page only handles a canceled or incomplete Stripe checkout redirect. It does not
-            mark an order as failed, paid, or fulfilled.
+            This page only handles a canceled or incomplete checkout. It does not mark an order as
+            failed, paid, or fulfilled.
           </p>
 
           <dl className={styles.statusList}>

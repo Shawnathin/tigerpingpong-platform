@@ -12,8 +12,8 @@ import styles from "../page.module.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Checkout Status | Tiger Ping Pong Platform",
-  description: "V1 Stripe checkout redirect status page for Tiger Ping Pong."
+  title: "Checkout Status | Tiger Ping Pong",
+  description: "Tiger Ping Pong checkout redirect status page."
 };
 
 interface CheckoutSuccessPageProps {

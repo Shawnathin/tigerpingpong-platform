@@ -1,4 +1,4 @@
-type PublicStorefrontNavItem = "home" | "catalog" | "shipping";
+type PublicStorefrontNavItem = "home" | "catalog" | "shipping" | "contact";
 
 const NAV_ITEMS: Array<{
   href: string;
@@ -19,6 +19,11 @@ const NAV_ITEMS: Array<{
     href: "/shipping",
     id: "shipping",
     label: "Shipping"
+  },
+  {
+    href: "/contact",
+    id: "contact",
+    label: "Contact"
   }
 ];
 

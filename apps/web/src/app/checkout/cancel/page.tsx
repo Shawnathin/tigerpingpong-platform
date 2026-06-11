@@ -46,12 +46,20 @@ export default function CheckoutCancelPage() {
             </div>
           </dl>
 
+          <p className={styles.supportNote}>
+            If checkout failed, a product detail is unclear, or you have payment questions,{" "}
+            <a href="/contact">contact support</a> before trying again.
+          </p>
+
           <div className={styles.actions}>
             <a className={styles.primaryAction} href="/catalog">
               Return to catalog
             </a>
             <a className={styles.secondaryLink} href="/shipping">
               Review shipping
+            </a>
+            <a className={styles.secondaryLink} href="/contact">
+              Contact support
             </a>
           </div>
         </section>

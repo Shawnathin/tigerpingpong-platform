@@ -131,12 +131,16 @@ export default function Home() {
           <div>
             <p className={styles.eyebrow}>Need a local hand?</p>
             <h2 id="support-title">
-              Ask about tables, paddles, or the right setup for your space.
+              Product, shipping, checkout, and setup questions all have one clear path.
             </h2>
-            <p>Call 1-888-552-5259 or email info@tigerpingpong.com.</p>
+            <p>
+              Call <a href="tel:+18885525259">1-888-552-5259</a> or email{" "}
+              <a href="mailto:info@tigerpingpong.com">info@tigerpingpong.com</a> for Vancouver, BC
+              support across Canada.
+            </p>
           </div>
-          <a className={styles.primaryAction} href="mailto:info@tigerpingpong.com">
-            Contact us
+          <a className={styles.primaryAction} href="/contact">
+            Contact support
           </a>
         </section>
       </main>

@@ -15,6 +15,10 @@ export interface StripeWebhookConfig {
   stripeWebhookSecret: string;
 }
 
+export interface InternalOrdersApiConfig {
+  apiToken: string;
+}
+
 function readCsv(value: string | undefined, fallback: string[]): string[] {
   if (!value) {
     return fallback;
@@ -86,5 +90,13 @@ export function getStripeWebhookConfig(env: NodeJS.ProcessEnv = process.env): St
   return {
     expectedLivemode: readOptionalBoolean(env.STRIPE_EXPECTED_LIVEMODE, "STRIPE_EXPECTED_LIVEMODE"),
     stripeWebhookSecret: readRequiredString(env.STRIPE_WEBHOOK_SECRET, "STRIPE_WEBHOOK_SECRET")
+  };
+}
+
+export function getInternalOrdersApiConfig(
+  env: NodeJS.ProcessEnv = process.env
+): InternalOrdersApiConfig {
+  return {
+    apiToken: readRequiredString(env.INTERNAL_ORDERS_API_TOKEN, "INTERNAL_ORDERS_API_TOKEN")
   };
 }

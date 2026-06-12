@@ -114,7 +114,7 @@ function AddToCartModal({
             View cart
           </a>
           <a className={styles.modalCheckoutButton} href="/cart">
-            Checkout
+            Review cart
           </a>
         </div>
       </section>

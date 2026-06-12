@@ -217,7 +217,13 @@ pnpm media:cloudinary:products
 Dry run is the default. Real upload requires:
 
 ```text
-pnpm media:cloudinary:products -- --commit
+pnpm media:cloudinary:products --commit
+```
+
+Direct Node equivalent:
+
+```text
+node scripts/upload-product-media-to-cloudinary.mjs --commit
 ```
 
 Commit mode requires:
@@ -298,7 +304,7 @@ Validation commands completed:
 Dry-run upload validation completed:
 
 ```text
-node scripts/upload-product-media-to-cloudinary.mjs
+pnpm media:cloudinary:products --manifest /private/tmp/043-cloudinary-dry-run-check.json
 ```
 
 Result: clean dry run, manifest written, no upload performed.

@@ -29,7 +29,19 @@
 Command:
 
 ```text
+pnpm media:cloudinary:products
+```
+
+Equivalent direct Node command:
+
+```text
 node scripts/upload-product-media-to-cloudinary.mjs
+```
+
+Real upload command, once credentials are present:
+
+```text
+pnpm media:cloudinary:products --commit
 ```
 
 Result:

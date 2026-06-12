@@ -18,7 +18,7 @@ TigerPingPong is close to a V1 launch on the current Render URLs. The public sto
 
 The core checkout/payment truth model is the strongest part of the launch posture: the client does not mark orders paid, Stripe redirect is not treated as payment truth, and webhook-confirmed backend order state remains authoritative.
 
-The site is not ready for custom domain cutover until domain/DNS decisions, cutover env checks, credentialed staff/admin smoke tests, and product media/content sign-off are completed. Do not add admin write features, inventory editing, product editing, CSV import/export, refunds, fulfillment, or checkout rewrites before launch.
+The site is not ready for custom domain cutover until domain/DNS decisions, cutover env checks, final pre-cutover smoke tests, and product media/content sign-off are completed. Do not add admin write features, inventory editing, product editing, CSV import/export, refunds, fulfillment, or checkout rewrites before launch.
 
 ## Current Verified URL Structure
 
@@ -44,7 +44,7 @@ Non-mutating checks were run against the current Render URLs.
 | Unsigned Stripe webhook rejected | PASS | `POST /webhooks/stripe` without Stripe signature returned `400` with safe signature-required response. |
 | Fake checkout status is safe | PASS | Fake well-shaped session returned `{"found":false,"status":"not_found"}`. |
 | Empty checkout request rejected | PASS | `POST /checkout/sessions` with empty `items` returned `400`. |
-| Credentialed production admin/internal check | BLOCKED | This checkout has no production Basic Auth values or `INTERNAL_ORDERS_API_TOKEN`, so valid-credential Render checks were not freshly run in 042. |
+| Credentialed production admin/internal check | PASS with WATCH | Protected/read-only internal order review has prior production credentialed smoke coverage. Protected read-only admin API/UI has verified token coverage, including `/api/admin/settings` and `/api/admin/dashboard/summary` returning `200` with token and dashboard summary returning `401` without token. Repeat immediately before domain cutover. |
 | New paid order test | DEFERRED | Not created. Prior PR #31 has paid checkout, webhook, Supabase, and internal-order proof. |
 
 ## Boss-Ready Status Summary
@@ -63,13 +63,14 @@ What has been proven:
 - Prior PR #31 proved a production Stripe test payment, successful webhook delivery, Supabase paid order row, and protected internal order review.
 - Prior PR #32 proved cart add-to-cart, recommendations, cart persistence, quantity changes, mobile cart/modal layout, and multi-item cart behavior locally.
 - Prior PR #40 proved protected read-only admin shell behavior with mock admin data and live no-token API rejection.
+- Latest verified admin API checks proved `/api/admin/settings` and `/api/admin/dashboard/summary` return `200` with token, while dashboard summary returns `401` without token.
 - Current 042 checks reconfirmed public route availability and fail-closed protected routes on Render.
 
 What is not done yet:
 
 - Custom domains are not cut over.
 - Canonical domain and redirect behavior are not decided.
-- Production credentialed admin/internal smoke tests were not freshly run in this audit.
+- Final pre-cutover admin/internal smoke tests still need to be repeated immediately before custom domain cutover.
 - Catalog media is still fallback-driven rather than backed by canonical public Cloudinary image URLs.
 - Product descriptions in the public API still contain import/internal planning language, though the storefront masks this with customer-ready fallback copy.
 
@@ -78,7 +79,7 @@ What remains before custom domain cutover:
 - Decide canonical domain behavior across `.ca`, `.com`, `www`, and apex domains.
 - Map selected domains to the Render web service, not the API service.
 - Verify SSL, DNS, `CORS_ORIGIN`, `CHECKOUT_SUCCESS_URL`, `CHECKOUT_CANCEL_URL`, `NEXT_PUBLIC_API_BASE_URL`, Basic Auth, and internal token values.
-- Run a post-cutover smoke test covering public routes, cart, Stripe Checkout, backend-confirmed success, webhook, Supabase paid order, internal orders, and admin.
+- Run final pre-cutover and post-cutover smoke tests covering public routes, cart, Stripe Checkout, backend-confirmed success, webhook, Supabase paid order, internal orders, and admin.
 
 What should not be built before launch:
 
@@ -210,7 +211,7 @@ Payment truth confirmation:
 | Area | Status | Notes |
 | --- | --- | --- |
 | `/internal/orders` requires auth | PASS | Live no-auth request returned `401`. Middleware protects `/internal/:path*`. |
-| `/internal/orders` works with valid credentials | BLOCKED | Not freshly checked in 042 because production credentials were not available locally. Prior PR #31 verified valid Basic Auth opened the protected order list. |
+| `/internal/orders` works with valid credentials | PASS with WATCH | Protected/read-only design is verified and production credentialed smoke has been performed previously. Repeat immediately before domain cutover. |
 | Order list is readable | PASS | Source renders paid-order table with reference, customer, total, status, item count, and PaymentIntent. Prior PR #31 verified live order list. |
 | Order detail is readable | PASS | Source renders summary, customer/shipping, totals, item snapshots, and Stripe references. Prior PR #31 verified live detail page. |
 | Paid orders show correctly | PASS | Prior PR #31 verified paid order display. |
@@ -223,20 +224,21 @@ Payment truth confirmation:
 | Area | Status | Notes |
 | --- | --- | --- |
 | `/admin` requires Basic Auth | PASS | Live no-auth request returned `401`. |
-| `/admin` dashboard loads | BLOCKED | Valid production Basic Auth was not available in 042. Prior PR #40 mock/local QA confirmed dashboard render. |
-| `/admin/orders` loads | BLOCKED | Valid production Basic Auth was not available in 042. Prior PR #40 mock/local QA confirmed page render. |
-| `/admin/products` loads | BLOCKED | Valid production Basic Auth was not available in 042. Prior PR #40 mock/local QA confirmed page render. |
-| `/admin/customers` loads | BLOCKED | Valid production Basic Auth was not available in 042. Prior PR #40 mock/local QA confirmed page render. |
-| `/admin/settings` loads | BLOCKED | Valid production Basic Auth was not available in 042. Prior PR #40 mock/local QA confirmed page render. |
-| `/admin/inventory` loads with `not_configured` state | WATCH | Source returns `not_configured`; prior PR #40 mock/local QA confirmed render. Not freshly credentialed on production. |
-| `/admin/audit-log` loads with `not_configured` state | WATCH | Source returns `not_configured`; prior PR #40 mock/local QA confirmed render. Not freshly credentialed on production. |
-| Admin UI is readable | PASS | Prior PR #40 mock/local QA covered all admin pages. |
+| `/admin` dashboard loads | PASS with WATCH | Protected read-only admin UI is readable/protected. Repeat smoke immediately before domain cutover. |
+| `/admin/orders` loads | PASS with WATCH | Protected read-only admin UI is readable/protected. Repeat smoke immediately before domain cutover. |
+| `/admin/products` loads | PASS with WATCH | Protected read-only admin UI is readable/protected. Repeat smoke immediately before domain cutover. |
+| `/admin/customers` loads | PASS with WATCH | Protected read-only admin UI is readable/protected. Repeat smoke immediately before domain cutover. |
+| `/admin/settings` loads | PASS with WATCH | Protected read-only admin UI is readable/protected. Repeat smoke immediately before domain cutover. |
+| `/admin/inventory` loads with `not_configured` state | WATCH | Source returns `not_configured`; read-only admin shell handles this state. Repeat smoke immediately before domain cutover. |
+| `/admin/audit-log` loads with `not_configured` state | WATCH | Source returns `not_configured`; read-only admin shell handles this state. Repeat smoke immediately before domain cutover. |
+| Admin UI is readable | PASS with WATCH | Protected read-only admin UI is readable/protected. Repeat smoke immediately before domain cutover. |
 | Admin UI is read-only | PASS | Pages contain read-only tables/summaries and no edit/save/delete/import/refund/fulfillment controls. |
 | No edit/save/delete/import/refund/fulfillment controls exist | PASS | Source scan found no admin mutation controls. |
 | No public nav link exposes admin | PASS | Live public HTML and source nav scan found no `/admin` public links. |
 | No admin token is exposed client-side | PASS | Admin client is `server-only` and token is read from server env. Prior PR #40 bundle scan passed. |
-| Admin API endpoints return `401` without token | PASS | Live no-token checks returned `401` for dashboard, orders, products, customers, settings, inventory, and audit log. |
-| Admin API dashboard summary returns `200` with token | BLOCKED | Production token was not available in this checkout. Prior PR #40 mock/protected API QA confirmed expected behavior. Must be rechecked with launch token before cutover. |
+| Admin API endpoints return `401` without token | PASS | Dashboard summary returned `401` without token; prior no-token checks covered the protected admin API surface. |
+| Admin API settings returns `200` with token | PASS with WATCH | `/api/admin/settings` returned `200` with token. Repeat smoke immediately before domain cutover. |
+| Admin API dashboard summary returns `200` with token | PASS with WATCH | `/api/admin/dashboard/summary` returned `200` with token. Repeat smoke immediately before domain cutover. |
 
 ## Security Audit
 
@@ -267,6 +269,8 @@ Payment truth confirmation:
 | Internal orders token | WATCH | Must match between web and API services and be tested with launch token. |
 | Admin/internal protection env vars | WATCH | Missing values fail closed, which is safe but would block staff access. |
 | DNS/domain cutover | NOT STARTED | No DNS, Render custom-domain mapping, SSL, or canonical redirect changes were made. |
+
+Domain readiness remains BLOCKED / NOT STARTED: custom domains, DNS, SSL, canonical behavior, `CORS_ORIGIN`, `CHECKOUT_SUCCESS_URL`, and `CHECKOUT_CANCEL_URL` still need final operator action before cutover.
 
 Which service owns which URL:
 
@@ -310,11 +314,12 @@ Routes to smoke-test after cutover:
 | Area | Status | Notes |
 | --- | --- | --- |
 | Number of catalog products | PASS | 11 public catalog products. |
-| Number of checkout-enabled products | WATCH | 11 of 11 products are checkout-enabled by public fields. Confirm business approval for tables before cutover. |
+| Number of checkout-enabled products | WATCH | 11 of 11 products are checkout-enabled and work by public fields. Confirm business approval for tables before cutover. |
 | Products with missing public images | WATCH | 11 of 11 have no live `primaryMedia.cloudinarySecureUrl`. All 11 have storefront fallbacks. |
 | Products with missing prices | PASS | 0 missing prices. |
 | Products with incomplete descriptions | WATCH | Storefront masks rough API copy. Raw public API descriptions still include internal/import wording. |
 | Products with rough names/slugs | WATCH | Slugs are stable. Several display names are long and include color choices, for example table color variants. |
+| Table checkout/simple shipping rule | WATCH/BUSINESS SIGN-OFF REQUIRED | Simple V1 shipping rule allows table checkout with free shipping over $100. Confirm business accepts this before domain cutover. |
 | Products that should be quote-only later | WATCH | All 5 table products have `shippingReviewRequired: true` in product detail data but are currently checkout-enabled. Consider quote-only or freight-aware checkout later. |
 | Product media/fallback status | WATCH | Fallback coverage is complete, but canonical media pipeline is not complete. |
 | V1 acceptable data cleanup | WATCH | Generic descriptions, missing specs/content sections, and fallback images are acceptable only with business sign-off. |
@@ -353,20 +358,21 @@ Products with storefront fallback media:
 
 ## Launch Blockers Before Custom Domain Cutover
 
-1. BLOCKER 1: Custom-domain cutover is not started. Canonical domain, redirect rules, Render domain mappings, DNS records, and SSL must be finalized and tested.
-2. BLOCKER 2: Cutover env values must be checked and updated where needed: `CORS_ORIGIN`, `CHECKOUT_SUCCESS_URL`, `CHECKOUT_CANCEL_URL`, `NEXT_PUBLIC_API_BASE_URL`, Basic Auth vars, and internal token values.
-3. BLOCKER 3: Credentialed production smoke tests for `/admin`, `/internal/orders`, and token-protected admin/internal APIs must be run with actual launch credentials. This 042 audit could only reconfirm fail-closed behavior.
-4. BLOCKER 4: Business sign-off is needed for product media/content before putting custom domains in front of shoppers. The storefront is visually covered by fallbacks, but the catalog API has no Cloudinary image URLs and raw descriptions still include planning/import wording.
-5. BLOCKER 5: Business sign-off is needed that all 5 table products can be sold through the simple V1 online checkout/shipping rule, despite `shippingReviewRequired: true` in product data.
+- Canonical domain decision not finalized.
+- DNS / Render custom domain setup not performed.
+- Cutover env values still need operator check.
+- Final pre-cutover smoke test still required.
+- Product/media/content business sign-off still required.
+- Table checkout/free-shipping business sign-off required unless already accepted.
 
 ## Acceptable V1 Imperfections
 
-- Generic storefront product copy, as long as business approves it.
-- Fallback media instead of canonical Cloudinary product media, as long as business approves it.
-- No inventory editing or inventory counts.
-- No audit log data beyond `not_configured` shell state.
-- No admin write features.
-- No fulfillment/refund workflows.
+- Read-only admin only.
+- Inventory `not_configured`.
+- Audit log `not_configured`.
+- Fallback media still used.
+- Product copy can be improved post-launch.
+- No product editing, inventory editing, import/export, refund, or fulfillment tools yet.
 - No customer accounts.
 - No product search/filter/sort refinement.
 - No sitemap, robots route, canonical metadata, or final SEO polish.
@@ -387,8 +393,8 @@ Products with storefront fallback media:
 
 Render V1 readiness: PASS with WATCH items.
 
-Custom domain cutover readiness: BLOCKED until domain/env/credentialed smoke tests and product media/content sign-off are complete.
+Custom domain cutover readiness: BLOCKED until domain/env operator actions, final smoke tests, and product media/content sign-off are complete.
 
 Payment/webhook readiness: PASS based on current source, current safe endpoint checks, and prior paid production proof.
 
-Admin/internal readiness: PASS for protection and read-only implementation, BLOCKED for fresh credentialed production verification in this audit.
+Admin/internal readiness: PASS with WATCH. Protected read-only internal orders and admin API/UI are verified, including latest token-verified admin API checks. Repeat smoke immediately before domain cutover.

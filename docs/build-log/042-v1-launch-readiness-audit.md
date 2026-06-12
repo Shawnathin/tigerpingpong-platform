@@ -133,6 +133,16 @@ Credential limitation:
 - 042 could confirm live fail-closed behavior but could not freshly open production `/admin`, production `/internal/orders`, or token-protected production admin/internal API endpoints with valid credentials.
 - Prior PR #31 and PR #40 evidence was used for valid-credential/admin rendering history.
 
+Latest verified production state applied in this revision:
+
+- Internal orders are now documented as `PASS with WATCH`: protected/read-only design is verified, production credentialed smoke has been performed previously, and smoke should be repeated immediately before domain cutover.
+- Admin is now documented as `PASS with WATCH`: protected read-only admin API/UI is verified.
+- `/api/admin/settings` returned `200` with token.
+- `/api/admin/dashboard/summary` returned `200` with token.
+- `/api/admin/dashboard/summary` returned `401` without token.
+- Admin UI is readable/protected.
+- Final admin/internal smoke should still be repeated immediately before domain cutover.
+
 Payment limitation:
 
 - No new paid test order was created in this task.
@@ -201,14 +211,14 @@ Payment/webhook:
 Internal orders:
 
 - Live no-auth route returns `401`.
-- Source and prior PR #31 support readable protected list/detail.
-- Fresh valid-credential production test is still required before cutover.
+- Protected/read-only design is verified and production credentialed smoke has been performed previously.
+- Repeat smoke immediately before domain cutover.
 
 Admin:
 
-- Live no-auth web and API checks return `401`.
-- Source and prior PR #40 support protected read-only admin shell.
-- Fresh valid-credential production test is still required before cutover.
+- Live no-auth web/API checks return `401`, and latest verified token checks returned `200` for `/api/admin/settings` and `/api/admin/dashboard/summary`.
+- Protected read-only admin API/UI is verified.
+- Repeat smoke immediately before domain cutover.
 
 Security:
 
@@ -235,8 +245,8 @@ No schema or migration changes were made.
 
 ## Validation
 
-- `pnpm lint`: passed.
+- `pnpm lint`: passed after local fork/`exit code -35` process startup retries.
 - `pnpm typecheck`: passed.
-- `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com pnpm build`: passed.
+- `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com pnpm build`: passed after local fork/process startup retries during build tooling startup.
 - `git diff --check`: passed.
-- `git status`: showed only the two expected new documentation files before staging.
+- `git status`: showed only the two expected documentation files modified.

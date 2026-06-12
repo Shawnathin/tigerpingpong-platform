@@ -192,10 +192,10 @@ function getMediaItems(product: CatalogProductDetail): DisplayMediaItem[] {
   const sortedCatalogMedia = [...product.media].sort(
     (left, right) => left.sortOrder - right.sortOrder
   );
-  const hasLiveMedia = sortedCatalogMedia.some((media) => media.cloudinarySecureUrl);
+  const liveMedia = sortedCatalogMedia.filter((media) => media.cloudinarySecureUrl);
 
-  if (hasLiveMedia) {
-    return sortedCatalogMedia.map((media) => ({
+  if (liveMedia.length > 0) {
+    return liveMedia.map((media) => ({
       ...media,
       src: media.cloudinarySecureUrl
     }));

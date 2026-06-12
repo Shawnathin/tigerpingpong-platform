@@ -840,12 +840,26 @@ function validateBusinessRules(files, issues) {
   }
 
   for (const row of media.rows) {
-    if (value(row, "cloudinary_secure_url") !== "") {
+    const cloudinarySecureUrl = value(row, "cloudinary_secure_url");
+
+    if (
+      cloudinarySecureUrl !== "" &&
+      !cloudinarySecureUrl.startsWith("https://res.cloudinary.com/")
+    ) {
       issues.push({
         file: media.relativePath,
         row: row.__rowNumber,
         message:
-          "cloudinary_secure_url must stay blank until an explicit Cloudinary upload task."
+          "cloudinary_secure_url must be blank or a Cloudinary HTTPS delivery URL."
+      });
+    }
+
+    if (cloudinarySecureUrl !== "" && value(row, "cloudinary_public_id") === "") {
+      issues.push({
+        file: media.relativePath,
+        row: row.__rowNumber,
+        message:
+          "cloudinary_public_id is required when cloudinary_secure_url is populated."
       });
     }
   }
@@ -1263,6 +1277,7 @@ async function importVariants(tx, importData, state, result) {
 async function importMedia(tx, importData, state, result) {
   for (const row of rows(importData, "media")) {
     const sourceUrl = nullIfBlank(value(row, "source_url"));
+    const cloudinarySecureUrl = nullIfBlank(value(row, "cloudinary_secure_url"));
     const product = state.products.get(value(row, "product_key"));
     const variantKey = value(row, "variant_key");
     const variant = variantKey === "" ? null : state.variants.get(variantKey);
@@ -1294,7 +1309,7 @@ async function importMedia(tx, importData, state, result) {
             },
         role: value(row, "role"),
         cloudinaryPublicId: nullIfBlank(value(row, "cloudinary_public_id")),
-        cloudinarySecureUrl: null,
+        cloudinarySecureUrl,
         cloudinaryResourceType: null,
         cloudinaryFormat: null,
         width: optionalInteger(row, "width"),
@@ -1306,9 +1321,9 @@ async function importMedia(tx, importData, state, result) {
         caption: nullIfBlank(value(row, "caption")),
         sortOrder: asInteger(row, "sort_order"),
         isPrimary: asBoolean(row, "is_primary"),
-        isPublic: false,
+        isPublic: Boolean(cloudinarySecureUrl),
         isActive: true,
-        reviewStatus: "needs_review",
+        reviewStatus: cloudinarySecureUrl ? "approved" : "needs_review",
         notes: mediaNotes
       },
       create: {
@@ -1329,7 +1344,7 @@ async function importMedia(tx, importData, state, result) {
           : {}),
         role: value(row, "role"),
         cloudinaryPublicId: nullIfBlank(value(row, "cloudinary_public_id")),
-        cloudinarySecureUrl: null,
+        cloudinarySecureUrl,
         cloudinaryResourceType: null,
         cloudinaryFormat: null,
         width: optionalInteger(row, "width"),
@@ -1341,9 +1356,9 @@ async function importMedia(tx, importData, state, result) {
         caption: nullIfBlank(value(row, "caption")),
         sortOrder: asInteger(row, "sort_order"),
         isPrimary: asBoolean(row, "is_primary"),
-        isPublic: false,
+        isPublic: Boolean(cloudinarySecureUrl),
         isActive: true,
-        reviewStatus: "needs_review",
+        reviewStatus: cloudinarySecureUrl ? "approved" : "needs_review",
         notes: mediaNotes
       }
     });

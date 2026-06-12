@@ -31,6 +31,27 @@ interface CustomerSummary {
   totalSpentCents: number;
 }
 
+type DashboardSectionStatus = "not_configured" | "ok" | "unavailable";
+
+interface DashboardWebhookEvent {
+  createdAt: string | null;
+  processedAt: string | null;
+  stripeEventId: string;
+  type: string;
+}
+
+interface DashboardWebhookHealth {
+  eventStatus: string;
+  items: DashboardWebhookEvent[];
+  latestProcessedWebhookEvent: DashboardWebhookEvent | null;
+  message?: string;
+  recentWebhookEvents: DashboardWebhookEvent[];
+  status: DashboardSectionStatus;
+  totalWebhookEventsCount: number;
+  unprocessedWebhookEventsCount: number;
+  webhookEventsTracked: boolean;
+}
+
 interface ShippingAddress {
   city?: string;
   country?: string;
@@ -297,174 +318,259 @@ export class AdminService implements OnModuleDestroy {
   }
 
   async getDashboardSummary(): Promise<unknown> {
+    const prisma = this.getPrisma();
+
+    await this.assertDashboardDatabaseAvailable(prisma);
+
+    const orders = await this.getDashboardOrders(prisma);
+    const products = await this.getDashboardProducts(prisma);
+    const webhookHealth = await this.getDashboardWebhookHealth(prisma);
+    const inventory = this.getDashboardInventorySummary();
+    const auditLog = this.getDashboardAuditLogSummary();
+
+    return {
+      orders,
+      products,
+      inventory,
+      auditLog,
+      webhookHealth,
+      payments: this.getDashboardPaymentsSummary(webhookHealth)
+    };
+  }
+
+  private async getDashboardOrders(prisma: PrismaClient) {
     try {
-      const prisma = this.getPrisma();
-      const [
-        paidOrdersCount,
-        pendingCheckoutOrdersCount,
-        failedCheckoutOrdersCount,
-        recentOrders,
-        totalProductsCount,
-        activeProductsCount,
-        checkoutScopeProductsCount,
-        missingCheckoutPriceCount,
-        missingPublicImageCount,
-        variantsCount,
-        totalWebhookEventsCount,
-        unprocessedWebhookEventsCount,
-        latestProcessedWebhookEvent,
-        recentWebhookEvents
-      ] = await Promise.all([
-        prisma.order.count({
-          where: {
-            status: "paid"
-          }
-        }),
-        prisma.order.count({
-          where: {
-            status: "checkout_pending"
-          }
-        }),
-        prisma.order.count({
-          where: {
-            status: "checkout_failed"
-          }
-        }),
-        prisma.order.findMany({
-          orderBy: [
-            {
-              paidAt: {
-                sort: "desc",
-                nulls: "last"
-              }
-            },
-            {
-              createdAt: "desc"
-            }
-          ],
-          select: adminOrderListSelect,
-          take: 5
-        }),
-        prisma.product.count(),
-        prisma.product.count({
-          where: {
-            status: "active"
-          }
-        }),
-        prisma.product.count({
-          where: {
-            v1CheckoutScope: true
-          }
-        }),
-        prisma.product.count({
-          where: {
-            status: "active",
-            v1CheckoutScope: true,
-            purchaseMode: {
-              in: ["online_checkout", "online_checkout_candidate"]
-            },
-            OR: [
-              {
-                priceCents: null
-              },
-              {
-                priceCents: {
-                  lte: 0
-                }
-              }
-            ]
-          }
-        }),
-        prisma.product.count({
-          where: {
-            status: "active",
-            v1CheckoutScope: true,
-            media: {
-              none: {
-                cloudinarySecureUrl: {
-                  not: null
-                },
-                isActive: true,
-                isPublic: true
-              }
-            }
-          }
-        }),
-        prisma.productVariant.count(),
-        prisma.stripeWebhookEvent.count(),
-        prisma.stripeWebhookEvent.count({
-          where: {
-            processedAt: null
-          }
-        }),
-        prisma.stripeWebhookEvent.findFirst({
-          where: {
-            processedAt: {
-              not: null
+      const paidOrdersCount = await prisma.order.count({
+        where: {
+          status: "paid"
+        }
+      });
+      const pendingCheckoutOrdersCount = await prisma.order.count({
+        where: {
+          status: "checkout_pending"
+        }
+      });
+      const failedCheckoutOrdersCount = await prisma.order.count({
+        where: {
+          status: "checkout_failed"
+        }
+      });
+      const recentOrders = await prisma.order.findMany({
+        orderBy: [
+          {
+            paidAt: {
+              sort: "desc",
+              nulls: "last"
             }
           },
-          orderBy: {
-            processedAt: "desc"
-          },
-          select: {
-            stripeEventId: true,
-            type: true,
-            processedAt: true,
-            createdAt: true
-          }
-        }),
-        prisma.stripeWebhookEvent.findMany({
-          orderBy: {
+          {
             createdAt: "desc"
-          },
-          select: {
-            stripeEventId: true,
-            type: true,
-            processedAt: true,
-            createdAt: true
-          },
-          take: 5
-        })
-      ]);
+          }
+        ],
+        select: adminOrderListSelect,
+        take: 5
+      });
 
       return {
-        orders: {
-          paidCount: paidOrdersCount,
-          pendingCheckoutCount: pendingCheckoutOrdersCount,
-          failedCheckoutCount: failedCheckoutOrdersCount,
-          recent: recentOrders.map((order) => this.serializeListOrder(order))
-        },
-        payments: {
-          webhookEventsTracked: totalWebhookEventsCount > 0,
-          status: this.getWebhookHealthStatus(totalWebhookEventsCount, latestProcessedWebhookEvent),
-          totalWebhookEventsCount,
-          unprocessedWebhookEventsCount,
-          latestProcessedWebhookEvent: latestProcessedWebhookEvent
-            ? this.serializeWebhookEvent(latestProcessedWebhookEvent)
-            : null,
-          recentWebhookEvents: recentWebhookEvents.map((event) => this.serializeWebhookEvent(event))
-        },
-        products: {
-          totalCount: totalProductsCount,
-          activeCount: activeProductsCount,
-          checkoutScopeCount: checkoutScopeProductsCount,
-          variantCount: variantsCount,
-          warnings: {
-            missingCheckoutPriceCount,
-            missingPublicImageCount
+        status: "ok",
+        paidCount: paidOrdersCount,
+        pendingCount: pendingCheckoutOrdersCount,
+        pendingCheckoutCount: pendingCheckoutOrdersCount,
+        failedCount: failedCheckoutOrdersCount,
+        failedCheckoutCount: failedCheckoutOrdersCount,
+        recent: recentOrders.map((order) => this.serializeListOrder(order))
+      };
+    } catch {
+      return {
+        status: "unavailable",
+        paidCount: 0,
+        pendingCount: 0,
+        pendingCheckoutCount: 0,
+        failedCount: 0,
+        failedCheckoutCount: 0,
+        recent: [],
+        message: "Order summary is temporarily unavailable."
+      };
+    }
+  }
+
+  private async getDashboardProducts(prisma: PrismaClient) {
+    try {
+      const totalProductsCount = await prisma.product.count();
+      const activeProductsCount = await prisma.product.count({
+        where: {
+          status: "active"
+        }
+      });
+      const checkoutScopeProductsCount = await prisma.product.count({
+        where: {
+          v1CheckoutScope: true
+        }
+      });
+      const missingCheckoutPriceCount = await prisma.product.count({
+        where: {
+          status: "active",
+          v1CheckoutScope: true,
+          purchaseMode: {
+            in: ["online_checkout", "online_checkout_candidate"]
+          },
+          OR: [
+            {
+              priceCents: null
+            },
+            {
+              priceCents: {
+                lte: 0
+              }
+            }
+          ]
+        }
+      });
+      const missingPublicImageCount = await prisma.product.count({
+        where: {
+          status: "active",
+          v1CheckoutScope: true,
+          media: {
+            none: {
+              cloudinarySecureUrl: {
+                not: null
+              },
+              isActive: true,
+              isPublic: true
+            }
           }
-        },
-        inventory: {
-          status: "not_configured",
-          warnings: [],
-          message: "Inventory tables are not implemented yet."
+        }
+      });
+      const variantsCount = await prisma.productVariant.count();
+
+      return {
+        status: "ok",
+        count: totalProductsCount,
+        totalCount: totalProductsCount,
+        activeCount: activeProductsCount,
+        checkoutScopeCount: checkoutScopeProductsCount,
+        variantCount: variantsCount,
+        warnings: {
+          missingCheckoutPriceCount,
+          missingPublicImageCount
         }
       };
     } catch {
-      throw new ServiceUnavailableException({
-        message: "Admin dashboard summary is unavailable."
-      });
+      return {
+        status: "unavailable",
+        count: 0,
+        totalCount: 0,
+        activeCount: 0,
+        checkoutScopeCount: 0,
+        variantCount: 0,
+        warnings: {
+          missingCheckoutPriceCount: 0,
+          missingPublicImageCount: 0
+        },
+        message: "Product summary is temporarily unavailable."
+      };
     }
+  }
+
+  private async getDashboardWebhookHealth(prisma: PrismaClient): Promise<DashboardWebhookHealth> {
+    try {
+      const totalWebhookEventsCount = await prisma.stripeWebhookEvent.count();
+      const unprocessedWebhookEventsCount = await prisma.stripeWebhookEvent.count({
+        where: {
+          processedAt: null
+        }
+      });
+      const latestProcessedWebhookEvent = await prisma.stripeWebhookEvent.findFirst({
+        where: {
+          processedAt: {
+            not: null
+          }
+        },
+        orderBy: {
+          processedAt: "desc"
+        },
+        select: {
+          stripeEventId: true,
+          type: true,
+          processedAt: true,
+          createdAt: true
+        }
+      });
+      const recentWebhookEvents = await prisma.stripeWebhookEvent.findMany({
+        orderBy: {
+          createdAt: "desc"
+        },
+        select: {
+          stripeEventId: true,
+          type: true,
+          processedAt: true,
+          createdAt: true
+        },
+        take: 5
+      });
+      const recentItems = recentWebhookEvents.map((event) => this.serializeWebhookEvent(event));
+
+      return {
+        status: "ok",
+        eventStatus: this.getWebhookHealthStatus(
+          totalWebhookEventsCount,
+          latestProcessedWebhookEvent
+        ),
+        webhookEventsTracked: totalWebhookEventsCount > 0,
+        totalWebhookEventsCount,
+        unprocessedWebhookEventsCount,
+        latestProcessedWebhookEvent: latestProcessedWebhookEvent
+          ? this.serializeWebhookEvent(latestProcessedWebhookEvent)
+          : null,
+        recentWebhookEvents: recentItems,
+        items: recentItems
+      };
+    } catch (error) {
+      const status = this.getOptionalDashboardSectionStatus(error);
+
+      return {
+        status,
+        eventStatus: status,
+        webhookEventsTracked: false,
+        totalWebhookEventsCount: 0,
+        unprocessedWebhookEventsCount: 0,
+        latestProcessedWebhookEvent: null,
+        recentWebhookEvents: [],
+        items: [],
+        message:
+          status === "not_configured"
+            ? "Webhook event tracking is not configured."
+            : "Webhook health is temporarily unavailable."
+      };
+    }
+  }
+
+  private getDashboardInventorySummary() {
+    return {
+      status: "not_configured",
+      items: [],
+      warnings: [],
+      message: "Inventory tables are not implemented yet."
+    };
+  }
+
+  private getDashboardAuditLogSummary() {
+    return {
+      status: "not_configured",
+      items: [],
+      message: "Audit log table not implemented yet."
+    };
+  }
+
+  private getDashboardPaymentsSummary(webhookHealth: DashboardWebhookHealth) {
+    return {
+      webhookEventsTracked: webhookHealth.webhookEventsTracked,
+      status: webhookHealth.eventStatus,
+      totalWebhookEventsCount: webhookHealth.totalWebhookEventsCount,
+      unprocessedWebhookEventsCount: webhookHealth.unprocessedWebhookEventsCount,
+      latestProcessedWebhookEvent: webhookHealth.latestProcessedWebhookEvent,
+      recentWebhookEvents: webhookHealth.recentWebhookEvents
+    };
   }
 
   async listProducts(query: AdminListQuery): Promise<unknown> {
@@ -1094,6 +1200,27 @@ export class AdminService implements OnModuleDestroy {
     return id;
   }
 
+  private async assertDashboardDatabaseAvailable(prisma: PrismaClient): Promise<void> {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+    } catch {
+      throw new ServiceUnavailableException({
+        message: "Admin dashboard summary is unavailable."
+      });
+    }
+  }
+
+  private getOptionalDashboardSectionStatus(error: unknown): DashboardSectionStatus {
+    return this.isMissingPrismaObjectError(error) ? "not_configured" : "unavailable";
+  }
+
+  private isMissingPrismaObjectError(error: unknown): boolean {
+    return (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      (error.code === "P2021" || error.code === "P2022")
+    );
+  }
+
   private getPrisma(): PrismaClient {
     if (!this.prisma) {
       try {
@@ -1119,8 +1246,8 @@ export class AdminService implements OnModuleDestroy {
   private isCheckoutConfigured(env: NodeJS.ProcessEnv): boolean {
     return Boolean(
       env.STRIPE_SECRET_KEY?.trim() &&
-        env.CHECKOUT_SUCCESS_URL?.trim() &&
-        env.CHECKOUT_CANCEL_URL?.trim()
+      env.CHECKOUT_SUCCESS_URL?.trim() &&
+      env.CHECKOUT_CANCEL_URL?.trim()
     );
   }
 

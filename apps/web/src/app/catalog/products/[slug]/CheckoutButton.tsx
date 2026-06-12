@@ -3,14 +3,32 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { formatCartMoney, type CartProductInput } from "../../../../lib/cart";
+import {
+  formatCartItemOptions,
+  formatCartMoney,
+  type CartItemOption,
+  type CartProductInput
+} from "../../../../lib/cart";
 import { useCart } from "../../../../lib/use-cart";
 
 import styles from "./page.module.css";
 
+export interface ProductOptionGroup {
+  displayName: string;
+  name: string;
+  required: boolean;
+  values: ProductOptionValue[];
+}
+
+export interface ProductOptionValue {
+  label: string;
+  value: string;
+}
+
 interface CheckoutButtonProps {
   isCheckoutEligible: boolean;
   product: CartProductInput;
+  productOptions: ProductOptionGroup[];
   recommendedProducts: CartProductInput[];
 }
 
@@ -66,6 +84,9 @@ function AddToCartModal({
           <div className={styles.addedItemBody}>
             <strong>{product.name}</strong>
             <span>{product.categoryName ?? "Tiger Ping Pong"}</span>
+            {product.selectedOptions && product.selectedOptions.length > 0 ? (
+              <em>{formatCartItemOptions(product.selectedOptions)}</em>
+            ) : null}
           </div>
           <p>{formatCartMoney(product.unitPriceCents, product.currency)}</p>
         </div>
@@ -127,19 +148,49 @@ function AddToCartModal({
 export function CheckoutButton({
   isCheckoutEligible,
   product,
+  productOptions,
   recommendedProducts
 }: CheckoutButtonProps) {
   const { addItem, items } = useCart();
+  const [addedProduct, setAddedProduct] = useState<CartProductInput | null>(null);
+  const [selectedOptionValues, setSelectedOptionValues] = useState<Record<string, string>>({});
+  const [selectionError, setSelectionError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const cartSlugs = useMemo(() => new Set(items.map((item) => item.productSlug)), [items]);
+  const selectedOptions = useMemo(
+    () => getSelectedOptions(productOptions, selectedOptionValues),
+    [productOptions, selectedOptionValues]
+  );
+  const isSelectionComplete = productOptions.every(
+    (optionGroup) => !optionGroup.required || Boolean(selectedOptionValues[optionGroup.name])
+  );
 
   function handleAddToCart(): void {
-    addItem(product);
+    if (!isSelectionComplete) {
+      setSelectionError(getSelectionError(productOptions));
+      return;
+    }
+
+    const productForCart = {
+      ...product,
+      selectedOptions
+    };
+
+    addItem(productForCart);
+    setAddedProduct(productForCart);
     setIsModalOpen(true);
   }
 
   function handleAddOn(addOn: CartProductInput): void {
     addItem(addOn);
+  }
+
+  function handleOptionChange(optionName: string, optionValue: string): void {
+    setSelectedOptionValues((currentValues) => ({
+      ...currentValues,
+      [optionName]: optionValue
+    }));
+    setSelectionError(null);
   }
 
   useEffect(() => {
@@ -174,19 +225,99 @@ export function CheckoutButton({
 
   return (
     <div className={styles.checkoutBox}>
-      <button className={styles.checkoutButton} onClick={handleAddToCart} type="button">
+      {productOptions.length > 0 ? (
+        <div className={styles.optionSelectors}>
+          {productOptions.map((optionGroup) => (
+            <fieldset className={styles.optionSelector} key={optionGroup.name}>
+              <legend>{optionGroup.displayName}</legend>
+              <div className={styles.optionChoices}>
+                {optionGroup.values.map((optionValue) => {
+                  const inputId = `${product.productSlug}-${optionGroup.name}-${optionValue.value}`
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, "-");
+
+                  return (
+                    <label
+                      className={styles.optionChoice}
+                      htmlFor={inputId}
+                      key={optionValue.value}
+                    >
+                      <input
+                        checked={selectedOptionValues[optionGroup.name] === optionValue.value}
+                        id={inputId}
+                        name={`${product.productSlug}-${optionGroup.name}`}
+                        onChange={() => handleOptionChange(optionGroup.name, optionValue.value)}
+                        type="radio"
+                        value={optionValue.value}
+                      />
+                      <span>{optionValue.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+          ))}
+        </div>
+      ) : null}
+
+      <button
+        className={styles.checkoutButton}
+        disabled={!isSelectionComplete}
+        onClick={handleAddToCart}
+        type="button"
+      >
         Add to cart
       </button>
+
+      {!isSelectionComplete || selectionError ? (
+        <p
+          className={isSelectionComplete ? styles.checkoutError : styles.checkoutHint}
+          role="status"
+        >
+          {selectionError ?? getSelectionError(productOptions)}
+        </p>
+      ) : null}
 
       {isModalOpen ? (
         <AddToCartModal
           cartSlugs={cartSlugs}
           onAddOn={handleAddOn}
           onClose={() => setIsModalOpen(false)}
-          product={product}
+          product={addedProduct ?? product}
           recommendedProducts={recommendedProducts}
         />
       ) : null}
     </div>
   );
+}
+
+function getSelectedOptions(
+  productOptions: ProductOptionGroup[],
+  selectedOptionValues: Record<string, string>
+): CartItemOption[] {
+  return productOptions
+    .map((optionGroup) => {
+      const selectedValue = selectedOptionValues[optionGroup.name];
+      const optionValue = optionGroup.values.find((value) => value.value === selectedValue);
+
+      if (!optionValue) {
+        return null;
+      }
+
+      return {
+        displayName: optionGroup.displayName,
+        label: optionValue.label,
+        name: optionGroup.name,
+        value: optionValue.value
+      };
+    })
+    .filter((option): option is CartItemOption => Boolean(option));
+}
+
+function getSelectionError(productOptions: ProductOptionGroup[]): string {
+  const firstRequiredOption = productOptions.find((optionGroup) => optionGroup.required);
+
+  return firstRequiredOption
+    ? `Select ${firstRequiredOption.displayName.toLowerCase()} to add this item.`
+    : "Select the required option to add this item.";
 }

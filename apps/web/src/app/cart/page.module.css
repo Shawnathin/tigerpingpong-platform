@@ -184,6 +184,13 @@
   font-weight: 760;
 }
 
+.itemInfo em {
+  color: #263049;
+  font-size: 0.9rem;
+  font-style: normal;
+  font-weight: 840;
+}
+
 .quantityControls {
   display: grid;
   grid-template-columns: 38px 34px 38px;

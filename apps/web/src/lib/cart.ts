@@ -5,6 +5,7 @@ export const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 export const MAX_CART_QUANTITY_PER_LINE = 10;
 
 export interface CartItem {
+  cartLineId: string;
   categoryName?: string;
   currency: string;
   imageUrl: string | null;
@@ -12,6 +13,7 @@ export interface CartItem {
   productKind?: string;
   productSlug: string;
   quantity: number;
+  selectedOptions: CartItemOption[];
   unitPriceCents: number;
 }
 
@@ -22,7 +24,15 @@ export interface CartProductInput {
   name: string;
   productKind?: string;
   productSlug: string;
+  selectedOptions?: CartItemOption[];
   unitPriceCents: number;
+}
+
+export interface CartItemOption {
+  displayName: string;
+  label: string;
+  name: string;
+  value: string;
 }
 
 interface StoredCart {
@@ -82,7 +92,9 @@ export function subscribeCart(listener: () => void): () => void {
 export function addCartItem(product: CartProductInput, quantity = 1): CartItem[] {
   const items = readCartItems();
   const productSlug = product.productSlug.trim().toLowerCase();
-  const existingIndex = items.findIndex((item) => item.productSlug === productSlug);
+  const selectedOptions = sanitizeCartItemOptions(product.selectedOptions);
+  const cartLineId = getCartLineId(productSlug, selectedOptions);
+  const existingIndex = items.findIndex((item) => item.cartLineId === cartLineId);
   const nextQuantity = normalizeQuantity(quantity);
 
   if (existingIndex >= 0) {
@@ -96,10 +108,12 @@ export function addCartItem(product: CartProductInput, quantity = 1): CartItem[]
       name: product.name.trim() || existingItem.name,
       productKind: product.productKind,
       quantity: Math.min(existingItem.quantity + nextQuantity, MAX_CART_QUANTITY_PER_LINE),
+      selectedOptions,
       unitPriceCents: normalizePrice(product.unitPriceCents)
     };
   } else {
     items.push({
+      cartLineId,
       categoryName: product.categoryName,
       currency: normalizeCurrency(product.currency),
       imageUrl: normalizeImageUrl(product.imageUrl),
@@ -107,6 +121,7 @@ export function addCartItem(product: CartProductInput, quantity = 1): CartItem[]
       productKind: product.productKind,
       productSlug,
       quantity: nextQuantity,
+      selectedOptions,
       unitPriceCents: normalizePrice(product.unitPriceCents)
     });
   }
@@ -114,11 +129,11 @@ export function addCartItem(product: CartProductInput, quantity = 1): CartItem[]
   return writeCartItems(items);
 }
 
-export function updateCartItemQuantity(productSlug: string, quantity: number): CartItem[] {
-  const normalizedSlug = productSlug.trim().toLowerCase();
+export function updateCartItemQuantity(cartLineId: string, quantity: number): CartItem[] {
+  const normalizedCartLineId = normalizeCartLineId(cartLineId);
   const nextItems = readCartItems()
     .map((item) =>
-      item.productSlug === normalizedSlug
+      item.cartLineId === normalizedCartLineId
         ? {
             ...item,
             quantity: normalizeQuantity(quantity)
@@ -130,9 +145,9 @@ export function updateCartItemQuantity(productSlug: string, quantity: number): C
   return writeCartItems(nextItems);
 }
 
-export function removeCartItem(productSlug: string): CartItem[] {
-  const normalizedSlug = productSlug.trim().toLowerCase();
-  return writeCartItems(readCartItems().filter((item) => item.productSlug !== normalizedSlug));
+export function removeCartItem(cartLineId: string): CartItem[] {
+  const normalizedCartLineId = normalizeCartLineId(cartLineId);
+  return writeCartItems(readCartItems().filter((item) => item.cartLineId !== normalizedCartLineId));
 }
 
 export function clearCart(): CartItem[] {
@@ -175,6 +190,19 @@ export function formatCartMoney(cents: number, currency = "CAD"): string {
   }).format(cents / 100);
 }
 
+export function formatCartItemOptions(options: CartItemOption[]): string {
+  return options.map((option) => `${option.displayName}: ${option.label}`).join(", ");
+}
+
+export function getCartLineId(productSlug: string, selectedOptions: CartItemOption[]): string {
+  const normalizedSlug = productSlug.trim().toLowerCase();
+  const optionSignature = sanitizeCartItemOptions(selectedOptions)
+    .map((option) => `${normalizeOptionKey(option.name)}=${normalizeOptionKey(option.value)}`)
+    .join("&");
+
+  return optionSignature ? `${normalizedSlug}::${optionSignature}` : normalizedSlug;
+}
+
 function writeCartItems(items: CartItem[]): CartItem[] {
   const sanitizedItems = sanitizeCartItems(items);
 
@@ -214,7 +242,7 @@ function sanitizeCartItems(value: unknown): CartItem[] {
   }
 
   const items: CartItem[] = [];
-  const seenSlugs = new Set<string>();
+  const seenCartLineIds = new Set<string>();
 
   for (const item of value) {
     if (!isRecord(item)) {
@@ -226,13 +254,21 @@ function sanitizeCartItems(value: unknown): CartItem[] {
     const name = typeof item.name === "string" ? item.name.trim() : "";
     const unitPriceCents = normalizePrice(item.unitPriceCents);
     const quantity = normalizeQuantity(item.quantity);
+    const selectedOptions = sanitizeCartItemOptions(item.selectedOptions);
+    const cartLineId = getCartLineId(productSlug, selectedOptions);
 
-    if (!isValidSlug(productSlug) || !name || unitPriceCents <= 0 || seenSlugs.has(productSlug)) {
+    if (
+      !isValidSlug(productSlug) ||
+      !name ||
+      unitPriceCents <= 0 ||
+      seenCartLineIds.has(cartLineId)
+    ) {
       continue;
     }
 
-    seenSlugs.add(productSlug);
+    seenCartLineIds.add(cartLineId);
     items.push({
+      cartLineId,
       categoryName: typeof item.categoryName === "string" ? item.categoryName : undefined,
       currency: normalizeCurrency(item.currency),
       imageUrl: normalizeImageUrl(item.imageUrl),
@@ -240,6 +276,7 @@ function sanitizeCartItems(value: unknown): CartItem[] {
       productKind: typeof item.productKind === "string" ? item.productKind : undefined,
       productSlug,
       quantity,
+      selectedOptions,
       unitPriceCents
     });
   }
@@ -263,6 +300,10 @@ function normalizeCurrency(value: unknown): string {
   return typeof value === "string" && value.trim() ? value.trim().toUpperCase() : "CAD";
 }
 
+function normalizeCartLineId(value: string): string {
+  return value.trim().toLowerCase();
+}
+
 function normalizeImageUrl(value: unknown): string | null {
   if (typeof value !== "string" || !value.trim()) {
     return null;
@@ -275,6 +316,71 @@ function normalizeImageUrl(value: unknown): string | null {
   }
 
   return null;
+}
+
+function sanitizeCartItemOptions(value: unknown): CartItemOption[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const options: CartItemOption[] = [];
+  const seenOptionNames = new Set<string>();
+
+  for (const option of value) {
+    if (!isRecord(option)) {
+      continue;
+    }
+
+    const name = normalizeOptionText(option.name);
+    const valueText = normalizeOptionText(option.value);
+
+    if (!name || !valueText) {
+      continue;
+    }
+
+    const normalizedName = normalizeOptionKey(name);
+
+    if (seenOptionNames.has(normalizedName)) {
+      continue;
+    }
+
+    seenOptionNames.add(normalizedName);
+    options.push({
+      displayName: normalizeOptionText(option.displayName) ?? name,
+      label: normalizeOptionText(option.label) ?? valueText,
+      name,
+      value: valueText
+    });
+  }
+
+  return options.sort((left, right) =>
+    normalizeOptionKey(left.name).localeCompare(normalizeOptionKey(right.name))
+  );
+}
+
+function normalizeOptionKey(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-");
+}
+
+function normalizeOptionText(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+
+  if (
+    !normalized ||
+    normalized.length > 80 ||
+    !/^[A-Za-z0-9][A-Za-z0-9 .,_/-]*$/.test(normalized)
+  ) {
+    return null;
+  }
+
+  return normalized;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

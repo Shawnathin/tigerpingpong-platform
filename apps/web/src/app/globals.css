@@ -153,6 +153,7 @@ select {
   flex: 1;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
@@ -161,6 +162,7 @@ select {
   min-height: 44px;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   border-radius: 999px;
   padding: 0 17px;
   color: #2a3142;
@@ -179,6 +181,21 @@ select {
   background: rgb(255 255 255 / 74%);
   color: var(--tiger-orange-deep);
   transform: translateY(-1px);
+}
+
+.publicCartCount {
+  display: inline-grid;
+  min-width: 23px;
+  height: 23px;
+  place-items: center;
+  border-radius: 999px;
+  padding: 0 7px;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 950;
+  line-height: 1;
+  background: var(--tiger-orange-deep);
+  box-shadow: 0 9px 18px rgb(232 111 24 / 22%);
 }
 
 .publicNavPromise {
@@ -215,10 +232,11 @@ select {
 
   .publicNavLinks {
     width: 100%;
+    justify-content: center;
   }
 
   .publicNavLinks a {
-    flex: 1;
+    flex: 1 1 calc(50% - 6px);
     min-width: 0;
     padding-inline: 8px;
   }

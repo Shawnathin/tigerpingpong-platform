@@ -7,6 +7,7 @@ import {
 } from "../../../lib/checkout-api";
 import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 
+import { CheckoutCartCleanup } from "./CheckoutCartCleanup";
 import styles from "../page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -195,6 +196,7 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
   return (
     <>
       <PublicStorefrontNav activeItem="catalog" />
+      <CheckoutCartCleanup status={isPaid ? "paid" : (status?.status ?? null)} />
       <main className={styles.page}>
         <div className={styles.backBar}>
           <a href="/catalog">Back to catalog</a>

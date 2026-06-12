@@ -1,0 +1,277 @@
+import "server-only";
+
+const DEFAULT_API_BASE_URL = "http://localhost:3001";
+const ADMIN_API_TOKEN_HEADER = "x-internal-orders-token";
+
+export type AdminSectionStatus = "not_configured" | "ok" | "unavailable" | string;
+
+export interface AdminStripeReferences {
+  checkoutSessionId: string | null;
+  customerId: string | null;
+  paymentIntentId: string | null;
+}
+
+export interface AdminOrderListItem {
+  id: string;
+  orderReference: string;
+  customer: {
+    email: string | null;
+    name: string | null;
+    phone: string | null;
+  };
+  currency: string;
+  subtotalCents: number;
+  shippingCents: number;
+  totalCents: number;
+  orderStatus: string;
+  paymentStatus: string;
+  itemCount: number;
+  stripe: AdminStripeReferences;
+  paidAt: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface AdminOrdersResponse {
+  count: number;
+  items: AdminOrderListItem[];
+  status: string;
+}
+
+export interface AdminProductListItem {
+  id: string;
+  key: string;
+  slug: string;
+  name: string;
+  sku: string | null;
+  category: {
+    id: string;
+    key: string;
+    name: string;
+    slug: string;
+  };
+  type: string;
+  priceCents: number | null;
+  currency: string;
+  status: string;
+  visible: boolean;
+  v1CheckoutScope: boolean;
+  purchaseMode: string;
+  checkoutEligible: boolean;
+  checkoutEligibilityReasons: string[];
+  imageStatus: {
+    primaryImageUrl: string | null;
+    status: string;
+  };
+  primaryImageUrl: string | null;
+  variantCount: number;
+  mediaCount: number;
+}
+
+export interface AdminProductsResponse {
+  count: number;
+  items: AdminProductListItem[];
+}
+
+export interface AdminCustomerSummary {
+  currency: string;
+  customerName: string | null;
+  customerPhone: string | null;
+  email: string;
+  lastOrderDate: string | null;
+  orderCount: number;
+  paidOrderCount: number;
+  totalSpentCents: number;
+}
+
+export interface AdminCustomersResponse {
+  count: number;
+  derivation: string;
+  items: AdminCustomerSummary[];
+}
+
+export interface AdminWebhookEvent {
+  createdAt: string | null;
+  processedAt: string | null;
+  stripeEventId: string;
+  type: string;
+}
+
+export interface AdminWebhookHealth {
+  eventStatus: string;
+  items?: AdminWebhookEvent[];
+  latestProcessedWebhookEvent: AdminWebhookEvent | null;
+  message?: string;
+  recentWebhookEvents: AdminWebhookEvent[];
+  status: AdminSectionStatus;
+  totalWebhookEventsCount: number;
+  unprocessedWebhookEventsCount: number;
+  webhookEventsTracked: boolean;
+}
+
+export interface AdminDashboardSummary {
+  orders: {
+    failedCheckoutCount: number;
+    failedCount?: number;
+    message?: string;
+    paidCount: number;
+    pendingCheckoutCount: number;
+    pendingCount?: number;
+    recent: AdminOrderListItem[];
+    status: AdminSectionStatus;
+  };
+  products: {
+    activeCount: number;
+    checkoutScopeCount: number;
+    count?: number;
+    message?: string;
+    status: AdminSectionStatus;
+    totalCount: number;
+    variantCount: number;
+    warnings: {
+      missingCheckoutPriceCount: number;
+      missingPublicImageCount: number;
+    };
+  };
+  inventory: AdminInventoryResponse;
+  auditLog?: AdminAuditLogResponse;
+  webhookHealth?: AdminWebhookHealth;
+  payments: {
+    latestProcessedWebhookEvent: AdminWebhookEvent | null;
+    recentWebhookEvents: AdminWebhookEvent[];
+    status: string;
+    totalWebhookEventsCount: number;
+    unprocessedWebhookEventsCount: number;
+    webhookEventsTracked: boolean;
+  };
+}
+
+export interface AdminSettings {
+  checkoutEnabled: boolean;
+  currency: string;
+  flatRateShippingCents: number;
+  freeShippingThresholdCents: number;
+  storeName: string;
+  stripeMode: string;
+  supportEmail: string;
+  supportPhone: string;
+}
+
+export interface AdminSettingsResponse {
+  secretsExposed: false;
+  settings: AdminSettings;
+}
+
+export interface AdminInventoryResponse {
+  futureSmallestNextStep?: string;
+  items: unknown[];
+  message: string;
+  status: AdminSectionStatus;
+  warnings?: string[];
+}
+
+export interface AdminAuditLogResponse {
+  items: unknown[];
+  message: string;
+  status: AdminSectionStatus;
+}
+
+export class AdminApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number | null,
+    readonly url: string
+  ) {
+    super(message);
+    this.name = "AdminApiError";
+  }
+}
+
+interface AdminListOptions {
+  limit?: number;
+  status?: string;
+}
+
+export function getAdminApiBaseUrl(): string {
+  return (process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE_URL).replace(/\/$/, "");
+}
+
+export function getAdminDashboardSummary(): Promise<AdminDashboardSummary> {
+  return fetchAdmin<AdminDashboardSummary>("/api/admin/dashboard/summary");
+}
+
+export function getAdminOrders(options: AdminListOptions = {}): Promise<AdminOrdersResponse> {
+  const searchParams = new URLSearchParams();
+
+  if (options.status) {
+    searchParams.set("status", options.status);
+  }
+
+  searchParams.set("limit", String(options.limit ?? 100));
+
+  return fetchAdmin<AdminOrdersResponse>(`/api/admin/orders?${searchParams}`);
+}
+
+export function getAdminProducts(options: AdminListOptions = {}): Promise<AdminProductsResponse> {
+  const searchParams = new URLSearchParams();
+
+  searchParams.set("limit", String(options.limit ?? 100));
+
+  return fetchAdmin<AdminProductsResponse>(`/api/admin/products?${searchParams}`);
+}
+
+export function getAdminCustomers(): Promise<AdminCustomersResponse> {
+  return fetchAdmin<AdminCustomersResponse>("/api/admin/customers");
+}
+
+export function getAdminSettings(): Promise<AdminSettingsResponse> {
+  return fetchAdmin<AdminSettingsResponse>("/api/admin/settings");
+}
+
+export function getAdminInventory(): Promise<AdminInventoryResponse> {
+  return fetchAdmin<AdminInventoryResponse>("/api/admin/inventory");
+}
+
+export function getAdminAuditLog(): Promise<AdminAuditLogResponse> {
+  return fetchAdmin<AdminAuditLogResponse>("/api/admin/audit-log");
+}
+
+async function fetchAdmin<TResponse>(path: string): Promise<TResponse> {
+  const url = `${getAdminApiBaseUrl()}${path}`;
+  const apiToken = readAdminApiToken(url);
+
+  let response: Response;
+
+  try {
+    response = await fetch(url, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+        [ADMIN_API_TOKEN_HEADER]: apiToken
+      }
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Admin API request failed.";
+    throw new AdminApiError(message, null, url);
+  }
+
+  if (!response.ok) {
+    throw new AdminApiError(`Admin API returned HTTP ${response.status}.`, response.status, url);
+  }
+
+  try {
+    return (await response.json()) as TResponse;
+  } catch {
+    throw new AdminApiError("Admin API returned an invalid response.", response.status, url);
+  }
+}
+
+function readAdminApiToken(url: string): string {
+  const token = process.env.INTERNAL_ORDERS_API_TOKEN?.trim();
+
+  if (!token) {
+    throw new AdminApiError("Admin API token is not configured.", null, url);
+  }
+
+  return token;
+}

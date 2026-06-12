@@ -250,11 +250,11 @@ docs/media/043-cloudinary-upload-manifest-v1.json
 ```
 
 The manifest is safe to commit because it contains local source paths,
-catalog slugs, planned Cloudinary public IDs, image role/order, skipped folder
-summaries, and dry-run upload status only. It does not contain raw image
-binaries or Cloudinary credentials.
+catalog slugs, Cloudinary public IDs, Cloudinary secure delivery URLs, image
+role/order, skipped folder summaries, and upload status only. It does not
+contain raw image binaries or Cloudinary credentials.
 
-Dry-run manifest result:
+Upload manifest result:
 
 | Field | Result |
 | --- | ---: |
@@ -266,10 +266,11 @@ Dry-run manifest result:
 | Unmapped folders skipped | 12 |
 | Ambiguous folders | 0 |
 | Checkout-enabled products missing mapped images | 0 |
-| Uploaded | 0 |
+| Uploaded | 69 |
 
-Real upload was not performed because Cloudinary credentials are not available
-in the current shell.
+Real upload completed with approved local Cloudinary credentials. Credentials
+were loaded only from the local environment and were not printed, staged, or
+committed.
 
 ## Site Mapping Decision
 
@@ -277,9 +278,8 @@ Smallest safe mapping path:
 
 1. Keep `product_media_import_v1.csv` as the reviewed source mapping surface.
 2. Let the upload script generate reviewed Cloudinary public IDs and a manifest.
-3. After real upload and human media review, populate
-   `cloudinary_secure_url` in the reviewed media import source or import from
-   the reviewed manifest.
+3. The 11 primary reviewed media rows now have real `cloudinary_public_id` and
+   `cloudinary_secure_url` values from the upload manifest.
 4. The dev import now respects nonblank Cloudinary secure URLs and marks those
    rows public/approved.
 5. The existing API/frontend path then serves Cloudinary media first, with the
@@ -309,12 +309,21 @@ pnpm media:cloudinary:products --manifest /private/tmp/043-cloudinary-dry-run-ch
 
 Result: clean dry run, manifest written, no upload performed.
 
+Real upload validation completed:
+
+```text
+pnpm media:cloudinary:products --commit
+```
+
+Result: 69 uploaded, 0 skipped existing, 0 failed. All 69 Cloudinary secure
+URLs returned image responses during post-upload verification.
+
 ## Remaining Risks
 
-- Human image review is still required before real upload.
+- Human image review is still required before merging media as final approved
+  production imagery.
 - The Aqua source folder is not safely mapped to current Aqua draft product
   slugs/SKUs.
 - The unmapped legacy folders may need future catalog decisions before upload.
-- The reviewed media CSV still needs secure URLs populated after a real upload.
 - The live database must be re-imported or updated after reviewed Cloudinary
   URLs are approved.

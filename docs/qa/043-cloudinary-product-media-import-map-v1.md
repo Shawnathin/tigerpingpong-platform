@@ -19,10 +19,11 @@
 - [x] No checkout/cart/payment/webhook changes.
 - [x] No domain changes.
 - [x] No admin/internal auth changes.
-- [ ] Catalog cards render Cloudinary images after real upload.
-- [ ] Product detail pages render Cloudinary images after real upload.
+- [x] Catalog media mapping has real primary Cloudinary URLs after upload.
+- [x] Product detail media path uses Cloudinary media before fallback media.
 - [ ] Wrong-image spot check completed by human reviewer.
-- [ ] Real Cloudinary upload completed with approved credentials.
+- [x] Programmatic slug/public ID mapping check passed.
+- [x] Real Cloudinary upload completed with approved local credentials.
 
 ## Dry-Run Result
 
@@ -58,17 +59,22 @@ Result:
 
 ## Upload Result
 
-Real upload was not run because the current shell does not have Cloudinary
-credentials:
+Real upload completed with approved local Cloudinary credentials. Credentials
+were not printed, staged, or committed.
 
-- `CLOUDINARY_CLOUD_NAME`: missing
-- `CLOUDINARY_API_KEY`: missing
-- `CLOUDINARY_API_SECRET`: missing
-- `CLOUDINARY_URL`: missing
+- 69 files uploaded.
+- 0 skipped existing.
+- 0 failed.
+- 69 real `https://res.cloudinary.com/...` secure URLs written to the
+  manifest.
+- 11 primary reviewed media CSV rows populated with Cloudinary public IDs and
+  secure URLs.
+- 69 uploaded URLs verified as image responses.
+- 0 manifest slug/public ID mapping issues.
 
 ## Media Mapping Spot Checks
 
-Planned primary image mappings:
+Uploaded primary image mappings:
 
 | Product slug | Primary public ID |
 | --- | --- |

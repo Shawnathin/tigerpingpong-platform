@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BASIC_AUTH_REALM = "Tiger Ping Pong Internal";
+const BASIC_AUTH_REALM = "Tiger Ping Pong Staff";
 const INTERNAL_RESPONSE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
   Expires: "0",
@@ -9,7 +9,7 @@ const INTERNAL_RESPONSE_HEADERS = {
 };
 
 export const config = {
-  matcher: ["/internal/:path*"]
+  matcher: ["/internal/:path*", "/admin", "/admin/:path*"]
 };
 
 export function middleware(request: NextRequest) {

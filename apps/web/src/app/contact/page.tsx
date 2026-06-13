@@ -6,7 +6,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Contact | Tiger Ping Pong",
   description:
-    "Contact Tiger Ping Pong for product, shipping, order, checkout, dealer, and setup questions."
+    "Contact Tiger Ping Pong for product, shipping, order, checkout, and setup questions."
 };
 
 const SUPPORT_PHONE = "1-888-552-5259";
@@ -28,8 +28,8 @@ const SUPPORT_TOPICS = [
     label: "Order/payment questions"
   },
   {
-    body: "Talk through dealer requests, school or club needs, replacement parts, or setup help.",
-    label: "Dealer or setup help"
+    body: "Talk through school or club needs, replacement parts, or setup help.",
+    label: "Setup help"
   }
 ];
 
@@ -78,7 +78,7 @@ export default function ContactPage() {
           <article>
             <span>Call</span>
             <a href="tel:+18885525259">{SUPPORT_PHONE}</a>
-            <p>Product help, availability, order questions, dealer requests, and setup help.</p>
+            <p>Product help, availability, order questions, and setup help.</p>
           </article>
           <article>
             <span>Email</span>
@@ -88,7 +88,7 @@ export default function ContactPage() {
           <article>
             <span>Location</span>
             <strong>Vancouver, BC</strong>
-            <p>Serving homes, clubs, schools, parks, and dealers across Canada.</p>
+            <p>Serving homes, clubs, schools, and parks across Canada.</p>
           </article>
         </section>
 

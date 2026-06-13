@@ -4,12 +4,12 @@ import { useState } from "react";
 
 import { createCheckoutSession } from "../../lib/checkout-api";
 import {
-  FREE_SHIPPING_THRESHOLD_CENTS,
   MAX_CART_QUANTITY_PER_LINE,
   formatCartItemOptions,
   formatCartMoney,
   type CartItem
 } from "../../lib/cart";
+import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "../../lib/shipping";
 import { useCart } from "../../lib/use-cart";
 
 import styles from "./page.module.css";
@@ -175,9 +175,7 @@ export function CartPageClient() {
           <div className={styles.shippingNotice}>
             <strong>{shippingCopy}</strong>
             <span>
-              Orders over {formatCartMoney(FREE_SHIPPING_THRESHOLD_CENTS, currency)} ship free.
-              Orders at or under {formatCartMoney(FREE_SHIPPING_THRESHOLD_CENTS, currency)} use $15
-              flat-rate shipping.
+              {V1_FREE_SHIPPING_COPY} {V1_FLAT_RATE_SHIPPING_COPY}
             </span>
           </div>
 

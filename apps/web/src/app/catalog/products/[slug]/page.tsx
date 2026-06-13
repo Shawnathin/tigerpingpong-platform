@@ -10,7 +10,16 @@ import {
   getPrimaryProductMediaFallback,
   getProductShortCopy
 } from "../../../../lib/public-storefront-demo";
-import { getV1ShippingMessage } from "../../../../lib/shipping";
+import {
+  getV1ShippingMessage,
+  V1_FLAT_RATE_SHIPPING_COPY,
+  V1_FREE_SHIPPING_COPY,
+  V1_IN_STOCK_HANDLING_COPY
+} from "../../../../lib/shipping";
+import {
+  getProductContentBySlug,
+  type NormalizedProductContent
+} from "../../../../lib/product-content";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
@@ -24,11 +33,6 @@ import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Product Detail | Tiger Ping Pong",
-  description: "Tiger Ping Pong public product detail and checkout page."
-};
-
 interface ProductPageProps {
   params: {
     slug: string;
@@ -41,6 +45,24 @@ interface ProductResource {
 }
 
 type PublicRecord = Record<string, unknown>;
+
+type ProductJsonLd = {
+  "@context": "https://schema.org";
+  "@type": "Product";
+  brand?: {
+    "@type": "Brand";
+    name: string;
+  };
+  category?: string;
+  description?: string;
+  image?: string[];
+  name: string;
+  offers?: {
+    "@type": "Offer";
+    price: string;
+    priceCurrency: string;
+  };
+};
 
 const HIDDEN_PUBLIC_KEYS = [
   "source",
@@ -108,6 +130,33 @@ async function loadProduct(slug: string): Promise<ProductResource> {
     product,
     error: null
   };
+}
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const product = await loadProductForMetadata(params.slug);
+
+  if (!product) {
+    return {
+      title: "Product Detail | Tiger Ping Pong",
+      description: "Tiger Ping Pong public product detail and checkout page."
+    };
+  }
+
+  const normalizedContent = getProductContentBySlug(product.slug);
+
+  return {
+    title: `${product.name} | Tiger Ping Pong`,
+    description: getProductMetadataDescription(product, normalizedContent)
+  };
+}
+
+async function loadProductForMetadata(slug: string): Promise<CatalogProductDetail | null> {
+  try {
+    const product = await getProductBySlug(slug);
+    return isReplacementPartsProduct(product) ? null : product;
+  } catch {
+    return null;
+  }
 }
 
 function hasReplacementPartsMarker(...values: Array<string | null | undefined>): boolean {
@@ -472,6 +521,118 @@ function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
   );
 }
 
+function getProductMetadataDescription(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null
+): string {
+  const sourcedDescription = getCleanSourcedCopy(normalizedContent?.shortDescription);
+
+  if (sourcedDescription) {
+    return truncateMetaDescription(sourcedDescription);
+  }
+
+  const priceCopy =
+    product.priceCents === null ? null : `${formatPrice(product.priceCents, product.currency)} CAD`;
+  const fallbackDescription = [
+    product.name,
+    product.category.name,
+    priceCopy,
+    getV1ShippingMessage(product.priceCents)
+  ]
+    .filter(Boolean)
+    .join(". ");
+
+  return truncateMetaDescription(fallbackDescription);
+}
+
+function getCleanSourcedCopy(value: string | null | undefined): string | null {
+  const copy = value?.replace(/\s+/g, " ").trim();
+
+  if (!copy) {
+    return null;
+  }
+
+  const normalizedCopy = copy.toLowerCase();
+  const unsafeMarkers = [
+    "candidate",
+    "confirm",
+    "missing/not visible",
+    "review needed",
+    "source-page",
+    "verify whether"
+  ];
+
+  if (unsafeMarkers.some((marker) => normalizedCopy.includes(marker))) {
+    return null;
+  }
+
+  return copy;
+}
+
+function truncateMetaDescription(description: string): string {
+  if (description.length <= 155) {
+    return description;
+  }
+
+  const truncated = description.slice(0, 152);
+  const lastSpaceIndex = truncated.lastIndexOf(" ");
+
+  return `${truncated.slice(0, lastSpaceIndex > 80 ? lastSpaceIndex : 152).trimEnd()}...`;
+}
+
+function getProductJsonLd(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null,
+  mediaItems: ProductMediaGalleryItem[]
+): ProductJsonLd {
+  const jsonLd: ProductJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name
+  };
+
+  const brand = getCleanSourcedCopy(normalizedContent?.brand);
+  const description = getCleanSourcedCopy(normalizedContent?.shortDescription);
+  const image = mediaItems.map((mediaItem) => mediaItem.src).filter(isAbsoluteImageUrl);
+
+  if (brand) {
+    jsonLd.brand = {
+      "@type": "Brand",
+      name: brand
+    };
+  }
+
+  if (product.category.name.trim()) {
+    jsonLd.category = product.category.name.trim();
+  }
+
+  if (image.length > 0) {
+    jsonLd.image = image;
+  }
+
+  if (description) {
+    jsonLd.description = description;
+  }
+
+  if (product.priceCents !== null && product.priceCents > 0 && product.currency.trim()) {
+    jsonLd.offers = {
+      "@type": "Offer",
+      price: (product.priceCents / 100).toFixed(2),
+      priceCurrency: product.currency.trim().toUpperCase()
+    };
+  }
+
+  return jsonLd;
+}
+
+function isAbsoluteImageUrl(src: string | null): src is string {
+  return Boolean(src && /^https?:\/\//i.test(src));
+}
+
+function serializeJsonLd(jsonLd: ProductJsonLd): string {
+  return JSON.stringify(jsonLd).replace(/</g, "\\u003c");
+}
+
 function isPublicRecord(value: unknown): value is PublicRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -817,9 +978,17 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const recommendedProducts = await loadRecommendedAddOns(product);
   const checkoutOptionGroups = getCheckoutOptionGroups(product);
   const mediaItems = getMediaItems(product);
+  const normalizedContent = getProductContentBySlug(product.slug);
+  const productJsonLd = getProductJsonLd(product, normalizedContent, mediaItems);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(productJsonLd)
+        }}
+      />
       <PublicStorefrontNav activeItem="catalog" />
       <main className={styles.page}>
         <div className={styles.backBar}>
@@ -845,12 +1014,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             <div className={styles.shippingNote}>
-              <strong>
-                {product.priceCents !== null && product.priceCents > 10000
-                  ? "Free shipping across Canada."
-                  : "Free shipping on orders over $100."}
-              </strong>
-              <span>Canada only. Orders $100 CAD or under use $15 flat-rate shipping.</span>
+              <strong>{V1_FREE_SHIPPING_COPY}</strong>
+              <span>
+                {V1_FLAT_RATE_SHIPPING_COPY} {V1_IN_STOCK_HANDLING_COPY}
+              </span>
             </div>
 
             <div className={styles.checkoutPanel}>
@@ -867,9 +1034,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
             <div className={styles.supportNote}>
               <strong>Questions before checkout?</strong>
-              <span>
-                Contact us with the product name for product, shipping, dealer, or setup help.
-              </span>
+              <span>Contact us with the product name for product, shipping, or setup help.</span>
               <a href="/contact">Contact support</a>
             </div>
           </aside>

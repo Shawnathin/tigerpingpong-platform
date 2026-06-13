@@ -1,0 +1,1591 @@
+{
+  "artifact": "tigerpingpong-product-content-normalized",
+  "version": 1,
+  "generatedFrom": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+  "generatedAt": "2026-06-13",
+  "productCount": 18,
+  "publicShippingCopyPolicy": {
+    "ordersOver100Cad": "Orders over $100 CAD ship free across Canada.",
+    "orders100CadOrUnder": "Orders $100 CAD or under use $15 CAD flat-rate shipping.",
+    "inStockHandling": "In-stock products typically leave the warehouse in about 24 business hours.",
+    "note": "Do not reuse legacy shipping thresholds or delivery guarantees from source pages."
+  },
+  "products": [
+    {
+      "slug": "expo-indoor-ping-pong-table-grey-green-blue",
+      "currentAppSlug": null,
+      "legacySlug": "expo-indoor-ping-pong-table-grey-green-blue",
+      "slugAliases": [
+        "expo-indoor-ping-pong-table-grey-green-blue"
+      ],
+      "name": "Tiger PingPong Expo Indoor Ping Pong Table Grey, Green or Blue",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Tables > Indoor Tables",
+        "path": [
+          "Tables",
+          "Indoor Tables"
+        ]
+      },
+      "productType": "Indoor ping pong table",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 120000,
+        "priceRangeCents": null,
+        "priceText": "$1,200.00",
+        "reviewNote": null
+      },
+      "shortDescription": "The Expo Indoor is a great-looking ping pong table that's built to last. Made in Germany, the Expo can stand up to heavy play.",
+      "longDescription": "The 3/4\" (19mm) multi-coated top is supported by thick metal tubing for extra strength. The frame features powder-coated metal that offers protection against wear and tear. The locking handle system makes it easy for one person to fold up the table and roll it into storage. Feature sections describe the tabletop, steel frame, open/close system, fixed adjustable net set, maneuverability, bat and ball storage, and dimensions.",
+      "keyFeatures": [
+        "Made in Germany",
+        "3/4\" (19mm) multi-coated top",
+        "Thick metal tubing and powder-coated metal frame",
+        "Locking handle system for one-person folding and storage",
+        "Included fixed net that is height and tension adjustable",
+        "Low-profile table design with double wheels for maneuverability",
+        "Storage on both sides for 4 paddles and 18 balls"
+      ],
+      "specifications": [
+        "SKU: 7016",
+        "Availability: Usually Ships in 24 hours",
+        "Shipping: Free Across Canada",
+        "Includes: Bonus $50 Paddle Package",
+        "Table top: 3/4\" chipboard",
+        "Net: fixed, height and tension adjustable",
+        "Storage: 4 paddles and 18 balls"
+      ],
+      "dimensions": "Original packaging: 144 x 15.5 x 162 cm; Weight (Gross/Net): 82.5 / 77 kg; Storage position: 152.5-184 x 72 x 155 cm; Playing position: 274 x 152.5 x 76 cm",
+      "includedItems": [
+        "Bonus $50 Paddle Package",
+        "Fixed net set"
+      ],
+      "availableOptions": [
+        "Grey",
+        "Green",
+        "Blue"
+      ],
+      "warrantyNotes": "Warranty text says defects in materials/workmanship are covered; excludes improper usage, negligence, abuse, transportation damage, acts of nature, accidents, and wearable items like the net; warranty valid to original purchaser in United States and Canada; shipped tables with apparent damage should be refused before accepting delivery. Table warranty listed as 3 years excluding wearable items like the net.",
+      "mediaNotes": "Product gallery shows 7 CDN image links. Main image alt text: 'expo indoor ping pong table with black top.' Feature images appear for tabletop, frame, open/close, net, maneuverability, storage, and dimensions.",
+      "seo": {
+        "title": {
+          "text": "Expo Indoor Ping Pong Table - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/tables/expo-indoor-ping-pong-table-grey-green-blue",
+        "legacyPath": "/tables/expo-indoor-ping-pong-table-grey-green-blue",
+        "legacySlug": "expo-indoor-ping-pong-table-grey-green-blue",
+        "legacyShippingNotes": "Product page lists Availability: Usually Ships in 24 hours and Shipping: Free Across Canada. Sitewide header says: Free shipping on orders over $50.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Review spelling/grammar, confirm SEO meta/schema from page source, and verify whether the bonus paddle package is still active.",
+        "contentQualityNotes": "Strong product detail, but table-family content contains visible typos such as 'manufactered', 'offial tournemnt', 'finsihed', and 'smoothy'. MSRP/Was/UPC/Current Stock fields are empty in extracted text. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "No unambiguous current app slug was mapped; legacy slug is preserved for traceability."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-expo-outdoor-table",
+      "currentAppSlug": "tiger-expo-outdoor-table",
+      "legacySlug": "expo-outdoor-ping-pong-table-grey-green-blue",
+      "slugAliases": [
+        "tiger-expo-outdoor-table",
+        "expo-outdoor-ping-pong-table-grey-green-blue"
+      ],
+      "name": "Tiger PingPong Expo Outdoor Ping Pong Table Grey, Green or Blue",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Tables > Outdoor Tables",
+        "path": [
+          "Tables",
+          "Outdoor Tables"
+        ]
+      },
+      "productType": "Outdoor ping pong table",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 130000,
+        "priceRangeCents": null,
+        "priceText": "$1,300.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Standing up to the harsh exposure of the elements, the Expo Outdoor features a durable, weather-proof top.",
+      "longDescription": "The plastic-coated frame provides protection against wear and tear while the locking handle system makes it easy for one person to fold up the table and roll into storage. A stylish, made in Germany ping pong table is ready for some fun in the sun. Feature sections describe the tabletop, steel frame and legs, open/close locking system, fixed adjustable net, wheels, bat and ball holder, dimensions, warranty, and one customer review.",
+      "keyFeatures": [
+        "Made in Germany",
+        "Outdoor weather-proof top",
+        "5mm pure melamine resin board with matte anti-reflection coating",
+        "Impact, shock, and weather resistant top",
+        "Plastic-coated / powder-coated frame",
+        "Locking handle system",
+        "Fixed net with height and tension adjustment",
+        "4 double 128mm wheels with rubber tread",
+        "Storage on both sides for 4 paddles and 18 balls"
+      ],
+      "specifications": [
+        "SKU: 9477",
+        "Availability: Usually Ships in 24 hours",
+        "Shipping: Free Across Canada",
+        "Tabletop thickness: 5mm melamine resin board",
+        "Finish: Matte Anti-Glare Coating",
+        "Resistance: Impact, Shock, Weather Resistant",
+        "Color: Green, Blue and Gray",
+        "Frame trim: L-profile powder-coated 50mm steel",
+        "Frame: 2\" x 1 1/4\" powder coated steel",
+        "Legs: 1.18\" x 1.18\" powder-coated steel",
+        "Net: black polyethylene; height and tension adjustable; fixed/remains in place when folded",
+        "Wheels: 4 double 128mm wheels with rubber tread"
+      ],
+      "dimensions": "Original packaging: 144 x 9 x 162 cm; Weight (Gross/Net): 65 / 60 kg; Storage position: 152-184 x 72 x 155 cm; Playing position: 274 x 152 x 76 cm",
+      "includedItems": [
+        "Fixed net set"
+      ],
+      "availableOptions": [
+        "Grey",
+        "Green",
+        "Blue"
+      ],
+      "warrantyNotes": "Page states Tiger guarantees a 3-year warranty on manufacturing defects and 10 years on outdoor table tops, with components covered except wheels, net and net posts. Additional warranty text says tabletop warranty is 10 years and table warranty is 3 years excluding wearable items like the net.",
+      "mediaNotes": "Product gallery shows 7 CDN image links. Main image alt text: 'tiger expo outdoor ping pong table with green surface'. Feature images appear for tabletop, frame/legs, locking system, net, wheels, bat/ball holder, and dimensions.",
+      "seo": {
+        "title": {
+          "text": "Expo Outdoor Ping Pong Table - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/tables/expo-outdoor-ping-pong-table-grey-green-blue",
+        "legacyPath": "/tables/expo-outdoor-ping-pong-table-grey-green-blue",
+        "legacySlug": "expo-outdoor-ping-pong-table-grey-green-blue",
+        "legacyShippingNotes": "Product page lists Availability: Usually Ships in 24 hours and Shipping: Free Across Canada. Sitewide header says: Free shipping on orders over $50.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Review outdoor warranty language for consistency, fix copy/typos, confirm page-source SEO meta/schema, and confirm color naming Gray/Grey.",
+        "contentQualityNotes": "Detailed content, but includes typos and apparent copy issues such as wheels copy referring to 'Expo Indoor' on the outdoor page. MSRP/Was/UPC/Current Stock fields are empty in extracted text. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-expo-outdoor-table."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-portland-indoor-table",
+      "currentAppSlug": "tiger-portland-indoor-table",
+      "legacySlug": "portland-indoor-ping-pong-table-grey-green-blue",
+      "slugAliases": [
+        "tiger-portland-indoor-table",
+        "portland-indoor-ping-pong-table-grey-green-blue"
+      ],
+      "name": "Tiger PingPong Portland Indoor Ping Pong Table Grey, Green or Blue",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Tables > Indoor Tables",
+        "path": [
+          "Tables",
+          "Indoor Tables"
+        ]
+      },
+      "productType": "Indoor ping pong table",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 130000,
+        "priceRangeCents": null,
+        "priceText": "$1,300.00",
+        "reviewNote": null
+      },
+      "shortDescription": "The Portland from Tiger is a professionally made ping pong table in Germany that's built to last.",
+      "longDescription": "The 22mm table top makes the playing surface of this table very durable and provides a bounce every level of player will enjoy. The compact frame provides maximum storage when folded up, and the lockable wheels hold the table in place. Feature sections describe the tabletop, steel frame, open/close system, fixed adjustable net set, wheels, bat and ball storage, and dimensions.",
+      "keyFeatures": [
+        "Professionally made ping pong table in Germany",
+        "22mm table top",
+        "Compact frame for storage when folded",
+        "Lockable wheels",
+        "Powder-coated steel frame and legs",
+        "Fixed net with height and tension adjustment",
+        "Storage on both sides for 4 paddles and 18 balls"
+      ],
+      "specifications": [
+        "SKU: 7013",
+        "Availability: Usually Ships in 24 hours",
+        "Shipping: Free Across Canada",
+        "Includes: Bonus $50 Paddle Package",
+        "Tabletop: 7/8\" chipboard / 22mm table top",
+        "Steel frame: 2\" x 1 1/4\"",
+        "Frame/legs: powder-coated steel",
+        "Net: fixed, height and tension adjustable",
+        "Wheels: easy-roll locking wheels",
+        "Storage: 4 paddles and 18 balls"
+      ],
+      "dimensions": "Original packaging: 144 x 16 x 162 cm; Weight (Gross/Net): 97 / 91 kg; Storage position: 152-184 x 70 x 155 cm; Playing position: 274 x 153 x 76 cm",
+      "includedItems": [
+        "Bonus $50 Paddle Package",
+        "Fixed net set"
+      ],
+      "availableOptions": [
+        "Grey",
+        "Green",
+        "Blue"
+      ],
+      "warrantyNotes": "Warranty text says defects in materials/workmanship are covered; excludes improper usage, negligence, abuse, transportation damage, acts of nature, accidents, and wearable items like the net; warranty valid to original purchaser in United States and Canada; shipped tables with apparent damage should be refused before accepting delivery. Table warranty listed as 3 years excluding wearable items like the net.",
+      "mediaNotes": "Product gallery shows 7 CDN image links. Main image alt text: 'tiger ping pong Portland indoor table with blue surface.' Feature images appear for tabletop, frame, open/close, net, wheels, storage, dimensions, and an additional image near related products.",
+      "seo": {
+        "title": {
+          "text": "Portland Indoor Ping Pong Table - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/tables/portland-indoor-ping-pong-table-grey-green-blue",
+        "legacyPath": "/tables/portland-indoor-ping-pong-table-grey-green-blue",
+        "legacySlug": "portland-indoor-ping-pong-table-grey-green-blue",
+        "legacyShippingNotes": "Product page lists Availability: Usually Ships in 24 hours and Shipping: Free Across Canada. Sitewide header says: Free shipping on orders over $50.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Review typos, confirm 22mm versus 7/8 inch wording, confirm bonus bundle, and verify SEO/meta/schema from page source.",
+        "contentQualityNotes": "Detailed but needs cleanup: visible typos include 'Portlands', 'manufactered', 'offial tournemnt', 'id easily', 'loacking', 'smoothy', and singular '18 ball'. MSRP/Was/UPC/Current Stock fields are empty. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-portland-indoor-table."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-portland-outdoor-table",
+      "currentAppSlug": "tiger-portland-outdoor-table",
+      "legacySlug": "portland-outdoor-ping-pong-table-grey-blue",
+      "slugAliases": [
+        "tiger-portland-outdoor-table",
+        "portland-outdoor-ping-pong-table-grey-blue"
+      ],
+      "name": "Tiger PingPong Portland Outdoor Ping Pong Table Grey or Blue",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Tables > Outdoor Tables",
+        "path": [
+          "Tables",
+          "Outdoor Tables"
+        ]
+      },
+      "productType": "Outdoor ping pong table",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 150000,
+        "priceRangeCents": null,
+        "priceText": "$1,500.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Play outdoors all year round with the Portland Outdoor ping pong table from Tiger PingPong.",
+      "longDescription": "Standing up to the harsh exposure of the elements, the Portland Outdoor features a durable, weatherproof top. The plastic-coated frame provides protection against wear and tear, while the locking handle system makes it easy for one person to fold up the table and roll it into storage. The compact undercarriage provides maximum storage when folded up. The page also lists feature sections for the 6mm indoor/outdoor top, welded steel frame, smart locking system, adjustable net, paddle and ball storage, single-person playback, mobility, leg levelling, specifications, warranty, and 3 customer reviews.",
+      "keyFeatures": [
+        "Durable weatherproof top",
+        "Plastic-coated frame",
+        "Locking handle system",
+        "Compact undercarriage for storage",
+        "6mm melamine resin playing surface",
+        "Welded 1\" x 2\" steel frame with powder-coated finish",
+        "Fixed adjustable net with height/tension adjustment",
+        "Paddle and ball storage",
+        "Single-person playback position",
+        "Double rubberized wheels",
+        "Adjustable leg levellers"
+      ],
+      "specifications": [
+        "SKU: 7736",
+        "Availability: Usually Ships in 24 hours",
+        "Shipping: Free Across Canada",
+        "Playing Surface: 6mm Melamine Resin",
+        "Anti-Reflection Top: Yes",
+        "Frame Material: Powder coated Steel",
+        "Locking system: SMS Locking System",
+        "Leg type/dimensions: Steel 2\" x 1 1/4\"",
+        "Adjustable Leg Leveller: Yes, up to 1 1/4\"",
+        "Net Type: Fixed",
+        "Adjustable Net: Tension and Height",
+        "Wheel Type: 5\" double Wheels",
+        "Brakes: No",
+        "Ball Storage: Yes, 18 Balls",
+        "Paddle Storage: Yes, 4 Paddles",
+        "Packaged Weight: 168lbs",
+        "Table Weight: 155 LBS",
+        "Made In: Germany"
+      ],
+      "dimensions": "Shipping Dimension: 64\" x 56\" x 6\"; Open Table Dimension: 108\" x 60\" (72\" with Net) x 30\"; Folded Table Dimension: 61\" x 72\" x 28\"",
+      "includedItems": [
+        "Fixed adjustable net"
+      ],
+      "availableOptions": [
+        "Grey",
+        "Blue"
+      ],
+      "warrantyNotes": "Warranty text says defects in materials/workmanship are covered; excludes improper usage, negligence, abuse, transportation damage, acts of nature, accidents, and wearable items. Tabletop warranty listed as 10 years; table itself listed as 3 years excluding wearable items like the net.",
+      "mediaNotes": "Product gallery shows 8 CDN image links. Main image alt text: 'Tiger PingPong Portland Outdoor Ping Pong Table Grey or Blue'. Feature images appear for top, frame, locking system, net, storage, playback, wheels, and leg levelers.",
+      "seo": {
+        "title": {
+          "text": "Portland Outdoor Ping Pong Table - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": "Search result snippet visible during research: 'Outdoor ping pong table from Tiger PingPong. features a durable, weatherproof top. 64\"x56\"x6\" Open Table.' Treat as search-snippet evidence, not confirmed page-source meta.",
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/tables/portland-outdoor-ping-pong-table-grey-blue",
+        "legacyPath": "/tables/portland-outdoor-ping-pong-table-grey-blue",
+        "legacySlug": "portland-outdoor-ping-pong-table-grey-blue",
+        "legacyShippingNotes": "Product page lists Availability: Usually Ships in 24 hours and Shipping: Free Across Canada. Sitewide header says: Free shipping on orders over $50.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm whether search snippet is the true meta description, validate SEO/schema from page source, and standardize units/copy.",
+        "contentQualityNotes": "Strongest current-site table record with full specifications and reviews. Needs typo correction ('SYSEM') and standardization of units/capitalization. MSRP/Was/UPC/Current Stock fields are empty. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-portland-outdoor-table."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-whistler-indoor-table",
+      "currentAppSlug": "tiger-whistler-indoor-table",
+      "legacySlug": "whistler-indoor-ping-pong-table-in-green-blue",
+      "slugAliases": [
+        "tiger-whistler-indoor-table",
+        "whistler-indoor-ping-pong-table-in-green-blue"
+      ],
+      "name": "Tiger PingPong Whistler Indoor Ping Pong Table Green or Blue",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Tables > Indoor Tables",
+        "path": [
+          "Tables",
+          "Indoor Tables"
+        ]
+      },
+      "productType": "Indoor ping pong table",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 160000,
+        "priceRangeCents": null,
+        "priceText": "$1,600.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Built to professional standards, made in Germany, the Whistler Indoor Ping Pong Table is a good-looking table that's a dream to play on.",
+      "longDescription": "Precision height adjusters keep the playing surface level while lockable wheels hold the table in place. The Whistler is built to international table tennis standards and has a sleek design to suit any modern room setting. Feature sections cover tabletop, steel frame and legs, open/close locking system, net set, wheels, and dimensions.",
+      "keyFeatures": [
+        "Built to professional standards",
+        "Made in Germany",
+        "Precision height adjusters",
+        "Lockable wheels",
+        "Built to international table tennis standards",
+        "1\" / 25mm multi-coated chipboard tabletop",
+        "Fixed net with height and tension adjustment",
+        "Leg levellers adjustable up to 25mm"
+      ],
+      "specifications": [
+        "Availability: Usually Ships in 24 hours",
+        "Shipping: Free Across Canada",
+        "Thickness: 1\" / 25 mm Multi-coated Chipboard",
+        "Colour: Green and Blue",
+        "Frame profile: A-60mm, powder-coated",
+        "Rectangle-tube-profile: 40 x 40 mm",
+        "Powder-coated square-profile",
+        "4 wheels",
+        "Leg levellers adjustable up to 25mm",
+        "Net: Black Polyethylene",
+        "Adjustable: Yes, Height & Tension Adjustable",
+        "Removable or Fixed: Fixed, remains in place when the table is folded",
+        "Wheels: 4 wheels 100mm with rubber tread",
+        "Locking: Yes, 2 Wheels Lock"
+      ],
+      "dimensions": "Original packaging: 144 x 22 x 162 cm; Weight (Gross/Net): 120 / 109 kg; Storage position: 152-184 x 70 x 155 cm; Playing position: 274 x 152 x 76 cm",
+      "includedItems": [
+        "Fixed net set"
+      ],
+      "availableOptions": [
+        "Green",
+        "Blue"
+      ],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 5 CDN image links. Main image alt text: 'tiger ping pong whistler indoor table blue surface.' Feature images appear for tabletop, frame/legs, open/close, net, wheels, and dimensions.",
+      "seo": {
+        "title": {
+          "text": "Whistler Indoor Ping Pong Table - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/tables/whistler-indoor-ping-pong-table-in-green-blue",
+        "legacyPath": "/tables/whistler-indoor-ping-pong-table-in-green-blue",
+        "legacySlug": "whistler-indoor-ping-pong-table-in-green-blue",
+        "legacyShippingNotes": "Product page lists Availability: Usually Ships in 24 hours and Shipping: Free Across Canada. Sitewide header says: Free shipping on orders over $50.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm SKU, warranty, page-source SEO/schema, and typo cleanup.",
+        "contentQualityNotes": "Detailed specs but missing SKU in extracted text and no warranty text visible. Copy has typos such as 'Whislters'' and 'id easily'. MSRP/Was/UPC/Current Stock fields are empty. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-whistler-indoor-table."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-plaza-outdoor-table-grey",
+      "currentAppSlug": "tiger-plaza-outdoor-table-grey",
+      "legacySlug": "plaza-outdoor-ping-pong-table-grey",
+      "slugAliases": [
+        "tiger-plaza-outdoor-table-grey",
+        "plaza-outdoor-ping-pong-table-grey"
+      ],
+      "name": "Tiger PingPong Plaza Outdoor Ping Pong Table Grey",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Tables > Outdoor Tables",
+        "path": [
+          "Tables",
+          "Outdoor Tables"
+        ]
+      },
+      "productType": "Outdoor / indoor fixed outdoor-style ping pong table",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 260000,
+        "priceRangeCents": null,
+        "priceText": "$2,600.00",
+        "reviewNote": null
+      },
+      "shortDescription": "The Plaza Outdoor is sturdy table made in Germany.",
+      "longDescription": "This outdoor / indoor ping-pong table is durable, robust, weatherproof and perfect alternative to concrete tables. Standing up to the harsh exposure of the elements, the Plaza Outdoor can easily adopt to any environment. The table comes with a fastening kit that allows it to be anchored into the ground. Feature sections describe tabletop, steel frame, anchoring system, metal net set, and downloadable documentation.",
+      "keyFeatures": [
+        "Made in Germany",
+        "Outdoor / indoor ping-pong table",
+        "Durable, robust, weatherproof alternative to concrete tables",
+        "Fastening kit for anchoring into the ground",
+        "10mm melamine resin board",
+        "Powder-coated galvanized sheet-steel frame",
+        "Solid metal net made of galvanized sheet steel"
+      ],
+      "specifications": [
+        "SKU: 10272",
+        "Availability: Usually Ships in 24 hours",
+        "Shipping: Free Across Canada",
+        "Tabletop: 10mm melamine resin board",
+        "Limited impact-resistant",
+        "Top resistant against dampness",
+        "Double strengthening, additional cross section",
+        "Frame: Galvanised sheet steel, powder-coated",
+        "Net: Solid metal net made of galvanized sheet steel",
+        "Net measurement: 160 cm x 16 cm x 4 mm",
+        "Net weight: 4.85 kg",
+        "Download link: INSTALLATION AND PARTS DOCUMENTATION (Google Drive PDF)",
+        "Download link: SPECIFICATIONS SHEET (Google Drive PDF)"
+      ],
+      "dimensions": "Net measurement listed: 160 cm x 16 cm x 4 mm. Overall table dimensions are missing/not visible in extracted page text; a linked spec sheet may contain them.",
+      "includedItems": [
+        "Fastening kit for anchoring into the ground",
+        "Solid metal net"
+      ],
+      "availableOptions": [
+        "Grey"
+      ],
+      "warrantyNotes": "Page states: Tiger guarantees 3-Years warranty on any manufacturing defects, with 10 years on outdoor table tops. The asterisk after the statement has no visible footnote in extracted text.",
+      "mediaNotes": "Product gallery shows 5 CDN image links. Main image alt text: 'tiger plaza ping pong table.' Feature images appear for tabletop, frame, anchoring system, and net. Downloadable Google Drive PDFs are linked: 'Plaza Install & Parts Doc.pdf' and 'Plaza Outdoor Spec Sheet.pdf'; viewer content was not extracted beyond the Drive file titles/loading screen.",
+      "seo": {
+        "title": {
+          "text": "Plaza Outdoor Ping Pong Table - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": "Search result snippet visible during research: 'The Plaza Outdoor is a sturdy table made in Germany. This outdoor / indoor ping-pong table is durable, robust, weatherproof and perfect alternative to concrete ...' Treat as search-snippet evidence, not confirmed page-source meta.",
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/tables/plaza-outdoor-ping-pong-table-grey",
+        "legacyPath": "/tables/plaza-outdoor-ping-pong-table-grey",
+        "legacySlug": "plaza-outdoor-ping-pong-table-grey",
+        "legacyShippingNotes": "Product page lists Availability: Usually Ships in 24 hours and Shipping: Free Across Canada. Sitewide header says: Free shipping on orders over $50.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Open linked PDFs/manuals directly, extract full dimensions/specs, confirm warranty footnote, and verify SEO/meta/schema.",
+        "contentQualityNotes": "Page has useful docs but visible table dimensions are missing from extracted text. Copy has typos/grammar issues ('is sturdy table', 'can easily adopt'). Warranty asterisk footnote is not visible. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-plaza-outdoor-table-grey."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-vice-paddle",
+      "currentAppSlug": "tiger-vice-paddle",
+      "legacySlug": "vice-ping-pong-paddle",
+      "slugAliases": [
+        "tiger-vice-paddle",
+        "vice-ping-pong-paddle"
+      ],
+      "name": "Tiger PingPong Vice Ping Pong Paddle",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Accessories > Paddles",
+        "path": [
+          "Accessories",
+          "Paddles"
+        ]
+      },
+      "productType": "Ping pong paddle",
+      "price": {
+        "currency": "CAD",
+        "priceCents": null,
+        "priceRangeCents": {
+          "max": 3600,
+          "min": 2000
+        },
+        "priceText": "$20.00 - $36.00",
+        "reviewNote": "Legacy price is a range; no single price cents value was normalized."
+      },
+      "shortDescription": "The Vice Ping Pong Paddle is the perfect entry-level paddle kids will love.",
+      "longDescription": "The handle has a slimmer profile making it easier for smaller hands to hold and features pink and blue rubber. A 1.5mm sponge ensures responsive control over the ball. The Vice paddle will be a quick go-to for all young pong apprentices.",
+      "keyFeatures": [
+        "Entry-level paddle for kids",
+        "Slimmer handle profile for smaller hands",
+        "Pink and blue rubber",
+        "1.5mm sponge for responsive control"
+      ],
+      "specifications": [
+        "Rubber: Inverted",
+        "Concept: Control",
+        "Sponge color/thickness: orange / 1.5 mm",
+        "Speed/Spin/Control: 5 / 5 / 7.5"
+      ],
+      "dimensions": null,
+      "includedItems": [],
+      "availableOptions": [
+        "Pack of 2",
+        "Pack of 4"
+      ],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 14 CDN image links. Main image alt text: 'Tiger PingPong vice pink paddle with white ball on it.'",
+      "seo": {
+        "title": {
+          "text": "Vice Ping Pong Paddle - Ping Pong Paddles - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": "Search result snippet visible during research: 'The Vice Ping Pong Paddle is the perfect entry-level paddle kids will love. The handle has a slimmer profile making it easier for smaller hands to hold.' Treat as search-snippet evidence, not confirmed page-source meta.",
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/vice-ping-pong-paddle",
+        "legacyPath": "/accessories/vice-ping-pong-paddle",
+        "legacySlug": "vice-ping-pong-paddle",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm SKU, warranty/dimensions if any, option pricing by pack, and page-source SEO/schema.",
+        "contentQualityNotes": "Solid, concise accessory description. SKU/UPC are blank in extracted text. Warranty/dimensions are not visible. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-vice-paddle."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "ping-pong-paddle-case",
+      "currentAppSlug": null,
+      "legacySlug": "ping-pong-paddle-case",
+      "slugAliases": [
+        "ping-pong-paddle-case"
+      ],
+      "name": "Tiger PingPong - Ping Pong Paddle Case",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Accessories > Paddles",
+        "path": [
+          "Accessories",
+          "Paddles"
+        ]
+      },
+      "productType": "Paddle case",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 1200,
+        "priceRangeCents": null,
+        "priceText": "$12.00",
+        "reviewNote": null
+      },
+      "shortDescription": null,
+      "longDescription": null,
+      "keyFeatures": [],
+      "specifications": [
+        "SKU: 9176"
+      ],
+      "dimensions": null,
+      "includedItems": [],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 9 CDN image links. Main image alt text: 'Bat Cover with red paddle.' No description tab/body text was visible in extracted page text.",
+      "seo": {
+        "title": {
+          "text": "Ping Pong Paddle Case - Ping Pong Accessories - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/ping-pong-paddle-case",
+        "legacyPath": "/accessories/ping-pong-paddle-case",
+        "legacySlug": "ping-pong-paddle-case",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Add/verify product description, dimensions, material, compatibility/capacity, SEO meta, and schema.",
+        "contentQualityNotes": "Thin product page: no current description, features, specs beyond SKU, dimensions, warranty, or options visible. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "shortDescription",
+          "longDescription",
+          "seoDescription",
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "No unambiguous current app slug was mapped; legacy slug is preserved for traceability."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "aqua-outdoor-indoor-paddle",
+      "currentAppSlug": null,
+      "legacySlug": "aqua-outdoor-indoor-paddle",
+      "slugAliases": [
+        "aqua-outdoor-indoor-paddle"
+      ],
+      "name": "Aqua Outdoor / Indoor Paddle",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Accessories > Paddles",
+        "path": [
+          "Accessories",
+          "Paddles"
+        ]
+      },
+      "productType": "Outdoor / indoor ping pong paddle",
+      "price": {
+        "currency": "CAD",
+        "priceCents": null,
+        "priceRangeCents": {
+          "max": 8000,
+          "min": 2500
+        },
+        "priceText": "$25.00 - $80.00",
+        "reviewNote": "Legacy price is a range; no single price cents value was normalized."
+      },
+      "shortDescription": "Bring the game outside with Tiger PingPong AQUA Outdoor Paddles — built to handle sun, rain, and even snow without losing their edge.",
+      "longDescription": "Designed with True Bounce Technology and a comfort grip handle, these paddles deliver consistent play, solid feel, and all-day fun for families, schools, and community centers. Whether you’re setting up in the backyard, the park, or the rec room, these paddles are made for rallies that never quit — and they come in 100% recyclable packaging so your good times don’t come at the planet’s expense. Bulk & program pricing available for schools and rec centres.",
+      "keyFeatures": [
+        "True Bounce Technology – injection-moulded textured surface for reliable, consistent rebound",
+        "Weather Resistant – built for sun, rain, and snow",
+        "Ultra Durable – perfect for schools, community centers, and high-use settings",
+        "Comfort Grip Design – ergonomic handle for all-day play",
+        "Balanced Weight – solid feel in hand, easy to control",
+        "Eco-Friendly Packaging – 100% recyclable box and inserts"
+      ],
+      "specifications": [
+        "Package options: Single - Coral Red",
+        "Package options: Single - Ocean Blue",
+        "Package options: 2-Pack w/ 3 Balls",
+        "Package options: 4-Pack w/ 3 Balls",
+        "Bulk & program pricing available for schools and rec centres"
+      ],
+      "dimensions": null,
+      "includedItems": [
+        "3 balls included in listed 2-Pack and 4-Pack options only, based on option labels"
+      ],
+      "availableOptions": [
+        "Single - Coral Red",
+        "Single - Ocean Blue",
+        "2-Pack w/ 3 Balls",
+        "4-Pack w/ 3 Balls"
+      ],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 10 CDN image links. Main image alt text: 'Aqua Outdoor / Indoor Paddle'. Product URL is under /paddles/ while breadcrumb places it under Accessories > Paddles.",
+      "seo": {
+        "title": {
+          "text": "Aqua Outdoor / Indoor Paddle",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": "Search result snippet visible during research: 'Bring the game outside with Tiger PingPong AQUA Outdoor Paddles — built to handle sun, rain, and even snow without losing their edge.' Treat as search-snippet evidence, not confirmed page-source meta.",
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/paddles/aqua-outdoor-indoor-paddle",
+        "legacyPath": "/paddles/aqua-outdoor-indoor-paddle",
+        "legacySlug": "aqua-outdoor-indoor-paddle",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm SKU, option-level prices, category assignment, warranty/dimensions if any, and SEO/meta/schema.",
+        "contentQualityNotes": "Newest-looking content with clear feature bullets. SKU/UPC are blank. Product URL path differs from visible category path. All Accessories listing did not show Aqua in extracted listing, while Paddles/Brand/Home did. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "No unambiguous current app slug was mapped; legacy slug is preserved for traceability."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-premium-balls-6-orange",
+      "currentAppSlug": "tiger-premium-balls-6-orange",
+      "legacySlug": "ping-pong-balls-premium-3-star-6-balls-orange",
+      "slugAliases": [
+        "tiger-premium-balls-6-orange",
+        "ping-pong-balls-premium-3-star-6-balls-orange"
+      ],
+      "name": "Tiger PingPong Premium 3-Star Ping Pong Balls 6 Balls Orange",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Accessories > Ping Pong Balls",
+        "path": [
+          "Accessories",
+          "Ping Pong Balls"
+        ]
+      },
+      "productType": "Ping pong balls",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 800,
+        "priceRangeCents": null,
+        "priceText": "$8.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Tiger Ping Pong Balls are great for both professional and recreational play.",
+      "longDescription": "The superior performance of these balls supports enhanced ball control, longer volleys, consistent bounce, and excellent spin. Quality section states Tiger celluloid ping pong balls are a standard 40mm.",
+      "keyFeatures": [
+        "3-star ping pong balls",
+        "6 balls",
+        "Orange",
+        "Supports ball control, longer volleys, consistent bounce, and spin",
+        "Standard 40mm celluloid ball"
+      ],
+      "specifications": [
+        "SKU: 9156",
+        "Quantity: 6 balls",
+        "Colour: Orange",
+        "Ball size: 40mm",
+        "Material listed: celluloid"
+      ],
+      "dimensions": "Ball size: 40mm",
+      "includedItems": [
+        "6 orange ping pong balls"
+      ],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 6 CDN image links. Main image alt text: 'Tiger Ping Pong table tennis balls pack of 6'.",
+      "seo": {
+        "title": {
+          "text": "Premium 3-Star Ping Pong Balls 6 Balls Orange - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/ping-pong-balls-premium-3-star-6-balls-orange",
+        "legacyPath": "/accessories/ping-pong-balls-premium-3-star-6-balls-orange",
+        "legacySlug": "ping-pong-balls-premium-3-star-6-balls-orange",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm whether orange balls should also mention ITTF requirements, confirm material/current ball standard, SEO/meta/schema, and whether this should be a variant rather than separate duplicated product page.",
+        "contentQualityNotes": "Description duplicates the white 6-ball product, but orange page's quality section only says standard 40mm; the white/bulk pages add ITTF size/weight language. SKU present; UPC blank. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-premium-balls-6-orange."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-premium-balls-6-white",
+      "currentAppSlug": "tiger-premium-balls-6-white",
+      "legacySlug": "ping-pong-balls-premium-3-star-white",
+      "slugAliases": [
+        "tiger-premium-balls-6-white",
+        "ping-pong-balls-premium-3-star-white"
+      ],
+      "name": "Tiger PingPong Premium 3-Star Ping Pong Balls 6 Balls White",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Accessories > Ping Pong Balls",
+        "path": [
+          "Accessories",
+          "Ping Pong Balls"
+        ]
+      },
+      "productType": "Ping pong balls",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 800,
+        "priceRangeCents": null,
+        "priceText": "$8.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Tiger Ping Pong Balls are great for both professional and recreational play.",
+      "longDescription": "The superior performance of these balls supports enhanced ball control, longer volleys, consistent bounce, and excellent spin. Quality section states Tiger celluloid ping pong balls are a standard 40mm and meet International Table Tennis Federation (ITTF) requirements for size and weight.",
+      "keyFeatures": [
+        "3-star ping pong balls",
+        "6 balls",
+        "White title / color option includes Orange and White",
+        "Supports ball control, longer volleys, consistent bounce, and spin",
+        "Standard 40mm celluloid ball",
+        "Meets ITTF requirements for size and weight"
+      ],
+      "specifications": [
+        "SKU: 125-WH",
+        "Quantity: 6 balls",
+        "Color options: Orange, White",
+        "Ball size: 40mm",
+        "Material listed: celluloid",
+        "Meets ITTF requirements for size and weight"
+      ],
+      "dimensions": "Ball size: 40mm",
+      "includedItems": [
+        "6 ping pong balls"
+      ],
+      "availableOptions": [
+        "Orange",
+        "White"
+      ],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 2 CDN image links. Main image alt text: 'Tiger ping pong balls on floor with pack.'",
+      "seo": {
+        "title": {
+          "text": "Ping Pong Balls Premium 3-Star 6 Balls White - Ping Pong Accessories",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/ping-pong-balls-premium-3-star-white",
+        "legacyPath": "/accessories/ping-pong-balls-premium-3-star-white",
+        "legacySlug": "ping-pong-balls-premium-3-star-white",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Decide whether orange/white 6-ball products should be variants or separate products; verify ITTF/material claims and SEO/meta/schema.",
+        "contentQualityNotes": "Duplicate/variant conflict: product title says White but option selector includes Orange and White, while a separate orange 6-ball page also exists. SKU present; UPC blank. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-premium-balls-6-white."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-premium-balls-140",
+      "currentAppSlug": "tiger-premium-balls-140",
+      "legacySlug": "ping-pong-balls-premium-3-star-140-balls-white-orange",
+      "slugAliases": [
+        "tiger-premium-balls-140",
+        "ping-pong-balls-premium-3-star-140-balls-white-orange"
+      ],
+      "name": "Tiger PingPong Premium 3-Star Ping Pong Balls 140 Balls White or Orange",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Accessories > Ping Pong Balls",
+        "path": [
+          "Accessories",
+          "Ping Pong Balls"
+        ]
+      },
+      "productType": "Bulk ping pong balls",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 9600,
+        "priceRangeCents": null,
+        "priceText": "$96.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Tiger Ping Pong Balls are great for both professional and recreational play.",
+      "longDescription": "The superior performance of these balls supports enhanced ball control, longer volleys, consistent bounce, and excellent spin. Quality section states Tiger celluloid ping pong balls are a standard 40mm and meet International Table Tennis Federation (ITTF) requirements for size and weight.",
+      "keyFeatures": [
+        "3-star ping pong balls",
+        "140 balls",
+        "White or Orange",
+        "Supports ball control, longer volleys, consistent bounce, and spin",
+        "Standard 40mm celluloid ball",
+        "Meets ITTF requirements for size and weight"
+      ],
+      "specifications": [
+        "Quantity: 140 balls",
+        "Color options: Orange, White",
+        "Ball size: 40mm",
+        "Material listed: celluloid",
+        "Meets ITTF requirements for size and weight"
+      ],
+      "dimensions": "Ball size: 40mm",
+      "includedItems": [
+        "140 ping pong balls"
+      ],
+      "availableOptions": [
+        "Orange",
+        "White"
+      ],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 10 CDN image links. Main image alt text: 'Orange premium 3-Star ping pong balls in bulk.'",
+      "seo": {
+        "title": {
+          "text": "Premium 3-Star Ping Pong Balls (140pc) - Ping Pong Accessories",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/ping-pong-balls-premium-3-star-140-balls-white-orange",
+        "legacyPath": "/accessories/ping-pong-balls-premium-3-star-140-balls-white-orange",
+        "legacySlug": "ping-pong-balls-premium-3-star-140-balls-white-orange",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm SKU/material/ITTF claims, option-level imagery/pricing, and SEO/meta/schema.",
+        "contentQualityNotes": "Useful description but SKU/UPC are blank in extracted text. Similar description to 6-ball pages. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-premium-balls-140."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "newgy-table-tennis-balls-orange",
+      "currentAppSlug": null,
+      "legacySlug": "newgy-table-tennis-balls-orange",
+      "slugAliases": [
+        "newgy-table-tennis-balls-orange"
+      ],
+      "name": "Newgy Table Tennis Balls 144 Balls Orange",
+      "brand": "Newgy (from product name; separate brand heading not visible)",
+      "category": {
+        "label": "Accessories > Ping Pong Balls",
+        "path": [
+          "Accessories",
+          "Ping Pong Balls"
+        ]
+      },
+      "productType": "Bulk table tennis balls",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 10000,
+        "priceRangeCents": null,
+        "priceText": "$100.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Newgy Robo-Balls have been selected especially for use with Newgy Robo-Pong table tennis robots.",
+      "longDescription": "Robo-Balls are high-quality table tennis balls ideal for recreational play or multi-ball training. Robo-Balls are durable and long-lasting. 40+ mm Robo-Balls are made from poly plastic material - safer and more environmentally friendly than traditional celluloid table tennis balls. 40+ mm Robo-Balls are 2-Star.",
+      "keyFeatures": [
+        "Selected for use with Newgy Robo-Pong table tennis robots",
+        "High-quality balls for recreational play or multi-ball training",
+        "Durable and long-lasting",
+        "40+ mm poly plastic material",
+        "2-Star balls"
+      ],
+      "specifications": [
+        "SKU: 11763",
+        "Quantity: 144 balls",
+        "Colour: Orange",
+        "Size: 40+ mm",
+        "Material: poly plastic",
+        "Rating: 2-Star"
+      ],
+      "dimensions": "Ball size: 40+ mm",
+      "includedItems": [
+        "144 orange table tennis balls"
+      ],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 1 CDN image link. Main image alt text: 'Newgy Robo ball'.",
+      "seo": {
+        "title": {
+          "text": "Newgy Table Tennis Balls 144 Balls Orange",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": "Search result snippet visible during research: 'Robo-Balls are high-quality table tennis balls ideal for recreational play or multi-ball training. Robo-Balls are durable and long-lasting.' Treat as search-snippet evidence, not confirmed page-source meta.",
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/newgy-table-tennis-balls-orange",
+        "legacyPath": "/accessories/newgy-table-tennis-balls-orange",
+        "legacySlug": "newgy-table-tennis-balls-orange",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm brand field, current SKU/vendor status, SEO/meta/schema, and whether product remains active.",
+        "contentQualityNotes": "Product content is clear but brand/manufacturer is only inferable from product name; no separate brand field visible. Warranty/options/dimensions beyond ball size missing. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "No unambiguous current app slug was mapped; legacy slug is preserved for traceability."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-table-cover-black-polyester",
+      "currentAppSlug": "tiger-table-cover-black-polyester",
+      "legacySlug": "ping-pong-table-cover",
+      "slugAliases": [
+        "tiger-table-cover-black-polyester",
+        "ping-pong-table-cover"
+      ],
+      "name": "Tiger PingPong Protective Ping Pong Table Cover Black Polyester",
+      "brand": "Tiger PingPong",
+      "category": {
+        "label": "Accessories > Covers",
+        "path": [
+          "Accessories",
+          "Covers"
+        ]
+      },
+      "productType": "Ping pong table cover",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 5500,
+        "priceRangeCents": null,
+        "priceText": "$55.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Our ping pong table cover is designed to provide the ultimate protection for your Tiger table.",
+      "longDescription": "Made with high-quality, durable polyester, it fits snugly over your table to provide a secure fit. The corded draw strap ensures that it stays in place, even during the most intense conditions. The sleek black colour adds a touch of style to your setup. This cover will fit most ping pong tables but was specifically designed to fit Tiger tables. Not compatible with the Tiger Plaza Table. Feature sections describe ultimate protection, Oxford outdoor fabric, slide buckle strap, and Canada-focused weather protection.",
+      "keyFeatures": [
+        "Black protective table cover",
+        "Designed for Tiger tables and fits most ping pong tables",
+        "Not compatible with the Tiger Plaza Table",
+        "High-quality durable polyester / Oxford outdoor fabric language appears on page",
+        "Corded draw strap / slide buckle strap",
+        "Moisture-resistant waterproofing membrane described for Oxford weave",
+        "Designed in Vancouver, B.C. and tested across Canada"
+      ],
+      "specifications": [
+        "Availability: In Stock - Ships in 24 Hours",
+        "Material language: durable polyester; Oxford outdoor fabric with moisture-resistant waterproofing membrane",
+        "Colour: Black",
+        "Compatibility: most ping pong tables; specifically designed for Tiger tables; not compatible with Tiger Plaza Table"
+      ],
+      "dimensions": null,
+      "includedItems": [
+        "Protective ping pong table cover"
+      ],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 3 CDN image links. Main image alt text: 'Tiger PingPong Protective Ping Pong Table Cover Black Polyester'. Feature images appear for protection, Oxford fabric, buckle strap, and Canada/weather positioning.",
+      "seo": {
+        "title": {
+          "text": "Ping Pong Table Cover - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/ping-pong-table-cover",
+        "legacyPath": "/accessories/ping-pong-table-cover",
+        "legacySlug": "ping-pong-table-cover",
+        "legacyShippingNotes": "Product page lists Availability: In Stock - Ships in 24 Hours. Sitewide header says: Free shipping on orders over $50. Product-specific shipping not otherwise visible.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm material, dimensions, compatibility by table model, warranty, SKU, SEO/meta/schema.",
+        "contentQualityNotes": "Material wording needs review: title says Black Polyester, opening description says durable polyester, feature section says Oxford outdoor fabric. No dimensions visible. SKU/UPC blank. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-table-cover-black-polyester."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-net-post-set",
+      "currentAppSlug": "tiger-net-post-set",
+      "legacySlug": "table-tennis-net-post-set",
+      "slugAliases": [
+        "tiger-net-post-set",
+        "table-tennis-net-post-set"
+      ],
+      "name": "Table Tennis Net & Post Set",
+      "brand": null,
+      "category": {
+        "label": "Accessories > Nets",
+        "path": [
+          "Accessories",
+          "Nets"
+        ]
+      },
+      "productType": "Table tennis net and post set",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 5900,
+        "priceRangeCents": null,
+        "priceText": "$59.00",
+        "reviewNote": null
+      },
+      "shortDescription": "Turn almost any table into a ping pong surface with the Ping Pong Net & Post set.",
+      "longDescription": "Heavy duty posts come pre-assembled and ready to clamp onto the sides of your table top. Note: This Ping Pong Net & Post set is not compatible with Tiger Expo, Portland and Whistler indoor and outdoor tables.",
+      "keyFeatures": [
+        "Turns almost any table into a ping pong surface",
+        "Heavy duty posts",
+        "Pre-assembled posts ready to clamp onto table top sides",
+        "Not compatible with Tiger Expo, Portland and Whistler indoor/outdoor tables"
+      ],
+      "specifications": [
+        "SKU: 6989-B",
+        "Compatibility note: not compatible with Tiger Expo, Portland and Whistler indoor and outdoor tables"
+      ],
+      "dimensions": null,
+      "includedItems": [
+        "Net and post set",
+        "Heavy duty posts"
+      ],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 2 CDN image links. Main image alt text: 'Net & Post Set in bag.'",
+      "seo": {
+        "title": {
+          "text": "Table Tennis Net & Post Set - Ping Pong Nets - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/table-tennis-net-post-set",
+        "legacyPath": "/accessories/table-tennis-net-post-set",
+        "legacySlug": "table-tennis-net-post-set",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm brand/manufacturer, dimensions/clamp range, SEO/meta/schema, and compatibility wording.",
+        "contentQualityNotes": "Important compatibility note should be preserved. Brand field is not visible as a separate page heading. No dimensions/warranty visible. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-net-post-set."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-table-net-replacement-set",
+      "currentAppSlug": "tiger-table-net-replacement-set",
+      "legacySlug": "tiger-pingpong-table-net-replacement-set",
+      "slugAliases": [
+        "tiger-table-net-replacement-set",
+        "tiger-pingpong-table-net-replacement-set"
+      ],
+      "name": "Tiger PingPong Table Net Replacement Set",
+      "brand": "Tiger PingPong (in product name/title; separate brand heading not visible)",
+      "category": {
+        "label": "Accessories > Nets / Uncategorized in breadcrumb",
+        "path": [
+          "Accessories",
+          "Nets / Uncategorized in breadcrumb"
+        ]
+      },
+      "productType": "Tiger table net and post replacement set",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 14000,
+        "priceRangeCents": null,
+        "priceText": "$140.00",
+        "reviewNote": null
+      },
+      "shortDescription": "A table tennis net and post set in good condition is essential for all ping pong and table tennis play.",
+      "longDescription": "This Net & Post Set fits perfectly on any indoor or outdoor Tiger Ping Pong table.",
+      "keyFeatures": [
+        "Replacement net and post set",
+        "Fits any indoor or outdoor Tiger Ping Pong table"
+      ],
+      "specifications": [],
+      "dimensions": null,
+      "includedItems": [
+        "Net & post set"
+      ],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 1 CDN image link. Main image alt text: 'Tiger PingPong Net Replacement Set.'",
+      "seo": {
+        "title": {
+          "text": "Tiger PingPong Table Net Replacement Set",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/tiger-pingpong-table-net-replacement-set",
+        "legacyPath": "/accessories/tiger-pingpong-table-net-replacement-set",
+        "legacySlug": "tiger-pingpong-table-net-replacement-set",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm exact product name, whether posts are included, compatibility, SKU, category placement, and SEO/meta/schema.",
+        "contentQualityNotes": "Thin page. Product page heading is 'Tiger PingPong Table Net Replacement Set' but description heading says 'Tiger PingPong Replacement Net'. Breadcrumb only shows Accessories then product, not Nets. No SKU/UPC visible. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-table-net-replacement-set."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-replacement-net",
+      "currentAppSlug": "tiger-replacement-net",
+      "legacySlug": "replacement-net",
+      "slugAliases": [
+        "tiger-replacement-net",
+        "replacement-net"
+      ],
+      "name": "Replacement Net",
+      "brand": null,
+      "category": {
+        "label": "Accessories > Nets",
+        "path": [
+          "Accessories",
+          "Nets"
+        ]
+      },
+      "productType": "Replacement table tennis net",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 2800,
+        "priceRangeCents": null,
+        "priceText": "$28.00",
+        "reviewNote": null
+      },
+      "shortDescription": "A table tennis net in good condition is essential for all ping pong and table tennis play.",
+      "longDescription": "This replacement net fits perfectly on any indoor or outdoor Tiger Ping Pong table.",
+      "keyFeatures": [
+        "Replacement net",
+        "Fits any indoor or outdoor Tiger Ping Pong table"
+      ],
+      "specifications": [
+        "SKU: 8367"
+      ],
+      "dimensions": null,
+      "includedItems": [
+        "Replacement net"
+      ],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 4 CDN image links. Main image alt text: 'Replacement net'.",
+      "seo": {
+        "title": {
+          "text": "Tiger PingPong Replacement Net - Table Tennis Nets",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": null,
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/accessories/replacement-net",
+        "legacyPath": "/accessories/replacement-net",
+        "legacySlug": "replacement-net",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm brand/name, compatibility with table models, dimensions, warranty, and SEO/meta/schema.",
+        "contentQualityNotes": "Thin page. Brand is not visible as separate page field. No dimensions/warranty visible. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "seoDescription",
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "Current app slug alias mapped to tiger-replacement-net."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    },
+    {
+      "slug": "tiger-pingpong-replacement-part-40",
+      "currentAppSlug": null,
+      "legacySlug": "tiger-pingpong-replacement-part-40",
+      "slugAliases": [
+        "tiger-pingpong-replacement-part-40"
+      ],
+      "name": "Tiger PingPong Replacement Part #40",
+      "brand": "Tiger PingPong (in product name; separate brand heading not visible)",
+      "category": {
+        "label": "Replacement Parts (URL path) / not listed in visible sitemap categories",
+        "path": [
+          "Replacement Parts (URL path) / not listed in visible sitemap categories"
+        ]
+      },
+      "productType": "Replacement part",
+      "price": {
+        "currency": "CAD",
+        "priceCents": 700,
+        "priceRangeCents": null,
+        "priceText": "$7.00",
+        "reviewNote": null
+      },
+      "shortDescription": "TP03 is original Tiger Ping Pong replacement part for selected Expo and Portland tables.",
+      "longDescription": "TP03 is original Tiger Ping Pong replacement part for: Expo Indoor Ping Pong Table, Expo Outdoor Ping Pong Table, Portland Indoor Ping Pong Table, and Portland Outdoor Ping Pong Table.",
+      "keyFeatures": [
+        "Original Tiger Ping Pong replacement part",
+        "Compatible with Expo Indoor, Expo Outdoor, Portland Indoor, and Portland Outdoor tables"
+      ],
+      "specifications": [
+        "SKU: 8123",
+        "Bulk discount: Buy 5 or above and get 10% off",
+        "Part text: TP03",
+        "Product title: Replacement Part #40"
+      ],
+      "dimensions": null,
+      "includedItems": [
+        "Replacement Part #40 / TP03"
+      ],
+      "availableOptions": [],
+      "warrantyNotes": null,
+      "mediaNotes": "Product gallery shows 1 CDN image link. Main image alt text: 'Tiger Replacement Part #40.' Product was found in homepage Most Popular/New Products and via search, not in visible sitemap categories.",
+      "seo": {
+        "title": {
+          "text": "Replacement Part #40 - Tiger PingPong",
+          "sourceEvidence": "seo_title_current"
+        },
+        "description": {
+          "text": "Search result snippet visible during research: 'TP03 is original Tiger PingPong replacement part for our Expo and Portland models.' Treat as search-snippet evidence, not confirmed page-source meta.",
+          "sourceEvidence": "seo_description_current"
+        }
+      },
+      "source": {
+        "file": "data/legacy-website/tigerpingpong-legacy-inventory.json",
+        "sourceUrl": "https://tigerpingpong.ca/replacement-parts/tiger-pingpong-replacement-part-40",
+        "legacyPath": "/replacement-parts/tiger-pingpong-replacement-part-40",
+        "legacySlug": "tiger-pingpong-replacement-part-40",
+        "legacyShippingNotes": "Sitewide header says: Free shipping on orders over $50. Product-specific shipping not visible in extracted text.",
+        "legacyShippingNotesUsage": "Source evidence only; public storefront copy must use approved V1 shipping language."
+      },
+      "review": {
+        "needsReview": true,
+        "humanReviewNeeded": true,
+        "humanReviewReason": "Confirm part number mapping (#40 vs TP03), model compatibility, category visibility, SEO/meta/schema, and whether replacement-parts category should exist on new site.",
+        "contentQualityNotes": "Potential naming mismatch: product title is Replacement Part #40 while description says TP03. Replacement Parts category is not visible in sitemap navigation. No dimensions/warranty visible. Structured data/schema not visible in extracted page text; page-source review needed",
+        "missingFields": [
+          "dimensions",
+          "warrantyNotes"
+        ],
+        "normalizationNotes": [
+          "All legacy content is review-ready source material and remains flagged for human review.",
+          "Legacy shipping claims were not normalized into public shipping promises.",
+          "No unambiguous current app slug was mapped; legacy slug is preserved for traceability."
+        ]
+      },
+      "needsReview": true,
+      "humanReviewNeeded": true
+    }
+  ]
+}

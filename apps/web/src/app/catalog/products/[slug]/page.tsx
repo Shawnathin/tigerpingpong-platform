@@ -178,28 +178,40 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
   const sortedCatalogMedia = [...product.media].sort(
     (left, right) => left.sortOrder - right.sortOrder
   );
-  const liveMedia = sortedCatalogMedia.filter((media) => media.cloudinarySecureUrl);
+  const cloudinaryMediaItems: ProductMediaGalleryItem[] = [];
 
-  if (liveMedia.length > 0) {
-    return liveMedia.map((media) => ({
-      ...media,
-      src: media.cloudinarySecureUrl
-    }));
+  for (const media of sortedCatalogMedia) {
+    const src = normalizeMediaSrc(media.cloudinarySecureUrl);
+
+    if (!src) {
+      continue;
+    }
+
+    cloudinaryMediaItems.push({
+      altText: media.altText,
+      caption: media.caption,
+      isPrimary: media.isPrimary,
+      mediaKey: media.mediaKey,
+      role: media.role,
+      sortOrder: media.sortOrder,
+      src,
+      title: media.title
+    });
   }
 
-  const fallbackMedia = getProductMediaFallbacks(product.slug);
+  const uniqueCloudinaryMediaItems = getUniqueMediaItems(cloudinaryMediaItems);
+  const fallbackMediaItems = getUniqueMediaItems(getFallbackMediaItems(product));
 
-  if (fallbackMedia.length > 0) {
-    return fallbackMedia.map((media, index) => ({
-      altText: media.alt,
-      caption: media.caption,
-      isPrimary: index === 0,
-      mediaKey: `${product.key}-fallback-${index + 1}`,
-      role: media.role,
-      sortOrder: index,
-      src: media.src,
-      title: media.title
-    }));
+  if (uniqueCloudinaryMediaItems.length >= 2) {
+    return uniqueCloudinaryMediaItems;
+  }
+
+  if (uniqueCloudinaryMediaItems.length === 1) {
+    return appendUniqueMediaItems(uniqueCloudinaryMediaItems, fallbackMediaItems);
+  }
+
+  if (fallbackMediaItems.length > 0) {
+    return fallbackMediaItems;
   }
 
   return [
@@ -214,6 +226,79 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
       isPrimary: true
     }
   ];
+}
+
+function normalizeMediaSrc(src: string | null): string | null {
+  const normalizedSrc = src?.trim();
+  return normalizedSrc ? normalizedSrc : null;
+}
+
+function getFallbackMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[] {
+  const fallbackMediaItems: ProductMediaGalleryItem[] = [];
+
+  for (const [index, media] of getProductMediaFallbacks(product.slug).entries()) {
+    const src = normalizeMediaSrc(media.src);
+
+    if (!src) {
+      continue;
+    }
+
+    fallbackMediaItems.push({
+      altText: media.alt,
+      caption: media.caption,
+      isPrimary: index === 0,
+      mediaKey: `${product.key}-fallback-${index + 1}`,
+      role: media.role,
+      sortOrder: index,
+      src,
+      title: media.title
+    });
+  }
+
+  return fallbackMediaItems;
+}
+
+function appendUniqueMediaItems(
+  preferredMediaItems: ProductMediaGalleryItem[],
+  fallbackMediaItems: ProductMediaGalleryItem[]
+): ProductMediaGalleryItem[] {
+  const mediaItems = getUniqueMediaItems(preferredMediaItems);
+  const seenSrcs = new Set(mediaItems.map((media) => media.src).filter(isPresentMediaSrc));
+
+  for (const fallbackMedia of fallbackMediaItems) {
+    if (!fallbackMedia.src || seenSrcs.has(fallbackMedia.src)) {
+      continue;
+    }
+
+    seenSrcs.add(fallbackMedia.src);
+    mediaItems.push({
+      ...fallbackMedia,
+      isPrimary: false,
+      sortOrder: mediaItems.length
+    });
+  }
+
+  return mediaItems;
+}
+
+function getUniqueMediaItems(mediaItems: ProductMediaGalleryItem[]): ProductMediaGalleryItem[] {
+  const seenSrcs = new Set<string>();
+  const uniqueMediaItems: ProductMediaGalleryItem[] = [];
+
+  for (const media of mediaItems) {
+    if (!media.src || seenSrcs.has(media.src)) {
+      continue;
+    }
+
+    seenSrcs.add(media.src);
+    uniqueMediaItems.push(media);
+  }
+
+  return uniqueMediaItems;
+}
+
+function isPresentMediaSrc(src: string | null): src is string {
+  return src !== null;
 }
 
 interface CheckoutOptionValue {

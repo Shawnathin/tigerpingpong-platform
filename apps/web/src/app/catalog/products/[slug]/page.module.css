@@ -894,6 +894,7 @@
   }
 
   .thumbnailGrid {
+    grid-template-columns: none;
     grid-auto-columns: minmax(108px, 42%);
     grid-auto-flow: column;
     overflow-x: auto;

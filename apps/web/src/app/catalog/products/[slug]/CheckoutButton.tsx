@@ -40,6 +40,41 @@ function ProductThumb({ product }: { product: CartProductInput }) {
   return <span aria-hidden="true">{product.name.charAt(0)}</span>;
 }
 
+function getOptionSwatchClassName(optionValue: ProductOptionValue): string {
+  const normalizedValue = `${optionValue.label} ${optionValue.value}`.toLowerCase();
+  const swatchClasses = [styles.optionSwatch];
+
+  if (normalizedValue.includes("grey") || normalizedValue.includes("gray")) {
+    swatchClasses.push(styles.optionSwatchGrey);
+  } else if (normalizedValue.includes("blue")) {
+    swatchClasses.push(styles.optionSwatchBlue);
+  } else if (normalizedValue.includes("green")) {
+    swatchClasses.push(styles.optionSwatchGreen);
+  } else if (normalizedValue.includes("orange")) {
+    swatchClasses.push(styles.optionSwatchOrange);
+  } else if (normalizedValue.includes("white")) {
+    swatchClasses.push(styles.optionSwatchWhite);
+  } else if (normalizedValue.includes("black")) {
+    swatchClasses.push(styles.optionSwatchBlack);
+  }
+
+  return swatchClasses.join(" ");
+}
+
+function getOptionLegend(optionGroup: ProductOptionGroup): string {
+  const normalizedLabel = `${optionGroup.displayName} ${optionGroup.name}`.toLowerCase();
+
+  if (
+    normalizedLabel.includes("top") ||
+    normalizedLabel.includes("colour") ||
+    normalizedLabel.includes("color")
+  ) {
+    return "Select top colour";
+  }
+
+  return `Select ${optionGroup.displayName.toLowerCase()}`;
+}
+
 function AddToCartModal({
   cartSlugs,
   onAddOn,
@@ -229,12 +264,13 @@ export function CheckoutButton({
         <div className={styles.optionSelectors}>
           {productOptions.map((optionGroup) => (
             <fieldset className={styles.optionSelector} key={optionGroup.name}>
-              <legend>{optionGroup.displayName}</legend>
+              <legend>{getOptionLegend(optionGroup)}</legend>
               <div className={styles.optionChoices}>
                 {optionGroup.values.map((optionValue) => {
                   const inputId = `${product.productSlug}-${optionGroup.name}-${optionValue.value}`
                     .toLowerCase()
                     .replace(/[^a-z0-9]+/g, "-");
+                  const isSelected = selectedOptionValues[optionGroup.name] === optionValue.value;
 
                   return (
                     <label
@@ -243,14 +279,19 @@ export function CheckoutButton({
                       key={optionValue.value}
                     >
                       <input
-                        checked={selectedOptionValues[optionGroup.name] === optionValue.value}
+                        checked={isSelected}
+                        className={styles.optionChoiceInput}
                         id={inputId}
                         name={`${product.productSlug}-${optionGroup.name}`}
                         onChange={() => handleOptionChange(optionGroup.name, optionValue.value)}
                         type="radio"
                         value={optionValue.value}
                       />
-                      <span>{optionValue.label}</span>
+                      <span className={getOptionSwatchClassName(optionValue)} aria-hidden="true" />
+                      <span className={styles.optionChoiceText}>
+                        <strong>{optionValue.label}</strong>
+                        {isSelected ? <small>{optionValue.label} is selected</small> : null}
+                      </span>
                     </label>
                   );
                 })}

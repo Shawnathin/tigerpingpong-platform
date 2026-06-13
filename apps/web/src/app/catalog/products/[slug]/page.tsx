@@ -5,15 +5,12 @@ import { PublicStorefrontNav } from "../../../PublicStorefrontNav";
 import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
 import type { CartProductInput } from "../../../../lib/cart";
 import {
-  getProductDescriptionCopy,
   getProductMediaFallbacks,
-  getPrimaryProductMediaFallback,
-  getProductShortCopy
+  getPrimaryProductMediaFallback
 } from "../../../../lib/public-storefront-demo";
 import {
   getV1ShippingMessage,
   V1_FLAT_RATE_SHIPPING_COPY,
-  V1_FREE_SHIPPING_COPY,
   V1_IN_STOCK_HANDLING_COPY
 } from "../../../../lib/shipping";
 import {
@@ -28,6 +25,16 @@ import type {
 } from "../../../../types/catalog";
 
 import { CheckoutButton } from "./CheckoutButton";
+import {
+  EverydayDetailsSection,
+  FeatureHighlightsSection,
+  ProductFamilySwitcher,
+  ProductStorySection,
+  QuickFactsSection,
+  SpecsGridSection,
+  TABLE_COMPARISON_PRODUCT_SLUGS,
+  TableComparisonSection
+} from "./ProductDetailSections";
 import { ProductMediaGallery, type ProductMediaGalleryItem } from "./ProductMediaGallery";
 import styles from "./page.module.css";
 
@@ -43,8 +50,6 @@ interface ProductResource {
   product: CatalogProductDetail | null;
   error: string | null;
 }
-
-type PublicRecord = Record<string, unknown>;
 
 type ProductJsonLd = {
   "@context": "https://schema.org";
@@ -64,18 +69,6 @@ type ProductJsonLd = {
   };
 };
 
-const HIDDEN_PUBLIC_KEYS = [
-  "source",
-  "url",
-  "notes",
-  "internal",
-  "bigcommerce",
-  "cloudinaryAsset",
-  "cloudinaryPublic",
-  "cloudinaryVersion",
-  "cloudinaryResource",
-  "cloudinaryOriginal"
-];
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
 const TABLE_RECOMMENDATION_SLUGS = [
   "tiger-vice-paddle",
@@ -202,6 +195,19 @@ function isSummaryCheckoutEligible(product: CatalogProductSummary): boolean {
     product.priceCents > 0 &&
     product.currency.trim().toLowerCase() === "cad"
   );
+}
+
+function isSummaryPublicProduct(product: CatalogProductSummary): boolean {
+  return (
+    product.v1PublicNavigation &&
+    !hasReplacementPartsMarker(product.productKind, product.key, product.slug, product.name) &&
+    !isReplacementPartsSummary(product.category) &&
+    !isReplacementPartsSummary(product.family)
+  );
+}
+
+function isDetailPublicProduct(product: CatalogProductDetail): boolean {
+  return product.v1PublicNavigation && !isReplacementPartsProduct(product);
 }
 
 function formatPrice(priceCents: number | null, currency: string): string {
@@ -465,7 +471,7 @@ function toCartProductInput(
 }
 
 function getRecommendationSlugs(product: CatalogProductDetail): string[] {
-  const productKind = product.productKind.trim().toLowerCase();
+  const productKind = normalizeOptionKey(product.productKind);
 
   if (productKind === "table") {
     return TABLE_RECOMMENDATION_SLUGS;
@@ -490,15 +496,34 @@ function getRecommendationSlugs(product: CatalogProductDetail): string[] {
   return PADDLE_RECOMMENDATION_SLUGS;
 }
 
-async function loadRecommendedAddOns(product: CatalogProductDetail): Promise<CartProductInput[]> {
-  let products: CatalogProductSummary[];
+function getPurchaseShippingLines(product: CatalogProductDetail): string[] {
+  const qualifiesForFreeShipping = product.priceCents !== null && product.priceCents > 10000;
+  const isTable = normalizeOptionKey(product.productKind) === "table";
 
+  if (qualifiesForFreeShipping) {
+    return [
+      isTable
+        ? "Tables typically leave the warehouse in about 24 business hours."
+        : V1_IN_STOCK_HANDLING_COPY,
+      "Free Canada-wide shipping included."
+    ];
+  }
+
+  return [V1_IN_STOCK_HANDLING_COPY, V1_FLAT_RATE_SHIPPING_COPY];
+}
+
+async function loadCatalogProductSummaries(): Promise<CatalogProductSummary[]> {
   try {
-    products = await getProducts();
+    return getProducts();
   } catch {
     return [];
   }
+}
 
+function getRecommendedAddOns(
+  product: CatalogProductDetail,
+  products: CatalogProductSummary[]
+): CartProductInput[] {
   const productsBySlug = new Map(
     products.map((catalogProduct) => [catalogProduct.slug, catalogProduct])
   );
@@ -513,11 +538,38 @@ async function loadRecommendedAddOns(product: CatalogProductDetail): Promise<Car
     .slice(0, 4);
 }
 
-function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
-  return (
-    <>
-      {getV1ShippingMessage(priceCents)} <a href="/shipping">Shipping details</a>
-    </>
+async function loadTableComparisonProducts(
+  product: CatalogProductDetail,
+  publicProducts: CatalogProductSummary[]
+): Promise<CatalogProductDetail[]> {
+  if (normalizeOptionKey(product.productKind) !== "table") {
+    return [];
+  }
+
+  const publicProductSlugs = new Set(publicProducts.map((catalogProduct) => catalogProduct.slug));
+  const tableSlugs = TABLE_COMPARISON_PRODUCT_SLUGS.filter(
+    (slug) => slug === product.slug || publicProductSlugs.has(slug)
+  );
+  const products = await Promise.all(
+    tableSlugs.map(async (slug) => {
+      if (slug === product.slug) {
+        return product;
+      }
+
+      try {
+        return await getProductBySlug(slug);
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  return products.filter((tableProduct): tableProduct is CatalogProductDetail =>
+    Boolean(
+      tableProduct &&
+      normalizeOptionKey(tableProduct.productKind) === "table" &&
+      isDetailPublicProduct(tableProduct)
+    )
   );
 }
 
@@ -567,6 +619,17 @@ function getCleanSourcedCopy(value: string | null | undefined): string | null {
   }
 
   return copy;
+}
+
+function getHeroSummary(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null
+): string {
+  return (
+    getCleanSourcedCopy(normalizedContent?.shortDescription) ??
+    getCleanSourcedCopy(product.shortDescription) ??
+    [formatLabel(product.productKind), product.family.name].filter(Boolean).join(" · ")
+  );
 }
 
 function truncateMetaDescription(description: string): string {
@@ -633,320 +696,6 @@ function serializeJsonLd(jsonLd: ProductJsonLd): string {
   return JSON.stringify(jsonLd).replace(/</g, "\\u003c");
 }
 
-function isPublicRecord(value: unknown): value is PublicRecord {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function getStringValue(record: PublicRecord, keys: string[]): string | null {
-  for (const key of keys) {
-    const value = record[key];
-
-    if (typeof value === "string" && value.trim()) {
-      return value;
-    }
-  }
-
-  return null;
-}
-
-function getNumberValue(record: PublicRecord, key: string): number | null {
-  const value = record[key];
-  return typeof value === "number" ? value : null;
-}
-
-function getBooleanValue(record: PublicRecord, key: string): boolean | null {
-  const value = record[key];
-  return typeof value === "boolean" ? value : null;
-}
-
-function isPublicKey(key: string): boolean {
-  const normalizedKey = key.toLowerCase();
-  return !HIDDEN_PUBLIC_KEYS.some((hiddenKey) => normalizedKey.includes(hiddenKey.toLowerCase()));
-}
-
-function formatPublicPrimitive(value: unknown): string | null {
-  if (typeof value === "string") {
-    return value.trim() || null;
-  }
-
-  if (typeof value === "number") {
-    return new Intl.NumberFormat("en-CA").format(value);
-  }
-
-  if (typeof value === "boolean") {
-    return value ? "Yes" : "No";
-  }
-
-  return null;
-}
-
-function formatOptionValue(value: unknown): string | null {
-  const primitive = formatPublicPrimitive(value);
-
-  if (primitive) {
-    return primitive;
-  }
-
-  if (!isPublicRecord(value)) {
-    return null;
-  }
-
-  const directLabel = getStringValue(value, ["label", "value", "name", "displayName"]);
-
-  if (directLabel) {
-    return directLabel;
-  }
-
-  const optionValue = value.productOptionValue;
-
-  if (isPublicRecord(optionValue)) {
-    return getStringValue(optionValue, ["label", "value", "name", "displayName"]);
-  }
-
-  return null;
-}
-
-function getVariantOptions(variant: PublicRecord): string {
-  const optionValues = Array.isArray(variant.options)
-    ? variant.options
-    : Array.isArray(variant.optionValues)
-      ? variant.optionValues
-      : [];
-
-  if (optionValues.length === 0) {
-    return "Standard option";
-  }
-
-  const labels = optionValues
-    .map((optionValue) => formatOptionValue(optionValue))
-    .filter((label): label is string => Boolean(label));
-
-  return labels.length > 0 ? labels.join(", ") : "Standard option";
-}
-
-function getVariantName(variant: unknown, index: number): string {
-  if (!isPublicRecord(variant)) {
-    return `Option ${index + 1}`;
-  }
-
-  return getStringValue(variant, ["name", "sku", "key"]) ?? `Option ${index + 1}`;
-}
-
-function renderPublicFields(record: PublicRecord): Array<{ key: string; value: string }> {
-  return Object.entries(record)
-    .filter(([key]) => isPublicKey(key))
-    .map(([key, value]) => {
-      const primitive = formatPublicPrimitive(value);
-
-      if (primitive) {
-        return {
-          key,
-          value: primitive
-        };
-      }
-
-      return null;
-    })
-    .filter((field): field is { key: string; value: string } => Boolean(field));
-}
-
-function ProductFacts({ product }: { product: CatalogProductDetail }) {
-  return (
-    <dl className={styles.factList}>
-      <div>
-        <dt>Category</dt>
-        <dd>{product.category.name}</dd>
-      </div>
-      <div>
-        <dt>Lineup</dt>
-        <dd>{product.family.name}</dd>
-      </div>
-      <div>
-        <dt>Product type</dt>
-        <dd>{formatLabel(product.productKind)}</dd>
-      </div>
-      <div>
-        <dt>Shipping</dt>
-        <dd className={styles.shippingFact}>
-          <ShippingTermsCopy priceCents={product.priceCents} />
-        </dd>
-      </div>
-    </dl>
-  );
-}
-
-function VariantsSection({
-  product,
-  variants
-}: {
-  product: CatalogProductDetail;
-  variants: unknown[];
-}) {
-  if (variants.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className={styles.section} aria-labelledby="product-options-title">
-      <div className={styles.sectionHeader}>
-        <p className={styles.eyebrow}>Choices</p>
-        <h2 id="product-options-title">Available options.</h2>
-      </div>
-      <div className={styles.tableWrap}>
-        <table className={styles.variantTable}>
-          <thead>
-            <tr>
-              <th scope="col">Option</th>
-              <th scope="col">SKU</th>
-              <th scope="col">Price</th>
-              <th scope="col">Availability</th>
-              <th scope="col">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {variants.map((variant, index) => {
-              const record = isPublicRecord(variant) ? variant : null;
-              const priceCents = record ? getNumberValue(record, "priceCents") : null;
-              const currency = record ? getStringValue(record, ["currency"]) : null;
-              const isActive = record ? getBooleanValue(record, "isActive") : null;
-
-              return (
-                <tr key={record ? (getStringValue(record, ["key", "sku"]) ?? index) : index}>
-                  <td>{getVariantName(variant, index)}</td>
-                  <td>
-                    {record
-                      ? (getStringValue(record, ["sku"]) ?? "SKU coming soon")
-                      : "SKU coming soon"}
-                  </td>
-                  <td>
-                    {priceCents === null
-                      ? formatPrice(product.priceCents, product.currency)
-                      : formatPrice(priceCents, currency ?? product.currency)}
-                  </td>
-                  <td>{isActive === false ? "Unavailable" : "Available"}</td>
-                  <td>{record ? getVariantOptions(record) : "Standard option"}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
-function HighlightsSection({ sections }: { sections: unknown[] | undefined }) {
-  if (!sections || sections.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className={styles.section} aria-labelledby="product-highlights-title">
-      <div className={styles.sectionHeader}>
-        <p className={styles.eyebrow}>Highlights</p>
-        <h2 id="product-highlights-title">Why it stands out.</h2>
-      </div>
-      <div className={styles.storyGrid}>
-        {sections.map((section, index) => {
-          const record = isPublicRecord(section) ? section : null;
-          const heading = record
-            ? getStringValue(record, ["heading", "title", "sectionType", "eyebrow"])
-            : null;
-          const body = record ? getStringValue(record, ["body", "description"]) : null;
-
-          return (
-            <article key={heading ?? index}>
-              <h3>{heading ? formatLabel(heading) : `Highlight ${index + 1}`}</h3>
-              {body ? <p>{body}</p> : <p>More detail is being prepared for this highlight.</p>}
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function SpecGroups({ specGroups }: { specGroups: unknown[] | undefined }) {
-  if (!specGroups || specGroups.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className={styles.section} aria-labelledby="product-specs-title">
-      <div className={styles.sectionHeader}>
-        <p className={styles.eyebrow}>Specifications</p>
-        <h2 id="product-specs-title">Details for comparison.</h2>
-      </div>
-      <div className={styles.storyGrid}>
-        {specGroups.map((group, index) => {
-          const record = isPublicRecord(group) ? group : null;
-          const name = record ? getStringValue(record, ["name", "heading", "key"]) : null;
-          const specs = record && Array.isArray(record.specs) ? record.specs : [];
-
-          return (
-            <article key={name ?? index}>
-              <h3>{name ? formatLabel(name) : `Specification group ${index + 1}`}</h3>
-              {specs.length > 0 ? (
-                <dl className={styles.fieldList}>
-                  {specs.map((spec, specIndex) => {
-                    const specRecord = isPublicRecord(spec) ? spec : null;
-                    const specName = specRecord
-                      ? getStringValue(specRecord, ["name", "label", "key"])
-                      : null;
-                    const specValue = specRecord
-                      ? (getStringValue(specRecord, ["value"]) ??
-                        formatPublicPrimitive(specRecord.value))
-                      : null;
-                    const unit = specRecord ? getStringValue(specRecord, ["unit"]) : null;
-
-                    return (
-                      <div key={specName ?? specIndex}>
-                        <dt>{specName ? formatLabel(specName) : `Detail ${specIndex + 1}`}</dt>
-                        <dd>{[specValue ?? "Coming soon", unit].filter(Boolean).join(" ")}</dd>
-                      </div>
-                    );
-                  })}
-                </dl>
-              ) : (
-                <p>More specifications are being prepared.</p>
-              )}
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function Relationships({ relationships }: { relationships: Record<string, unknown> | undefined }) {
-  if (!relationships || Object.keys(relationships).length === 0) {
-    return null;
-  }
-
-  const fields = renderPublicFields(relationships);
-
-  if (fields.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className={styles.section} aria-labelledby="product-details-title">
-      <div className={styles.sectionHeader}>
-        <p className={styles.eyebrow}>More details</p>
-        <h2 id="product-details-title">Useful product notes.</h2>
-      </div>
-      <dl className={styles.fieldList}>
-        {fields.map((field) => (
-          <div key={field.key}>
-            <dt>{formatLabel(field.key)}</dt>
-            <dd>{field.value}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-  );
-}
-
 function ErrorState({ error }: { error: string }) {
   return (
     <>
@@ -971,14 +720,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     return <ErrorState error={error ?? "Product details are temporarily unavailable."} />;
   }
 
-  const variants = product.variants ?? [];
   const isCheckoutEligible = isProductCheckoutEligible(product);
-  const descriptionCopy = getProductDescriptionCopy(product);
-  const shortDescription = getProductShortCopy(product);
-  const recommendedProducts = await loadRecommendedAddOns(product);
   const checkoutOptionGroups = getCheckoutOptionGroups(product);
   const mediaItems = getMediaItems(product);
   const normalizedContent = getProductContentBySlug(product.slug);
+  const catalogProducts = await loadCatalogProductSummaries();
+  const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
+  const recommendedProducts = getRecommendedAddOns(product, publicProducts);
+  const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
+  const heroSummary = getHeroSummary(product, normalizedContent);
   const productJsonLd = getProductJsonLd(product, normalizedContent, mediaItems);
 
   return (
@@ -995,6 +745,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           <a href="/catalog">Back to catalog</a>
         </div>
 
+        <ProductFamilySwitcher product={product} products={publicProducts} />
+
         <section className={styles.productHero} aria-labelledby="product-title">
           <ProductMediaGallery
             categoryName={product.category.name}
@@ -1010,18 +762,17 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
             <div className={styles.priceRow}>
               <strong>{formatPrice(product.priceCents, product.currency)}</strong>
-              <span>{shortDescription}</span>
+              <span>{heroSummary}</span>
             </div>
 
             <div className={styles.shippingNote}>
-              <strong>{V1_FREE_SHIPPING_COPY}</strong>
-              <span>
-                {V1_FLAT_RATE_SHIPPING_COPY} {V1_IN_STOCK_HANDLING_COPY}
-              </span>
+              <strong>In stock and ready to ship.</strong>
+              {getPurchaseShippingLines(product).map((line) => (
+                <span key={line}>{line}</span>
+              ))}
             </div>
 
             <div className={styles.checkoutPanel}>
-              <h2>Add to cart</h2>
               <CheckoutButton
                 isCheckoutEligible={isCheckoutEligible}
                 product={toCartProductInput(product)}
@@ -1029,27 +780,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 recommendedProducts={recommendedProducts}
               />
             </div>
-
-            <ProductFacts product={product} />
-
-            <div className={styles.supportNote}>
-              <strong>Questions before checkout?</strong>
-              <span>Contact us with the product name for product, shipping, or setup help.</span>
-              <a href="/contact">Contact support</a>
-            </div>
           </aside>
         </section>
 
-        <section className={styles.descriptionBand} aria-labelledby="product-description-title">
-          <p className={styles.eyebrow}>Product story</p>
-          <h2 id="product-description-title">Built for the next match.</h2>
-          <p>{descriptionCopy}</p>
-        </section>
-
-        <VariantsSection product={product} variants={variants} />
-        <SpecGroups specGroups={product.specGroups} />
-        <HighlightsSection sections={product.contentSections} />
-        <Relationships relationships={product.relationships} />
+        <QuickFactsSection normalizedContent={normalizedContent} product={product} />
+        <ProductStorySection normalizedContent={normalizedContent} product={product} />
+        <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
+        <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
+        <SpecsGridSection normalizedContent={normalizedContent} product={product} />
+        <TableComparisonSection currentSlug={product.slug} products={tableComparisonProducts} />
       </main>
     </>
   );

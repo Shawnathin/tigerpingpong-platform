@@ -1,0 +1,113 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+import styles from "./page.module.css";
+
+export interface ProductMediaGalleryItem {
+  altText: string | null;
+  caption: string | null;
+  isPrimary: boolean;
+  mediaKey: string;
+  role: string;
+  sortOrder: number;
+  src: string | null;
+  title: string | null;
+}
+
+interface ProductMediaGalleryProps {
+  categoryName: string;
+  mediaItems: ProductMediaGalleryItem[];
+  productName: string;
+}
+
+function formatLabel(value: string): string {
+  return value
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function getMediaLabel(media: ProductMediaGalleryItem, fallback: string): string {
+  const mediaText = [media.altText, media.title].filter(Boolean).join(" / ");
+  return mediaText || media.caption || fallback;
+}
+
+export function ProductMediaGallery({
+  categoryName,
+  mediaItems,
+  productName
+}: ProductMediaGalleryProps) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [failedMediaKeys, setFailedMediaKeys] = useState<Set<string>>(() => new Set());
+  const selectedMedia = mediaItems[selectedIndex] ?? mediaItems[0];
+  const activeIndex = mediaItems[selectedIndex] ? selectedIndex : 0;
+  const label = getMediaLabel(selectedMedia, `${productName} image pending`);
+  const selectedSrc = failedMediaKeys.has(selectedMedia.mediaKey) ? null : selectedMedia.src;
+  const hasMultipleImages = mediaItems.length > 1;
+  const thumbnailItems = useMemo(() => mediaItems, [mediaItems]);
+
+  function markImageFailed(mediaKey: string): void {
+    setFailedMediaKeys((currentFailedKeys) => {
+      const nextFailedKeys = new Set(currentFailedKeys);
+      nextFailedKeys.add(mediaKey);
+      return nextFailedKeys;
+    });
+  }
+
+  return (
+    <div className={styles.gallery}>
+      <figure className={styles.mainMedia}>
+        {selectedSrc ? (
+          <img
+            src={selectedSrc}
+            alt={selectedMedia.altText ?? productName}
+            onError={() => markImageFailed(selectedMedia.mediaKey)}
+          />
+        ) : (
+          <div className={styles.mediaPlaceholder} aria-label={label}>
+            <span>{categoryName}</span>
+            <strong>{productName}</strong>
+          </div>
+        )}
+        <figcaption>{label}</figcaption>
+      </figure>
+
+      {hasMultipleImages ? (
+        <div className={styles.thumbnailGrid} aria-label="Product images">
+          {thumbnailItems.map((media, index) => {
+            const thumbnailLabel = getMediaLabel(media, productName);
+            const thumbnailSrc = failedMediaKeys.has(media.mediaKey) ? null : media.src;
+            const isSelected = index === activeIndex;
+
+            return (
+              <button
+                aria-label={`Show ${thumbnailLabel}`}
+                aria-pressed={isSelected}
+                className={styles.thumbnailButton}
+                key={media.mediaKey}
+                onClick={() => setSelectedIndex(index)}
+                type="button"
+              >
+                <span className={styles.thumbnailImage}>
+                  {thumbnailSrc ? (
+                    <img
+                      src={thumbnailSrc}
+                      alt=""
+                      aria-hidden="true"
+                      onError={() => markImageFailed(media.mediaKey)}
+                    />
+                  ) : (
+                    <span className={styles.thumbnailPlaceholder} aria-hidden="true" />
+                  )}
+                </span>
+                <span>{index === 0 ? "Main" : formatLabel(media.role)}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}

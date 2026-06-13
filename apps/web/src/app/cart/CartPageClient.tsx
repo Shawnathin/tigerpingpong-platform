@@ -6,6 +6,7 @@ import { createCheckoutSession } from "../../lib/checkout-api";
 import {
   FREE_SHIPPING_THRESHOLD_CENTS,
   MAX_CART_QUANTITY_PER_LINE,
+  formatCartItemOptions,
   formatCartMoney,
   type CartItem
 } from "../../lib/cart";
@@ -50,7 +51,11 @@ export function CartPageClient() {
       const session = await createCheckoutSession({
         items: items.map((item) => ({
           productSlug: item.productSlug,
-          quantity: item.quantity
+          quantity: item.quantity,
+          selectedOptions: item.selectedOptions.map((option) => ({
+            name: option.name,
+            value: option.value
+          }))
         }))
       });
 
@@ -98,7 +103,7 @@ export function CartPageClient() {
       <section className={styles.cartLayout} aria-label="Cart review">
         <div className={styles.cartItems} aria-label={`${itemCount} cart items`}>
           {items.map((item) => (
-            <article className={styles.cartItem} key={item.productSlug}>
+            <article className={styles.cartItem} key={item.cartLineId}>
               <a
                 className={styles.itemImage}
                 href={`/catalog/products/${item.productSlug}`}
@@ -112,6 +117,9 @@ export function CartPageClient() {
                 <h2>
                   <a href={`/catalog/products/${item.productSlug}`}>{item.name}</a>
                 </h2>
+                {item.selectedOptions.length > 0 ? (
+                  <em>{formatCartItemOptions(item.selectedOptions)}</em>
+                ) : null}
                 <span>{formatCartMoney(item.unitPriceCents, item.currency)} each</span>
               </div>
 
@@ -119,7 +127,7 @@ export function CartPageClient() {
                 <button
                   aria-label={`Decrease quantity for ${item.name}`}
                   disabled={item.quantity <= 1}
-                  onClick={() => updateQuantity(item.productSlug, item.quantity - 1)}
+                  onClick={() => updateQuantity(item.cartLineId, item.quantity - 1)}
                   type="button"
                 >
                   -
@@ -128,7 +136,7 @@ export function CartPageClient() {
                 <button
                   aria-label={`Increase quantity for ${item.name}`}
                   disabled={item.quantity >= MAX_CART_QUANTITY_PER_LINE}
-                  onClick={() => updateQuantity(item.productSlug, item.quantity + 1)}
+                  onClick={() => updateQuantity(item.cartLineId, item.quantity + 1)}
                   type="button"
                 >
                   +
@@ -139,7 +147,7 @@ export function CartPageClient() {
                 <strong>
                   {formatCartMoney(item.unitPriceCents * item.quantity, item.currency)}
                 </strong>
-                <button onClick={() => removeItem(item.productSlug)} type="button">
+                <button onClick={() => removeItem(item.cartLineId)} type="button">
                   Remove
                 </button>
               </div>

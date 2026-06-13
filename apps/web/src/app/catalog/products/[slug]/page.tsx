@@ -14,10 +14,12 @@ import { getV1ShippingMessage } from "../../../../lib/shipping";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
+  CatalogProductVariantSummary,
   CatalogSummary
 } from "../../../../types/catalog";
 
 import { CheckoutButton } from "./CheckoutButton";
+import { ProductMediaGallery, type ProductMediaGalleryItem } from "./ProductMediaGallery";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -81,17 +83,6 @@ const NET_RECOMMENDATION_SLUGS = [
   "tiger-premium-balls-6-white",
   "tiger-premium-balls-6-orange"
 ];
-
-interface DisplayMediaItem {
-  altText: string | null;
-  caption: string | null;
-  isPrimary: boolean;
-  mediaKey: string;
-  role: string;
-  sortOrder: number;
-  src: string | null;
-  title: string | null;
-}
 
 async function loadProduct(slug: string): Promise<ProductResource> {
   let product: CatalogProductDetail;
@@ -183,12 +174,7 @@ function formatLabel(value: string): string {
     .join(" ");
 }
 
-function getMediaLabel(media: DisplayMediaItem, fallback: string): string {
-  const mediaText = [media.altText, media.title].filter(Boolean).join(" / ");
-  return mediaText || media.caption || fallback;
-}
-
-function getMediaItems(product: CatalogProductDetail): DisplayMediaItem[] {
+function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[] {
   const sortedCatalogMedia = [...product.media].sort(
     (left, right) => left.sortOrder - right.sortOrder
   );
@@ -226,6 +212,94 @@ function getMediaItems(product: CatalogProductDetail): DisplayMediaItem[] {
       caption: null,
       sortOrder: 0,
       isPrimary: true
+    }
+  ];
+}
+
+interface CheckoutOptionValue {
+  label: string;
+  value: string;
+}
+
+interface CheckoutOptionGroup {
+  displayName: string;
+  name: string;
+  required: boolean;
+  values: CheckoutOptionValue[];
+}
+
+function normalizeOptionKey(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-");
+}
+
+function isCheckoutVariantActive(variant: CatalogProductVariantSummary): boolean {
+  return (
+    variant.isActive &&
+    variant.purchaseModeOverride !== "deferred_from_v1" &&
+    variant.purchaseModeOverride !== "disabled"
+  );
+}
+
+function getCheckoutOptionGroups(product: CatalogProductDetail): CheckoutOptionGroup[] {
+  if (normalizeOptionKey(product.productKind) !== "table") {
+    return [];
+  }
+
+  const valuesByNormalizedValue = new Map<
+    string,
+    {
+      label: string;
+      sortOrder: number;
+      value: string;
+    }
+  >();
+
+  for (const variant of product.variants ?? []) {
+    if (!isCheckoutVariantActive(variant)) {
+      continue;
+    }
+
+    const colorOption = variant.options.find(
+      (option) => normalizeOptionKey(option.name) === "color"
+    );
+
+    if (!colorOption) {
+      continue;
+    }
+
+    const normalizedValue = normalizeOptionKey(colorOption.value);
+
+    if (!normalizedValue || valuesByNormalizedValue.has(normalizedValue)) {
+      continue;
+    }
+
+    valuesByNormalizedValue.set(normalizedValue, {
+      label: colorOption.label ?? colorOption.value,
+      sortOrder: colorOption.sortOrder,
+      value: colorOption.value
+    });
+  }
+
+  const values = [...valuesByNormalizedValue.values()].sort(
+    (left, right) => left.sortOrder - right.sortOrder || left.label.localeCompare(right.label)
+  );
+
+  if (values.length <= 1) {
+    return [];
+  }
+
+  return [
+    {
+      displayName: "Top colour",
+      name: "Color",
+      required: true,
+      values: values.map(({ label, value }) => ({
+        label,
+        value
+      }))
     }
   ];
 }
@@ -428,48 +502,6 @@ function renderPublicFields(record: PublicRecord): Array<{ key: string; value: s
       return null;
     })
     .filter((field): field is { key: string; value: string } => Boolean(field));
-}
-
-function ProductMediaGallery({ product }: { product: CatalogProductDetail }) {
-  const mediaItems = getMediaItems(product);
-  const heroMedia = mediaItems[0];
-  const label = getMediaLabel(heroMedia, `${product.name} image pending`);
-  const thumbnails = mediaItems.slice(1, 5);
-
-  return (
-    <div className={styles.gallery}>
-      <figure className={styles.mainMedia}>
-        {heroMedia.src ? (
-          <img src={heroMedia.src} alt={heroMedia.altText ?? product.name} />
-        ) : (
-          <div className={styles.mediaPlaceholder} aria-label={label}>
-            <span>{product.category.name}</span>
-            <strong>{product.name}</strong>
-          </div>
-        )}
-        <figcaption>{label}</figcaption>
-      </figure>
-
-      {thumbnails.length > 0 ? (
-        <div className={styles.thumbnailGrid} aria-label="More product images">
-          {thumbnails.map((media) => {
-            const thumbnailLabel = getMediaLabel(media, product.name);
-
-            return (
-              <figure className={styles.thumbnail} key={media.mediaKey}>
-                {media.src ? (
-                  <img src={media.src} alt={media.altText ?? product.name} />
-                ) : (
-                  <div className={styles.thumbnailPlaceholder} aria-label={thumbnailLabel} />
-                )}
-                <figcaption>{formatLabel(media.role)}</figcaption>
-              </figure>
-            );
-          })}
-        </div>
-      ) : null}
-    </div>
-  );
 }
 
 function ProductFacts({ product }: { product: CatalogProductDetail }) {
@@ -698,6 +730,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const descriptionCopy = getProductDescriptionCopy(product);
   const shortDescription = getProductShortCopy(product);
   const recommendedProducts = await loadRecommendedAddOns(product);
+  const checkoutOptionGroups = getCheckoutOptionGroups(product);
+  const mediaItems = getMediaItems(product);
 
   return (
     <>
@@ -708,7 +742,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         </div>
 
         <section className={styles.productHero} aria-labelledby="product-title">
-          <ProductMediaGallery product={product} />
+          <ProductMediaGallery
+            categoryName={product.category.name}
+            mediaItems={mediaItems}
+            productName={product.name}
+          />
 
           <aside className={styles.purchasePanel} aria-label={`${product.name} purchase panel`}>
             <p className={styles.eyebrow}>{product.category.name}</p>
@@ -735,6 +773,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               <CheckoutButton
                 isCheckoutEligible={isCheckoutEligible}
                 product={toCartProductInput(product)}
+                productOptions={checkoutOptionGroups}
                 recommendedProducts={recommendedProducts}
               />
             </div>

@@ -18,10 +18,18 @@ const MAX_QUANTITY_PER_LINE = 10;
 const SHIPPING_RULE = "canada_free_over_100_flat_15";
 const STRIPE_CHECKOUT_SOURCE = "stripe_checkout";
 const V1_CURRENCY = "cad";
+const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
+const NON_CHECKOUT_VARIANT_PURCHASE_MODES = new Set(["deferred_from_v1", "disabled"]);
+
+interface CheckoutRequestSelectedOption {
+  name: string;
+  value: string;
+}
 
 interface CheckoutRequestItem {
   productSlug: string;
   quantity: number;
+  selectedOptions: CheckoutRequestSelectedOption[];
 }
 
 interface ValidatedCheckoutRequest {
@@ -42,6 +50,13 @@ interface SnapshotLineItem {
   unitPriceCents: number;
   variantId: string | null;
   variantKey: string | null;
+}
+
+interface ValidatedLineItemOption {
+  displayName: string;
+  label: string;
+  name: string;
+  value: string;
 }
 
 interface CheckoutTotals {
@@ -154,12 +169,58 @@ const checkoutProductSelect = {
       cloudinarySecureUrl: true
     },
     take: 1
+  },
+  variants: {
+    where: {
+      isActive: true
+    },
+    orderBy: [
+      {
+        name: "asc"
+      },
+      {
+        key: "asc"
+      }
+    ],
+    select: {
+      id: true,
+      key: true,
+      sku: true,
+      name: true,
+      purchaseModeOverride: true,
+      isActive: true,
+      optionValues: {
+        select: {
+          productOptionValue: {
+            select: {
+              value: true,
+              label: true,
+              sortOrder: true,
+              option: {
+                select: {
+                  name: true,
+                  displayName: true,
+                  sortOrder: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 } satisfies Prisma.ProductSelect;
 
 type CheckoutProductRecord = Prisma.ProductGetPayload<{
   select: typeof checkoutProductSelect;
 }>;
+
+type CheckoutProductVariantRecord = CheckoutProductRecord["variants"][number];
+
+interface ValidatedLineItemOptions {
+  selectedOptions: ValidatedLineItemOption[];
+  variant: CheckoutProductVariantRecord | null;
+}
 
 @Injectable()
 export class CheckoutService implements OnModuleDestroy {
@@ -284,7 +345,7 @@ export class CheckoutService implements OnModuleDestroy {
       });
     }
 
-    const seenSlugs = new Set<string>();
+    const seenLineKeys = new Set<string>();
     const items: CheckoutRequestItem[] = body.items.map((item, index) => {
       if (!this.isRecord(item)) {
         throw new BadRequestException({
@@ -306,13 +367,16 @@ export class CheckoutService implements OnModuleDestroy {
         });
       }
 
-      if (seenSlugs.has(productSlug)) {
+      const selectedOptions = this.validateSelectedOptions(item.selectedOptions, index);
+      const lineKey = this.getRequestLineKey(productSlug, selectedOptions);
+
+      if (seenLineKeys.has(lineKey)) {
         throw new BadRequestException({
-          message: "Duplicate product slugs are not supported for V1 checkout."
+          message: "Duplicate cart lines are not supported for V1 checkout."
         });
       }
 
-      seenSlugs.add(productSlug);
+      seenLineKeys.add(lineKey);
 
       const quantity = item.quantity;
 
@@ -336,7 +400,8 @@ export class CheckoutService implements OnModuleDestroy {
 
       return {
         productSlug,
-        quantity
+        quantity,
+        selectedOptions
       };
     });
 
@@ -344,6 +409,115 @@ export class CheckoutService implements OnModuleDestroy {
       customerEmail: this.validateCustomerEmail(body.customerEmail),
       items
     };
+  }
+
+  private validateSelectedOptions(
+    value: unknown,
+    itemIndex: number
+  ): CheckoutRequestSelectedOption[] {
+    if (value === undefined || value === null) {
+      return [];
+    }
+
+    if (!Array.isArray(value)) {
+      throw new BadRequestException({
+        message: `items[${itemIndex}].selectedOptions must be an array.`
+      });
+    }
+
+    if (value.length > 4) {
+      throw new BadRequestException({
+        message: `items[${itemIndex}].selectedOptions cannot include more than 4 options.`
+      });
+    }
+
+    const selectedOptions: CheckoutRequestSelectedOption[] = [];
+    const seenOptionNames = new Set<string>();
+
+    for (const [optionIndex, selectedOption] of value.entries()) {
+      if (!this.isRecord(selectedOption)) {
+        throw new BadRequestException({
+          message: `items[${itemIndex}].selectedOptions[${optionIndex}] must be an object.`
+        });
+      }
+
+      const name = this.validateOptionText(
+        selectedOption.name,
+        `items[${itemIndex}].selectedOptions[${optionIndex}].name`
+      );
+      const optionValue = this.validateOptionText(
+        selectedOption.value,
+        `items[${itemIndex}].selectedOptions[${optionIndex}].value`
+      );
+      const normalizedName = this.normalizeOptionKey(name);
+
+      if (seenOptionNames.has(normalizedName)) {
+        throw new BadRequestException({
+          message: `items[${itemIndex}].selectedOptions includes duplicate option names.`
+        });
+      }
+
+      seenOptionNames.add(normalizedName);
+      selectedOptions.push({
+        name,
+        value: optionValue
+      });
+    }
+
+    return selectedOptions.sort((left, right) =>
+      this.normalizeOptionKey(left.name).localeCompare(this.normalizeOptionKey(right.name))
+    );
+  }
+
+  private validateOptionText(value: unknown, path: string): string {
+    if (typeof value !== "string") {
+      throw new BadRequestException({
+        message: `${path} must be a string.`
+      });
+    }
+
+    const normalized = value.trim();
+
+    if (
+      !normalized ||
+      normalized.length > 80 ||
+      !/^[A-Za-z0-9][A-Za-z0-9 .,_/-]*$/.test(normalized)
+    ) {
+      throw new BadRequestException({
+        message: `${path} is invalid.`
+      });
+    }
+
+    return normalized;
+  }
+
+  private getRequestLineKey(
+    productSlug: string,
+    selectedOptions: CheckoutRequestSelectedOption[]
+  ): string {
+    const optionSignature = selectedOptions
+      .map(
+        (selectedOption) =>
+          `${this.normalizeOptionKey(selectedOption.name)}=${this.normalizeOptionKey(
+            selectedOption.value
+          )}`
+      )
+      .join("&");
+
+    return optionSignature ? `${productSlug}::${optionSignature}` : productSlug;
+  }
+
+  private formatSelectedOptions(selectedOptions: ValidatedLineItemOption[]): string {
+    return selectedOptions
+      .map((selectedOption) => `${selectedOption.displayName}: ${selectedOption.label}`)
+      .join(", ");
+  }
+
+  private normalizeOptionKey(value: string): string {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[_\s]+/g, "-");
   }
 
   private validateCustomerEmail(value: unknown): string | undefined {
@@ -468,6 +642,7 @@ export class CheckoutService implements OnModuleDestroy {
         });
       }
 
+      const optionValidation = this.validateLineItemOptions(item, product);
       const unitPriceCents = product.priceCents;
 
       if (
@@ -481,15 +656,17 @@ export class CheckoutService implements OnModuleDestroy {
       }
 
       const lineTotalCents = unitPriceCents * item.quantity;
+      const optionSummary = this.formatSelectedOptions(optionValidation.selectedOptions);
+      const displayName = optionSummary ? `${product.name} (${optionSummary})` : product.name;
 
       return {
         productId: product.id,
-        variantId: null,
+        variantId: optionValidation.variant?.id ?? null,
         productKey: product.key,
         productSlug: product.slug,
-        variantKey: null,
-        sku: product.sku,
-        name: product.name,
+        variantKey: optionValidation.variant?.key ?? null,
+        sku: optionValidation.variant?.sku ?? product.sku,
+        name: displayName,
         imageUrl: this.getProductImageUrl(product),
         unitPriceCents,
         quantity: item.quantity,
@@ -497,6 +674,133 @@ export class CheckoutService implements OnModuleDestroy {
         currency: "CAD"
       };
     });
+  }
+
+  private validateLineItemOptions(
+    item: CheckoutRequestItem,
+    product: CheckoutProductRecord
+  ): ValidatedLineItemOptions {
+    const requiredColorOption = this.getRequiredTableColorOption(product);
+
+    if (!requiredColorOption) {
+      if (item.selectedOptions.length > 0) {
+        throw new BadRequestException({
+          message: "Selected options are not supported for one or more requested items."
+        });
+      }
+
+      return {
+        selectedOptions: [],
+        variant: null
+      };
+    }
+
+    if (item.selectedOptions.length !== 1) {
+      throw new BadRequestException({
+        message: "A required product option is missing."
+      });
+    }
+
+    const selectedOption = item.selectedOptions[0];
+
+    if (this.normalizeOptionKey(selectedOption.name) !== "color") {
+      throw new BadRequestException({
+        message: "A selected product option is invalid."
+      });
+    }
+
+    const normalizedValue = this.normalizeOptionKey(selectedOption.value);
+    const canonicalValue = requiredColorOption.values.get(normalizedValue);
+
+    if (!canonicalValue) {
+      throw new BadRequestException({
+        message: "A selected product option value is invalid."
+      });
+    }
+
+    const matchingVariants = product.variants
+      .filter((variant) => this.isVariantCheckoutable(variant))
+      .filter((variant) =>
+        variant.optionValues.some(
+          ({ productOptionValue }) =>
+            this.normalizeOptionKey(productOptionValue.option.name) === "color" &&
+            this.normalizeOptionKey(productOptionValue.value) === normalizedValue
+        )
+      );
+
+    if (matchingVariants.length !== 1) {
+      throw new BadRequestException({
+        message: "A selected product option could not be matched to a checkout variant."
+      });
+    }
+
+    return {
+      selectedOptions: [
+        {
+          displayName: requiredColorOption.displayName,
+          label: canonicalValue.label,
+          name: requiredColorOption.name,
+          value: canonicalValue.value
+        }
+      ],
+      variant: matchingVariants[0]
+    };
+  }
+
+  private getRequiredTableColorOption(product: CheckoutProductRecord): {
+    displayName: string;
+    name: string;
+    values: Map<string, { label: string; sortOrder: number; value: string }>;
+  } | null {
+    if (product.productKind !== "table") {
+      return null;
+    }
+
+    const values = new Map<string, { label: string; sortOrder: number; value: string }>();
+
+    for (const variant of product.variants) {
+      if (!this.isVariantCheckoutable(variant)) {
+        continue;
+      }
+
+      const colorOption = variant.optionValues.find(
+        ({ productOptionValue }) =>
+          this.normalizeOptionKey(productOptionValue.option.name) === "color"
+      );
+
+      if (!colorOption) {
+        continue;
+      }
+
+      const { productOptionValue } = colorOption;
+      const normalizedValue = this.normalizeOptionKey(productOptionValue.value);
+
+      if (!normalizedValue || values.has(normalizedValue)) {
+        continue;
+      }
+
+      values.set(normalizedValue, {
+        label: productOptionValue.label ?? productOptionValue.value,
+        sortOrder: productOptionValue.sortOrder,
+        value: productOptionValue.value
+      });
+    }
+
+    return values.size > 1
+      ? {
+          displayName: "Top colour",
+          name: "Color",
+          values
+        }
+      : null;
+  }
+
+  private isVariantCheckoutable(variant: CheckoutProductVariantRecord): boolean {
+    return (
+      variant.isActive &&
+      (variant.purchaseModeOverride === null ||
+        !NON_CHECKOUT_VARIANT_PURCHASE_MODES.has(variant.purchaseModeOverride))
+    );
   }
 
   private isProductCheckoutable(product: CheckoutProductRecord): boolean {
@@ -507,8 +811,7 @@ export class CheckoutService implements OnModuleDestroy {
       product.v1PublicNavigation &&
       product.v1CheckoutScope &&
       product.productKind !== "replacement_part" &&
-      (product.purchaseMode === "online_checkout" ||
-        product.purchaseMode === "online_checkout_candidate") &&
+      CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
       product.family.isActive &&
       product.family.isPublic &&
       product.primaryCategory.isActive &&
@@ -566,6 +869,15 @@ export class CheckoutService implements OnModuleDestroy {
                     id: item.productId
                   }
                 },
+                ...(item.variantId
+                  ? {
+                      variant: {
+                        connect: {
+                          id: item.variantId
+                        }
+                      }
+                    }
+                  : {}),
                 productKey: item.productKey,
                 productSlug: item.productSlug,
                 variantKey: item.variantKey,

@@ -3,6 +3,12 @@ const DEFAULT_API_BASE_URL = "http://localhost:3001";
 export interface CheckoutSessionItemInput {
   productSlug: string;
   quantity: number;
+  selectedOptions?: CheckoutSessionItemOptionInput[];
+}
+
+export interface CheckoutSessionItemOptionInput {
+  name: string;
+  value: string;
 }
 
 export interface CreateCheckoutSessionInput {

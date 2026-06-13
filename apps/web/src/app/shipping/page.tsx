@@ -19,8 +19,8 @@ export default function ShippingPage() {
             Simple Canada-wide shipping for online orders.
           </h1>
           <p className={styles.intro}>
-            Tiger Ping Pong ships storefront orders within Canada. Tables and high-priced products
-            qualify for free shipping across Canada.
+            Tiger Ping Pong ships storefront orders within Canada. Orders over $100 CAD ship free
+            across Canada.
           </p>
         </section>
 
@@ -38,13 +38,13 @@ export default function ShippingPage() {
 
           <article>
             <span>Orders over $100 CAD</span>
-            <strong>Free shipping across Canada.</strong>
-            <p>This includes tables and other higher-priced products.</p>
+            <strong>Orders over $100 CAD ship free across Canada.</strong>
+            <p>Checkout calculates the final shipping total before payment.</p>
           </article>
 
           <article>
             <span>$100 CAD or under</span>
-            <strong>$15 flat-rate shipping.</strong>
+            <strong>Orders $100 CAD or under use $15 CAD flat-rate shipping.</strong>
             <p>Exactly $100.00 CAD still uses the $15 flat-rate shipping rule.</p>
           </article>
         </section>
@@ -55,8 +55,9 @@ export default function ShippingPage() {
             <h2 id="shipping-copy-title">What shoppers see on product pages.</h2>
           </div>
           <ul>
-            <li>High-priced products and tables: Free shipping across Canada.</li>
-            <li>Lower-priced products: Free shipping on orders over $100.</li>
+            <li>Orders over $100 CAD ship free across Canada.</li>
+            <li>Orders $100 CAD or under use $15 CAD flat-rate shipping.</li>
+            <li>In-stock products typically leave the warehouse in about 24 business hours.</li>
             <li>Checkout calculates the final shipping total before payment.</li>
           </ul>
         </section>
@@ -67,9 +68,8 @@ export default function ShippingPage() {
             <h2 id="shipping-support-title">Need help before or after checkout?</h2>
             <p>
               Contact Tiger Ping Pong for shipping questions, order/payment help, product details,
-              or dealer and setup support from Vancouver, BC across Canada. For order questions,
-              include your order reference if available, checkout email, and product name if
-              relevant.
+              or setup support from Vancouver, BC across Canada. For order questions, include your
+              order reference if available, checkout email, and product name if relevant.
             </p>
           </div>
           <a className={styles.primaryAction} href="/contact">

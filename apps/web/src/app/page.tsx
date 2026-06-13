@@ -118,8 +118,8 @@ export default function Home() {
             <p className={styles.eyebrow}>Shipping promise</p>
             <h2 id="shipping-promise-title">Free shipping over $100 across Canada.</h2>
             <p>
-              Orders over $100 CAD ship free. Orders $100 CAD or under use $15 flat-rate shipping.
-              Tables qualify for free shipping across Canada.
+              Orders over $100 CAD ship free across Canada. Orders $100 CAD or under use $15 CAD
+              flat-rate shipping.
             </p>
           </div>
           <a className={styles.secondaryAction} href="/shipping">

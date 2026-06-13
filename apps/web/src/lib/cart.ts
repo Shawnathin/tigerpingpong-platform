@@ -1,3 +1,5 @@
+import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "./shipping";
+
 export const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
 export const CART_CHANGE_EVENT = "tigerpingpong:cart-change";
 export const FLAT_SHIPPING_CENTS = 1500;
@@ -179,8 +181,8 @@ export function getCartShippingCents(subtotalCents: number): number {
 
 export function getCartShippingCopy(subtotalCents: number): string {
   return subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS
-    ? "Free shipping across Canada"
-    : "Free shipping on orders over $100";
+    ? V1_FREE_SHIPPING_COPY
+    : V1_FLAT_RATE_SHIPPING_COPY;
 }
 
 export function formatCartMoney(cents: number, currency = "CAD"): string {

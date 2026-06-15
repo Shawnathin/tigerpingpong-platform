@@ -47,6 +47,7 @@ export interface ProductMediaSummary {
   mediaKey: string;
   role: string;
   cloudinarySecureUrl: string | null;
+  cloudinaryPublicId?: string | null;
   altText: string | null;
   title: string | null;
   caption: string | null;

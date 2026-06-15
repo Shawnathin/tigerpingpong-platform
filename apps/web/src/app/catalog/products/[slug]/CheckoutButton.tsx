@@ -302,19 +302,16 @@ export function CheckoutButton({
 
       <button
         className={styles.checkoutButton}
-        disabled={!isSelectionComplete}
+        data-selection-required={!isSelectionComplete ? "true" : undefined}
         onClick={handleAddToCart}
         type="button"
       >
         Add to cart
       </button>
 
-      {!isSelectionComplete || selectionError ? (
-        <p
-          className={isSelectionComplete ? styles.checkoutError : styles.checkoutHint}
-          role="status"
-        >
-          {selectionError ?? getSelectionError(productOptions)}
+      {selectionError ? (
+        <p className={styles.checkoutError} role="status">
+          {selectionError}
         </p>
       ) : null}
 

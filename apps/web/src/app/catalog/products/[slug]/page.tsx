@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { PublicStorefrontNav } from "../../../PublicStorefrontNav";
+import { PublicStorefrontFooter } from "../../../PublicStorefrontFooter";
+import { PublicStorefrontNav, type PublicStorefrontNavItem } from "../../../PublicStorefrontNav";
 import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
 import type { CartProductInput } from "../../../../lib/cart";
 import {
@@ -221,6 +222,24 @@ function formatLabel(value: string): string {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+function getProductNavItem(product: CatalogProductDetail): PublicStorefrontNavItem {
+  const kind = product.productKind.toLowerCase().replace(/[_\s]+/g, "-");
+
+  if (kind === "paddle") {
+    return "paddles";
+  }
+
+  if (kind === "ball") {
+    return "balls";
+  }
+
+  if (kind === "cover" || kind === "net") {
+    return "accessories";
+  }
+
+  return "tables";
 }
 
 function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[] {
@@ -516,7 +535,7 @@ async function loadRecommendedAddOns(product: CatalogProductDetail): Promise<Car
 function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
   return (
     <>
-      {getV1ShippingMessage(priceCents)} <a href="/shipping">Shipping details</a>
+      {getV1ShippingMessage(priceCents)} <a href="/shipping-returns">Shipping details</a>
     </>
   );
 }
@@ -950,16 +969,17 @@ function Relationships({ relationships }: { relationships: Record<string, unknow
 function ErrorState({ error }: { error: string }) {
   return (
     <>
-      <PublicStorefrontNav activeItem="catalog" />
+      <PublicStorefrontNav activeItem="tables" />
       <main className={styles.page}>
         <div className={styles.backBar}>
-          <a href="/catalog">Back to catalog</a>
+          <a href="/tables/">Back to tables</a>
         </div>
         <section className={styles.error} role="status">
           <strong>We could not load this product.</strong>
           <span>{error}</span>
         </section>
       </main>
+      <PublicStorefrontFooter />
     </>
   );
 }
@@ -989,10 +1009,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           __html: serializeJsonLd(productJsonLd)
         }}
       />
-      <PublicStorefrontNav activeItem="catalog" />
+      <PublicStorefrontNav activeItem={getProductNavItem(product)} />
       <main className={styles.page}>
         <div className={styles.backBar}>
-          <a href="/catalog">Back to catalog</a>
+          <a href="/tables/">Back to tables</a>
         </div>
 
         <section className={styles.productHero} aria-labelledby="product-title">
@@ -1051,6 +1071,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <HighlightsSection sections={product.contentSections} />
         <Relationships relationships={product.relationships} />
       </main>
+      <PublicStorefrontFooter />
     </>
   );
 }

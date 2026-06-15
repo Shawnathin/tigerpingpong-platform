@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import styles from "./page.module.css";
 
@@ -123,6 +124,7 @@ export default function ContactPage() {
           </ul>
         </section>
       </main>
+      <PublicStorefrontFooter />
     </>
   );
 }

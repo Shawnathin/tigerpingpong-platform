@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PublicStorefrontFooter } from "../../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 import styles from "../page.module.css";
 
@@ -11,10 +12,10 @@ export const metadata: Metadata = {
 export default function CheckoutCancelPage() {
   return (
     <>
-      <PublicStorefrontNav activeItem="catalog" />
+      <PublicStorefrontNav activeItem="tables" />
       <main className={styles.page}>
         <div className={styles.backBar}>
-          <a href="/catalog">Back to catalog</a>
+          <a href="/tables/">Back to tables</a>
         </div>
 
         <section className={styles.header} aria-labelledby="checkout-cancel-title">
@@ -24,7 +25,7 @@ export default function CheckoutCancelPage() {
           </h1>
           <p className={styles.intro}>
             Checkout was canceled. No payment was completed through this page. You can return to the
-            catalog and try again when ready.
+            storefront and try again when ready.
           </p>
         </section>
 
@@ -53,10 +54,10 @@ export default function CheckoutCancelPage() {
           </p>
 
           <div className={styles.actions}>
-            <a className={styles.primaryAction} href="/catalog">
-              Return to catalog
+            <a className={styles.primaryAction} href="/tables/">
+              Return to tables
             </a>
-            <a className={styles.secondaryLink} href="/shipping">
+            <a className={styles.secondaryLink} href="/shipping-returns">
               Review shipping
             </a>
             <a className={styles.secondaryLink} href="/contact">
@@ -65,6 +66,7 @@ export default function CheckoutCancelPage() {
           </div>
         </section>
       </main>
+      <PublicStorefrontFooter />
     </>
   );
 }

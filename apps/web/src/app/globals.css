@@ -60,7 +60,7 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  width: min(1120px, 100%);
+  width: min(1240px, 100%);
   min-height: 70px;
   margin: 0 auto;
   padding: 10px 12px 10px 18px;
@@ -153,33 +153,112 @@ select {
   flex: 1;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 6px;
 }
 
-.publicNavLinks a {
+.publicNavItem {
+  position: relative;
   display: inline-flex;
-  min-height: 44px;
+  min-height: 50px;
+  align-items: center;
+}
+
+.publicNavLink,
+.publicDropdown a {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
   border-radius: 999px;
-  padding: 0 17px;
   color: #2a3142;
-  font-size: 0.93rem;
-  font-weight: 850;
   text-decoration: none;
   transition:
     background 180ms ease,
     color 180ms ease,
+    opacity 180ms ease,
     transform 180ms ease;
 }
 
-.publicNavLinks a:hover,
-.publicNavLinks a:focus-visible,
-.publicNavLinks a[data-active="true"] {
+.publicNavLink {
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 0.92rem;
+  font-weight: 850;
+}
+
+.publicNavLink:hover,
+.publicNavLink:focus-visible,
+.publicNavItem[data-active="true"] .publicNavLink {
   background: rgb(255 255 255 / 74%);
   color: var(--tiger-orange-deep);
+  transform: translateY(-1px);
+}
+
+.publicDropdown {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+  width: max-content;
+  max-width: min(88vw, 520px);
+  min-height: 42px;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 84%), rgb(255 255 255 / 48%)),
+    rgb(255 255 255 / 26%);
+  box-shadow:
+    0 18px 46px rgb(27 36 65 / 13%),
+    inset 0 1px 0 rgb(255 255 255 / 90%);
+  backdrop-filter: blur(22px) saturate(1.2);
+  transform: translate(-50%, -4px);
+}
+
+.publicDropdown a {
+  min-height: 32px;
+  padding: 0 13px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.publicDropdown a:hover,
+.publicDropdown a:focus-visible {
+  color: var(--tiger-orange-deep);
+  background: rgb(255 255 255 / 72%);
+}
+
+.publicNavItem:hover .publicDropdown,
+.publicNavItem:focus-within .publicDropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.publicCartButton {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 999px;
+  padding: 0 17px 0 19px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #ffad5d, var(--tiger-orange-deep));
+  box-shadow: 0 18px 34px rgb(232 111 24 / 20%);
+}
+
+.publicCartButton:hover,
+.publicCartButton:focus-visible {
   transform: translateY(-1px);
 }
 
@@ -190,35 +269,95 @@ select {
   place-items: center;
   border-radius: 999px;
   padding: 0 7px;
-  color: #ffffff;
+  color: var(--tiger-orange-deep);
   font-size: 0.72rem;
   font-weight: 950;
   line-height: 1;
-  background: var(--tiger-orange-deep);
-  box-shadow: 0 9px 18px rgb(232 111 24 / 22%);
+  background: rgb(255 255 255 / 92%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 70%);
 }
 
-.publicNavPromise {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 0 16px;
-  color: #ffffff;
-  font-size: 0.84rem;
-  font-weight: 900;
-  white-space: nowrap;
-  background: linear-gradient(135deg, #ffad5d, var(--tiger-orange-deep));
-  box-shadow: 0 18px 34px rgb(232 111 24 / 20%);
+.publicFooter {
+  padding: 0 20px 28px;
 }
 
-@media (max-width: 760px) {
-  .publicHeader {
-    top: 8px;
-    padding-inline: 12px;
-  }
+.publicFooterInner {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.6fr);
+  gap: 36px;
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  border: 1px solid rgb(255 255 255 / 78%);
+  border-radius: 8px;
+  padding: 30px;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 84%), rgb(255 255 255 / 56%)),
+    linear-gradient(120deg, rgb(242 138 46 / 8%), rgb(116 200 242 / 12%));
+  box-shadow: 0 20px 58px rgb(27 36 65 / 8%);
+}
 
+.publicFooterBrand {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.publicFooterBrand .publicBrand {
+  justify-self: start;
+  padding: 0;
+}
+
+.publicFooterBrand p {
+  max-width: 360px;
+  margin: 0;
+  color: #566074;
+  font-size: 0.94rem;
+  font-weight: 720;
+  line-height: 1.55;
+}
+
+.publicFooterNav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.publicFooterNav section {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.publicFooterNav h2 {
+  margin: 0;
+  color: var(--tiger-ink);
+  font-size: 0.82rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.publicFooterNav ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.publicFooterNav a {
+  color: #4d586c;
+  font-size: 0.9rem;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.publicFooterNav a:hover,
+.publicFooterNav a:focus-visible {
+  color: var(--tiger-orange-deep);
+}
+
+@media (max-width: 1060px) {
   .glassNav {
     align-items: stretch;
     flex-direction: column;
@@ -232,17 +371,69 @@ select {
 
   .publicNavLinks {
     width: 100%;
-    justify-content: center;
+    flex-wrap: wrap;
   }
 
-  .publicNavLinks a {
+  .publicCartButton {
+    width: 100%;
+  }
+
+  .publicDropdown {
+    top: calc(100% + 5px);
+  }
+
+  .publicFooterInner,
+  .publicFooterNav {
+    grid-template-columns: 1fr;
+  }
+
+  .publicFooterNav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .publicHeader {
+    top: 8px;
+    padding-inline: 12px;
+  }
+
+  .publicNavItem {
     flex: 1 1 calc(50% - 6px);
     min-width: 0;
+  }
+
+  .publicNavLink {
+    width: 100%;
     padding-inline: 8px;
   }
 
-  .publicNavPromise {
-    display: none;
+  .publicDropdown {
+    position: static;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: none;
+    margin-top: 4px;
+    transform: none;
+  }
+
+  .publicNavItem:hover .publicDropdown,
+  .publicNavItem:focus-within .publicDropdown {
+    transform: none;
+  }
+
+  .publicFooter {
+    padding-inline: 12px;
+  }
+
+  .publicFooterInner {
+    padding: 22px;
+  }
+
+  .publicFooterNav {
+    grid-template-columns: 1fr;
   }
 }
 

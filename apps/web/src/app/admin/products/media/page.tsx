@@ -79,6 +79,16 @@ export default async function AdminProductMediaPage({
         </p>
       </section>
 
+      <section className={styles.alert} aria-label="Product media mapping warnings">
+        <ul className={styles.alertList}>
+          <li>This only changes which existing Cloudinary image is assigned to this product.</li>
+          <li>This does not upload or delete Cloudinary assets.</li>
+          <li>
+            Changes affect the storefront after refresh/deploy/API cache refresh as applicable.
+          </li>
+        </ul>
+      </section>
+
       {productsResource ? (
         <ProductMediaMappingTool
           mediaResource={productMediaResource}

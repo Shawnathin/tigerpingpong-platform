@@ -214,7 +214,13 @@ function MediaMappingForm({
           </label>
           <label className={styles.field}>
             <span>Order</span>
-            <input defaultValue={media?.sortOrder ?? 0} name="sortOrder" type="number" />
+            <input
+              defaultValue={media?.sortOrder ?? 0}
+              max={999}
+              min={0}
+              name="sortOrder"
+              type="number"
+            />
           </label>
           <label className={styles.field}>
             <span>Title</span>

@@ -366,6 +366,18 @@
   line-height: 1.5;
 }
 
+.alertList {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.alertList li {
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .statusLine {
   display: flex;
   flex-wrap: wrap;

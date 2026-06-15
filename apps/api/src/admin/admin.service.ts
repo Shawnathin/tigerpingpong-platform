@@ -101,6 +101,8 @@ const DEFAULT_LIMIT = 50;
 const FLAT_SHIPPING_CENTS = 1500;
 const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 const MAX_LIMIT = 100;
+const MAX_MEDIA_SORT_ORDER = 999;
+const MIN_MEDIA_SORT_ORDER = 0;
 const SUPPORT_EMAIL = "info@tigerpingpong.com";
 const SUPPORT_PHONE = "1-888-552-5259";
 
@@ -1186,24 +1188,45 @@ export class AdminService implements OnModuleDestroy {
   }
 
   private normalizeProductMediaInput(input: AdminProductMediaInput): NormalizedProductMediaInput {
+    if (!this.isRecord(input)) {
+      throw new BadRequestException({
+        message: "Product media input is required."
+      });
+    }
+
     const cloudinaryPublicId = this.normalizeCloudinaryPublicId(input.cloudinaryPublicId);
     const cloudinarySecureUrl = this.normalizeCloudinarySecureUrl(input.cloudinarySecureUrl);
     const parsedCloudinaryUrl = cloudinarySecureUrl
       ? this.parseCloudinaryDeliveryUrl(cloudinarySecureUrl)
       : null;
+
+    if (cloudinarySecureUrl && !parsedCloudinaryUrl) {
+      throw new BadRequestException({
+        message: "cloudinarySecureUrl must be a valid Cloudinary image delivery URL."
+      });
+    }
+
     const resolvedPublicId = cloudinaryPublicId ?? parsedCloudinaryUrl?.publicId ?? null;
     const resolvedSecureUrl =
       cloudinarySecureUrl ?? this.createCloudinaryDeliveryUrl(resolvedPublicId);
 
-    if (!resolvedPublicId && !resolvedSecureUrl) {
+    if (!resolvedPublicId) {
       throw new BadRequestException({
         message:
           "A Cloudinary public ID or Cloudinary secure URL is required for product media mapping."
       });
     }
 
-    const isPrimary = this.normalizeBoolean(input.isPrimary);
-    const role = isPrimary ? "primary" : this.normalizeMediaRole(input.role);
+    if (!resolvedSecureUrl) {
+      throw new BadRequestException({
+        message:
+          "Product media must resolve to a Cloudinary secure URL. Provide cloudinarySecureUrl or configure CLOUDINARY_CLOUD_NAME for public ID delivery URLs."
+      });
+    }
+
+    const requestedRole = this.normalizeMediaRole(input.role);
+    const isPrimary = this.normalizeBoolean(input.isPrimary) || requestedRole === "primary";
+    const role = isPrimary ? "primary" : requestedRole;
 
     return {
       altText: this.normalizeOptionalString(input.altText),
@@ -1718,16 +1741,28 @@ export class AdminService implements OnModuleDestroy {
   }
 
   private normalizeSortOrder(value: unknown): number {
+    let sortOrder: number | null = null;
+
     if (typeof value === "number" && Number.isInteger(value)) {
-      return value;
+      sortOrder = value;
     }
 
     if (typeof value === "string" && value.trim()) {
       const parsed = Number(value);
 
       if (Number.isInteger(parsed)) {
-        return parsed;
+        sortOrder = parsed;
       }
+    }
+
+    if (sortOrder !== null) {
+      if (sortOrder < MIN_MEDIA_SORT_ORDER || sortOrder > MAX_MEDIA_SORT_ORDER) {
+        throw new BadRequestException({
+          message: `sortOrder must be between ${MIN_MEDIA_SORT_ORDER} and ${MAX_MEDIA_SORT_ORDER}.`
+        });
+      }
+
+      return sortOrder;
     }
 
     throw new BadRequestException({
@@ -1825,7 +1860,7 @@ export class AdminService implements OnModuleDestroy {
     const resourceType = parts[1] ?? null;
     const uploadIndex = parts.indexOf("upload");
 
-    if (uploadIndex < 0) {
+    if (resourceType !== "image" || uploadIndex < 0) {
       return null;
     }
 

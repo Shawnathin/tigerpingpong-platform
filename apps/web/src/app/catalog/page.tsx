@@ -260,24 +260,6 @@ function ResourceError({ error }: { error: string | null }) {
   );
 }
 
-function CategoryNav({ categories }: { categories: CatalogCategory[] }) {
-  const flatCategories = flattenCategories(categories);
-
-  if (flatCategories.length === 0) {
-    return null;
-  }
-
-  return (
-    <nav className={styles.categoryNav} aria-label="Catalog categories">
-      {flatCategories.map((category) => (
-        <a href={`#category-${category.slug}`} key={category.key}>
-          {category.name}
-        </a>
-      ))}
-    </nav>
-  );
-}
-
 function ProductMedia({ product }: { product: CatalogProductSummary }) {
   const image = getProductImage(product);
 
@@ -373,14 +355,6 @@ export default async function CatalogPage() {
         <ResourceError
           error={catalog.categories.error ?? catalog.families.error ?? catalog.products.error}
         />
-
-        <section className={styles.section} aria-labelledby="catalog-navigation-title">
-          <div className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Find your match</p>
-            <h2 id="catalog-navigation-title">Jump into the lineup.</h2>
-          </div>
-          <CategoryNav categories={categories} />
-        </section>
 
         {families.length > 0 ? (
           <section className={styles.section} aria-labelledby="catalog-families-title">

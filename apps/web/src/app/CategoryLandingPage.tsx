@@ -35,6 +35,7 @@ export interface CategoryLandingPageConfig {
   productLayout?: "editorial" | "compact";
   productOrder?: string[];
   productRailLabels?: Record<string, string>;
+  showProductRail?: boolean;
   shippingMessage?: string;
 }
 
@@ -218,11 +219,13 @@ function ProductRail({
 function BrowseTools({
   productRailLabels,
   products,
+  showProductRail,
   shippingMessage,
   title
 }: {
   productRailLabels?: Record<string, string>;
   products: CatalogProductSummary[];
+  showProductRail: boolean;
   shippingMessage: string;
   title: string;
 }) {
@@ -231,8 +234,14 @@ function BrowseTools({
   }
 
   return (
-    <div className={styles.browseTools} data-sticky={products.length > 1 ? "true" : undefined}>
-      <ProductRail productRailLabels={productRailLabels} products={products} title={title} />
+    <div
+      className={styles.browseTools}
+      data-sticky={showProductRail && products.length > 1 ? "true" : undefined}
+      data-rail={showProductRail ? "true" : undefined}
+    >
+      {showProductRail ? (
+        <ProductRail productRailLabels={productRailLabels} products={products} title={title} />
+      ) : null}
       <p className={styles.shippingBadge}>{shippingMessage}</p>
     </div>
   );
@@ -292,6 +301,7 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
           <BrowseTools
             productRailLabels={config.productRailLabels}
             products={products}
+            showProductRail={config.showProductRail ?? false}
             shippingMessage={shippingMessage}
             title={config.title}
           />

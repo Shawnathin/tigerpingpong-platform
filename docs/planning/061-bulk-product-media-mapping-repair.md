@@ -52,6 +52,23 @@ fallback image points at Aqua prototype media. Its proposed primary should be:
 tigerpingpong/products/tiger-vice-paddle/01-main
 ```
 
+## Verify Current DB State
+
+Run verify before applying, especially after a failed or interrupted apply run:
+
+```bash
+DATABASE_URL='<postgres connection string>' node scripts/repair-product-media-mappings.mjs --verify
+```
+
+Verify mode:
+
+- requires `DATABASE_URL`;
+- writes no database rows;
+- prints the 11 high-confidence product slugs;
+- prints the 6 review-confidence product slugs that remain report-only;
+- reports whether each high-confidence product is already correctly mapped,
+  needs apply, or has a blocking conflict such as duplicate matching rows.
+
 ## Safe Apply
 
 Apply mode uses the Prisma Client generated for the `@tigerpingpong/db`
@@ -73,12 +90,22 @@ Apply mode:
 - requires `DATABASE_URL`;
 - fails with the exact generate command if the package-scoped Prisma Client is
   missing or not generated;
+- verifies current DB state and prints high-confidence, skipped-review, and
+  per-product mapping status before writing;
 - updates or creates `ProductMedia` rows for high-confidence Cloudinary assets;
 - clears only competing primary flags for the same product;
 - skips mappings with public IDs already assigned to another product;
+- leaves review-confidence mappings report-only;
+- avoids one long interactive transaction, and applies one high-confidence
+  product mapping at a time so a retry is idempotent after a partial failure;
+- avoids duplicate media rows by matching existing rows by media key or
+  Cloudinary public ID before creating anything;
+- records `attempted`, `created`, `updated`, `alreadyCorrect`,
+  `skippedReview`, `failed`, and before/after `changes` in `applyResult`;
 - stores before/after row data in `applyResult.changes` for manual revert.
 
-Do not run apply against production without reviewing the dry-run report first.
+Do not run apply against production without reviewing the dry-run and verify
+reports first.
 
 ## Revert
 

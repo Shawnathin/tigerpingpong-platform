@@ -22,6 +22,7 @@ const APPLY_FLAG = "--apply";
 const HELP_FLAG = "--help";
 const MANIFEST_FLAG = "--manifest";
 const REPORT_FLAG = "--report";
+const VERIFY_FLAG = "--verify";
 
 const FAMILY_WORDS = [
   "expo",
@@ -81,7 +82,9 @@ async function main() {
   const context = await loadContext(args);
   const report = buildReport(context, args);
 
-  if (args.apply) {
+  if (args.verify) {
+    await verifyHighConfidenceMappings(report);
+  } else if (args.apply) {
     await applyHighConfidenceMappings(report);
   }
 
@@ -89,6 +92,10 @@ async function main() {
   printSummary(report);
 
   if (args.apply && !report.applyResult?.applied) {
+    process.exitCode = 1;
+  }
+
+  if (args.verify && !report.verifyResult?.verified) {
     process.exitCode = 1;
   }
 }
@@ -99,7 +106,8 @@ function parseArgs(argv) {
     errors: [],
     help: false,
     manifestPath: DEFAULT_MANIFEST,
-    reportPath: null
+    reportPath: null,
+    verify: false
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -112,6 +120,11 @@ function parseArgs(argv) {
 
     if (arg === APPLY_FLAG) {
       parsed.apply = true;
+      continue;
+    }
+
+    if (arg === VERIFY_FLAG) {
+      parsed.verify = true;
       continue;
     }
 
@@ -143,6 +156,10 @@ function parseArgs(argv) {
     parsed.errors.push(`Unknown argument: ${arg}`);
   }
 
+  if (parsed.apply && parsed.verify) {
+    parsed.errors.push("--apply and --verify cannot be used together.");
+  }
+
   return parsed;
 }
 
@@ -152,12 +169,16 @@ function printHelp() {
 Dry run, default:
   node scripts/repair-product-media-mappings.mjs
 
+Verify current high-confidence database mappings:
+  DATABASE_URL='<postgres connection string>' node scripts/repair-product-media-mappings.mjs --verify
+
 Apply high-confidence database changes:
   pnpm --filter @tigerpingpong/db prisma:generate
   DATABASE_URL='<postgres connection string>' node scripts/repair-product-media-mappings.mjs --apply
 
 Options:
   --apply             Write only high-confidence Cloudinary mappings to ProductMedia.
+  --verify            Read database state and report whether high-confidence mappings are applied.
   --manifest <path>   Use a custom Cloudinary upload manifest.
   --report <path>     Write the report to a custom JSON path.
 
@@ -181,7 +202,7 @@ async function loadContext(args) {
   const mediaRows = parseCsv(mediaCsv);
   const manifest = JSON.parse(manifestRaw);
   const fallbackMediaBySlug = parseFallbackMedia(fallbackSource);
-  const dbMediaRows = await readDatabaseMediaRows(args.apply);
+  const dbMediaRows = await readDatabaseMediaRows(args.apply || args.verify);
 
   return {
     dbMediaRows,
@@ -325,7 +346,7 @@ function buildReport(context, args) {
   return {
     schemaVersion: 1,
     generatedAt: generatedAt.toISOString(),
-    mode: args.apply ? "apply" : "dry-run",
+    mode: args.apply ? "apply" : args.verify ? "verify" : "dry-run",
     safety: {
       dryRunDefault: !args.apply,
       applied: false,
@@ -369,6 +390,7 @@ function buildReport(context, args) {
     unmatchedImages,
     recommendedManualReviewList,
     applyResult: null,
+    verifyResult: null,
     reportPath
   };
 }
@@ -677,192 +699,68 @@ async function applyHighConfidenceMappings(report) {
     report.applyResult = {
       applied: false,
       error: "DATABASE_URL is required for --apply.",
+      attempted: [],
+      created: [],
+      updated: [],
+      alreadyCorrect: [],
+      skippedReview: getReviewMappings(report).map((mapping) => mapping.productSlug),
+      failed: [],
       changes: []
     };
     report.safety.applied = false;
     return;
   }
 
-  const highConfidenceMappings = report.proposedMappings.filter(
-    (mapping) => mapping.confidenceLevel === "high"
-  );
   let prisma = null;
-  const changes = [];
+  const result = createApplyResult(report);
 
   try {
     const { PrismaClient } = await loadPrismaClient();
     prisma = new PrismaClient();
+    const verification = await buildMappingVerification(prisma, report);
+    printVerificationPlan(verification);
+    result.attempted = verification.highConfidenceProductSlugs;
 
-    await prisma.$transaction(async (transaction) => {
-      for (const mapping of highConfidenceMappings) {
-        const product = await transaction.product.findUnique({
-          where: {
-            slug: mapping.productSlug
-          },
-          select: {
-            id: true,
-            slug: true
-          }
-        });
-
-        if (!product) {
-          changes.push({
-            action: "skipped",
-            productSlug: mapping.productSlug,
-            reason: "Product was not found in the database."
-          });
-          continue;
-        }
-
-        const publicIds = mapping.gallery.map((item) => item.cloudinaryPublicId);
-        const conflictingRows = await transaction.productMedia.findMany({
-          where: {
-            cloudinaryPublicId: {
-              in: publicIds
-            },
-            productId: {
-              not: product.id
-            }
-          },
-          select: applyMediaSelect()
-        });
-
-        if (conflictingRows.length > 0) {
-          changes.push({
-            action: "skipped",
-            productSlug: mapping.productSlug,
-            reason: "One or more public IDs are already assigned to another product.",
-            conflicts: conflictingRows.map(serializeApplyMediaRow)
-          });
-          continue;
-        }
-
-        if (mapping.proposedPrimary) {
-          const primaryRowsBefore = await transaction.productMedia.findMany({
-            where: {
-              productId: product.id,
-              isPrimary: true
-            },
-            select: applyMediaSelect()
-          });
-
-          await transaction.productMedia.updateMany({
-            where: {
-              productId: product.id,
-              isPrimary: true,
-              mediaKey: {
-                not: mapping.proposedPrimary.mediaKey
-              }
-            },
-            data: {
-              isPrimary: false
-            }
-          });
-
-          const primaryRowsAfter = await transaction.productMedia.findMany({
-            where: {
-              id: {
-                in: primaryRowsBefore.map((row) => row.id)
-              }
-            },
-            select: applyMediaSelect()
-          });
-
-          for (const before of primaryRowsBefore) {
-            const after = primaryRowsAfter.find((row) => row.id === before.id);
-
-            if (after && before.isPrimary !== after.isPrimary) {
-              changes.push({
-                action: "updated_existing_primary_flag",
-                productSlug: mapping.productSlug,
-                before: serializeApplyMediaRow(before),
-                after: serializeApplyMediaRow(after)
-              });
-            }
-          }
-        }
-
-        for (const item of mapping.gallery) {
-          const existing = await transaction.productMedia.findFirst({
-            where: {
-              OR: [
-                {
-                  mediaKey: item.mediaKey
-                },
-                {
-                  cloudinaryPublicId: item.cloudinaryPublicId
-                }
-              ],
-              productId: product.id
-            },
-            select: applyMediaSelect()
-          });
-          const data = {
-            altText: item.altText,
-            cloudinaryFormat: item.cloudinaryFormat,
-            cloudinaryPublicId: item.cloudinaryPublicId,
-            cloudinaryResourceType: item.cloudinaryResourceType,
-            cloudinarySecureUrl: item.cloudinarySecureUrl,
-            cloudinaryVersion: item.cloudinaryVersion,
-            height: item.height,
-            isActive: true,
-            isPrimary: item.isPrimary,
-            isPublic: Boolean(item.cloudinaryPublicId || item.cloudinarySecureUrl),
-            mediaKey: item.mediaKey,
-            productId: product.id,
-            reviewStatus: "approved",
-            role: item.role,
-            sortOrder: item.sortOrder,
-            sourceProvider: "cloudinary",
-            sourceUrl: item.sourceUrl,
-            title: item.title,
-            width: item.width
-          };
-
-          if (existing) {
-            await transaction.productMedia.update({
-              where: {
-                id: existing.id
-              },
-              data
-            });
-          } else {
-            await transaction.productMedia.create({
-              data
-            });
-          }
-
-          const after = await transaction.productMedia.findFirst({
-            where: {
-              productId: product.id,
-              mediaKey: item.mediaKey
-            },
-            select: applyMediaSelect()
-          });
-
-          changes.push({
-            action: existing ? "updated" : "created",
-            productSlug: mapping.productSlug,
-            cloudinaryPublicId: item.cloudinaryPublicId,
-            before: existing ? serializeApplyMediaRow(existing) : null,
-            after: after ? serializeApplyMediaRow(after) : null
-          });
-        }
+    for (const verificationItem of verification.highConfidenceProducts) {
+      if (verificationItem.status === "already_correct") {
+        result.alreadyCorrect.push(verificationItem.productSlug);
+        continue;
       }
-    });
+
+      if (verificationItem.status === "failed") {
+        result.failed.push({
+          productSlug: verificationItem.productSlug,
+          reason: verificationItem.reason,
+          conflicts: verificationItem.conflicts,
+          duplicateMatches: verificationItem.duplicateMatches
+        });
+        continue;
+      }
+
+      const mapping = verificationItem.mapping;
+      const mappingResult = await applySingleHighConfidenceMapping(prisma, mapping);
+      result.created.push(...mappingResult.created);
+      result.updated.push(...mappingResult.updated);
+      result.failed.push(...mappingResult.failed);
+      result.changes.push(...mappingResult.changes);
+    }
+
+    const hasFailures = result.failed.length > 0;
 
     report.applyResult = {
-      applied: true,
-      error: null,
-      highConfidenceProductCount: highConfidenceMappings.length,
-      changes
+      ...result,
+      applied: !hasFailures,
+      error: hasFailures
+        ? "One or more high-confidence mappings failed; review applyResult.failed."
+        : null
     };
-    report.safety.applied = true;
+    report.safety.applied = !hasFailures;
   } catch (error) {
     report.applyResult = {
+      ...result,
       applied: false,
       error: error.message,
-      changes
+      changes: result.changes
     };
     report.safety.applied = false;
   } finally {
@@ -870,6 +768,431 @@ async function applyHighConfidenceMappings(report) {
       await prisma.$disconnect();
     }
   }
+}
+
+async function verifyHighConfidenceMappings(report) {
+  if (!process.env.DATABASE_URL) {
+    report.verifyResult = {
+      verified: false,
+      error: "DATABASE_URL is required for --verify.",
+      highConfidenceProductSlugs: getHighConfidenceMappings(report).map(
+        (mapping) => mapping.productSlug
+      ),
+      skippedReview: getReviewMappings(report).map((mapping) => mapping.productSlug),
+      highConfidenceProducts: []
+    };
+    return;
+  }
+
+  let prisma = null;
+
+  try {
+    const { PrismaClient } = await loadPrismaClient();
+    prisma = new PrismaClient();
+    const verification = await buildMappingVerification(prisma, report);
+    printVerificationPlan(verification);
+
+    report.verifyResult = {
+      verified: true,
+      error: null,
+      ...serializeVerification(verification)
+    };
+  } catch (error) {
+    report.verifyResult = {
+      verified: false,
+      error: error.message,
+      highConfidenceProductSlugs: getHighConfidenceMappings(report).map(
+        (mapping) => mapping.productSlug
+      ),
+      skippedReview: getReviewMappings(report).map((mapping) => mapping.productSlug),
+      highConfidenceProducts: []
+    };
+  } finally {
+    if (prisma) {
+      await prisma.$disconnect();
+    }
+  }
+}
+
+function createApplyResult(report) {
+  return {
+    attempted: [],
+    created: [],
+    updated: [],
+    alreadyCorrect: [],
+    skippedReview: getReviewMappings(report).map((mapping) => mapping.productSlug),
+    failed: [],
+    changes: []
+  };
+}
+
+async function buildMappingVerification(prisma, report) {
+  const highConfidenceMappings = getHighConfidenceMappings(report);
+  const reviewMappings = getReviewMappings(report);
+  const highConfidenceProducts = [];
+
+  for (const mapping of highConfidenceMappings) {
+    highConfidenceProducts.push(await verifySingleHighConfidenceMapping(prisma, mapping));
+  }
+
+  return {
+    highConfidenceProductSlugs: highConfidenceMappings.map((mapping) => mapping.productSlug),
+    skippedReview: reviewMappings.map((mapping) => mapping.productSlug),
+    highConfidenceProducts
+  };
+}
+
+async function verifySingleHighConfidenceMapping(prisma, mapping) {
+  const product = await prisma.product.findUnique({
+    where: {
+      slug: mapping.productSlug
+    },
+    select: {
+      id: true,
+      slug: true
+    }
+  });
+
+  if (!product) {
+    return {
+      mapping,
+      productSlug: mapping.productSlug,
+      status: "failed",
+      reason: "Product was not found in the database.",
+      alreadyCorrect: false,
+      itemStatuses: []
+    };
+  }
+
+  const publicIds = mapping.gallery.map((item) => item.cloudinaryPublicId).filter(Boolean);
+  const conflicts = await prisma.productMedia.findMany({
+    where: {
+      cloudinaryPublicId: {
+        in: publicIds
+      },
+      productId: {
+        not: product.id
+      }
+    },
+    select: applyMediaSelect()
+  });
+
+  const productRows = await prisma.productMedia.findMany({
+    where: {
+      productId: product.id
+    },
+    select: applyMediaSelect()
+  });
+  const duplicateMatches = [];
+  const itemStatuses = mapping.gallery.map((item) => {
+    const expected = buildApplyMediaData(item, product.id);
+    const matches = matchingMediaRows(productRows, item);
+
+    if (matches.length > 1) {
+      duplicateMatches.push({
+        mediaKey: item.mediaKey,
+        cloudinaryPublicId: item.cloudinaryPublicId,
+        matches: matches.map(serializeApplyMediaRow)
+      });
+    }
+
+    return {
+      mediaKey: item.mediaKey,
+      cloudinaryPublicId: item.cloudinaryPublicId,
+      status:
+        matches.length === 0
+          ? "missing"
+          : matches.length > 1
+            ? "duplicate_matches"
+            : mediaRowMatchesExpected(matches[0], expected)
+              ? "correct"
+              : "needs_update",
+      current: matches[0] ? serializeApplyMediaRow(matches[0]) : null,
+      expected
+    };
+  });
+  const competingPrimaryRows = productRows.filter(
+    (row) => row.isPrimary && row.mediaKey !== mapping.proposedPrimary?.mediaKey
+  );
+
+  if (conflicts.length > 0) {
+    return {
+      mapping,
+      productSlug: mapping.productSlug,
+      status: "failed",
+      reason: "One or more public IDs are already assigned to another product.",
+      alreadyCorrect: false,
+      conflicts: conflicts.map(serializeApplyMediaRow),
+      duplicateMatches,
+      itemStatuses,
+      competingPrimaryRows: competingPrimaryRows.map(serializeApplyMediaRow)
+    };
+  }
+
+  if (duplicateMatches.length > 0) {
+    return {
+      mapping,
+      productSlug: mapping.productSlug,
+      status: "failed",
+      reason:
+        "Multiple same-product media rows match a proposed media key or Cloudinary public ID.",
+      alreadyCorrect: false,
+      conflicts: [],
+      duplicateMatches,
+      itemStatuses,
+      competingPrimaryRows: competingPrimaryRows.map(serializeApplyMediaRow)
+    };
+  }
+
+  const alreadyCorrect =
+    itemStatuses.every((item) => item.status === "correct") && competingPrimaryRows.length === 0;
+
+  return {
+    mapping,
+    productId: product.id,
+    productSlug: mapping.productSlug,
+    status: alreadyCorrect ? "already_correct" : "needs_apply",
+    reason: alreadyCorrect ? null : "One or more media rows are missing or need updates.",
+    alreadyCorrect,
+    conflicts: [],
+    duplicateMatches,
+    itemStatuses,
+    competingPrimaryRows: competingPrimaryRows.map(serializeApplyMediaRow)
+  };
+}
+
+async function applySingleHighConfidenceMapping(prisma, mapping) {
+  const result = {
+    created: [],
+    updated: [],
+    failed: [],
+    changes: []
+  };
+  const verification = await verifySingleHighConfidenceMapping(prisma, mapping);
+
+  if (verification.status === "failed") {
+    result.failed.push({
+      productSlug: mapping.productSlug,
+      reason: verification.reason,
+      conflicts: verification.conflicts,
+      duplicateMatches: verification.duplicateMatches
+    });
+    return result;
+  }
+
+  if (verification.status === "already_correct") {
+    return result;
+  }
+
+  const productId = verification.productId;
+
+  if (mapping.proposedPrimary) {
+    const primaryRowsBefore = await prisma.productMedia.findMany({
+      where: {
+        productId,
+        isPrimary: true,
+        mediaKey: {
+          not: mapping.proposedPrimary.mediaKey
+        }
+      },
+      select: applyMediaSelect()
+    });
+
+    if (primaryRowsBefore.length > 0) {
+      await prisma.productMedia.updateMany({
+        where: {
+          id: {
+            in: primaryRowsBefore.map((row) => row.id)
+          }
+        },
+        data: {
+          isPrimary: false
+        }
+      });
+
+      const primaryRowsAfter = await prisma.productMedia.findMany({
+        where: {
+          id: {
+            in: primaryRowsBefore.map((row) => row.id)
+          }
+        },
+        select: applyMediaSelect()
+      });
+
+      for (const before of primaryRowsBefore) {
+        const after = primaryRowsAfter.find((row) => row.id === before.id);
+
+        if (after && before.isPrimary !== after.isPrimary) {
+          const change = {
+            action: "updated_existing_primary_flag",
+            productSlug: mapping.productSlug,
+            before: serializeApplyMediaRow(before),
+            after: serializeApplyMediaRow(after)
+          };
+          result.updated.push(change);
+          result.changes.push(change);
+        }
+      }
+    }
+  }
+
+  for (const item of mapping.gallery) {
+    const existingRows = await prisma.productMedia.findMany({
+      where: {
+        OR: [
+          {
+            mediaKey: item.mediaKey
+          },
+          {
+            cloudinaryPublicId: item.cloudinaryPublicId
+          }
+        ],
+        productId
+      },
+      select: applyMediaSelect()
+    });
+
+    if (existingRows.length > 1) {
+      result.failed.push({
+        productSlug: mapping.productSlug,
+        reason: "Multiple same-product rows match a proposed media key or Cloudinary public ID.",
+        duplicateMatches: [
+          {
+            mediaKey: item.mediaKey,
+            cloudinaryPublicId: item.cloudinaryPublicId,
+            matches: existingRows.map(serializeApplyMediaRow)
+          }
+        ]
+      });
+      return result;
+    }
+
+    const data = buildApplyMediaData(item, productId);
+    const existing = existingRows[0] ?? null;
+
+    if (existing && mediaRowMatchesExpected(existing, data)) {
+      continue;
+    }
+
+    if (existing) {
+      await prisma.productMedia.update({
+        where: {
+          id: existing.id
+        },
+        data
+      });
+    } else {
+      await prisma.productMedia.create({
+        data
+      });
+    }
+
+    const after = await prisma.productMedia.findFirst({
+      where: {
+        productId,
+        mediaKey: item.mediaKey
+      },
+      select: applyMediaSelect()
+    });
+    const change = {
+      action: existing ? "updated" : "created",
+      productSlug: mapping.productSlug,
+      cloudinaryPublicId: item.cloudinaryPublicId,
+      before: existing ? serializeApplyMediaRow(existing) : null,
+      after: after ? serializeApplyMediaRow(after) : null
+    };
+
+    if (existing) {
+      result.updated.push(change);
+    } else {
+      result.created.push(change);
+    }
+
+    result.changes.push(change);
+  }
+
+  return result;
+}
+
+function printVerificationPlan(verification) {
+  console.log(
+    `High-confidence product slugs (${verification.highConfidenceProductSlugs.length}): ${verification.highConfidenceProductSlugs.join(
+      ", "
+    )}`
+  );
+  console.log(
+    `Skipped review product slugs (${verification.skippedReview.length}): ${verification.skippedReview.join(", ")}`
+  );
+  console.log("High-confidence mapping status:");
+
+  for (const product of verification.highConfidenceProducts) {
+    const label =
+      product.status === "already_correct"
+        ? "already correctly mapped"
+        : product.status === "needs_apply"
+          ? "needs apply"
+          : `failed: ${product.reason}`;
+    console.log(`- ${product.productSlug}: ${label}`);
+  }
+}
+
+function serializeVerification(verification) {
+  return {
+    highConfidenceProductSlugs: verification.highConfidenceProductSlugs,
+    skippedReview: verification.skippedReview,
+    highConfidenceProducts: verification.highConfidenceProducts.map((product) => ({
+      productSlug: product.productSlug,
+      status: product.status,
+      reason: product.reason,
+      alreadyCorrect: product.alreadyCorrect,
+      itemStatuses: product.itemStatuses,
+      competingPrimaryRows: product.competingPrimaryRows ?? [],
+      conflicts: product.conflicts ?? [],
+      duplicateMatches: product.duplicateMatches ?? []
+    }))
+  };
+}
+
+function buildApplyMediaData(item, productId) {
+  return {
+    altText: item.altText,
+    cloudinaryFormat: item.cloudinaryFormat,
+    cloudinaryPublicId: item.cloudinaryPublicId,
+    cloudinaryResourceType: item.cloudinaryResourceType,
+    cloudinarySecureUrl: item.cloudinarySecureUrl,
+    cloudinaryVersion: item.cloudinaryVersion,
+    height: item.height,
+    isActive: true,
+    isPrimary: item.isPrimary,
+    isPublic: Boolean(item.cloudinaryPublicId || item.cloudinarySecureUrl),
+    mediaKey: item.mediaKey,
+    productId,
+    reviewStatus: "approved",
+    role: item.role,
+    sortOrder: item.sortOrder,
+    sourceProvider: "cloudinary",
+    sourceUrl: item.sourceUrl,
+    title: item.title,
+    width: item.width
+  };
+}
+
+function matchingMediaRows(rows, item) {
+  return rows.filter(
+    (row) => row.mediaKey === item.mediaKey || row.cloudinaryPublicId === item.cloudinaryPublicId
+  );
+}
+
+function mediaRowMatchesExpected(row, expected) {
+  return Object.entries(expected).every(([key, value]) => row[key] === value);
+}
+
+function getHighConfidenceMappings(report) {
+  return report.proposedMappings.filter((mapping) => mapping.confidenceLevel === "high");
+}
+
+function getReviewMappings(report) {
+  return report.proposedMappings.filter((mapping) => mapping.confidenceLevel !== "high");
 }
 
 function applyMediaSelect() {
@@ -918,10 +1241,23 @@ function printSummary(report) {
   console.log(`Suspicious conflicts: ${report.summary.suspiciousConflicts}`);
 
   if (report.applyResult) {
+    console.log(`Apply attempted products: ${report.applyResult.attempted.length}`);
+    console.log(`Apply created rows: ${report.applyResult.created.length}`);
+    console.log(`Apply updated rows: ${report.applyResult.updated.length}`);
+    console.log(`Apply already-correct products: ${report.applyResult.alreadyCorrect.length}`);
+    console.log(`Apply skipped review products: ${report.applyResult.skippedReview.length}`);
+    console.log(`Apply failed products: ${report.applyResult.failed.length}`);
+
+    if (!report.applyResult.applied) {
+      console.log(`Apply skipped/failed: ${report.applyResult.error}`);
+    }
+  }
+
+  if (report.verifyResult) {
     console.log(
-      report.applyResult.applied
-        ? `Applied changes: ${report.applyResult.changes.length}`
-        : `Apply skipped/failed: ${report.applyResult.error}`
+      report.verifyResult.verified
+        ? `Verify high-confidence products: ${report.verifyResult.highConfidenceProducts.length}`
+        : `Verify failed: ${report.verifyResult.error}`
     );
   }
 }

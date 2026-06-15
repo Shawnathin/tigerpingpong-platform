@@ -21,6 +21,7 @@
     "media:cloudinary:products": "node scripts/upload-product-media-to-cloudinary.mjs",
     "import:tiger:dev": "pnpm --filter @tigerpingpong/db import:tiger:dev",
     "db:generate": "pnpm --filter @tigerpingpong/db prisma:generate",
+    "db:migrate:deploy": "pnpm --filter @tigerpingpong/db prisma:migrate:deploy",
     "db:validate": "pnpm --filter @tigerpingpong/db prisma:validate"
   },
   "devDependencies": {

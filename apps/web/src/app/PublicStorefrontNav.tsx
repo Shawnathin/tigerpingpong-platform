@@ -113,6 +113,7 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
             <div
               className="publicNavItem"
               data-active={activeItem === item.id ? "true" : undefined}
+              data-has-dropdown={item.dropdown ? "true" : undefined}
               key={item.id}
             >
               <a

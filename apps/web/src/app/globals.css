@@ -163,6 +163,16 @@ select {
   align-items: center;
 }
 
+.publicNavItem[data-has-dropdown="true"]::after {
+  position: absolute;
+  top: 100%;
+  left: -14px;
+  z-index: 1;
+  width: calc(100% + 28px);
+  height: 18px;
+  content: "";
+}
+
 .publicNavLink,
 .publicDropdown a {
   display: inline-flex;
@@ -195,11 +205,11 @@ select {
 
 .publicDropdown {
   position: absolute;
-  top: calc(100% + 9px);
+  top: calc(100% + 8px);
   left: 50%;
-  z-index: 2;
+  z-index: 3;
   display: flex;
-  gap: 4px;
+  gap: 5px;
   width: max-content;
   max-width: min(88vw, 520px);
   min-height: 42px;
@@ -217,11 +227,16 @@ select {
     inset 0 1px 0 rgb(255 255 255 / 90%);
   backdrop-filter: blur(22px) saturate(1.2);
   transform: translate(-50%, -4px);
+  transition:
+    opacity 150ms ease 90ms,
+    transform 150ms ease 90ms,
+    visibility 0ms linear 240ms;
+  visibility: hidden;
 }
 
 .publicDropdown a {
-  min-height: 32px;
-  padding: 0 13px;
+  min-height: 34px;
+  padding: 0 15px;
   font-size: 0.8rem;
   font-weight: 900;
   white-space: nowrap;
@@ -238,6 +253,8 @@ select {
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, 0);
+  transition-delay: 0ms;
+  visibility: visible;
 }
 
 .publicCartButton {
@@ -417,6 +434,8 @@ select {
     max-width: none;
     margin-top: 4px;
     transform: none;
+    transition: none;
+    visibility: visible;
   }
 
   .publicNavItem:hover .publicDropdown,

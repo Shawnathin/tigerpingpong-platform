@@ -1,4 +1,5 @@
 import { getProducts } from "../lib/catalog-api";
+import { resolveProductMediaUrl } from "../lib/product-media";
 import { getPrimaryProductMediaFallback, getProductCardPitch } from "../lib/public-storefront-demo";
 import { getV1ShippingMessage } from "../lib/shipping";
 import type { CatalogProductSummary } from "../types/catalog";
@@ -66,13 +67,15 @@ function getProductImage(product: CatalogProductSummary): {
   alt: string;
   src: string | null;
 } {
-  const livePrimaryMedia = product.primaryMedia?.cloudinarySecureUrl ? product.primaryMedia : null;
+  const livePrimaryMedia = product.primaryMedia
+    ? {
+        alt: product.primaryMedia.altText ?? product.name,
+        src: resolveProductMediaUrl(product.primaryMedia, product.slug)
+      }
+    : null;
 
-  if (livePrimaryMedia) {
-    return {
-      alt: livePrimaryMedia.altText ?? product.name,
-      src: livePrimaryMedia.cloudinarySecureUrl
-    };
+  if (livePrimaryMedia?.src) {
+    return livePrimaryMedia;
   }
 
   const fallbackMedia = getPrimaryProductMediaFallback(product.slug);

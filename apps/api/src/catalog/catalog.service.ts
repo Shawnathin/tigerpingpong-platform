@@ -855,6 +855,7 @@ export class CatalogService implements OnModuleDestroy {
       mediaKey: media.mediaKey,
       role: media.role,
       cloudinarySecureUrl: media.cloudinarySecureUrl,
+      cloudinaryPublicId: media.cloudinaryPublicId,
       altText: media.altText,
       title: media.title,
       caption: media.caption,
@@ -862,7 +863,6 @@ export class CatalogService implements OnModuleDestroy {
       isPrimary: media.isPrimary,
       ...(includeInternal
         ? {
-            cloudinaryPublicId: media.cloudinaryPublicId,
             sourceUrl: media.sourceUrl,
             sourceProvider: media.sourceProvider,
             isPublic: media.isPublic,

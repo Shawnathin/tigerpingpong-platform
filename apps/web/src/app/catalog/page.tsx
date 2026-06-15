@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { getCategories, getProductFamilies, getProducts } from "../../lib/catalog-api";
+import { resolveProductMediaUrl } from "../../lib/product-media";
 import {
   getPrimaryProductMediaFallback,
   getProductCardPitch
@@ -182,13 +183,10 @@ function getProductImage(product: CatalogProductSummary): {
   alt: string;
   src: string | null;
 } {
-  const livePrimaryMedia = product.primaryMedia?.cloudinarySecureUrl ? product.primaryMedia : null;
+  const livePrimaryMedia = getLivePrimaryProductImage(product);
 
-  if (livePrimaryMedia) {
-    return {
-      alt: livePrimaryMedia.altText ?? product.name,
-      src: livePrimaryMedia.cloudinarySecureUrl
-    };
+  if (livePrimaryMedia?.src) {
+    return livePrimaryMedia;
   }
 
   const fallbackMedia = getPrimaryProductMediaFallback(product.slug);
@@ -199,17 +197,33 @@ function getProductImage(product: CatalogProductSummary): {
   };
 }
 
+function getLivePrimaryProductImage(product: CatalogProductSummary): {
+  alt: string;
+  src: string | null;
+} | null {
+  return product.primaryMedia
+    ? {
+        alt: product.primaryMedia.altText ?? product.name,
+        src: resolveProductMediaUrl(product.primaryMedia, product.slug)
+      }
+    : null;
+}
+
 function getHeroImage(products: CatalogProductSummary[]): {
   alt: string;
   src: string;
 } {
-  const liveFeaturedProduct = products.find((product) => product.primaryMedia?.cloudinarySecureUrl);
+  const liveFeaturedProduct = products.find((product) => getLivePrimaryProductImage(product)?.src);
 
-  if (liveFeaturedProduct?.primaryMedia?.cloudinarySecureUrl) {
-    return {
-      alt: liveFeaturedProduct.primaryMedia.altText ?? liveFeaturedProduct.name,
-      src: liveFeaturedProduct.primaryMedia.cloudinarySecureUrl
-    };
+  if (liveFeaturedProduct) {
+    const liveImage = getLivePrimaryProductImage(liveFeaturedProduct);
+
+    if (liveImage?.src) {
+      return {
+        alt: liveImage.alt,
+        src: liveImage.src
+      };
+    }
   }
 
   const fallbackFeaturedProduct =

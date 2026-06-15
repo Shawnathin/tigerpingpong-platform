@@ -6,6 +6,10 @@ import { PublicStorefrontNav, type PublicStorefrontNavItem } from "../../../Publ
 import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
 import type { CartProductInput } from "../../../../lib/cart";
 import {
+  normalizeMediaSrc,
+  resolveProductMediaUrl
+} from "../../../../lib/product-media";
+import {
   getProductMediaFallbacks,
   getPrimaryProductMediaFallback
 } from "../../../../lib/public-storefront-demo";
@@ -255,7 +259,7 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
   const cloudinaryMediaItems: ProductMediaGalleryItem[] = [];
 
   for (const media of sortedCatalogMedia) {
-    const src = normalizeMediaSrc(media.cloudinarySecureUrl);
+    const src = resolveProductMediaUrl(media, product.slug);
 
     if (!src) {
       continue;
@@ -276,12 +280,8 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
   const uniqueCloudinaryMediaItems = getUniqueMediaItems(cloudinaryMediaItems);
   const fallbackMediaItems = getUniqueMediaItems(getFallbackMediaItems(product));
 
-  if (uniqueCloudinaryMediaItems.length >= 2) {
+  if (uniqueCloudinaryMediaItems.length > 0) {
     return uniqueCloudinaryMediaItems;
-  }
-
-  if (uniqueCloudinaryMediaItems.length === 1) {
-    return appendUniqueMediaItems(uniqueCloudinaryMediaItems, fallbackMediaItems);
   }
 
   if (fallbackMediaItems.length > 0) {
@@ -300,11 +300,6 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
       isPrimary: true
     }
   ];
-}
-
-function normalizeMediaSrc(src: string | null): string | null {
-  const normalizedSrc = src?.trim();
-  return normalizedSrc ? normalizedSrc : null;
 }
 
 function getFallbackMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[] {
@@ -332,29 +327,6 @@ function getFallbackMediaItems(product: CatalogProductDetail): ProductMediaGalle
   return fallbackMediaItems;
 }
 
-function appendUniqueMediaItems(
-  preferredMediaItems: ProductMediaGalleryItem[],
-  fallbackMediaItems: ProductMediaGalleryItem[]
-): ProductMediaGalleryItem[] {
-  const mediaItems = getUniqueMediaItems(preferredMediaItems);
-  const seenSrcs = new Set(mediaItems.map((media) => media.src).filter(isPresentMediaSrc));
-
-  for (const fallbackMedia of fallbackMediaItems) {
-    if (!fallbackMedia.src || seenSrcs.has(fallbackMedia.src)) {
-      continue;
-    }
-
-    seenSrcs.add(fallbackMedia.src);
-    mediaItems.push({
-      ...fallbackMedia,
-      isPrimary: false,
-      sortOrder: mediaItems.length
-    });
-  }
-
-  return mediaItems;
-}
-
 function getUniqueMediaItems(mediaItems: ProductMediaGalleryItem[]): ProductMediaGalleryItem[] {
   const seenSrcs = new Set<string>();
   const uniqueMediaItems: ProductMediaGalleryItem[] = [];
@@ -369,10 +341,6 @@ function getUniqueMediaItems(mediaItems: ProductMediaGalleryItem[]): ProductMedi
   }
 
   return uniqueMediaItems;
-}
-
-function isPresentMediaSrc(src: string | null): src is string {
-  return src !== null;
 }
 
 interface CheckoutOptionValue {
@@ -468,8 +436,12 @@ function getCartImage(product: CatalogProductDetail): string | null {
 }
 
 function getSummaryCartImage(product: CatalogProductSummary): string | null {
-  if (product.primaryMedia?.cloudinarySecureUrl) {
-    return product.primaryMedia.cloudinarySecureUrl;
+  if (product.primaryMedia) {
+    const mediaUrl = resolveProductMediaUrl(product.primaryMedia, product.slug);
+
+    if (mediaUrl) {
+      return mediaUrl;
+    }
   }
 
   return getPrimaryProductMediaFallback(product.slug)?.src ?? null;

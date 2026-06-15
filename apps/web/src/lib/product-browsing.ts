@@ -7,6 +7,14 @@ const TABLE_PRODUCT_ORDER = [
   "tiger-whistler-indoor-table",
   "tiger-plaza-outdoor-table-grey"
 ];
+const ACCESSORY_PARENT_ORDER = [
+  "tiger-net-post-set",
+  "tiger-table-cover-black-polyester",
+  "tiger-premium-balls-140",
+  "tiger-premium-balls-6-orange",
+  "tiger-premium-balls-6-white",
+  "tiger-vice-paddle"
+];
 
 const TABLE_PRODUCT_META: Record<
   string,
@@ -61,7 +69,7 @@ const PRODUCT_DISPLAY_NAMES: Record<string, string> = {
   "tiger-vice-paddle": "Vice Paddle"
 };
 
-export const TABLE_SHIPPING_MESSAGE = "Free Canada-wide shipping on all tables.";
+export const TABLE_SHIPPING_MESSAGE = "Free Canada-wide shipping on all tables!";
 export const ACCESSORY_SHIPPING_MESSAGE = "Free Canada-wide shipping over $100.";
 
 export function getProductAnchorId(product: CatalogProductSummary): string {
@@ -143,6 +151,10 @@ export function getTableProductOrder(kind: "all" | "indoor" | "outdoor"): string
   }
 
   return TABLE_PRODUCT_ORDER;
+}
+
+export function getAccessoryParentProductOrder(): string[] {
+  return ACCESSORY_PARENT_ORDER;
 }
 
 function getProductMode(product: CatalogProductSummary): string | null {

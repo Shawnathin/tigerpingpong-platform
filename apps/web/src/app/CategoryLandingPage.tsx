@@ -214,6 +214,27 @@ function ProductRail({ products, title }: { products: CatalogProductSummary[]; t
   );
 }
 
+function BrowseTools({
+  products,
+  shippingMessage,
+  title
+}: {
+  products: CatalogProductSummary[];
+  shippingMessage: string;
+  title: string;
+}) {
+  if (products.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={styles.browseTools} data-sticky={products.length > 1 ? "true" : undefined}>
+      <ProductRail products={products} title={title} />
+      <p className={styles.shippingBadge}>{shippingMessage}</p>
+    </div>
+  );
+}
+
 function CategoryHeroImage({
   products,
   slug
@@ -264,7 +285,9 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
           <CategoryHeroImage products={products} slug={config.heroImageSlug} />
         </section>
 
-        <ProductRail products={products} title={config.title} />
+        {productResource.data && products.length > 0 ? (
+          <BrowseTools products={products} shippingMessage={shippingMessage} title={config.title} />
+        ) : null}
 
         {productResource.error ? (
           <div className={styles.error} role="status">
@@ -274,10 +297,6 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
         ) : null}
 
         <section className={styles.section} aria-label={`${config.title} products`}>
-          {productResource.data && products.length > 0 ? (
-            <p className={styles.shippingNote}>{shippingMessage}</p>
-          ) : null}
-
           {productResource.data && products.length > 0 ? (
             <div
               className={

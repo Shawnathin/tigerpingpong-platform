@@ -1,5 +1,9 @@
 import type { CategoryLandingPageConfig } from "./CategoryLandingPage";
-import { TABLE_SHIPPING_MESSAGE, getTableProductOrder } from "../lib/product-browsing";
+import {
+  TABLE_SHIPPING_MESSAGE,
+  getAccessoryParentProductOrder,
+  getTableProductOrder
+} from "../lib/product-browsing";
 import type { CatalogProductSummary } from "../types/catalog";
 
 function normalizedText(...values: Array<string | null | undefined>): string {
@@ -128,6 +132,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Round out the table setup with Tiger Ping Pong accessories for play, protection, and replacement setup needs.",
       heroImageSlug: "tiger-vice-paddle",
       navLinks: accessoryNavLinks,
+      productOrder: getAccessoryParentProductOrder(),
       productFilter: isAccessory
     }),
     paddles: categoryConfig({

@@ -139,7 +139,7 @@
   width: fit-content;
   max-width: min(100%, 1040px);
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   gap: 0;
 }
@@ -214,10 +214,11 @@
   flex: 0 0 auto;
   min-height: 26px;
   align-items: center;
-  align-self: flex-end;
+  justify-content: center;
+  max-width: min(86%, 360px);
   border: 1px solid rgb(255 255 255 / 70%);
   border-top-color: rgb(255 255 255 / 38%);
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 18px 18px;
   padding: 0 12px;
   color: #445066;
   background:
@@ -227,10 +228,11 @@
     inset 0 1px 0 rgb(255 255 255 / 88%),
     0 8px 18px rgb(27 36 65 / 5%);
   backdrop-filter: blur(16px) saturate(1.12);
-  margin: -1px 18px 0 0;
+  margin: -1px auto 0;
   font-size: 0.76rem;
   font-weight: 820;
   line-height: 1.2;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -553,7 +555,7 @@
   .shippingBadge {
     min-height: 26px;
     max-width: calc(100% - 24px);
-    margin-right: 12px;
+    margin-inline: auto;
     white-space: normal;
   }
 

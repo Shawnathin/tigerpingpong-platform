@@ -150,8 +150,8 @@
 
 .productRail {
   flex: 0 1 auto;
-  min-width: 0;
-  width: auto;
+  min-width: 520px;
+  width: max-content;
   max-width: 100%;
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 76%);
@@ -167,8 +167,10 @@
 .productRailInner {
   display: flex;
   gap: 6px;
+  min-width: 100%;
   overflow-x: auto;
   padding: 6px;
+  justify-content: safe center;
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
 }
@@ -377,11 +379,11 @@
   border: 1px solid rgb(255 255 255 / 82%);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 82%), rgb(255 255 255 / 60%)),
-    linear-gradient(120deg, rgb(242 138 46 / 6%), rgb(116 200 242 / 9%));
+    linear-gradient(135deg, rgb(255 255 255 / 86%), rgb(255 255 255 / 58%)),
+    linear-gradient(120deg, rgb(242 138 46 / 8%), rgb(116 200 242 / 12%));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 90%),
-    0 18px 48px rgb(27 36 65 / 7%);
+    inset 0 1px 0 rgb(255 255 255 / 92%),
+    0 20px 54px rgb(27 36 65 / 8%);
 }
 
 .productLink {
@@ -398,12 +400,15 @@
 .mediaFrame,
 .mediaPlaceholder {
   aspect-ratio: 4 / 3;
-  border-bottom: 1px solid rgb(223 228 232 / 72%);
+  border: 0;
   margin: 10px 10px 0;
   border-radius: 7px;
   background:
     linear-gradient(135deg, rgb(255 255 255 / 88%), rgb(241 247 249 / 88%)),
     linear-gradient(120deg, rgb(116 200 242 / 14%), rgb(242 138 46 / 10%));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 76%),
+    0 14px 34px rgb(27 36 65 / 7%);
 }
 
 .mediaFrame img {
@@ -469,7 +474,6 @@
 
 .cardFooter {
   display: grid;
-  border-top: 1px solid rgb(223 228 232 / 74%);
   padding: 0 18px 18px;
 }
 
@@ -538,6 +542,7 @@
 
   .productRail {
     justify-self: stretch;
+    min-width: 0;
     width: 100%;
     max-width: 100%;
     border-radius: 999px;

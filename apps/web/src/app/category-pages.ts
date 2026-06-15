@@ -108,6 +108,10 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       navLinks: tableNavLinks,
       productLayout: "editorial",
       productOrder: getTableProductOrder("indoor"),
+      productRailLabels: {
+        "tiger-portland-indoor-table": "Portland Indoor Table",
+        "tiger-whistler-indoor-table": "Whistler Indoor Table"
+      },
       shippingMessage: TABLE_SHIPPING_MESSAGE,
       productFilter: (product) => isTable(product) && hasMarker(product, "indoor")
     }),

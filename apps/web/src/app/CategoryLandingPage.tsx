@@ -34,6 +34,7 @@ export interface CategoryLandingPageConfig {
   productCtaLabel?: string;
   productLayout?: "editorial" | "compact";
   productOrder?: string[];
+  productRailLabels?: Record<string, string>;
   shippingMessage?: string;
 }
 
@@ -193,7 +194,15 @@ function ProductCard({
   );
 }
 
-function ProductRail({ products, title }: { products: CatalogProductSummary[]; title: string }) {
+function ProductRail({
+  productRailLabels,
+  products,
+  title
+}: {
+  productRailLabels?: Record<string, string>;
+  products: CatalogProductSummary[];
+  title: string;
+}) {
   if (products.length <= 1) {
     return null;
   }
@@ -201,7 +210,7 @@ function ProductRail({ products, title }: { products: CatalogProductSummary[]; t
   const railItems = products.map((product) => ({
     href: `#${getProductAnchorId(product)}`,
     id: getProductAnchorId(product),
-    label: getProductDisplayName(product)
+    label: productRailLabels?.[product.slug] ?? getProductDisplayName(product)
   }));
 
   return (
@@ -215,10 +224,12 @@ function ProductRail({ products, title }: { products: CatalogProductSummary[]; t
 }
 
 function BrowseTools({
+  productRailLabels,
   products,
   shippingMessage,
   title
 }: {
+  productRailLabels?: Record<string, string>;
   products: CatalogProductSummary[];
   shippingMessage: string;
   title: string;
@@ -229,7 +240,7 @@ function BrowseTools({
 
   return (
     <div className={styles.browseTools} data-sticky={products.length > 1 ? "true" : undefined}>
-      <ProductRail products={products} title={title} />
+      <ProductRail productRailLabels={productRailLabels} products={products} title={title} />
       <p className={styles.shippingBadge}>{shippingMessage}</p>
     </div>
   );
@@ -286,7 +297,12 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
         </section>
 
         {productResource.data && products.length > 0 ? (
-          <BrowseTools products={products} shippingMessage={shippingMessage} title={config.title} />
+          <BrowseTools
+            productRailLabels={config.productRailLabels}
+            products={products}
+            shippingMessage={shippingMessage}
+            title={config.title}
+          />
         ) : null}
 
         {productResource.error ? (

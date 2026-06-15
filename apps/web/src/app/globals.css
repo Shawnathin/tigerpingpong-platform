@@ -419,6 +419,11 @@ select {
     min-width: 0;
   }
 
+  .publicNavItem[data-has-dropdown="true"] {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .publicNavLink {
     width: 100%;
     padding-inline: 8px;
@@ -426,13 +431,15 @@ select {
 
   .publicDropdown {
     position: static;
-    display: none;
+    display: flex;
     flex: 1 1 100%;
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
     max-width: none;
     margin-top: 4px;
+    opacity: 1;
+    pointer-events: auto;
     transform: none;
     transition: none;
     visibility: visible;
@@ -440,7 +447,6 @@ select {
 
   .publicNavItem:hover .publicDropdown,
   .publicNavItem:focus-within .publicDropdown {
-    display: flex;
     transform: none;
   }
 

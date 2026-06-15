@@ -1138,7 +1138,8 @@
 }
 
 .purchasePanel {
-  gap: 16px;
+  align-content: center;
+  gap: 20px;
   border: 1px solid rgb(255 255 255 / 78%);
   border-radius: 26px;
   padding: clamp(22px, 2.2vw, 28px);
@@ -1193,11 +1194,11 @@
 }
 
 .checkoutBox {
-  gap: 16px;
+  gap: 18px;
 }
 
 .optionSelectors {
-  gap: 14px;
+  gap: 16px;
 }
 
 .optionSelector {

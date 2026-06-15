@@ -220,8 +220,7 @@ select {
   opacity: 0;
   pointer-events: none;
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 84%), rgb(255 255 255 / 48%)),
-    rgb(255 255 255 / 26%);
+    linear-gradient(135deg, rgb(255 255 255 / 84%), rgb(255 255 255 / 48%)), rgb(255 255 255 / 26%);
   box-shadow:
     0 18px 46px rgb(27 36 65 / 13%),
     inset 0 1px 0 rgb(255 255 255 / 90%);

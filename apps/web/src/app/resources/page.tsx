@@ -22,17 +22,33 @@ export default function ResourcesPage() {
   return (
     <>
       <PublicStorefrontNav activeItem="resources" />
-      <main className={styles.page}>
-        <section className={styles.hero} aria-labelledby="resources-title">
-          <p className={styles.eyebrow}>Resources</p>
-          <h1 id="resources-title">Useful starting points for choosing Tiger Ping Pong gear.</h1>
-          <p>
-            Start with the active shopping categories, shipping terms, and support paths that are
-            ready on the storefront today.
-          </p>
+      <main className={`${styles.page} ${styles.resourcesPage}`}>
+        <section
+          className={`${styles.hero} ${styles.resourcesHero}`}
+          aria-labelledby="resources-title"
+        >
+          <div className={styles.resourcesHeroCopy}>
+            <p className={styles.eyebrow}>Resources</p>
+            <h1 id="resources-title">Useful starting points for choosing Tiger Ping Pong gear.</h1>
+            <p>
+              Start with the active shopping categories, shipping terms, and support paths that are
+              ready on the storefront today.
+            </p>
+          </div>
+
+          <nav className={styles.resourcesHeroLinks} aria-label="Featured resources">
+            {RESOURCE_LINKS.slice(0, 4).map((link) => (
+              <a href={link.href} key={`featured-${link.href}`}>
+                {link.label}
+              </a>
+            ))}
+          </nav>
         </section>
 
-        <section className={styles.section} aria-labelledby="resources-links-title">
+        <section
+          className={`${styles.section} ${styles.resourcesSection}`}
+          aria-labelledby="resources-links-title"
+        >
           <p className={styles.eyebrow}>Browse</p>
           <h2 id="resources-links-title">Current storefront resources.</h2>
           <ul className={styles.linkList}>

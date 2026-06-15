@@ -187,14 +187,6 @@ function formatPrice(priceCents: number | null, currency: string): string {
   }).format(priceCents / 100);
 }
 
-function formatProductKind(productKind: string): string {
-  return productKind
-    .split(/[-_]/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 function getProductImage(product: CatalogProductSummary): {
   alt: string;
   src: string | null;
@@ -317,7 +309,7 @@ function FamilyCard({ family }: { family: CatalogFamily }) {
 
 function ProductCard({ product }: { product: CatalogProductSummary }) {
   const displayName = getProductDisplayName(product);
-  const chips = getProductChips(product, "compact", formatProductKind(product.productKind));
+  const chips = getProductChips(product, "compact");
   const pitch = getProductPitch(product, getProductCardPitch(product));
   const ctaLabel = getProductCtaLabel(product, "View product");
 

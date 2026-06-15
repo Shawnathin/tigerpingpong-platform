@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This planning document decides the future URL, footer navigation, and SEO redirect direction before implementation. It is intended to give Shawn a clear review surface for canonical paths, footer links, redirect strategy, and launch SEO sequencing before any app routes, redirects, sitemap, robots, or canonical tags are changed.
+This planning document decides the future URL, header navigation, footer navigation, and SEO redirect direction before implementation. It is intended to give Shawn a clear review surface for canonical paths, header links, footer links, redirect strategy, and launch SEO sequencing before any app routes, redirects, sitemap, robots, or canonical tags are changed.
 
 ## Current state
 
@@ -81,7 +81,41 @@ Known product URL preservation recommendation:
 | Terms and conditions | Not confirmed | `/terms-and-conditions` | Add before launch if legally required/available. | Confirm final terms content and URL. | Legal footer should not link to placeholders. |
 | Tracking parameters | URLs with `srsltid` or campaign parameters | Clean canonical URL without tracking parameters | Strip or ignore for canonicalization after canonical strategy is approved. | Decide query parameter policy. | Do not implement canonical handling yet. |
 
+## Header navigation direction
+
+Decision: header navigation should stay commercial and simple. It should prioritize traffic, SEO preservation, and sales clarity over Shawn's visual preference for filling space.
+
+Logo:
+
+- Logo links to homepage.
+
+Main header links:
+
+- Tables
+- Paddles
+- Balls
+- Accessories
+- Resources
+- Contact
+- Cart/icon as utility
+
+Dropdowns:
+
+- Tables may have a simple dropdown: All Tables, Indoor Tables, Outdoor Tables.
+- Accessories may have a simple dropdown: All Accessories, Covers, Nets, Replacement Parts.
+
+Rules:
+
+- Do not put Shipping & Returns in the main header.
+- Shipping & Returns belongs in the footer, product-page trust messaging, cart, and checkout support areas.
+- Header links should stay customer-shopping oriented, not operational or legal.
+- No admin/internal links.
+- No dead placeholder links.
+- Header links must match final URL decisions.
+
 ## Footer menu proposal
+
+Decision: footer should contain the full support/legal/resource/shop structure. Footer links must only point to real launch pages or approved planned pages.
 
 Shop:
 
@@ -128,6 +162,8 @@ Rules:
 - No dead placeholder links.
 - Footer links must match final URL decisions.
 - No SEO-spam link stuffing.
+- Footer should contain the full support/legal/resource/shop structure.
+- Footer links must only point to real launch pages or approved planned pages.
 
 ## Open decisions for Shawn
 
@@ -141,10 +177,11 @@ Rules:
 8. Trailing slash convention.
 9. Query parameter policy for `srsltid` and tracking parameters.
 10. What gets included in footer for launch.
+11. Which approved planned pages can appear in footer before launch content is complete.
 
 ## Implementation phases after approval
 
-Phase 1: decide canonical paths and footer links.
+Phase 1: decide canonical paths, header links, and footer links.
 
 Phase 2: implement route aliases/category pages/resource pages as needed.
 
@@ -162,4 +199,3 @@ Phase 5: crawl and smoke test before domain cutover.
 - No payment/checkout changes.
 - No database migration.
 - No shipment automation.
-

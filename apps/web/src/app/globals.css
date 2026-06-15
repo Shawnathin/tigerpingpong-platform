@@ -427,6 +427,7 @@ select {
 
   .publicDropdown {
     position: static;
+    display: none;
     flex: 1 1 100%;
     flex-wrap: wrap;
     justify-content: center;
@@ -440,6 +441,7 @@ select {
 
   .publicNavItem:hover .publicDropdown,
   .publicNavItem:focus-within .publicDropdown {
+    display: flex;
     transform: none;
   }
 

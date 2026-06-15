@@ -240,6 +240,53 @@ Payment code is high risk. Be conservative.
 - PR descriptions should include summary, validation, risks, and screenshots/recordings for UI changes when useful.
 - Prefer draft PRs for agent work until reviewed.
 
+## Human-facing changelog protocol
+
+Human-facing changelogs are for project memory, not git history, commit logs, or exhaustive file-change dumps. Do not create one for every small task.
+
+Create or update a changelog only at meaningful milestones, such as a major PR merge, major branch parked, launch-critical decision, payment/shipping/admin/SEO behavior change, product-page/content architecture decision, important deferral, or human follow-up needed later.
+
+- Prefer `Change Logs/` when that folder already exists in the repo or workspace.
+- If no human-readable changelog folder exists, ask before creating one unless Shawn explicitly says to create it.
+- Keep entries short, practical, and written for Shawn/future project review.
+- Include key decisions, why they were made, what changed, what stayed unchanged, deferred work, risks, and follow-up items.
+- Do not include secrets, env values, tokens, customer data, or private payment data.
+- Do not paste long diffs, duplicate the PR body, or list every touched file.
+- Include only what a human needs to find later.
+
+Recommended structure:
+
+```md
+# <Milestone Name>
+
+Date:
+Branch / PR:
+Status:
+
+## Decision made
+What changed or what was decided.
+
+## Why
+Why this decision was made.
+
+## What changed
+Human-readable summary.
+
+## What did not change
+Important boundaries / safety rules.
+
+## Deferred
+What we intentionally did not do yet.
+
+## Follow-up
+What Shawn or a future Codex session needs to do later.
+
+## Human notes
+Anything Shawn needs to remember.
+```
+
+If a user says "note this," "remember this for later," "parking this," or "this is a milestone," consider whether it belongs in a human-facing changelog or project note. If unsure whether a changelog is warranted, ask instead of creating clutter.
+
 ## Definition of done
 
 A task is done only when the requested change is implemented and reasonably verified.

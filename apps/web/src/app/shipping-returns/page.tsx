@@ -2,22 +2,22 @@ import type { Metadata } from "next";
 
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
-import styles from "./page.module.css";
+import styles from "../shipping/page.module.css";
 
 export const metadata: Metadata = {
-  title: "Shipping | Tiger Ping Pong",
-  description: "Tiger Ping Pong Canada-wide shipping terms."
+  title: "Shipping & Returns | Tiger Ping Pong",
+  description: "Tiger Ping Pong Canada-wide shipping and returns support."
 };
 
-export default function ShippingPage() {
+export default function ShippingReturnsPage() {
   return (
     <>
       <PublicStorefrontNav activeItem="support" />
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="shipping-title">
-          <p className={styles.eyebrow}>Shipping</p>
+          <p className={styles.eyebrow}>Shipping & Returns</p>
           <h1 className={styles.title} id="shipping-title">
-            Simple Canada-wide shipping for online orders.
+            Simple Canada-wide shipping and clear support for returns questions.
           </h1>
           <p className={styles.intro}>
             Tiger Ping Pong ships storefront orders within Canada. Orders over $100 CAD ship free
@@ -50,27 +50,26 @@ export default function ShippingPage() {
           </article>
         </section>
 
-        <section className={styles.copyBand} aria-labelledby="shipping-copy-title">
+        <section className={styles.copyBand} aria-labelledby="returns-copy-title">
           <div>
-            <p className={styles.eyebrow}>Customer copy</p>
-            <h2 id="shipping-copy-title">What shoppers see on product pages.</h2>
+            <p className={styles.eyebrow}>Returns support</p>
+            <h2 id="returns-copy-title">Contact support for returns or order questions.</h2>
           </div>
           <ul>
-            <li>Orders over $100 CAD ship free across Canada.</li>
-            <li>Orders $100 CAD or under use $15 CAD flat-rate shipping.</li>
-            <li>In-stock products typically leave the warehouse in about 24 business hours.</li>
-            <li>Checkout calculates the final shipping total before payment.</li>
+            <li>Include your order reference if available.</li>
+            <li>Include your checkout email.</li>
+            <li>Include the product name and a short description of the issue.</li>
+            <li>Tiger Ping Pong support will confirm the next step for the order.</li>
           </ul>
         </section>
 
         <section className={styles.supportBand} aria-labelledby="shipping-support-title">
           <div>
-            <p className={styles.eyebrow}>Shipping questions</p>
+            <p className={styles.eyebrow}>Shipping or returns questions</p>
             <h2 id="shipping-support-title">Need help before or after checkout?</h2>
             <p>
               Contact Tiger Ping Pong for shipping questions, order/payment help, product details,
-              or setup support from Vancouver, BC across Canada. For order questions, include your
-              order reference if available, checkout email, and product name if relevant.
+              setup support, or returns questions from Vancouver, BC across Canada.
             </p>
           </div>
           <a className={styles.primaryAction} href="/contact">

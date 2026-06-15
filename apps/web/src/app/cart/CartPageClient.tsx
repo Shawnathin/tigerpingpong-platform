@@ -73,10 +73,10 @@ export function CartPageClient() {
           <p className={styles.eyebrow}>TigerPingPong.ca cart</p>
           <h1 id="cart-empty-title">Your cart is empty.</h1>
           <p>
-            Add a table, paddle, balls, or accessory from the catalog, then return here before
+            Add a table, paddle, balls, or accessory from the storefront, then return here before
             Stripe Checkout.
           </p>
-          <a className={styles.primaryAction} href="/catalog">
+          <a className={styles.primaryAction} href="/tables/">
             Continue shopping
           </a>
         </section>
@@ -95,7 +95,7 @@ export function CartPageClient() {
             totals, and shipping.
           </p>
         </div>
-        <a className={styles.secondaryAction} href="/catalog">
+        <a className={styles.secondaryAction} href="/tables/">
           Continue shopping
         </a>
       </section>

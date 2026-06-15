@@ -5,6 +5,7 @@ import {
   type CheckoutSessionPublicStatus,
   type CheckoutSessionStatus
 } from "../../../lib/checkout-api";
+import { PublicStorefrontFooter } from "../../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 
 import { CheckoutCartCleanup } from "./CheckoutCartCleanup";
@@ -195,11 +196,11 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
 
   return (
     <>
-      <PublicStorefrontNav activeItem="catalog" />
+      <PublicStorefrontNav activeItem="tables" />
       <CheckoutCartCleanup status={isPaid ? "paid" : (status?.status ?? null)} />
       <main className={styles.page}>
         <div className={styles.backBar}>
-          <a href="/catalog">Back to catalog</a>
+          <a href="/tables/">Back to tables</a>
         </div>
 
         <section className={styles.header} aria-labelledby="checkout-success-title">
@@ -282,10 +283,10 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
           </p>
 
           <div className={styles.actions}>
-            <a className={styles.primaryAction} href="/catalog">
-              Return to catalog
+            <a className={styles.primaryAction} href="/tables/">
+              Return to tables
             </a>
-            <a className={styles.secondaryLink} href="/shipping">
+            <a className={styles.secondaryLink} href="/shipping-returns">
               Review shipping
             </a>
             <a className={styles.secondaryLink} href="/contact">
@@ -294,6 +295,7 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
           </div>
         </section>
       </main>
+      <PublicStorefrontFooter />
     </>
   );
 }

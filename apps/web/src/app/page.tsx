@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PublicStorefrontFooter } from "./PublicStorefrontFooter";
 import { PublicStorefrontNav } from "./PublicStorefrontNav";
 import styles from "./page.module.css";
 
@@ -16,7 +17,7 @@ const CATEGORY_CARDS = [
   {
     body: "Weather-ready outdoor builds and polished indoor tables for home, school, and club play.",
     cta: "Explore tables",
-    href: "/catalog",
+    href: "/tables/",
     imageAlt: "Portland Outdoor table",
     imageSrc: PORTLAND_IMAGE,
     label: "Tables",
@@ -25,7 +26,7 @@ const CATEGORY_CARDS = [
   {
     body: "Aqua outdoor paddle sets and play-ready options for the first match out of the box.",
     cta: "Shop paddles",
-    href: "/catalog/products/tiger-vice-paddle",
+    href: "/accessories/paddles/",
     imageAlt: "Aqua paddle set box",
     imageSrc: "/storefront/prototype/aqua-paddle/aqua-4count-box-angle.jpg",
     label: "Paddles",
@@ -34,7 +35,7 @@ const CATEGORY_CARDS = [
   {
     body: "Covers and simple setup extras keep the table ready between matches.",
     cta: "View accessories",
-    href: "/catalog",
+    href: "/accessories/",
     imageAlt: "Tiger Ping Pong outdoor table cover",
     imageSrc: "/storefront/prototype/table-cover-transparent.png",
     label: "Accessories",
@@ -58,11 +59,11 @@ export default function Home() {
               simple Canada-wide shipping.
             </p>
             <div className={styles.heroActions}>
-              <a className={styles.primaryAction} href="/catalog">
-                Shop catalog
+              <a className={styles.primaryAction} href="/tables/">
+                Shop tables
               </a>
-              <a className={styles.secondaryAction} href="/shipping">
-                See shipping
+              <a className={styles.secondaryAction} href="/shipping-returns">
+                Shipping & returns
               </a>
             </div>
           </div>
@@ -122,7 +123,7 @@ export default function Home() {
               flat-rate shipping.
             </p>
           </div>
-          <a className={styles.secondaryAction} href="/shipping">
+          <a className={styles.secondaryAction} href="/shipping-returns">
             Shipping details
           </a>
         </section>
@@ -144,6 +145,7 @@ export default function Home() {
           </a>
         </section>
       </main>
+      <PublicStorefrontFooter />
     </>
   );
 }

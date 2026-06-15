@@ -2,37 +2,87 @@
 
 import { useCart } from "../lib/use-cart";
 
-type PublicStorefrontNavItem = "home" | "catalog" | "shipping" | "contact" | "cart";
+export type PublicStorefrontNavItem =
+  | "home"
+  | "tables"
+  | "paddles"
+  | "balls"
+  | "accessories"
+  | "resources"
+  | "contact"
+  | "cart"
+  | "support";
 
 const NAV_ITEMS: Array<{
   href: string;
   id: PublicStorefrontNavItem;
   label: string;
+  dropdown?: Array<{
+    href: string;
+    label: string;
+  }>;
 }> = [
   {
-    href: "/",
-    id: "home",
-    label: "Home"
+    href: "/tables/",
+    id: "tables",
+    label: "Tables",
+    dropdown: [
+      {
+        href: "/tables/",
+        label: "All Tables"
+      },
+      {
+        href: "/tables/indoor-tables/",
+        label: "Indoor Tables"
+      },
+      {
+        href: "/tables/outdoor-tables/",
+        label: "Outdoor Tables"
+      }
+    ]
   },
   {
-    href: "/catalog",
-    id: "catalog",
-    label: "Catalog"
+    href: "/accessories/paddles/",
+    id: "paddles",
+    label: "Paddles"
   },
   {
-    href: "/shipping",
-    id: "shipping",
-    label: "Shipping"
+    href: "/accessories/ping-pong-balls/",
+    id: "balls",
+    label: "Balls"
+  },
+  {
+    href: "/accessories/",
+    id: "accessories",
+    label: "Accessories",
+    dropdown: [
+      {
+        href: "/accessories/",
+        label: "All Accessories"
+      },
+      {
+        href: "/accessories/covers/",
+        label: "Covers"
+      },
+      {
+        href: "/accessories/nets/",
+        label: "Nets"
+      },
+      {
+        href: "/replacement-parts/",
+        label: "Replacement Parts"
+      }
+    ]
+  },
+  {
+    href: "/resources/",
+    id: "resources",
+    label: "Resources"
   },
   {
     href: "/contact",
     id: "contact",
     label: "Contact"
-  },
-  {
-    href: "/cart",
-    id: "cart",
-    label: "Cart"
   }
 ];
 
@@ -60,23 +110,42 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
 
         <div className="publicNavLinks">
           {NAV_ITEMS.map((item) => (
-            <a
-              aria-current={activeItem === item.id ? "page" : undefined}
+            <div
+              className="publicNavItem"
               data-active={activeItem === item.id ? "true" : undefined}
-              href={item.href}
+              data-has-dropdown={item.dropdown ? "true" : undefined}
               key={item.id}
             >
-              <span>{item.label}</span>
-              {item.id === "cart" ? (
-                <span className="publicCartCount" aria-label={`${itemCount} items in cart`}>
-                  {itemCount}
-                </span>
+              <a
+                aria-current={activeItem === item.id ? "page" : undefined}
+                className="publicNavLink"
+                href={item.href}
+              >
+                {item.label}
+              </a>
+              {item.dropdown ? (
+                <div className="publicDropdown" aria-label={`${item.label} links`}>
+                  {item.dropdown.map((dropdownItem) => (
+                    <a href={dropdownItem.href} key={dropdownItem.href}>
+                      {dropdownItem.label}
+                    </a>
+                  ))}
+                </div>
               ) : null}
-            </a>
+            </div>
           ))}
         </div>
 
-        <span className="publicNavPromise">Canada-wide shipping</span>
+        <a
+          aria-current={activeItem === "cart" ? "page" : undefined}
+          className="publicCartButton"
+          href="/cart"
+        >
+          <span>View Cart</span>
+          <span className="publicCartCount" aria-label={`${itemCount} items in cart`}>
+            {itemCount}
+          </span>
+        </a>
       </nav>
     </header>
   );

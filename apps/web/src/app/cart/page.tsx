@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 
 import { CartPageClient } from "./CartPageClient";
@@ -14,6 +15,7 @@ export default function CartPage() {
     <>
       <PublicStorefrontNav activeItem="cart" />
       <CartPageClient />
+      <PublicStorefrontFooter />
     </>
   );
 }

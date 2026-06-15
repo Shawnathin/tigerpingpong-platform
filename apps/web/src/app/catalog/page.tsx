@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { getCategories, getProductFamilies, getProducts } from "../../lib/catalog-api";
 import {
@@ -277,7 +278,7 @@ function ProductMedia({ product }: { product: CatalogProductSummary }) {
 function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
   return (
     <>
-      {getV1ShippingMessage(priceCents)} <a href="/shipping">Shipping details</a>
+      {getV1ShippingMessage(priceCents)} <a href="/shipping-returns">Shipping details</a>
     </>
   );
 }
@@ -340,7 +341,7 @@ export default async function CatalogPage() {
 
   return (
     <>
-      <PublicStorefrontNav activeItem="catalog" />
+      <PublicStorefrontNav activeItem="tables" />
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="catalog-title">
           <div className={styles.heroText}>
@@ -356,7 +357,7 @@ export default async function CatalogPage() {
               <a className={styles.primaryAction} href="#products">
                 Browse products
               </a>
-              <a className={styles.secondaryAction} href="/shipping">
+              <a className={styles.secondaryAction} href="/shipping-returns">
                 Shipping terms
               </a>
             </div>
@@ -425,6 +426,7 @@ export default async function CatalogPage() {
           )}
         </section>
       </main>
+      <PublicStorefrontFooter />
     </>
   );
 }

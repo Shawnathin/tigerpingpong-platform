@@ -938,6 +938,7 @@ export class CheckoutService implements OnModuleDestroy {
             orderId: order.id,
             publicReference: order.publicReference,
             source: CHECKOUT_SOURCE,
+            website: "tigerpingpong",
             environment: config.appEnv
           }
         },
@@ -976,6 +977,7 @@ export class CheckoutService implements OnModuleDestroy {
       orderId: order.id,
       publicReference: order.publicReference,
       source: CHECKOUT_SOURCE,
+      website: "tigerpingpong",
       environment: config.appEnv,
       shippingRuleVersion: "v1",
       subtotalCents: String(order.subtotalCents),

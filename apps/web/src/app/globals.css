@@ -425,11 +425,22 @@ select {
   }
 
   .publicDropdown {
+    position: static;
     display: none;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: none;
+    margin-top: 4px;
+    transform: none;
+    transition: none;
+    visibility: visible;
   }
 
   .publicNavItem:hover .publicDropdown,
   .publicNavItem:focus-within .publicDropdown {
+    display: flex;
     transform: none;
   }
 

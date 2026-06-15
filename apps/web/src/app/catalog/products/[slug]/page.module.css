@@ -739,6 +739,7 @@
 .section {
   display: grid;
   gap: 16px;
+  min-width: 0;
 }
 
 .descriptionBand {
@@ -792,6 +793,8 @@
 }
 
 .tableWrap {
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   border: 1px solid rgb(255 255 255 / 82%);
   border-radius: 8px;
@@ -894,10 +897,13 @@
   }
 
   .thumbnailGrid {
+    max-width: 100%;
+    min-width: 0;
     grid-template-columns: none;
     grid-auto-columns: minmax(108px, 42%);
     grid-auto-flow: column;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     padding-bottom: 4px;
   }
 

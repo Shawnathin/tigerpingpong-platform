@@ -732,10 +732,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       />
       <PublicStorefrontNav activeItem={getProductNavItem(product)} />
       <main className={styles.page}>
-        <div className={styles.backBar}>
-          <a href="/catalog">Back to catalog</a>
-        </div>
-
         <ProductFamilySwitcher product={product} products={publicProducts} />
 
         <section className={styles.productHero} aria-labelledby="product-title">

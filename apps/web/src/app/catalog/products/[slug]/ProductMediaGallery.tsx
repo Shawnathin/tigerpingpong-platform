@@ -21,14 +21,6 @@ interface ProductMediaGalleryProps {
   productName: string;
 }
 
-function formatLabel(value: string): string {
-  return value
-    .split(/[-_]/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 function getMediaLabel(media: ProductMediaGalleryItem, fallback: string): string {
   const mediaText = [media.altText, media.title].filter(Boolean).join(" / ");
   return mediaText || media.caption || fallback;
@@ -71,7 +63,6 @@ export function ProductMediaGallery({
             <strong>{productName}</strong>
           </div>
         )}
-        <figcaption>{label}</figcaption>
       </figure>
 
       {hasMultipleImages ? (
@@ -102,7 +93,6 @@ export function ProductMediaGallery({
                     <span className={styles.thumbnailPlaceholder} aria-hidden="true" />
                   )}
                 </span>
-                <span>{index === 0 ? "Main" : formatLabel(media.role)}</span>
               </button>
             );
           })}

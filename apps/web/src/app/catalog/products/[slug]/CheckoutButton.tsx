@@ -290,7 +290,6 @@ export function CheckoutButton({
                       <span className={getOptionSwatchClassName(optionValue)} aria-hidden="true" />
                       <span className={styles.optionChoiceText}>
                         <strong>{optionValue.label}</strong>
-                        {isSelected ? <small>{optionValue.label} is selected</small> : null}
                       </span>
                     </label>
                   );

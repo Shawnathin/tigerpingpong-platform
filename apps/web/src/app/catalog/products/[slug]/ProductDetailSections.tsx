@@ -126,6 +126,7 @@ const UNSAFE_SPEC_LABEL_MARKERS = [
   "upc",
   "warranty"
 ];
+const TABLE_COLOR_SPEC_LABEL_MARKERS = ["color", "colour", "colors", "colours"];
 
 const BONUS_MARKERS = ["bonus", "$50 paddle package"];
 const BALL_REVIEW_MARKERS = ["ittf", "material listed"];
@@ -160,9 +161,9 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
       },
       {
         description:
-          "A highly visible handle and SMS lock secure the table in play or storage position, so folding and rolling the table feels simple.",
+          "A highly visible handle and quick-lock folding system secure the table in play or storage position, so folding and rolling the table feels simple.",
         kicker: "Simple open and close",
-        title: "SMS Locking System",
+        title: "Quick-Lock Folding System",
         visual: { variant: "lock" }
       },
       {
@@ -184,7 +185,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
     moreFeatures: [
       {
         title: "Single Frame Rollaway",
-        value: "A compact frame and SMS lock help one person fold and roll the table away.",
+        value: "A compact frame and quick-lock folding system help one person fold and roll the table away.",
         visual: { variant: "lock" }
       },
       {
@@ -465,7 +466,7 @@ const TABLE_COMPARISON_VALUES: Record<string, Record<ComparisonValueKey, string>
   "tiger-expo-outdoor-table": {
     bestFor: "Families / Backyards",
     bounceLevel: "Good",
-    foldingStyle: "Compact / SMS lock",
+    foldingStyle: "Compact quick-lock folding",
     frameStyle: "50mm steel",
     netSystem: "Fixed / Adjustable",
     primaryUse: "Outdoor (Standard)",
@@ -475,7 +476,7 @@ const TABLE_COMPARISON_VALUES: Record<string, Record<ComparisonValueKey, string>
   },
   "tiger-plaza-outdoor-table-grey": {
     bestFor: "Parks / Resorts",
-    bounceLevel: "Superior",
+    bounceLevel: "Thick outdoor top",
     foldingStyle: "Fixed",
     frameStyle: "Galvanized steel",
     netSystem: "Solid metal",
@@ -487,18 +488,18 @@ const TABLE_COMPARISON_VALUES: Record<string, Record<ComparisonValueKey, string>
   "tiger-portland-indoor-table": {
     bestFor: "Schools / Clubs",
     bounceLevel: "Professional",
-    foldingStyle: "Compact / SMS lock",
+    foldingStyle: "Compact quick-lock folding",
     frameStyle: "50mm steel",
-    netSystem: "Adjustable / Compact",
-    primaryUse: "Indoor (Recreational)",
+    netSystem: "Fixed / Adjustable",
+    primaryUse: "Mid-range indoor",
     tableTop: "22mm chipboard",
     weatherproof: "No",
-    wheels: "4 x 100mm"
+    wheels: "Rubberized locking wheels"
   },
   "tiger-portland-outdoor-table": {
     bestFor: "All-weather performance",
     bounceLevel: "Very good",
-    foldingStyle: "Compact / SMS lock",
+    foldingStyle: "Compact quick-lock folding",
     frameStyle: "50mm steel",
     netSystem: "Fixed / Adjustable",
     primaryUse: "Outdoor (High Performance)",
@@ -509,13 +510,13 @@ const TABLE_COMPARISON_VALUES: Record<string, Record<ComparisonValueKey, string>
   "tiger-whistler-indoor-table": {
     bestFor: "Serious players",
     bounceLevel: "Elite / Tournament",
-    foldingStyle: "Compact / SMS lock",
+    foldingStyle: "Compact quick-lock folding",
     frameStyle: "60mm steel",
     netSystem: "Fixed / Adjustable",
     primaryUse: "Indoor (Tournament)",
     tableTop: "25mm chipboard",
     weatherproof: "No",
-    wheels: "4 x 100mm"
+    wheels: "Rubberized locking wheels"
   }
 };
 
@@ -579,7 +580,7 @@ export function QuickFactsSection({
       <div className={styles.detailStripHeading}>
         <div>
           <p className={styles.eyebrow}>
-            {isTableProduct(product) ? "At a glance." : "Quick facts"}
+            {isTableProduct(product) ? "Why this table" : "Quick facts"}
           </p>
           <h2 id="quick-facts-title">{getDetailStripHeading(product)}</h2>
         </div>
@@ -642,7 +643,6 @@ export function FeatureHighlightsSection({
       <section className={styles.featureMoments} aria-labelledby="feature-highlights-title">
         <header className={styles.featureMomentsHeading}>
           <div>
-            <p className={styles.eyebrow}>Get the highlights.</p>
             <h2 id="feature-highlights-title">All the good parts, close up.</h2>
           </div>
           <a className={styles.secondaryPill} href="#specs">
@@ -967,17 +967,11 @@ function getDetailStripHeading(product: CatalogProductDetail): string {
     return "Ready for the next rally.";
   }
 
-  const useFact = getUseFact(product, null);
-
-  if (useFact === "Outdoor") {
-    return "Worth the backyard upgrade?";
+  if (product.slug === "tiger-expo-outdoor-table") {
+    return "Why customers choose Expo.";
   }
 
-  if (useFact === "Indoor") {
-    return "Ready for the game room?";
-  }
-
-  return "Made for serious rallies.";
+  return `Why customers choose ${getProductDisplayLabel(product)}.`;
 }
 
 function getDetailStripIntro(product: CatalogProductDetail): string {
@@ -988,14 +982,14 @@ function getDetailStripIntro(product: CatalogProductDetail): string {
   const useFact = getUseFact(product, null);
 
   if (useFact === "Outdoor") {
-    return "Outdoor-ready table details, kept short and scannable.";
+    return "Outdoor-ready details, focused on the things buyers ask about first.";
   }
 
   if (useFact === "Indoor") {
-    return "Indoor table details, kept short and scannable.";
+    return "Indoor table details, focused on play feel, setup, and daily use.";
   }
 
-  return "Table details, kept short and scannable.";
+  return "Table details, focused on the things buyers ask about first.";
 }
 
 function getQuickFacts(
@@ -1054,8 +1048,10 @@ function getTableDetailStats(
 ): LabeledValue[] {
   const stats: LabeledValue[] = [];
   const surfaceStat = getSurfaceStat(normalizedContent);
-  const tableWeight = getTableWeightStat(normalizedContent);
   const madeIn = getMadeInStat(normalizedContent);
+  const tabletopWarranty = getWarrantyStat(normalizedContent, "tabletop");
+  const tableWarranty = getWarrantyStat(normalizedContent, "table");
+  const tableWeight = getTableWeightStat(normalizedContent);
   const colorOptions = getDisplayColorOptions(product, normalizedContent);
   const includedItem = getShortIncludedFact(normalizedContent);
   const useFact = getUseFact(product, normalizedContent);
@@ -1067,12 +1063,20 @@ function getTableDetailStats(
     });
   }
 
-  if (tableWeight) {
-    stats.push(tableWeight);
-  }
-
   if (madeIn) {
     stats.push(madeIn);
+  }
+
+  if (tabletopWarranty) {
+    stats.push(tabletopWarranty);
+  }
+
+  if (tableWarranty) {
+    stats.push(tableWarranty);
+  }
+
+  if (stats.length < 4 && tableWeight) {
+    stats.push(tableWeight);
   }
 
   if (colorOptions.length > 0) {
@@ -1159,6 +1163,14 @@ function getSpecificationFields(
 ): LabeledValue[] {
   const fields: LabeledValue[] = [];
   const dimensions = getSafeDimensions(normalizedContent?.dimensions);
+  const colorOptions = getDisplayColorOptions(product, normalizedContent);
+
+  if (isTableProduct(product) && colorOptions.length > 0) {
+    fields.push({
+      label: "Colours",
+      value: joinShortList(colorOptions)
+    });
+  }
 
   if (dimensions) {
     fields.push(...parseDimensionFields(dimensions));
@@ -1167,7 +1179,7 @@ function getSpecificationFields(
   for (const spec of normalizedContent?.specifications ?? []) {
     const parsedSpec = parseSpecification(spec, product);
 
-    if (parsedSpec) {
+    if (parsedSpec && !isSupersededTableColorSpec(product, parsedSpec, colorOptions)) {
       fields.push(parsedSpec);
     }
   }
@@ -1270,6 +1282,45 @@ function getMadeInStat(normalizedContent: NormalizedProductContent | null): Labe
     label: "Made in Germany",
     value: "Germany"
   };
+}
+
+function getWarrantyStat(
+  normalizedContent: NormalizedProductContent | null,
+  warrantyKind: "table" | "tabletop"
+): LabeledValue | null {
+  const warrantyNotes = getSafeWarrantyNotes(normalizedContent);
+
+  if (!warrantyNotes) {
+    return null;
+  }
+
+  if (warrantyKind === "tabletop" && /\b10\s*years?\b/i.test(warrantyNotes)) {
+    return {
+      label: "Tabletop warranty",
+      value: "10 years"
+    };
+  }
+
+  if (warrantyKind === "table" && /\b3[-\s]*years?\b/i.test(warrantyNotes)) {
+    return {
+      label: "Table warranty",
+      value: "3 years"
+    };
+  }
+
+  return null;
+}
+
+function getSafeWarrantyNotes(
+  normalizedContent: NormalizedProductContent | null
+): string | null {
+  const warrantyNotes = normalizeWhitespace(normalizedContent?.warrantyNotes);
+
+  if (!warrantyNotes || hasAnyMarker(warrantyNotes, ["missing/not visible", "confirm"])) {
+    return null;
+  }
+
+  return warrantyNotes;
 }
 
 function getShortIncludedFact(normalizedContent: NormalizedProductContent | null): string | null {
@@ -1504,7 +1555,11 @@ function getActiveVariantColorOptions(variants: CatalogProductVariantSummary[]):
   const colors: string[] = [];
 
   for (const variant of variants) {
-    if (!variant.isActive || variant.purchaseModeOverride === "disabled") {
+    if (
+      !variant.isActive ||
+      variant.purchaseModeOverride === "disabled" ||
+      variant.purchaseModeOverride === "deferred_from_v1"
+    ) {
       continue;
     }
 
@@ -1521,6 +1576,20 @@ function getActiveVariantColorOptions(variants: CatalogProductVariantSummary[]):
   }
 
   return dedupeStrings(colors);
+}
+
+function isSupersededTableColorSpec(
+  product: CatalogProductDetail,
+  field: LabeledValue,
+  activeColorOptions: string[]
+): boolean {
+  if (!isTableProduct(product) || activeColorOptions.length === 0) {
+    return false;
+  }
+
+  return TABLE_COLOR_SPEC_LABEL_MARKERS.some((marker) =>
+    field.label.toLowerCase().includes(marker)
+  );
 }
 
 function isColorOptionLabel(value: string): boolean {
@@ -1611,7 +1680,7 @@ function parseSpecification(
 
   return {
     label: formatSpecLabel(parsedSpec.label),
-    value: parsedSpec.value
+    value: formatSpecValue(parsedSpec.label, parsedSpec.value)
   };
 }
 
@@ -1786,6 +1855,17 @@ function formatSpecLabel(label: string): string {
     .replace(/\s+/g, " ")
     .trim()
     .replace(/^./, (firstCharacter) => firstCharacter.toUpperCase());
+}
+
+function formatSpecValue(label: string, value: string): string {
+  if (
+    label.toLowerCase().includes("locking") &&
+    value.toLowerCase().includes("sms locking system")
+  ) {
+    return "Quick-lock folding system";
+  }
+
+  return value;
 }
 
 function joinShortList(values: string[]): string {

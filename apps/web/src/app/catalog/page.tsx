@@ -3,12 +3,19 @@ import type { Metadata } from "next";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { getCategories, getProductFamilies, getProducts } from "../../lib/catalog-api";
+import {
+  getProductChips,
+  getProductCtaLabel,
+  getProductDisplayName,
+  getProductPitch,
+  getTableProductOrder,
+  sortProductsForBrowsing
+} from "../../lib/product-browsing";
 import { resolveProductMediaUrl } from "../../lib/product-media";
 import {
   getPrimaryProductMediaFallback,
   getProductCardPitch
 } from "../../lib/public-storefront-demo";
-import { getV1ShippingMessage } from "../../lib/shipping";
 import type {
   CatalogCategory,
   CatalogFamily,
@@ -27,6 +34,7 @@ export const metadata: Metadata = {
 
 const PORTLAND_IMAGE =
   "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1";
+const CATALOG_SHIPPING_MESSAGE = "Free Canada-wide shipping on tables and orders over $100.";
 
 interface CatalogResource<TData> {
   data: TData | null;
@@ -148,16 +156,24 @@ function groupProductsByCategory(
     }
   }
 
-  return [...groups.values()].sort((left, right) => {
-    const leftOrder = categoryOrder.get(left.category.key) ?? Number.MAX_SAFE_INTEGER;
-    const rightOrder = categoryOrder.get(right.category.key) ?? Number.MAX_SAFE_INTEGER;
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      products:
+        group.category.key === "tables" || group.category.slug === "tables"
+          ? sortProductsForBrowsing(group.products, getTableProductOrder("all"))
+          : group.products
+    }))
+    .sort((left, right) => {
+      const leftOrder = categoryOrder.get(left.category.key) ?? Number.MAX_SAFE_INTEGER;
+      const rightOrder = categoryOrder.get(right.category.key) ?? Number.MAX_SAFE_INTEGER;
 
-    if (leftOrder !== rightOrder) {
-      return leftOrder - rightOrder;
-    }
+      if (leftOrder !== rightOrder) {
+        return leftOrder - rightOrder;
+      }
 
-    return left.category.name.localeCompare(right.category.name);
-  });
+      return left.category.name.localeCompare(right.category.name);
+    });
 }
 
 function formatPrice(priceCents: number | null, currency: string): string {
@@ -289,14 +305,6 @@ function ProductMedia({ product }: { product: CatalogProductSummary }) {
   );
 }
 
-function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
-  return (
-    <>
-      {getV1ShippingMessage(priceCents)} <a href="/shipping-returns">Shipping details</a>
-    </>
-  );
-}
-
 function FamilyCard({ family }: { family: CatalogFamily }) {
   return (
     <a className={styles.familyCard} href={`#category-${family.primaryCategory.slug}`}>
@@ -308,6 +316,11 @@ function FamilyCard({ family }: { family: CatalogFamily }) {
 }
 
 function ProductCard({ product }: { product: CatalogProductSummary }) {
+  const displayName = getProductDisplayName(product);
+  const chips = getProductChips(product, "compact", formatProductKind(product.productKind));
+  const pitch = getProductPitch(product, getProductCardPitch(product));
+  const ctaLabel = getProductCtaLabel(product, "View product");
+
   return (
     <article className={styles.productCard}>
       <a
@@ -318,28 +331,20 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
         <ProductMedia product={product} />
         <div className={styles.productBody}>
           <div className={styles.productHeader}>
-            <p>{product.category.name}</p>
-            <h3>{product.name}</h3>
+            <p>{product.family.name}</p>
+            <h3>{displayName}</h3>
             <strong>{formatPrice(product.priceCents, product.currency)}</strong>
           </div>
-          <p className={styles.productPitch}>{getProductCardPitch(product)}</p>
-          <dl className={styles.productFacts}>
-            <div>
-              <dt>Lineup</dt>
-              <dd>{product.family.name}</dd>
-            </div>
-            <div>
-              <dt>Type</dt>
-              <dd>{formatProductKind(product.productKind)}</dd>
-            </div>
-          </dl>
+          <p className={styles.productPitch}>{pitch}</p>
+          <ul className={styles.productChips} aria-label={`${displayName} product details`}>
+            {chips.map((chip) => (
+              <li key={chip}>{chip}</li>
+            ))}
+          </ul>
         </div>
       </a>
       <div className={styles.cardFooter}>
-        <p>
-          <ShippingTermsCopy priceCents={product.priceCents} />
-        </p>
-        <a href={`/catalog/products/${product.slug}`}>View product</a>
+        <a href={`/catalog/products/${product.slug}`}>{ctaLabel}</a>
       </div>
     </article>
   );
@@ -367,14 +372,6 @@ export default async function CatalogPage() {
               Browse the Tiger Ping Pong product lineup, then open any product page for details,
               shipping terms, and secure checkout.
             </p>
-            <div className={styles.heroActions}>
-              <a className={styles.primaryAction} href="#products">
-                Browse products
-              </a>
-              <a className={styles.secondaryAction} href="/shipping-returns">
-                Shipping terms
-              </a>
-            </div>
           </div>
           <div className={styles.heroVisual}>
             <img src={heroImage.src} alt={heroImage.alt} />
@@ -412,6 +409,9 @@ export default async function CatalogPage() {
             <p className={styles.eyebrow}>Products</p>
             <h2 id="catalog-products-title">Ready for the next match.</h2>
           </div>
+          {catalog.products.data && products.length > 0 ? (
+            <p className={styles.shippingNote}>{CATALOG_SHIPPING_MESSAGE}</p>
+          ) : null}
 
           {catalog.products.data && products.length > 0 ? (
             <div className={styles.productGroups}>

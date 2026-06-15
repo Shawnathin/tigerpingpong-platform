@@ -1,4 +1,9 @@
 import type { CategoryLandingPageConfig } from "./CategoryLandingPage";
+import {
+  TABLE_SHIPPING_MESSAGE,
+  getAccessoryParentProductOrder,
+  getTableProductOrder
+} from "../lib/product-browsing";
 import type { CatalogProductSummary } from "../types/catalog";
 
 function normalizedText(...values: Array<string | null | undefined>): string {
@@ -37,7 +42,10 @@ function isReplacementPart(product: CatalogProductSummary): boolean {
 }
 
 function isTable(product: CatalogProductSummary): boolean {
-  return !isReplacementPart(product) && (isProductKind(product, "table") || isCategory(product, "tables"));
+  return (
+    !isReplacementPart(product) &&
+    (isProductKind(product, "table") || isCategory(product, "tables"))
+  );
 }
 
 function isAccessory(product: CatalogProductSummary): boolean {
@@ -85,6 +93,9 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Browse Tiger Ping Pong tables with secure checkout, product details, and Canada-wide shipping terms.",
       heroImageSlug: "tiger-portland-outdoor-table",
       navLinks: tableNavLinks,
+      productLayout: "editorial",
+      productOrder: getTableProductOrder("all"),
+      shippingMessage: TABLE_SHIPPING_MESSAGE,
       productFilter: isTable
     }),
     "indoor-tables": categoryConfig({
@@ -95,6 +106,9 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Explore indoor Tiger Ping Pong table options, including Portland and Whistler indoor table products where available.",
       heroImageSlug: "tiger-portland-indoor-table",
       navLinks: tableNavLinks,
+      productLayout: "editorial",
+      productOrder: getTableProductOrder("indoor"),
+      shippingMessage: TABLE_SHIPPING_MESSAGE,
       productFilter: (product) => isTable(product) && hasMarker(product, "indoor")
     }),
     "outdoor-tables": categoryConfig({
@@ -105,6 +119,9 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Explore outdoor Tiger Ping Pong table options with storefront checkout and Canada-wide shipping terms.",
       heroImageSlug: "tiger-portland-outdoor-table",
       navLinks: tableNavLinks,
+      productLayout: "editorial",
+      productOrder: getTableProductOrder("outdoor"),
+      shippingMessage: TABLE_SHIPPING_MESSAGE,
       productFilter: (product) => isTable(product) && hasMarker(product, "outdoor")
     }),
     accessories: categoryConfig({
@@ -115,6 +132,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Round out the table setup with Tiger Ping Pong accessories for play, protection, and replacement setup needs.",
       heroImageSlug: "tiger-vice-paddle",
       navLinks: accessoryNavLinks,
+      productOrder: getAccessoryParentProductOrder(),
       productFilter: isAccessory
     }),
     paddles: categoryConfig({
@@ -130,7 +148,8 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       activeItem: "balls",
       eyebrow: "Shop balls",
       title: "Ping pong balls for practice, games, and restocks.",
-      intro: "Browse Tiger Ping Pong ball packs for home play, practice, and table tennis restocks.",
+      intro:
+        "Browse Tiger Ping Pong ball packs for home play, practice, and table tennis restocks.",
       heroImageSlug: "tiger-premium-balls-140",
       navLinks: accessoryNavLinks,
       productFilter: (product) => !isReplacementPart(product) && isProductKind(product, "ball")

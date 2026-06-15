@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import {
+  AdminApiError,
   getAdminProductMedia,
   getAdminProducts,
   type AdminProductMediaResponse,
@@ -25,7 +26,11 @@ interface AdminProductMediaPageProps {
 
 interface ProductMediaResource {
   data: AdminProductMediaResponse | null;
-  error: boolean;
+  error: {
+    message: string;
+    selectedProductId: string;
+    status: number | null;
+  } | null;
 }
 
 async function loadProducts(): Promise<AdminProductsResponse | null> {
@@ -42,21 +47,33 @@ async function loadProductMedia(productId: string | null): Promise<ProductMediaR
   if (!productId) {
     return {
       data: null,
-      error: false
+      error: null
     };
   }
 
   try {
     return {
       data: await getAdminProductMedia(productId),
-      error: false
+      error: null
     };
-  } catch {
+  } catch (error) {
     return {
       data: null,
-      error: true
+      error: {
+        message: getAdminMediaErrorMessage(error),
+        selectedProductId: productId,
+        status: error instanceof AdminApiError ? error.status : null
+      }
     };
   }
+}
+
+function getAdminMediaErrorMessage(error: unknown): string {
+  if (error instanceof AdminApiError) {
+    return error.responseMessage ?? error.message;
+  }
+
+  return "Product media could not be loaded.";
 }
 
 export default async function AdminProductMediaPage({

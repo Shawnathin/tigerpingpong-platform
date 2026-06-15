@@ -16,7 +16,11 @@ const MEDIA_ROLES = ["primary", "gallery", "detail", "lifestyle", "variant", "so
 
 interface ProductMediaResource {
   data: AdminProductMediaResponse | null;
-  error: boolean;
+  error: {
+    message: string;
+    selectedProductId: string;
+    status: number | null;
+  } | null;
 }
 
 interface ProductMediaMappingToolProps {
@@ -92,12 +96,19 @@ export function ProductMediaMappingTool({
           <div className={styles.panelHeader}>
             <div>
               <h2 id="admin-product-media-load-error-title">Current media</h2>
-              <p>Media rows could not be loaded for the selected product.</p>
+              <p>{mediaResource.error.message}</p>
             </div>
             <span className={`${styles.badge} ${styles.badgeWarning}`}>Unavailable</span>
           </div>
           <div className={styles.alert}>
-            <p>Confirm the product still exists and the API service is reachable.</p>
+            <p>
+              {mediaResource.error.status === 404
+                ? "The selected product may be stale or no longer available in this catalog."
+                : "Confirm the API service is reachable and the selected product can be loaded."}
+            </p>
+            <p className={styles.muted}>
+              Selected product ID: <span className={styles.mono}>{mediaResource.error.selectedProductId}</span>
+            </p>
           </div>
         </section>
       ) : null}
@@ -145,6 +156,19 @@ export function ProductMediaMappingTool({
               <p>{selectedProduct.name}</p>
             </div>
             <span className={styles.badge}>No selection</span>
+          </div>
+        </section>
+      ) : !mediaResource.error && selectedProductId ? (
+        <section className={styles.panel} aria-labelledby="admin-product-media-stale-title">
+          <div className={styles.panelHeader}>
+            <div>
+              <h2 id="admin-product-media-stale-title">Current media rows</h2>
+              <p>The selected product is not in the current product list.</p>
+            </div>
+            <span className={`${styles.badge} ${styles.badgeWarning}`}>Stale selection</span>
+          </div>
+          <div className={styles.alert}>
+            <p>Choose a product from the list above to load media mappings.</p>
           </div>
         </section>
       ) : null}

@@ -749,8 +749,14 @@ export class AdminService implements OnModuleDestroy {
 
       return this.serializeProductMediaResponse(product, media);
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
+      }
+
+      if (error instanceof Prisma.PrismaClientValidationError) {
+        throw new BadRequestException({
+          message: "Product media request is invalid."
+        });
       }
 
       throw new ServiceUnavailableException({

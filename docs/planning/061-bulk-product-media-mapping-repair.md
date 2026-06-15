@@ -54,6 +54,13 @@ tigerpingpong/products/tiger-vice-paddle/01-main
 
 ## Safe Apply
 
+Apply mode uses the Prisma Client generated for the `@tigerpingpong/db`
+workspace package. Generate it first if it is missing:
+
+```bash
+pnpm --filter @tigerpingpong/db prisma:generate
+```
+
 Apply mode writes only high-confidence mappings:
 
 ```bash
@@ -64,6 +71,8 @@ Apply mode:
 
 - requires `--apply`;
 - requires `DATABASE_URL`;
+- fails with the exact generate command if the package-scoped Prisma Client is
+  missing or not generated;
 - updates or creates `ProductMedia` rows for high-confidence Cloudinary assets;
 - clears only competing primary flags for the same product;
 - skips mappings with public IDs already assigned to another product;

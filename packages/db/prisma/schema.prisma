@@ -98,6 +98,13 @@ enum OrderStatus {
   @@map("order_status")
 }
 
+enum FulfillmentStatus {
+  not_shipped
+  shipped
+
+  @@map("fulfillment_status")
+}
+
 enum RedirectStatus {
   draft
   approved
@@ -511,6 +518,7 @@ model Order {
   id                      String      @id @default(cuid())
   publicReference         String      @unique @default(cuid()) @map("public_reference")
   status                  OrderStatus @default(checkout_pending)
+  fulfillmentStatus       FulfillmentStatus @default(not_shipped) @map("fulfillment_status")
   currency                String      @default("CAD") @db.Char(3)
   subtotalCents           Int         @default(0) @map("subtotal_cents")
   shippingCents           Int         @default(0) @map("shipping_cents")
@@ -527,15 +535,24 @@ model Order {
   stripePaymentIntentId   String?     @map("stripe_payment_intent_id")
   stripeCustomerId        String?     @map("stripe_customer_id")
   paidAt                  DateTime?   @map("paid_at")
+  shipmentCarrier         String?     @map("shipment_carrier") @db.VarChar(80)
+  shipmentTrackingNumber  String?     @map("shipment_tracking_number") @db.VarChar(120)
+  shipmentTrackingUrl     String?     @map("shipment_tracking_url") @db.VarChar(2048)
+  shippedAt               DateTime?   @map("shipped_at")
+  shipmentInternalNote    String?     @map("shipment_internal_note") @db.VarChar(1000)
+  shipmentRecordedAt      DateTime?   @map("shipment_recorded_at")
+  shipmentRecordedBy      String?     @map("shipment_recorded_by") @db.VarChar(120)
   createdAt               DateTime    @default(now()) @map("created_at")
   updatedAt               DateTime    @updatedAt @map("updated_at")
   items                   OrderItem[]
 
   @@index([status])
+  @@index([fulfillmentStatus])
   @@index([customerEmail])
   @@index([stripePaymentIntentId])
   @@index([stripeCustomerId])
   @@index([paidAt])
+  @@index([shippedAt])
   @@map("orders")
 }
 

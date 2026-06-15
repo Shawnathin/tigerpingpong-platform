@@ -263,7 +263,7 @@
 
 .table {
   width: 100%;
-  min-width: 880px;
+  min-width: 1120px;
   border-collapse: collapse;
 }
 
@@ -371,6 +371,77 @@
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+}
+
+.shipmentSummary {
+  display: grid;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.shipmentSummary strong {
+  color: #17633a;
+  font-size: 0.84rem;
+}
+
+.shipmentForm {
+  display: grid;
+  min-width: 220px;
+  gap: 8px;
+}
+
+.shipmentForm label {
+  display: grid;
+  gap: 4px;
+}
+
+.shipmentForm label span {
+  color: #6b7583;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.shipmentForm input,
+.shipmentForm textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #d9e0d5;
+  border-radius: 6px;
+  padding: 8px 9px;
+  color: #273449;
+  font: inherit;
+  font-size: 0.84rem;
+  background: #ffffff;
+}
+
+.shipmentForm textarea {
+  resize: vertical;
+}
+
+.shipmentForm input:focus-visible,
+.shipmentForm textarea:focus-visible {
+  outline: 2px solid #f0bd8b;
+  outline-offset: 2px;
+}
+
+.actionButton {
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 12px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  background: #17633a;
+  cursor: pointer;
+}
+
+.actionButton:hover,
+.actionButton:focus-visible {
+  background: #104a2b;
 }
 
 @media (max-width: 920px) {

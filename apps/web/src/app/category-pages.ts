@@ -95,6 +95,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       navLinks: tableNavLinks,
       productLayout: "editorial",
       productOrder: getTableProductOrder("all"),
+      showProductRail: true,
       shippingMessage: TABLE_SHIPPING_MESSAGE,
       productFilter: isTable
     }),
@@ -108,6 +109,11 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       navLinks: tableNavLinks,
       productLayout: "editorial",
       productOrder: getTableProductOrder("indoor"),
+      productRailLabels: {
+        "tiger-portland-indoor-table": "Portland Indoor Table",
+        "tiger-whistler-indoor-table": "Whistler Indoor Table"
+      },
+      showProductRail: true,
       shippingMessage: TABLE_SHIPPING_MESSAGE,
       productFilter: (product) => isTable(product) && hasMarker(product, "indoor")
     }),
@@ -121,6 +127,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       navLinks: tableNavLinks,
       productLayout: "editorial",
       productOrder: getTableProductOrder("outdoor"),
+      showProductRail: true,
       shippingMessage: TABLE_SHIPPING_MESSAGE,
       productFilter: (product) => isTable(product) && hasMarker(product, "outdoor")
     }),

@@ -69,6 +69,15 @@ const PRODUCT_DISPLAY_NAMES: Record<string, string> = {
   "tiger-vice-paddle": "Vice Paddle"
 };
 
+const ACCESSORY_CTA_LABELS: Record<string, string> = {
+  "tiger-net-post-set": "View net set",
+  "tiger-premium-balls-140": "View balls",
+  "tiger-premium-balls-6-orange": "View balls",
+  "tiger-premium-balls-6-white": "View balls",
+  "tiger-table-cover-black-polyester": "View cover",
+  "tiger-vice-paddle": "View paddle"
+};
+
 export const TABLE_SHIPPING_MESSAGE = "Free Canada-wide shipping on all tables!";
 export const ACCESSORY_SHIPPING_MESSAGE = "Free Canada-wide shipping over $100.";
 
@@ -81,7 +90,9 @@ export function getProductDisplayName(product: CatalogProductSummary): string {
 }
 
 export function getProductCtaLabel(product: CatalogProductSummary, fallback: string): string {
-  return TABLE_PRODUCT_META[product.slug]?.ctaLabel ?? fallback;
+  return (
+    TABLE_PRODUCT_META[product.slug]?.ctaLabel ?? ACCESSORY_CTA_LABELS[product.slug] ?? fallback
+  );
 }
 
 export function getProductPitch(product: CatalogProductSummary, fallback: string): string {
@@ -90,8 +101,7 @@ export function getProductPitch(product: CatalogProductSummary, fallback: string
 
 export function getProductChips(
   product: CatalogProductSummary,
-  layout: "editorial" | "compact",
-  formattedKind: string
+  layout: "editorial" | "compact"
 ): string[] {
   const tableChips = TABLE_PRODUCT_META[product.slug]?.chips;
 
@@ -106,11 +116,7 @@ export function getProductChips(
     chips.push(productMode);
   }
 
-  if (layout === "compact" && !chips.includes(formattedKind)) {
-    chips.push(formattedKind);
-  }
-
-  return chips.slice(0, 3);
+  return chips.slice(0, layout === "compact" ? 2 : 3);
 }
 
 export function sortProductsForBrowsing(

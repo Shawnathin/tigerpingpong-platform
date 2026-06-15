@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  gap: 46px;
+  gap: 36px;
   min-height: 100vh;
   padding: 28px 20px 72px;
 }
@@ -8,19 +8,19 @@
 .hero,
 .section,
 .error {
-  width: min(1440px, 100%);
+  width: min(1240px, 100%);
   margin: 0 auto;
 }
 
 .hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(420px, 1fr);
+  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.72fr);
   align-items: center;
-  gap: 34px;
+  gap: 30px;
   overflow: hidden;
-  border-radius: 34px;
-  padding: 52px;
+  border-radius: 28px;
+  padding: 42px;
   background:
     linear-gradient(135deg, rgb(255 255 255 / 88%), rgb(255 255 255 / 44%)),
     linear-gradient(120deg, rgb(242 138 46 / 12%), rgb(116 200 242 / 16%));
@@ -42,6 +42,7 @@
       rgb(255 255 255 / 18%) 26px
     );
   content: "";
+  pointer-events: none;
 }
 
 .heroText,
@@ -75,8 +76,8 @@
 
 .title {
   max-width: 720px;
-  font-size: 4.6rem;
-  line-height: 0.92;
+  font-size: 4rem;
+  line-height: 0.96;
 }
 
 .intro {
@@ -121,7 +122,7 @@
 
 .heroVisual {
   display: grid;
-  min-height: 430px;
+  min-height: 300px;
   place-items: center;
 }
 
@@ -136,13 +137,14 @@
     0 26px 70px rgb(27 36 65 / 12%),
     inset 0 0 0 1px rgb(255 255 255 / 86%);
   content: "";
+  pointer-events: none;
 }
 
 .heroVisual img {
   position: relative;
   z-index: 1;
-  width: min(110%, 760px);
-  max-height: 430px;
+  width: min(100%, 520px);
+  max-height: 330px;
   object-fit: contain;
   filter: drop-shadow(0 28px 32px rgb(27 36 65 / 15%));
   mix-blend-mode: darken;
@@ -162,54 +164,6 @@
   max-width: 760px;
   font-size: 3rem;
   line-height: 0.98;
-}
-
-.categoryNav {
-  position: sticky;
-  top: 104px;
-  z-index: 12;
-  align-self: start;
-  justify-self: start;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  width: auto;
-  max-width: min(100%, 940px);
-  overflow-x: auto;
-  border: 1px solid rgb(255 255 255 / 76%);
-  border-radius: 999px;
-  padding: 6px;
-  background:
-    linear-gradient(135deg, rgb(255 255 255 / 76%), rgb(255 255 255 / 42%)), rgb(255 255 255 / 24%);
-  box-shadow:
-    0 12px 30px rgb(27 36 65 / 8%),
-    inset 0 1px 0 rgb(255 255 255 / 92%);
-  backdrop-filter: blur(18px) saturate(1.18);
-  scrollbar-width: thin;
-}
-
-.categoryNav a {
-  display: inline-flex;
-  flex: 0 0 auto;
-  min-height: 34px;
-  align-items: center;
-  border-radius: 999px;
-  padding: 0 14px;
-  color: #263049;
-  font-size: 0.82rem;
-  font-weight: 880;
-  opacity: 0.72;
-  text-decoration: none;
-  white-space: nowrap;
-  background: rgb(255 255 255 / 44%);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 56%);
-}
-
-.categoryNav a:hover,
-.categoryNav a:focus-visible {
-  color: var(--tiger-orange-deep);
-  opacity: 1;
-  background: rgb(255 255 255 / 86%);
 }
 
 .familyGrid {
@@ -273,8 +227,10 @@
 
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
+  gap: 18px;
+  justify-self: center;
+  width: min(980px, 100%);
 }
 
 .productCard {
@@ -284,15 +240,18 @@
   border: 1px solid rgb(255 255 255 / 82%);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 82%), rgb(255 255 255 / 60%)),
-    linear-gradient(120deg, rgb(242 138 46 / 6%), rgb(116 200 242 / 9%));
+    linear-gradient(135deg, rgb(255 255 255 / 86%), rgb(255 255 255 / 58%)),
+    linear-gradient(120deg, rgb(242 138 46 / 8%), rgb(116 200 242 / 12%));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 90%),
-    0 18px 48px rgb(27 36 65 / 7%);
+    inset 0 1px 0 rgb(255 255 255 / 92%),
+    0 22px 60px rgb(27 36 65 / 9%);
 }
 
 .productLink {
   display: grid;
+  grid-template-columns: minmax(150px, 0.82fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 2px;
   color: inherit;
   text-decoration: none;
 }
@@ -304,13 +263,17 @@
 
 .mediaFrame,
 .mediaPlaceholder {
-  aspect-ratio: 4 / 3;
-  border-bottom: 1px solid rgb(223 228 232 / 72%);
-  margin: 10px 10px 0;
-  border-radius: 7px;
+  min-height: 230px;
+  height: 100%;
+  border: 0;
+  margin: 12px 0 12px 12px;
+  border-radius: 8px;
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 88%), rgb(241 247 249 / 88%)),
-    linear-gradient(120deg, rgb(116 200 242 / 14%), rgb(242 138 46 / 10%));
+    linear-gradient(135deg, rgb(255 255 255 / 90%), rgb(245 250 252 / 82%)),
+    linear-gradient(120deg, rgb(116 200 242 / 18%), rgb(242 138 46 / 12%));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 82%),
+    0 16px 38px rgb(27 36 65 / 8%);
 }
 
 .mediaFrame img {
@@ -318,7 +281,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 20px;
+  padding: 18px;
   mix-blend-mode: darken;
 }
 
@@ -345,8 +308,9 @@
 
 .productBody {
   display: grid;
-  gap: 14px;
-  padding: 20px;
+  align-content: center;
+  gap: 12px;
+  padding: 22px 20px 18px;
 }
 
 .productHeader {
@@ -365,8 +329,8 @@
 .productHeader h3 {
   margin: 0;
   color: var(--tiger-ink);
-  font-size: 1.22rem;
-  line-height: 1.18;
+  font-size: clamp(1.28rem, 2vw, 1.7rem);
+  line-height: 1.03;
 }
 
 .productHeader strong {
@@ -406,13 +370,15 @@
 
 .cardFooter {
   display: grid;
+  position: relative;
+  z-index: 1;
   gap: 12px;
   padding: 0 20px 20px;
 }
 
 .shippingNote {
   display: inline-flex;
-  justify-self: start;
+  justify-self: center;
   min-height: 34px;
   max-width: 100%;
   align-items: center;
@@ -445,6 +411,7 @@
   font-weight: 900;
   text-decoration: none;
   background: linear-gradient(135deg, #ffad5d, var(--tiger-orange-deep));
+  box-shadow: 0 16px 30px rgb(232 111 24 / 18%);
 }
 
 .error {
@@ -481,7 +448,7 @@
 
   .familyGrid,
   .productGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr));
   }
 }
 
@@ -516,18 +483,18 @@
   .familyGrid,
   .productGrid {
     grid-template-columns: 1fr;
+    width: 100%;
   }
 
-  .categoryNav {
-    top: 98px;
-    flex-wrap: nowrap;
-    max-width: 100%;
-    justify-self: stretch;
-    border-radius: 18px;
+  .productLink {
+    grid-template-columns: 1fr;
   }
 
-  .categoryNav a {
-    max-width: min(62vw, 210px);
+  .mediaFrame,
+  .mediaPlaceholder {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+    margin: 10px 10px 0;
   }
 
   .shippingNote {

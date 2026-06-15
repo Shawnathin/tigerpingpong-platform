@@ -34,6 +34,8 @@ export interface CategoryLandingPageConfig {
   productCtaLabel?: string;
   productLayout?: "editorial" | "compact";
   productOrder?: string[];
+  productRailLabels?: Record<string, string>;
+  showProductRail?: boolean;
   shippingMessage?: string;
 }
 
@@ -65,14 +67,6 @@ function formatPrice(priceCents: number | null, currency: string): string {
     currency,
     style: "currency"
   }).format(priceCents / 100);
-}
-
-function formatProductKind(productKind: string): string {
-  return productKind
-    .split(/[-_]/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
 }
 
 function getProductImage(product: CatalogProductSummary): {
@@ -129,7 +123,7 @@ function ProductCard({
   layout: "editorial" | "compact";
 }) {
   const displayName = getProductDisplayName(product);
-  const chips = getProductChips(product, layout, formatProductKind(product.productKind));
+  const chips = getProductChips(product, layout);
   const anchorId = getProductAnchorId(product);
   const ctaLabel = getProductCtaLabel(product, productCtaLabel);
   const pitch = getProductPitch(product, getProductCardPitch(product));
@@ -193,7 +187,15 @@ function ProductCard({
   );
 }
 
-function ProductRail({ products, title }: { products: CatalogProductSummary[]; title: string }) {
+function ProductRail({
+  productRailLabels,
+  products,
+  title
+}: {
+  productRailLabels?: Record<string, string>;
+  products: CatalogProductSummary[];
+  title: string;
+}) {
   if (products.length <= 1) {
     return null;
   }
@@ -201,7 +203,7 @@ function ProductRail({ products, title }: { products: CatalogProductSummary[]; t
   const railItems = products.map((product) => ({
     href: `#${getProductAnchorId(product)}`,
     id: getProductAnchorId(product),
-    label: getProductDisplayName(product)
+    label: productRailLabels?.[product.slug] ?? getProductDisplayName(product)
   }));
 
   return (
@@ -215,11 +217,15 @@ function ProductRail({ products, title }: { products: CatalogProductSummary[]; t
 }
 
 function BrowseTools({
+  productRailLabels,
   products,
+  showProductRail,
   shippingMessage,
   title
 }: {
+  productRailLabels?: Record<string, string>;
   products: CatalogProductSummary[];
+  showProductRail: boolean;
   shippingMessage: string;
   title: string;
 }) {
@@ -228,8 +234,14 @@ function BrowseTools({
   }
 
   return (
-    <div className={styles.browseTools} data-sticky={products.length > 1 ? "true" : undefined}>
-      <ProductRail products={products} title={title} />
+    <div
+      className={styles.browseTools}
+      data-sticky={showProductRail && products.length > 1 ? "true" : undefined}
+      data-rail={showProductRail ? "true" : undefined}
+    >
+      {showProductRail ? (
+        <ProductRail productRailLabels={productRailLabels} products={products} title={title} />
+      ) : null}
       <p className={styles.shippingBadge}>{shippingMessage}</p>
     </div>
   );
@@ -286,7 +298,13 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
         </section>
 
         {productResource.data && products.length > 0 ? (
-          <BrowseTools products={products} shippingMessage={shippingMessage} title={config.title} />
+          <BrowseTools
+            productRailLabels={config.productRailLabels}
+            products={products}
+            showProductRail={config.showProductRail ?? false}
+            shippingMessage={shippingMessage}
+            title={config.title}
+          />
         ) : null}
 
         {productResource.error ? (

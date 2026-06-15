@@ -15,9 +15,36 @@ type AdminOrderStatus =
   | "paid"
   | "refunded";
 
+type AdminMediaRole = "primary" | "gallery" | "detail" | "lifestyle" | "variant" | "source_reference";
+
 interface AdminListQuery {
   limit?: string;
   status?: string;
+}
+
+interface AdminProductMediaInput {
+  altText?: unknown;
+  caption?: unknown;
+  cloudinaryPublicId?: unknown;
+  cloudinarySecureUrl?: unknown;
+  isPrimary?: unknown;
+  role?: unknown;
+  sortOrder?: unknown;
+  title?: unknown;
+}
+
+interface NormalizedProductMediaInput {
+  altText: string | null;
+  caption: string | null;
+  cloudinaryFormat: string | null;
+  cloudinaryPublicId: string | null;
+  cloudinaryResourceType: string | null;
+  cloudinarySecureUrl: string | null;
+  cloudinaryVersion: string | null;
+  isPrimary: boolean;
+  role: AdminMediaRole;
+  sortOrder: number;
+  title: string | null;
 }
 
 interface CustomerSummary {
@@ -74,8 +101,19 @@ const DEFAULT_LIMIT = 50;
 const FLAT_SHIPPING_CENTS = 1500;
 const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 const MAX_LIMIT = 100;
+const MAX_MEDIA_SORT_ORDER = 999;
+const MIN_MEDIA_SORT_ORDER = 0;
 const SUPPORT_EMAIL = "info@tigerpingpong.com";
 const SUPPORT_PHONE = "1-888-552-5259";
+
+const ADMIN_MEDIA_ROLES: readonly AdminMediaRole[] = [
+  "primary",
+  "gallery",
+  "detail",
+  "lifestyle",
+  "variant",
+  "source_reference"
+];
 
 const adminProductListSelect = {
   id: true,
@@ -193,6 +231,38 @@ const adminProductDetailSelect = {
   }
 } satisfies Prisma.ProductSelect;
 
+const adminProductMediaProductSelect = {
+  id: true,
+  key: true,
+  slug: true,
+  name: true,
+  sku: true
+} satisfies Prisma.ProductSelect;
+
+const adminProductMediaSelect = {
+  id: true,
+  mediaKey: true,
+  productId: true,
+  variantId: true,
+  role: true,
+  cloudinaryPublicId: true,
+  cloudinarySecureUrl: true,
+  cloudinaryResourceType: true,
+  cloudinaryFormat: true,
+  cloudinaryVersion: true,
+  sourceUrl: true,
+  sourceProvider: true,
+  altText: true,
+  title: true,
+  caption: true,
+  sortOrder: true,
+  isPrimary: true,
+  isPublic: true,
+  isActive: true,
+  reviewStatus: true,
+  updatedAt: true
+} satisfies Prisma.ProductMediaSelect;
+
 const adminOrderListSelect = {
   id: true,
   publicReference: true,
@@ -305,6 +375,14 @@ type AdminOrderDetailRecord = Prisma.OrderGetPayload<{
 
 type AdminCustomerOrderRecord = Prisma.OrderGetPayload<{
   select: typeof adminCustomerOrderSelect;
+}>;
+
+type AdminProductMediaProductRecord = Prisma.ProductGetPayload<{
+  select: typeof adminProductMediaProductSelect;
+}>;
+
+type AdminProductMediaRecord = Prisma.ProductMediaGetPayload<{
+  select: typeof adminProductMediaSelect;
 }>;
 
 @Injectable()
@@ -630,6 +708,223 @@ export class AdminService implements OnModuleDestroy {
     };
   }
 
+  async getProductMedia(idParam: string): Promise<unknown> {
+    const productId = this.parseRouteIdentifier(idParam, "Product");
+    const prisma = this.getPrisma();
+
+    try {
+      const product = await prisma.product.findUnique({
+        where: {
+          id: productId
+        },
+        select: adminProductMediaProductSelect
+      });
+
+      if (!product) {
+        throw new NotFoundException({
+          message: "Admin product was not found."
+        });
+      }
+
+      const media = await prisma.productMedia.findMany({
+        where: {
+          productId
+        },
+        orderBy: [
+          {
+            isActive: "desc"
+          },
+          {
+            isPrimary: "desc"
+          },
+          {
+            sortOrder: "asc"
+          },
+          {
+            updatedAt: "desc"
+          }
+        ],
+        select: adminProductMediaSelect
+      });
+
+      return this.serializeProductMediaResponse(product, media);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new ServiceUnavailableException({
+        message: "Admin product media is unavailable."
+      });
+    }
+  }
+
+  async addProductMedia(idParam: string, input: AdminProductMediaInput): Promise<unknown> {
+    const productId = this.parseRouteIdentifier(idParam, "Product");
+    const mediaInput = this.normalizeProductMediaInput(input);
+    const prisma = this.getPrisma();
+
+    try {
+      const product = await prisma.product.findUnique({
+        where: {
+          id: productId
+        },
+        select: adminProductMediaProductSelect
+      });
+
+      if (!product) {
+        throw new NotFoundException({
+          message: "Admin product was not found."
+        });
+      }
+
+      await prisma.$transaction(async (transaction) => {
+        if (mediaInput.isPrimary) {
+          await this.clearPrimaryProductMedia(transaction, productId);
+        }
+
+        await transaction.productMedia.create({
+          data: {
+            altText: mediaInput.altText,
+            caption: mediaInput.caption,
+            cloudinaryFormat: mediaInput.cloudinaryFormat,
+            cloudinaryPublicId: mediaInput.cloudinaryPublicId,
+            cloudinaryResourceType: mediaInput.cloudinaryResourceType,
+            cloudinarySecureUrl: mediaInput.cloudinarySecureUrl,
+            cloudinaryVersion: mediaInput.cloudinaryVersion,
+            isActive: true,
+            isPrimary: mediaInput.isPrimary,
+            isPublic: true,
+            mediaKey: this.createAdminMediaKey(product.slug, mediaInput),
+            productId,
+            reviewStatus: "approved",
+            role: mediaInput.role,
+            sortOrder: mediaInput.sortOrder,
+            sourceProvider: "cloudinary",
+            title: mediaInput.title
+          }
+        });
+      });
+
+      return this.getProductMedia(productId);
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+
+      this.throwProductMediaWriteError(error);
+    }
+  }
+
+  async updateProductMedia(
+    idParam: string,
+    mediaIdParam: string,
+    input: AdminProductMediaInput
+  ): Promise<unknown> {
+    const productId = this.parseRouteIdentifier(idParam, "Product");
+    const mediaId = this.parseRouteIdentifier(mediaIdParam, "Product media");
+    const mediaInput = this.normalizeProductMediaInput(input);
+
+    try {
+      await this.getPrisma().$transaction(async (transaction) => {
+        const media = await transaction.productMedia.findFirst({
+          where: {
+            id: mediaId,
+            productId
+          },
+          select: {
+            id: true
+          }
+        });
+
+        if (!media) {
+          throw new NotFoundException({
+            message: "Admin product media row was not found."
+          });
+        }
+
+        if (mediaInput.isPrimary) {
+          await this.clearPrimaryProductMedia(transaction, productId);
+        }
+
+        await transaction.productMedia.update({
+          where: {
+            id: mediaId
+          },
+          data: {
+            altText: mediaInput.altText,
+            caption: mediaInput.caption,
+            cloudinaryFormat: mediaInput.cloudinaryFormat,
+            cloudinaryPublicId: mediaInput.cloudinaryPublicId,
+            cloudinaryResourceType: mediaInput.cloudinaryResourceType,
+            cloudinarySecureUrl: mediaInput.cloudinarySecureUrl,
+            cloudinaryVersion: mediaInput.cloudinaryVersion,
+            isActive: true,
+            isPrimary: mediaInput.isPrimary,
+            isPublic: true,
+            reviewStatus: "approved",
+            role: mediaInput.role,
+            sortOrder: mediaInput.sortOrder,
+            sourceProvider: "cloudinary",
+            title: mediaInput.title
+          }
+        });
+      });
+
+      return this.getProductMedia(productId);
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+
+      this.throwProductMediaWriteError(error);
+    }
+  }
+
+  async unassignProductMedia(idParam: string, mediaIdParam: string): Promise<unknown> {
+    const productId = this.parseRouteIdentifier(idParam, "Product");
+    const mediaId = this.parseRouteIdentifier(mediaIdParam, "Product media");
+
+    try {
+      const media = await this.getPrisma().productMedia.findFirst({
+        where: {
+          id: mediaId,
+          productId
+        },
+        select: {
+          id: true
+        }
+      });
+
+      if (!media) {
+        throw new NotFoundException({
+          message: "Admin product media row was not found."
+        });
+      }
+
+      await this.getPrisma().productMedia.update({
+        where: {
+          id: mediaId
+        },
+        data: {
+          isActive: false,
+          isPrimary: false,
+          isPublic: false
+        }
+      });
+
+      return this.getProductMedia(productId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new ServiceUnavailableException({
+        message: "Admin product media could not be unassigned."
+      });
+    }
+  }
+
   async listOrders(query: AdminListQuery): Promise<unknown> {
     const status = this.parseOptionalStatus(query.status);
     const limit = this.parseLimit(query.limit);
@@ -847,6 +1142,152 @@ export class AdminService implements OnModuleDestroy {
       createdAt: this.serializeDate(product.createdAt),
       updatedAt: this.serializeDate(product.updatedAt)
     };
+  }
+
+  private serializeProductMediaResponse(
+    product: AdminProductMediaProductRecord,
+    media: AdminProductMediaRecord[]
+  ) {
+    return {
+      product: {
+        id: product.id,
+        key: product.key,
+        slug: product.slug,
+        name: product.name,
+        sku: product.sku
+      },
+      media: media.map((item) => this.serializeProductMedia(item))
+    };
+  }
+
+  private serializeProductMedia(media: AdminProductMediaRecord) {
+    return {
+      id: media.id,
+      mediaKey: media.mediaKey,
+      productId: media.productId,
+      variantId: media.variantId,
+      role: media.role,
+      cloudinaryPublicId: media.cloudinaryPublicId,
+      cloudinarySecureUrl: media.cloudinarySecureUrl,
+      cloudinaryResourceType: media.cloudinaryResourceType,
+      cloudinaryFormat: media.cloudinaryFormat,
+      cloudinaryVersion: media.cloudinaryVersion,
+      sourceUrl: media.sourceUrl,
+      sourceProvider: media.sourceProvider,
+      altText: media.altText,
+      title: media.title,
+      caption: media.caption,
+      sortOrder: media.sortOrder,
+      isPrimary: media.isPrimary,
+      isPublic: media.isPublic,
+      isActive: media.isActive,
+      reviewStatus: media.reviewStatus,
+      previewUrl: media.cloudinarySecureUrl ?? this.createCloudinaryDeliveryUrl(media.cloudinaryPublicId),
+      updatedAt: this.serializeDate(media.updatedAt)
+    };
+  }
+
+  private normalizeProductMediaInput(input: AdminProductMediaInput): NormalizedProductMediaInput {
+    if (!this.isRecord(input)) {
+      throw new BadRequestException({
+        message: "Product media input is required."
+      });
+    }
+
+    const cloudinaryPublicId = this.normalizeCloudinaryPublicId(input.cloudinaryPublicId);
+    const cloudinarySecureUrl = this.normalizeCloudinarySecureUrl(input.cloudinarySecureUrl);
+    const parsedCloudinaryUrl = cloudinarySecureUrl
+      ? this.parseCloudinaryDeliveryUrl(cloudinarySecureUrl)
+      : null;
+
+    if (cloudinarySecureUrl && !parsedCloudinaryUrl) {
+      throw new BadRequestException({
+        message: "cloudinarySecureUrl must be a valid Cloudinary image delivery URL."
+      });
+    }
+
+    const resolvedPublicId = cloudinaryPublicId ?? parsedCloudinaryUrl?.publicId ?? null;
+    const resolvedSecureUrl =
+      cloudinarySecureUrl ?? this.createCloudinaryDeliveryUrl(resolvedPublicId);
+
+    if (!resolvedPublicId) {
+      throw new BadRequestException({
+        message:
+          "A Cloudinary public ID or Cloudinary secure URL is required for product media mapping."
+      });
+    }
+
+    if (!resolvedSecureUrl) {
+      throw new BadRequestException({
+        message:
+          "Product media must resolve to a Cloudinary secure URL. Provide cloudinarySecureUrl or configure CLOUDINARY_CLOUD_NAME for public ID delivery URLs."
+      });
+    }
+
+    const requestedRole = this.normalizeMediaRole(input.role);
+    const isPrimary = this.normalizeBoolean(input.isPrimary) || requestedRole === "primary";
+    const role = isPrimary ? "primary" : requestedRole;
+
+    return {
+      altText: this.normalizeOptionalString(input.altText),
+      caption: this.normalizeOptionalString(input.caption),
+      cloudinaryFormat: parsedCloudinaryUrl?.format ?? null,
+      cloudinaryPublicId: resolvedPublicId,
+      cloudinaryResourceType: parsedCloudinaryUrl?.resourceType ?? "image",
+      cloudinarySecureUrl: resolvedSecureUrl,
+      cloudinaryVersion: parsedCloudinaryUrl?.version ?? null,
+      isPrimary,
+      role,
+      sortOrder: this.normalizeSortOrder(input.sortOrder),
+      title: this.normalizeOptionalString(input.title)
+    };
+  }
+
+  private async clearPrimaryProductMedia(
+    transaction: Prisma.TransactionClient,
+    productId: string
+  ): Promise<void> {
+    await transaction.productMedia.updateMany({
+      where: {
+        productId,
+        isPrimary: true
+      },
+      data: {
+        isPrimary: false,
+        role: "gallery"
+      }
+    });
+  }
+
+  private createAdminMediaKey(
+    productSlug: string,
+    input: Pick<NormalizedProductMediaInput, "cloudinaryPublicId" | "role" | "sortOrder">
+  ): string {
+    const source = input.cloudinaryPublicId ?? `${input.role}-${input.sortOrder}`;
+    const slug = source
+      .split("/")
+      .filter(Boolean)
+      .slice(-2)
+      .join("-")
+      .replace(/[^A-Za-z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase();
+    const suffix = slug || `${input.role}-${Date.now()}`;
+
+    return `${productSlug}-${suffix}`.slice(0, 180);
+  }
+
+  private throwProductMediaWriteError(error: unknown): never {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new BadRequestException({
+        message:
+          "That Cloudinary public ID or media key is already assigned. Update the existing row or unassign it first."
+      });
+    }
+
+    throw new ServiceUnavailableException({
+      message: "Admin product media could not be saved."
+    });
   }
 
   private serializeListOrder(order: AdminOrderListRecord) {
@@ -1271,6 +1712,175 @@ export class AdminService implements OnModuleDestroy {
 
   private isAdminOrderStatus(value: string): value is AdminOrderStatus {
     return ADMIN_ORDER_STATUSES.includes(value as AdminOrderStatus);
+  }
+
+  private normalizeMediaRole(value: unknown): AdminMediaRole {
+    const normalized = this.normalizeOptionalString(value) ?? "gallery";
+
+    if (ADMIN_MEDIA_ROLES.includes(normalized as AdminMediaRole)) {
+      return normalized as AdminMediaRole;
+    }
+
+    throw new BadRequestException({
+      message: "role is invalid."
+    });
+  }
+
+  private normalizeBoolean(value: unknown): boolean {
+    if (typeof value === "boolean") {
+      return value;
+    }
+
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+
+      return normalized === "true" || normalized === "on" || normalized === "1";
+    }
+
+    return false;
+  }
+
+  private normalizeSortOrder(value: unknown): number {
+    let sortOrder: number | null = null;
+
+    if (typeof value === "number" && Number.isInteger(value)) {
+      sortOrder = value;
+    }
+
+    if (typeof value === "string" && value.trim()) {
+      const parsed = Number(value);
+
+      if (Number.isInteger(parsed)) {
+        sortOrder = parsed;
+      }
+    }
+
+    if (sortOrder !== null) {
+      if (sortOrder < MIN_MEDIA_SORT_ORDER || sortOrder > MAX_MEDIA_SORT_ORDER) {
+        throw new BadRequestException({
+          message: `sortOrder must be between ${MIN_MEDIA_SORT_ORDER} and ${MAX_MEDIA_SORT_ORDER}.`
+        });
+      }
+
+      return sortOrder;
+    }
+
+    throw new BadRequestException({
+      message: "sortOrder must be an integer."
+    });
+  }
+
+  private normalizeCloudinaryPublicId(value: unknown): string | null {
+    const publicId = this.normalizeOptionalString(value);
+
+    if (!publicId) {
+      return null;
+    }
+
+    if (
+      publicId.startsWith("http://") ||
+      publicId.startsWith("https://") ||
+      publicId.includes("?") ||
+      publicId.includes("#")
+    ) {
+      throw new BadRequestException({
+        message: "cloudinaryPublicId must be a public ID, not a URL."
+      });
+    }
+
+    if (!/^[A-Za-z0-9/_-]+$/.test(publicId)) {
+      throw new BadRequestException({
+        message: "cloudinaryPublicId contains unsupported characters."
+      });
+    }
+
+    return publicId.replace(/^\/+|\/+$/g, "");
+  }
+
+  private normalizeCloudinarySecureUrl(value: unknown): string | null {
+    const secureUrl = this.normalizeOptionalString(value);
+
+    if (!secureUrl) {
+      return null;
+    }
+
+    let parsedUrl: URL;
+
+    try {
+      parsedUrl = new URL(secureUrl);
+    } catch {
+      throw new BadRequestException({
+        message: "cloudinarySecureUrl must be a valid URL."
+      });
+    }
+
+    if (parsedUrl.protocol !== "https:" || parsedUrl.hostname !== "res.cloudinary.com") {
+      throw new BadRequestException({
+        message: "cloudinarySecureUrl must be an HTTPS Cloudinary delivery URL."
+      });
+    }
+
+    return parsedUrl.toString();
+  }
+
+  private createCloudinaryDeliveryUrl(publicId: string | null): string | null {
+    if (!publicId) {
+      return null;
+    }
+
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim();
+
+    if (!cloudName) {
+      return null;
+    }
+
+    return `https://res.cloudinary.com/${encodeURIComponent(cloudName)}/image/upload/${publicId}`;
+  }
+
+  private parseCloudinaryDeliveryUrl(value: string): {
+    format: string | null;
+    publicId: string | null;
+    resourceType: string | null;
+    version: string | null;
+  } | null {
+    let parsedUrl: URL;
+
+    try {
+      parsedUrl = new URL(value);
+    } catch {
+      return null;
+    }
+
+    const parts = parsedUrl.pathname.split("/").filter(Boolean);
+
+    if (parts.length < 4) {
+      return null;
+    }
+
+    const resourceType = parts[1] ?? null;
+    const uploadIndex = parts.indexOf("upload");
+
+    if (resourceType !== "image" || uploadIndex < 0) {
+      return null;
+    }
+
+    const pathAfterUpload = parts.slice(uploadIndex + 1);
+    const version = pathAfterUpload[0]?.match(/^v\d+$/) ? pathAfterUpload.shift() ?? null : null;
+    const publicPath = pathAfterUpload.join("/");
+
+    if (!publicPath) {
+      return null;
+    }
+
+    const publicId = publicPath.replace(/\.[A-Za-z0-9]+$/, "");
+    const formatMatch = publicPath.match(/\.([A-Za-z0-9]+)$/);
+
+    return {
+      format: formatMatch?.[1]?.toLowerCase() ?? null,
+      publicId,
+      resourceType,
+      version
+    };
   }
 
   private normalizeCurrency(value: string): string {

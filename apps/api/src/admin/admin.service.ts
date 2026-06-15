@@ -20,6 +20,22 @@ interface AdminListQuery {
   status?: string;
 }
 
+interface MarkOrderShippedBody {
+  carrier?: unknown;
+  trackingNumber?: unknown;
+  trackingUrl?: unknown;
+  shippedAt?: unknown;
+  internalNote?: unknown;
+}
+
+interface ParsedShipmentInput {
+  carrier: string;
+  trackingNumber: string;
+  trackingUrl: string | null;
+  shippedAt: Date;
+  internalNote: string | null;
+}
+
 interface CustomerSummary {
   currency: string;
   customerName: string | null;
@@ -61,6 +77,17 @@ interface ShippingAddress {
   state?: string;
 }
 
+interface ShipmentRecord {
+  fulfillmentStatus: string;
+  shipmentCarrier: string | null;
+  shipmentTrackingNumber: string | null;
+  shipmentTrackingUrl: string | null;
+  shippedAt: Date | null;
+  shipmentInternalNote: string | null;
+  shipmentRecordedAt: Date | null;
+  shipmentRecordedBy: string | null;
+}
+
 const ADMIN_ORDER_STATUSES: readonly AdminOrderStatus[] = [
   "checkout_pending",
   "checkout_failed",
@@ -74,6 +101,9 @@ const DEFAULT_LIMIT = 50;
 const FLAT_SHIPPING_CENTS = 1500;
 const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 const MAX_LIMIT = 100;
+const MAX_SHIPMENT_CARRIER_LENGTH = 80;
+const MAX_SHIPMENT_INTERNAL_NOTE_LENGTH = 1000;
+const MAX_SHIPMENT_TRACKING_NUMBER_LENGTH = 120;
 const SUPPORT_EMAIL = "info@tigerpingpong.com";
 const SUPPORT_PHONE = "1-888-552-5259";
 
@@ -197,6 +227,7 @@ const adminOrderListSelect = {
   id: true,
   publicReference: true,
   status: true,
+  fulfillmentStatus: true,
   currency: true,
   subtotalCents: true,
   shippingCents: true,
@@ -208,6 +239,13 @@ const adminOrderListSelect = {
   stripePaymentIntentId: true,
   stripeCustomerId: true,
   paidAt: true,
+  shipmentCarrier: true,
+  shipmentTrackingNumber: true,
+  shipmentTrackingUrl: true,
+  shippedAt: true,
+  shipmentInternalNote: true,
+  shipmentRecordedAt: true,
+  shipmentRecordedBy: true,
   createdAt: true,
   updatedAt: true,
   _count: {
@@ -221,6 +259,7 @@ const adminOrderDetailSelect = {
   id: true,
   publicReference: true,
   status: true,
+  fulfillmentStatus: true,
   currency: true,
   subtotalCents: true,
   shippingCents: true,
@@ -237,6 +276,13 @@ const adminOrderDetailSelect = {
   stripePaymentIntentId: true,
   stripeCustomerId: true,
   paidAt: true,
+  shipmentCarrier: true,
+  shipmentTrackingNumber: true,
+  shipmentTrackingUrl: true,
+  shippedAt: true,
+  shipmentInternalNote: true,
+  shipmentRecordedAt: true,
+  shipmentRecordedBy: true,
   createdAt: true,
   updatedAt: true,
   items: {
@@ -702,6 +748,67 @@ export class AdminService implements OnModuleDestroy {
     };
   }
 
+  async markOrderShipped(publicReferenceParam: string, body: MarkOrderShippedBody): Promise<unknown> {
+    const publicReference = this.parseRouteIdentifier(publicReferenceParam, "Order");
+    const shipment = this.parseShipmentInput(body);
+    const recordedAt = new Date();
+
+    let order: AdminOrderDetailRecord | null;
+
+    try {
+      const existingOrder = await this.getPrisma().order.findUnique({
+        where: {
+          publicReference
+        },
+        select: {
+          id: true,
+          status: true
+        }
+      });
+
+      if (!existingOrder) {
+        throw new NotFoundException({
+          message: "Admin order was not found."
+        });
+      }
+
+      if (existingOrder.status !== "paid") {
+        throw new BadRequestException({
+          message: "Only paid orders can be marked shipped."
+        });
+      }
+
+      order = await this.getPrisma().order.update({
+        where: {
+          id: existingOrder.id
+        },
+        data: {
+          fulfillmentStatus: "shipped",
+          shipmentCarrier: shipment.carrier,
+          shipmentTrackingNumber: shipment.trackingNumber,
+          shipmentTrackingUrl: shipment.trackingUrl,
+          shippedAt: shipment.shippedAt,
+          shipmentInternalNote: shipment.internalNote,
+          shipmentRecordedAt: recordedAt,
+          shipmentRecordedBy: null
+        },
+        select: adminOrderDetailSelect
+      });
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new ServiceUnavailableException({
+        message: "Admin order shipment update is unavailable."
+      });
+    }
+
+    return {
+      order: this.serializeDetailOrder(order)
+    };
+  }
+
   async listCustomers(): Promise<unknown> {
     try {
       const orders = await this.getPrisma().order.findMany({
@@ -864,6 +971,7 @@ export class AdminService implements OnModuleDestroy {
       totalCents: order.totalCents,
       orderStatus: order.status,
       paymentStatus: this.getPaymentStatus(order.status),
+      fulfillment: this.serializeShipment(order),
       itemCount: order._count.items,
       stripe: {
         checkoutSessionId: order.stripeCheckoutSessionId,
@@ -899,6 +1007,7 @@ export class AdminService implements OnModuleDestroy {
       },
       orderStatus: order.status,
       paymentStatus: this.getPaymentStatus(order.status),
+      fulfillment: this.serializeShipment(order),
       checkoutSource: order.checkoutSource,
       stripe: {
         checkoutSessionId: order.stripeCheckoutSessionId,
@@ -938,6 +1047,137 @@ export class AdminService implements OnModuleDestroy {
           : null
       }))
     };
+  }
+
+  private serializeShipment(order: ShipmentRecord) {
+    return {
+      status: order.fulfillmentStatus,
+      carrier: order.shipmentCarrier,
+      trackingNumber: order.shipmentTrackingNumber,
+      trackingUrl: order.shipmentTrackingUrl,
+      shippedAt: this.serializeDate(order.shippedAt),
+      internalNote: order.shipmentInternalNote,
+      recordedAt: this.serializeDate(order.shipmentRecordedAt),
+      recordedBy: order.shipmentRecordedBy
+    };
+  }
+
+  private parseShipmentInput(body: MarkOrderShippedBody): ParsedShipmentInput {
+    if (!this.isRecord(body)) {
+      throw new BadRequestException({
+        message: "Shipment details are invalid."
+      });
+    }
+
+    return {
+      carrier: this.parseRequiredPlainText(
+        body.carrier,
+        "carrier",
+        MAX_SHIPMENT_CARRIER_LENGTH
+      ),
+      trackingNumber: this.parseRequiredPlainText(
+        body.trackingNumber,
+        "trackingNumber",
+        MAX_SHIPMENT_TRACKING_NUMBER_LENGTH
+      ),
+      trackingUrl: this.parseOptionalTrackingUrl(body.trackingUrl),
+      shippedAt: this.parseRequiredDate(body.shippedAt, "shippedAt"),
+      internalNote: this.parseOptionalPlainText(
+        body.internalNote,
+        "internalNote",
+        MAX_SHIPMENT_INTERNAL_NOTE_LENGTH
+      )
+    };
+  }
+
+  private parseRequiredPlainText(value: unknown, fieldName: string, maxLength: number): string {
+    const normalized = this.normalizeOptionalString(value);
+
+    if (!normalized) {
+      throw new BadRequestException({
+        message: `${fieldName} is required.`
+      });
+    }
+
+    this.assertPlainText(normalized, fieldName, maxLength);
+
+    return normalized;
+  }
+
+  private parseOptionalPlainText(
+    value: unknown,
+    fieldName: string,
+    maxLength: number
+  ): string | null {
+    const normalized = this.normalizeOptionalString(value);
+
+    if (!normalized) {
+      return null;
+    }
+
+    this.assertPlainText(normalized, fieldName, maxLength);
+
+    return normalized;
+  }
+
+  private parseOptionalTrackingUrl(value: unknown): string | null {
+    const normalized = this.normalizeOptionalString(value);
+
+    if (!normalized) {
+      return null;
+    }
+
+    if (normalized.length > 2048 || this.hasControlCharacters(normalized)) {
+      throw new BadRequestException({
+        message: "trackingUrl is invalid."
+      });
+    }
+
+    let parsed: URL;
+
+    try {
+      parsed = new URL(normalized);
+    } catch {
+      throw new BadRequestException({
+        message: "trackingUrl is invalid."
+      });
+    }
+
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+      throw new BadRequestException({
+        message: "trackingUrl is invalid."
+      });
+    }
+
+    return normalized;
+  }
+
+  private parseRequiredDate(value: unknown, fieldName: string): Date {
+    const normalized = this.normalizeOptionalString(value);
+
+    if (!normalized) {
+      throw new BadRequestException({
+        message: `${fieldName} is required.`
+      });
+    }
+
+    const parsed = new Date(normalized);
+
+    if (Number.isNaN(parsed.getTime())) {
+      throw new BadRequestException({
+        message: `${fieldName} is invalid.`
+      });
+    }
+
+    return parsed;
+  }
+
+  private assertPlainText(value: string, fieldName: string, maxLength: number): void {
+    if (value.length > maxLength || this.hasControlCharacters(value)) {
+      throw new BadRequestException({
+        message: `${fieldName} is invalid.`
+      });
+    }
   }
 
   private createCustomerSummaries(orders: AdminCustomerOrderRecord[]): CustomerSummary[] {
@@ -1289,6 +1529,18 @@ export class AdminService implements OnModuleDestroy {
     const normalized = value.trim();
 
     return normalized || null;
+  }
+
+  private hasControlCharacters(value: string): boolean {
+    for (let index = 0; index < value.length; index += 1) {
+      const code = value.charCodeAt(index);
+
+      if (code <= 31 || code === 127) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private isRecord(value: unknown): value is Record<string, unknown> {

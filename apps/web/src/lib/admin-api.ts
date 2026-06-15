@@ -11,6 +11,17 @@ export interface AdminStripeReferences {
   paymentIntentId: string | null;
 }
 
+export interface AdminShipmentSummary {
+  carrier: string | null;
+  internalNote: string | null;
+  recordedAt: string | null;
+  recordedBy: string | null;
+  shippedAt: string | null;
+  status: string;
+  trackingNumber: string | null;
+  trackingUrl: string | null;
+}
+
 export interface AdminOrderListItem {
   id: string;
   orderReference: string;
@@ -25,6 +36,7 @@ export interface AdminOrderListItem {
   totalCents: number;
   orderStatus: string;
   paymentStatus: string;
+  fulfillment: AdminShipmentSummary;
   itemCount: number;
   stripe: AdminStripeReferences;
   paidAt: string | null;
@@ -36,6 +48,23 @@ export interface AdminOrdersResponse {
   count: number;
   items: AdminOrderListItem[];
   status: string;
+}
+
+export interface MarkOrderShippedInput {
+  carrier: string;
+  internalNote?: string;
+  shippedAt: string;
+  trackingNumber: string;
+  trackingUrl?: string;
+}
+
+export interface AdminOrderShipmentResponse {
+  order: {
+    fulfillment: AdminShipmentSummary;
+    orderReference: string;
+    orderStatus: string;
+    paymentStatus: string;
+  };
 }
 
 export interface AdminProductListItem {
@@ -212,6 +241,19 @@ export function getAdminOrders(options: AdminListOptions = {}): Promise<AdminOrd
   return fetchAdmin<AdminOrdersResponse>(`/api/admin/orders?${searchParams}`);
 }
 
+export function markAdminOrderShipped(
+  publicReference: string,
+  input: MarkOrderShippedInput
+): Promise<AdminOrderShipmentResponse> {
+  return fetchAdmin<AdminOrderShipmentResponse>(
+    `/api/admin/orders/${encodeURIComponent(publicReference)}/shipment`,
+    {
+      body: JSON.stringify(input),
+      method: "PATCH"
+    }
+  );
+}
+
 export function getAdminProducts(options: AdminListOptions = {}): Promise<AdminProductsResponse> {
   const searchParams = new URLSearchParams();
 
@@ -236,19 +278,25 @@ export function getAdminAuditLog(): Promise<AdminAuditLogResponse> {
   return fetchAdmin<AdminAuditLogResponse>("/api/admin/audit-log");
 }
 
-async function fetchAdmin<TResponse>(path: string): Promise<TResponse> {
+async function fetchAdmin<TResponse>(path: string, init: RequestInit = {}): Promise<TResponse> {
   const url = `${getAdminApiBaseUrl()}${path}`;
   const apiToken = readAdminApiToken(url);
+  const headers = new Headers(init.headers);
+
+  headers.set("Accept", "application/json");
+  headers.set(ADMIN_API_TOKEN_HEADER, apiToken);
+
+  if (init.body) {
+    headers.set("Content-Type", "application/json");
+  }
 
   let response: Response;
 
   try {
     response = await fetch(url, {
+      ...init,
       cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        [ADMIN_API_TOKEN_HEADER]: apiToken
-      }
+      headers
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Admin API request failed.";

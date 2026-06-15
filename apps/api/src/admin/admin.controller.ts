@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, Param, Query, Res } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Param, Patch, Query, Res } from "@nestjs/common";
 
 import { AdminService } from "./admin.service";
 import { AdminAuthHeaderValue, assertAdminApiAuthorized } from "./admin-auth";
@@ -10,6 +10,14 @@ interface HeaderResponse {
 interface AdminListQuery {
   limit?: string;
   status?: string;
+}
+
+interface MarkOrderShippedBody {
+  carrier?: unknown;
+  trackingNumber?: unknown;
+  trackingUrl?: unknown;
+  shippedAt?: unknown;
+  internalNote?: unknown;
 }
 
 const ADMIN_RESPONSE_HEADERS = {
@@ -75,6 +83,18 @@ export class AdminController {
     this.assertAuthorized(response, requestToken);
 
     return this.adminService.getOrder(id);
+  }
+
+  @Patch("orders/:publicReference/shipment")
+  markOrderShipped(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Param("publicReference") publicReference: string,
+    @Body() body: MarkOrderShippedBody
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.markOrderShipped(publicReference, body);
   }
 
   @Get("customers")

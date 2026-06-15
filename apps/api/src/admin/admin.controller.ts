@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, Param, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query, Res } from "@nestjs/common";
 
 import { AdminService } from "./admin.service";
 import { AdminAuthHeaderValue, assertAdminApiAuthorized } from "./admin-auth";
@@ -10,6 +10,17 @@ interface HeaderResponse {
 interface AdminListQuery {
   limit?: string;
   status?: string;
+}
+
+interface AdminProductMediaBody {
+  altText?: unknown;
+  caption?: unknown;
+  cloudinaryPublicId?: unknown;
+  cloudinarySecureUrl?: unknown;
+  isPrimary?: unknown;
+  role?: unknown;
+  sortOrder?: unknown;
+  title?: unknown;
 }
 
 const ADMIN_RESPONSE_HEADERS = {
@@ -53,6 +64,54 @@ export class AdminController {
     this.assertAuthorized(response, requestToken);
 
     return this.adminService.getProduct(id);
+  }
+
+  @Get("products/:id/media")
+  getProductMedia(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Param("id") id: string
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.getProductMedia(id);
+  }
+
+  @Post("products/:id/media")
+  addProductMedia(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Param("id") id: string,
+    @Body() body: AdminProductMediaBody
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.addProductMedia(id, body);
+  }
+
+  @Patch("products/:id/media/:mediaId")
+  updateProductMedia(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Param("id") id: string,
+    @Param("mediaId") mediaId: string,
+    @Body() body: AdminProductMediaBody
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.updateProductMedia(id, mediaId, body);
+  }
+
+  @Delete("products/:id/media/:mediaId")
+  unassignProductMedia(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Param("id") id: string,
+    @Param("mediaId") mediaId: string
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.unassignProductMedia(id, mediaId);
   }
 
   @Get("orders")

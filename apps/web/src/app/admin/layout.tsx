@@ -25,6 +25,10 @@ const ADMIN_NAV_ITEMS = [
     label: "Products"
   },
   {
+    href: "/admin/products/media",
+    label: "Product Media"
+  },
+  {
     href: "/admin/customers",
     label: "Customers"
   },

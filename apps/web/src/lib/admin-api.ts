@@ -73,6 +73,55 @@ export interface AdminProductsResponse {
   items: AdminProductListItem[];
 }
 
+export interface AdminProductMediaProduct {
+  id: string;
+  key: string;
+  slug: string;
+  name: string;
+  sku: string | null;
+}
+
+export interface AdminProductMediaItem {
+  id: string;
+  mediaKey: string;
+  productId: string;
+  variantId: string | null;
+  role: string;
+  cloudinaryPublicId: string | null;
+  cloudinarySecureUrl: string | null;
+  cloudinaryResourceType: string | null;
+  cloudinaryFormat: string | null;
+  cloudinaryVersion: string | null;
+  sourceUrl: string | null;
+  sourceProvider: string;
+  altText: string | null;
+  title: string | null;
+  caption: string | null;
+  sortOrder: number;
+  isPrimary: boolean;
+  isPublic: boolean;
+  isActive: boolean;
+  reviewStatus: string;
+  previewUrl: string | null;
+  updatedAt: string | null;
+}
+
+export interface AdminProductMediaResponse {
+  product: AdminProductMediaProduct;
+  media: AdminProductMediaItem[];
+}
+
+export interface AdminProductMediaInput {
+  altText?: string | null;
+  caption?: string | null;
+  cloudinaryPublicId?: string | null;
+  cloudinarySecureUrl?: string | null;
+  isPrimary?: boolean;
+  role?: string;
+  sortOrder?: number;
+  title?: string | null;
+}
+
 export interface AdminCustomerSummary {
   currency: string;
   customerName: string | null;
@@ -220,6 +269,46 @@ export function getAdminProducts(options: AdminListOptions = {}): Promise<AdminP
   return fetchAdmin<AdminProductsResponse>(`/api/admin/products?${searchParams}`);
 }
 
+export function getAdminProductMedia(productId: string): Promise<AdminProductMediaResponse> {
+  return fetchAdmin<AdminProductMediaResponse>(`/api/admin/products/${productId}/media`);
+}
+
+export function addAdminProductMedia(
+  productId: string,
+  input: AdminProductMediaInput
+): Promise<AdminProductMediaResponse> {
+  return fetchAdmin<AdminProductMediaResponse>(`/api/admin/products/${productId}/media`, {
+    body: input,
+    method: "POST"
+  });
+}
+
+export function updateAdminProductMedia(
+  productId: string,
+  mediaId: string,
+  input: AdminProductMediaInput
+): Promise<AdminProductMediaResponse> {
+  return fetchAdmin<AdminProductMediaResponse>(
+    `/api/admin/products/${productId}/media/${mediaId}`,
+    {
+      body: input,
+      method: "PATCH"
+    }
+  );
+}
+
+export function unassignAdminProductMedia(
+  productId: string,
+  mediaId: string
+): Promise<AdminProductMediaResponse> {
+  return fetchAdmin<AdminProductMediaResponse>(
+    `/api/admin/products/${productId}/media/${mediaId}`,
+    {
+      method: "DELETE"
+    }
+  );
+}
+
 export function getAdminCustomers(): Promise<AdminCustomersResponse> {
   return fetchAdmin<AdminCustomersResponse>("/api/admin/customers");
 }
@@ -236,19 +325,34 @@ export function getAdminAuditLog(): Promise<AdminAuditLogResponse> {
   return fetchAdmin<AdminAuditLogResponse>("/api/admin/audit-log");
 }
 
-async function fetchAdmin<TResponse>(path: string): Promise<TResponse> {
+interface FetchAdminOptions {
+  body?: unknown;
+  method?: "DELETE" | "GET" | "PATCH" | "POST";
+}
+
+async function fetchAdmin<TResponse>(
+  path: string,
+  options: FetchAdminOptions = {}
+): Promise<TResponse> {
   const url = `${getAdminApiBaseUrl()}${path}`;
   const apiToken = readAdminApiToken(url);
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    [ADMIN_API_TOKEN_HEADER]: apiToken
+  };
+
+  if (options.body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
 
   let response: Response;
 
   try {
     response = await fetch(url, {
       cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        [ADMIN_API_TOKEN_HEADER]: apiToken
-      }
+      method: options.method ?? "GET",
+      headers,
+      body: options.body === undefined ? undefined : JSON.stringify(options.body)
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Admin API request failed.";

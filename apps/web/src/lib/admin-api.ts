@@ -229,7 +229,8 @@ export class AdminApiError extends Error {
   constructor(
     message: string,
     readonly status: number | null,
-    readonly url: string
+    readonly url: string,
+    readonly responseMessage: string | null = null
   ) {
     super(message);
     this.name = "AdminApiError";
@@ -360,7 +361,14 @@ async function fetchAdmin<TResponse>(
   }
 
   if (!response.ok) {
-    throw new AdminApiError(`Admin API returned HTTP ${response.status}.`, response.status, url);
+    const responseMessage = await readAdminErrorMessage(response);
+
+    throw new AdminApiError(
+      responseMessage ?? `Admin API returned HTTP ${response.status}.`,
+      response.status,
+      url,
+      responseMessage
+    );
   }
 
   try {
@@ -368,6 +376,42 @@ async function fetchAdmin<TResponse>(
   } catch {
     throw new AdminApiError("Admin API returned an invalid response.", response.status, url);
   }
+}
+
+async function readAdminErrorMessage(response: Response): Promise<string | null> {
+  let payload: unknown;
+
+  try {
+    payload = await response.json();
+  } catch {
+    return null;
+  }
+
+  if (!isRecord(payload)) {
+    return null;
+  }
+
+  const message = payload.message;
+
+  if (typeof message === "string") {
+    return normalizeSafeErrorMessage(message);
+  }
+
+  if (Array.isArray(message)) {
+    return normalizeSafeErrorMessage(message.filter((entry) => typeof entry === "string").join(" "));
+  }
+
+  return null;
+}
+
+function normalizeSafeErrorMessage(value: string): string | null {
+  const normalized = value.replace(/\s+/g, " ").trim();
+
+  return normalized ? normalized.slice(0, 240) : null;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function readAdminApiToken(url: string): string {

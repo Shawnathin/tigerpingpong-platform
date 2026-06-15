@@ -103,6 +103,13 @@ const NET_RECOMMENDATION_SLUGS = [
   "tiger-premium-balls-6-white",
   "tiger-premium-balls-6-orange"
 ];
+const TABLE_HERO_DISPLAY_TITLES: Record<string, string> = {
+  "tiger-expo-outdoor-table": "Expo Outdoor",
+  "tiger-portland-indoor-table": "Portland Indoor",
+  "tiger-portland-outdoor-table": "Portland Outdoor",
+  "tiger-whistler-indoor-table": "Whistler",
+  "tiger-plaza-outdoor-table": "Plaza"
+};
 
 async function loadProduct(slug: string): Promise<ProductResource> {
   let product: CatalogProductDetail;
@@ -623,6 +630,39 @@ function getHeroSummary(
   );
 }
 
+function getHeroDisplayTitle(product: CatalogProductDetail): string {
+  return TABLE_HERO_DISPLAY_TITLES[product.slug] ?? product.name;
+}
+
+function getHeroEyebrow(product: CatalogProductDetail): string {
+  if (normalizeOptionKey(product.productKind) !== "table") {
+    return product.category.name;
+  }
+
+  const searchableName = `${product.name} ${product.slug}`.toLowerCase();
+
+  if (searchableName.includes("outdoor")) {
+    return "Outdoor table";
+  }
+
+  if (searchableName.includes("indoor")) {
+    return "Indoor table";
+  }
+
+  return "Tables";
+}
+
+function getHeroPriceSummary(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null
+): string | null {
+  if (normalizeOptionKey(product.productKind) === "table") {
+    return null;
+  }
+
+  return getHeroSummary(product, normalizedContent);
+}
+
 function truncateMetaDescription(description: string): string {
   if (description.length <= 155) {
     return description;
@@ -719,7 +759,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
   const recommendedProducts = getRecommendedAddOns(product, publicProducts);
   const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
-  const heroSummary = getHeroSummary(product, normalizedContent);
+  const heroDisplayTitle = getHeroDisplayTitle(product);
+  const heroEyebrow = getHeroEyebrow(product);
+  const heroPriceSummary = getHeroPriceSummary(product, normalizedContent);
   const productJsonLd = getProductJsonLd(product, normalizedContent, mediaItems);
 
   return (
@@ -742,14 +784,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           />
 
           <aside className={styles.purchasePanel} aria-label={`${product.name} purchase panel`}>
-            <p className={styles.eyebrow}>{product.category.name}</p>
+            <p className={styles.eyebrow}>{heroEyebrow}</p>
             <h1 className={styles.title} id="product-title">
-              {product.name}
+              {heroDisplayTitle}
             </h1>
 
             <div className={styles.priceRow}>
               <strong>{formatPrice(product.priceCents, product.currency)}</strong>
-              <span>{heroSummary}</span>
+              {heroPriceSummary ? <span>{heroPriceSummary}</span> : null}
             </div>
 
             <div className={styles.shippingNote}>

@@ -3,12 +3,19 @@ import type { Metadata } from "next";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { getCategories, getProductFamilies, getProducts } from "../../lib/catalog-api";
+import {
+  getProductChips,
+  getProductCtaLabel,
+  getProductDisplayName,
+  getProductPitch,
+  getTableProductOrder,
+  sortProductsForBrowsing
+} from "../../lib/product-browsing";
 import { resolveProductMediaUrl } from "../../lib/product-media";
 import {
   getPrimaryProductMediaFallback,
   getProductCardPitch
 } from "../../lib/public-storefront-demo";
-import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "../../lib/shipping";
 import type {
   CatalogCategory,
   CatalogFamily,
@@ -27,6 +34,7 @@ export const metadata: Metadata = {
 
 const PORTLAND_IMAGE =
   "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1";
+const CATALOG_SHIPPING_MESSAGE = "Free Canada-wide shipping on tables and orders over $100.";
 
 interface CatalogResource<TData> {
   data: TData | null;
@@ -148,16 +156,24 @@ function groupProductsByCategory(
     }
   }
 
-  return [...groups.values()].sort((left, right) => {
-    const leftOrder = categoryOrder.get(left.category.key) ?? Number.MAX_SAFE_INTEGER;
-    const rightOrder = categoryOrder.get(right.category.key) ?? Number.MAX_SAFE_INTEGER;
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      products:
+        group.category.key === "tables" || group.category.slug === "tables"
+          ? sortProductsForBrowsing(group.products, getTableProductOrder("all"))
+          : group.products
+    }))
+    .sort((left, right) => {
+      const leftOrder = categoryOrder.get(left.category.key) ?? Number.MAX_SAFE_INTEGER;
+      const rightOrder = categoryOrder.get(right.category.key) ?? Number.MAX_SAFE_INTEGER;
 
-    if (leftOrder !== rightOrder) {
-      return leftOrder - rightOrder;
-    }
+      if (leftOrder !== rightOrder) {
+        return leftOrder - rightOrder;
+      }
 
-    return left.category.name.localeCompare(right.category.name);
-  });
+      return left.category.name.localeCompare(right.category.name);
+    });
 }
 
 function formatPrice(priceCents: number | null, currency: string): string {
@@ -177,37 +193,6 @@ function formatProductKind(productKind: string): string {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
-}
-
-function getProductMode(product: CatalogProductSummary): string | null {
-  const normalized = `${product.name} ${product.slug} ${product.key}`.toLowerCase();
-
-  if (normalized.includes("indoor")) {
-    return "Indoor";
-  }
-
-  if (normalized.includes("outdoor")) {
-    return "Outdoor";
-  }
-
-  return null;
-}
-
-function getProductChips(product: CatalogProductSummary): string[] {
-  const chips = [product.family.name];
-  const productMode = getProductMode(product);
-
-  if (productMode && !chips.includes(productMode)) {
-    chips.push(productMode);
-  }
-
-  const productKind = formatProductKind(product.productKind);
-
-  if (!chips.includes(productKind)) {
-    chips.push(productKind);
-  }
-
-  return chips.slice(0, 3);
 }
 
 function getProductImage(product: CatalogProductSummary): {
@@ -331,7 +316,10 @@ function FamilyCard({ family }: { family: CatalogFamily }) {
 }
 
 function ProductCard({ product }: { product: CatalogProductSummary }) {
-  const chips = getProductChips(product);
+  const displayName = getProductDisplayName(product);
+  const chips = getProductChips(product, "compact", formatProductKind(product.productKind));
+  const pitch = getProductPitch(product, getProductCardPitch(product));
+  const ctaLabel = getProductCtaLabel(product, "View product");
 
   return (
     <article className={styles.productCard}>
@@ -344,11 +332,11 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
         <div className={styles.productBody}>
           <div className={styles.productHeader}>
             <p>{product.family.name}</p>
-            <h3>{product.name}</h3>
+            <h3>{displayName}</h3>
             <strong>{formatPrice(product.priceCents, product.currency)}</strong>
           </div>
-          <p className={styles.productPitch}>{getProductCardPitch(product)}</p>
-          <ul className={styles.productChips} aria-label={`${product.name} product details`}>
+          <p className={styles.productPitch}>{pitch}</p>
+          <ul className={styles.productChips} aria-label={`${displayName} product details`}>
             {chips.map((chip) => (
               <li key={chip}>{chip}</li>
             ))}
@@ -356,7 +344,7 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
         </div>
       </a>
       <div className={styles.cardFooter}>
-        <a href={`/catalog/products/${product.slug}`}>View product</a>
+        <a href={`/catalog/products/${product.slug}`}>{ctaLabel}</a>
       </div>
     </article>
   );
@@ -422,9 +410,7 @@ export default async function CatalogPage() {
             <h2 id="catalog-products-title">Ready for the next match.</h2>
           </div>
           {catalog.products.data && products.length > 0 ? (
-            <p className={styles.shippingNote}>
-              {V1_FREE_SHIPPING_COPY} {V1_FLAT_RATE_SHIPPING_COPY}
-            </p>
+            <p className={styles.shippingNote}>{CATALOG_SHIPPING_MESSAGE}</p>
           ) : null}
 
           {catalog.products.data && products.length > 0 ? (

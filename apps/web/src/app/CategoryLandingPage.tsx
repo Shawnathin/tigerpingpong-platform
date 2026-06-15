@@ -1,9 +1,18 @@
 import { getProducts } from "../lib/catalog-api";
+import {
+  ACCESSORY_SHIPPING_MESSAGE,
+  getProductAnchorId,
+  getProductChips,
+  getProductCtaLabel,
+  getProductDisplayName,
+  getProductPitch,
+  sortProductsForBrowsing
+} from "../lib/product-browsing";
 import { resolveProductMediaUrl } from "../lib/product-media";
 import { getPrimaryProductMediaFallback, getProductCardPitch } from "../lib/public-storefront-demo";
-import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "../lib/shipping";
 import type { CatalogProductSummary } from "../types/catalog";
 
+import { ProductAnchorRail } from "./ProductAnchorRail";
 import { PublicStorefrontFooter } from "./PublicStorefrontFooter";
 import { PublicStorefrontNav, type PublicStorefrontNavItem } from "./PublicStorefrontNav";
 import styles from "./category-landing.module.css";
@@ -24,6 +33,8 @@ export interface CategoryLandingPageConfig {
   productHref?: (product: CatalogProductSummary) => string;
   productCtaLabel?: string;
   productLayout?: "editorial" | "compact";
+  productOrder?: string[];
+  shippingMessage?: string;
 }
 
 interface ProductResource {
@@ -62,43 +73,6 @@ function formatProductKind(productKind: string): string {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
-}
-
-function getProductAnchorId(product: CatalogProductSummary): string {
-  return `product-${product.slug}`;
-}
-
-function getProductMode(product: CatalogProductSummary): string | null {
-  const normalized = `${product.name} ${product.slug} ${product.key}`.toLowerCase();
-
-  if (normalized.includes("indoor")) {
-    return "Indoor";
-  }
-
-  if (normalized.includes("outdoor")) {
-    return "Outdoor";
-  }
-
-  return null;
-}
-
-function getProductChips(product: CatalogProductSummary, layout: "editorial" | "compact"): string[] {
-  const chips = [product.family.name];
-  const productMode = getProductMode(product);
-
-  if (productMode && !chips.includes(productMode)) {
-    chips.push(productMode);
-  }
-
-  if (layout === "compact") {
-    const productKind = formatProductKind(product.productKind);
-
-    if (!chips.includes(productKind)) {
-      chips.push(productKind);
-    }
-  }
-
-  return chips.slice(0, 3);
 }
 
 function getProductImage(product: CatalogProductSummary): {
@@ -154,8 +128,11 @@ function ProductCard({
   productCtaLabel: string;
   layout: "editorial" | "compact";
 }) {
-  const chips = getProductChips(product, layout);
+  const displayName = getProductDisplayName(product);
+  const chips = getProductChips(product, layout, formatProductKind(product.productKind));
   const anchorId = getProductAnchorId(product);
+  const ctaLabel = getProductCtaLabel(product, productCtaLabel);
+  const pitch = getProductPitch(product, getProductCardPitch(product));
 
   if (layout === "editorial") {
     return (
@@ -169,18 +146,18 @@ function ProductCard({
         </a>
         <div className={styles.editorialProductBody}>
           <p className={styles.productLabel}>{product.family.name}</p>
-          <h2>{product.name}</h2>
+          <h2>{displayName}</h2>
           <strong>{formatPrice(product.priceCents, product.currency)}</strong>
           {chips.length > 0 ? (
-            <ul className={styles.productChips} aria-label={`${product.name} product details`}>
+            <ul className={styles.productChips} aria-label={`${displayName} product details`}>
               {chips.map((chip) => (
                 <li key={chip}>{chip}</li>
               ))}
             </ul>
           ) : null}
-          <p className={styles.productPitch}>{getProductCardPitch(product)}</p>
+          <p className={styles.productPitch}>{pitch}</p>
           <a className={styles.productCta} href={href}>
-            {productCtaLabel}
+            {ctaLabel}
           </a>
         </div>
       </article>
@@ -197,46 +174,43 @@ function ProductCard({
         <ProductMedia product={product} />
         <div className={styles.productBody}>
           <p>{product.family.name}</p>
-          <h2>{product.name}</h2>
+          <h2>{displayName}</h2>
           <strong>{formatPrice(product.priceCents, product.currency)}</strong>
           {chips.length > 0 ? (
-            <ul className={styles.productChips} aria-label={`${product.name} product details`}>
+            <ul className={styles.productChips} aria-label={`${displayName} product details`}>
               {chips.map((chip) => (
                 <li key={chip}>{chip}</li>
               ))}
             </ul>
           ) : null}
-          <span>{getProductCardPitch(product)}</span>
+          <span>{pitch}</span>
         </div>
       </a>
       <div className={styles.cardFooter}>
-        <a href={href}>{productCtaLabel}</a>
+        <a href={href}>{ctaLabel}</a>
       </div>
     </article>
   );
 }
 
-function ProductRail({
-  products,
-  title
-}: {
-  products: CatalogProductSummary[];
-  title: string;
-}) {
-  if (products.length === 0) {
+function ProductRail({ products, title }: { products: CatalogProductSummary[]; title: string }) {
+  if (products.length <= 1) {
     return null;
   }
 
+  const railItems = products.map((product) => ({
+    href: `#${getProductAnchorId(product)}`,
+    id: getProductAnchorId(product),
+    label: getProductDisplayName(product)
+  }));
+
   return (
-    <nav className={styles.productRail} aria-label={`${title} products`}>
-      <div className={styles.productRailInner}>
-        {products.map((product) => (
-          <a href={`#${getProductAnchorId(product)}`} key={product.key}>
-            {product.name}
-          </a>
-        ))}
-      </div>
-    </nav>
+    <ProductAnchorRail
+      ariaLabel={`${title} products`}
+      className={styles.productRail}
+      innerClassName={styles.productRailInner}
+      items={railItems}
+    />
   );
 }
 
@@ -270,8 +244,12 @@ function CategoryHeroImage({
 
 export async function CategoryLandingPage({ config }: { config: CategoryLandingPageConfig }) {
   const productResource = await loadProducts();
-  const products = (productResource.data ?? []).filter(config.productFilter);
+  const products = sortProductsForBrowsing(
+    (productResource.data ?? []).filter(config.productFilter),
+    config.productOrder
+  );
   const productLayout = config.productLayout ?? "compact";
+  const shippingMessage = config.shippingMessage ?? ACCESSORY_SHIPPING_MESSAGE;
 
   return (
     <>
@@ -297,9 +275,7 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
 
         <section className={styles.section} aria-label={`${config.title} products`}>
           {productResource.data && products.length > 0 ? (
-            <p className={styles.shippingNote}>
-              {V1_FREE_SHIPPING_COPY} {V1_FLAT_RATE_SHIPPING_COPY}
-            </p>
+            <p className={styles.shippingNote}>{shippingMessage}</p>
           ) : null}
 
           {productResource.data && products.length > 0 ? (

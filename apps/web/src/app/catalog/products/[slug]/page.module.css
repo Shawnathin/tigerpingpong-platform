@@ -1138,8 +1138,9 @@
 }
 
 .purchasePanel {
-  align-content: center;
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   border: 1px solid rgb(255 255 255 / 78%);
   border-radius: 26px;
   padding: clamp(22px, 2.2vw, 28px);
@@ -1153,6 +1154,7 @@
 
 .title {
   max-width: 10ch;
+  margin-top: 6px;
   font-size: clamp(2.2rem, 3.5vw, 2.8rem);
   line-height: 1;
 }
@@ -1172,6 +1174,7 @@
 
 .priceRow {
   gap: 6px;
+  margin-top: 18px;
   padding-top: 2px;
 }
 
@@ -1187,26 +1190,30 @@
 
 .shippingNote {
   gap: 7px;
+  margin-top: 30px;
 }
 
 .checkoutPanel {
   gap: 14px;
+  margin-top: auto;
 }
 
 .checkoutBox {
-  gap: 18px;
+  gap: 20px;
 }
 
 .optionSelectors {
-  gap: 16px;
+  gap: 18px;
 }
 
 .optionSelector {
-  gap: 12px;
+  gap: 14px;
+  padding-top: 2px;
 }
 
 .optionSelector legend {
   font-size: 0.78rem;
+  text-align: center;
   text-transform: uppercase;
 }
 

@@ -639,17 +639,7 @@ function getHeroEyebrow(product: CatalogProductDetail): string {
     return product.category.name;
   }
 
-  const searchableName = `${product.name} ${product.slug}`.toLowerCase();
-
-  if (searchableName.includes("outdoor")) {
-    return "Outdoor table";
-  }
-
-  if (searchableName.includes("indoor")) {
-    return "Indoor table";
-  }
-
-  return "Tables";
+  return "Tiger PingPong";
 }
 
 function getHeroPriceSummary(

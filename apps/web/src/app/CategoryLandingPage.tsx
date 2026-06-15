@@ -1,7 +1,7 @@
 import { getProducts } from "../lib/catalog-api";
 import { resolveProductMediaUrl } from "../lib/product-media";
 import { getPrimaryProductMediaFallback, getProductCardPitch } from "../lib/public-storefront-demo";
-import { getV1ShippingMessage } from "../lib/shipping";
+import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "../lib/shipping";
 import type { CatalogProductSummary } from "../types/catalog";
 
 import { PublicStorefrontFooter } from "./PublicStorefrontFooter";
@@ -23,6 +23,7 @@ export interface CategoryLandingPageConfig {
   productFilter: (product: CatalogProductSummary) => boolean;
   productHref?: (product: CatalogProductSummary) => string;
   productCtaLabel?: string;
+  productLayout?: "editorial" | "compact";
 }
 
 interface ProductResource {
@@ -61,6 +62,43 @@ function formatProductKind(productKind: string): string {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+function getProductAnchorId(product: CatalogProductSummary): string {
+  return `product-${product.slug}`;
+}
+
+function getProductMode(product: CatalogProductSummary): string | null {
+  const normalized = `${product.name} ${product.slug} ${product.key}`.toLowerCase();
+
+  if (normalized.includes("indoor")) {
+    return "Indoor";
+  }
+
+  if (normalized.includes("outdoor")) {
+    return "Outdoor";
+  }
+
+  return null;
+}
+
+function getProductChips(product: CatalogProductSummary, layout: "editorial" | "compact"): string[] {
+  const chips = [product.family.name];
+  const productMode = getProductMode(product);
+
+  if (productMode && !chips.includes(productMode)) {
+    chips.push(productMode);
+  }
+
+  if (layout === "compact") {
+    const productKind = formatProductKind(product.productKind);
+
+    if (!chips.includes(productKind)) {
+      chips.push(productKind);
+    }
+  }
+
+  return chips.slice(0, 3);
 }
 
 function getProductImage(product: CatalogProductSummary): {
@@ -108,14 +146,49 @@ function ProductMedia({ product }: { product: CatalogProductSummary }) {
 function ProductCard({
   href,
   product,
-  productCtaLabel
+  productCtaLabel,
+  layout
 }: {
   href: string;
   product: CatalogProductSummary;
   productCtaLabel: string;
+  layout: "editorial" | "compact";
 }) {
+  const chips = getProductChips(product, layout);
+  const anchorId = getProductAnchorId(product);
+
+  if (layout === "editorial") {
+    return (
+      <article className={styles.editorialProductCard} id={anchorId}>
+        <a
+          className={styles.editorialMediaLink}
+          href={href}
+          aria-label={`View product details for ${product.name}`}
+        >
+          <ProductMedia product={product} />
+        </a>
+        <div className={styles.editorialProductBody}>
+          <p className={styles.productLabel}>{product.family.name}</p>
+          <h2>{product.name}</h2>
+          <strong>{formatPrice(product.priceCents, product.currency)}</strong>
+          {chips.length > 0 ? (
+            <ul className={styles.productChips} aria-label={`${product.name} product details`}>
+              {chips.map((chip) => (
+                <li key={chip}>{chip}</li>
+              ))}
+            </ul>
+          ) : null}
+          <p className={styles.productPitch}>{getProductCardPitch(product)}</p>
+          <a className={styles.productCta} href={href}>
+            {productCtaLabel}
+          </a>
+        </div>
+      </article>
+    );
+  }
+
   return (
-    <article className={styles.productCard}>
+    <article className={styles.productCard} id={anchorId}>
       <a
         className={styles.productLink}
         href={href}
@@ -123,27 +196,47 @@ function ProductCard({
       >
         <ProductMedia product={product} />
         <div className={styles.productBody}>
-          <p>{product.category.name}</p>
+          <p>{product.family.name}</p>
           <h2>{product.name}</h2>
           <strong>{formatPrice(product.priceCents, product.currency)}</strong>
+          {chips.length > 0 ? (
+            <ul className={styles.productChips} aria-label={`${product.name} product details`}>
+              {chips.map((chip) => (
+                <li key={chip}>{chip}</li>
+              ))}
+            </ul>
+          ) : null}
           <span>{getProductCardPitch(product)}</span>
-          <dl>
-            <div>
-              <dt>Lineup</dt>
-              <dd>{product.family.name}</dd>
-            </div>
-            <div>
-              <dt>Type</dt>
-              <dd>{formatProductKind(product.productKind)}</dd>
-            </div>
-          </dl>
         </div>
       </a>
       <div className={styles.cardFooter}>
-        <p>{getV1ShippingMessage(product.priceCents)}</p>
         <a href={href}>{productCtaLabel}</a>
       </div>
     </article>
+  );
+}
+
+function ProductRail({
+  products,
+  title
+}: {
+  products: CatalogProductSummary[];
+  title: string;
+}) {
+  if (products.length === 0) {
+    return null;
+  }
+
+  return (
+    <nav className={styles.productRail} aria-label={`${title} products`}>
+      <div className={styles.productRailInner}>
+        {products.map((product) => (
+          <a href={`#${getProductAnchorId(product)}`} key={product.key}>
+            {product.name}
+          </a>
+        ))}
+      </div>
+    </nav>
   );
 }
 
@@ -178,6 +271,7 @@ function CategoryHeroImage({
 export async function CategoryLandingPage({ config }: { config: CategoryLandingPageConfig }) {
   const productResource = await loadProducts();
   const products = (productResource.data ?? []).filter(config.productFilter);
+  const productLayout = config.productLayout ?? "compact";
 
   return (
     <>
@@ -188,18 +282,11 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
             <p className={styles.eyebrow}>{config.eyebrow}</p>
             <h1 id="category-title">{config.title}</h1>
             <p>{config.intro}</p>
-            {config.navLinks && config.navLinks.length > 0 ? (
-              <nav className={styles.subnav} aria-label={`${config.title} navigation`}>
-                {config.navLinks.map((link) => (
-                  <a href={link.href} key={link.href}>
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
-            ) : null}
           </div>
           <CategoryHeroImage products={products} slug={config.heroImageSlug} />
         </section>
+
+        <ProductRail products={products} title={config.title} />
 
         {productResource.error ? (
           <div className={styles.error} role="status">
@@ -208,19 +295,25 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
           </div>
         ) : null}
 
-        <section className={styles.section} aria-labelledby="category-products-title">
-          <div className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Shop</p>
-            <h2 id="category-products-title">Available products</h2>
-          </div>
+        <section className={styles.section} aria-label={`${config.title} products`}>
+          {productResource.data && products.length > 0 ? (
+            <p className={styles.shippingNote}>
+              {V1_FREE_SHIPPING_COPY} {V1_FLAT_RATE_SHIPPING_COPY}
+            </p>
+          ) : null}
 
           {productResource.data && products.length > 0 ? (
-            <div className={styles.productGrid}>
+            <div
+              className={
+                productLayout === "editorial" ? styles.editorialProductList : styles.productGrid
+              }
+            >
               {products.map((product) => (
                 <ProductCard
                   href={config.productHref?.(product) ?? `/catalog/products/${product.slug}`}
                   product={product}
                   productCtaLabel={config.productCtaLabel ?? "View product"}
+                  layout={productLayout}
                   key={product.key}
                 />
               ))}

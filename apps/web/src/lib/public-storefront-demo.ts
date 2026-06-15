@@ -184,8 +184,8 @@ export function getProductCardPitch(product: StorefrontSummaryProduct): string {
 
   if (kind === "table") {
     return name.includes("outdoor")
-      ? "Outdoor ping pong table for home play, outdoor rallies, and Canada-wide shipping."
-      : "Indoor ping pong table for home play, practice, and Canada-wide shipping.";
+      ? "Outdoor ping pong table for home play and outdoor rallies."
+      : "Indoor ping pong table for home play and practice.";
   }
 
   if (kind === "paddle") {

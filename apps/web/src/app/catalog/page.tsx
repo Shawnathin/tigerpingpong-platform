@@ -8,7 +8,7 @@ import {
   getPrimaryProductMediaFallback,
   getProductCardPitch
 } from "../../lib/public-storefront-demo";
-import { getV1ShippingMessage } from "../../lib/shipping";
+import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "../../lib/shipping";
 import type {
   CatalogCategory,
   CatalogFamily,
@@ -179,6 +179,37 @@ function formatProductKind(productKind: string): string {
     .join(" ");
 }
 
+function getProductMode(product: CatalogProductSummary): string | null {
+  const normalized = `${product.name} ${product.slug} ${product.key}`.toLowerCase();
+
+  if (normalized.includes("indoor")) {
+    return "Indoor";
+  }
+
+  if (normalized.includes("outdoor")) {
+    return "Outdoor";
+  }
+
+  return null;
+}
+
+function getProductChips(product: CatalogProductSummary): string[] {
+  const chips = [product.family.name];
+  const productMode = getProductMode(product);
+
+  if (productMode && !chips.includes(productMode)) {
+    chips.push(productMode);
+  }
+
+  const productKind = formatProductKind(product.productKind);
+
+  if (!chips.includes(productKind)) {
+    chips.push(productKind);
+  }
+
+  return chips.slice(0, 3);
+}
+
 function getProductImage(product: CatalogProductSummary): {
   alt: string;
   src: string | null;
@@ -289,14 +320,6 @@ function ProductMedia({ product }: { product: CatalogProductSummary }) {
   );
 }
 
-function ShippingTermsCopy({ priceCents }: { priceCents: number | null }) {
-  return (
-    <>
-      {getV1ShippingMessage(priceCents)} <a href="/shipping-returns">Shipping details</a>
-    </>
-  );
-}
-
 function FamilyCard({ family }: { family: CatalogFamily }) {
   return (
     <a className={styles.familyCard} href={`#category-${family.primaryCategory.slug}`}>
@@ -308,6 +331,8 @@ function FamilyCard({ family }: { family: CatalogFamily }) {
 }
 
 function ProductCard({ product }: { product: CatalogProductSummary }) {
+  const chips = getProductChips(product);
+
   return (
     <article className={styles.productCard}>
       <a
@@ -318,27 +343,19 @@ function ProductCard({ product }: { product: CatalogProductSummary }) {
         <ProductMedia product={product} />
         <div className={styles.productBody}>
           <div className={styles.productHeader}>
-            <p>{product.category.name}</p>
+            <p>{product.family.name}</p>
             <h3>{product.name}</h3>
             <strong>{formatPrice(product.priceCents, product.currency)}</strong>
           </div>
           <p className={styles.productPitch}>{getProductCardPitch(product)}</p>
-          <dl className={styles.productFacts}>
-            <div>
-              <dt>Lineup</dt>
-              <dd>{product.family.name}</dd>
-            </div>
-            <div>
-              <dt>Type</dt>
-              <dd>{formatProductKind(product.productKind)}</dd>
-            </div>
-          </dl>
+          <ul className={styles.productChips} aria-label={`${product.name} product details`}>
+            {chips.map((chip) => (
+              <li key={chip}>{chip}</li>
+            ))}
+          </ul>
         </div>
       </a>
       <div className={styles.cardFooter}>
-        <p>
-          <ShippingTermsCopy priceCents={product.priceCents} />
-        </p>
         <a href={`/catalog/products/${product.slug}`}>View product</a>
       </div>
     </article>
@@ -367,14 +384,6 @@ export default async function CatalogPage() {
               Browse the Tiger Ping Pong product lineup, then open any product page for details,
               shipping terms, and secure checkout.
             </p>
-            <div className={styles.heroActions}>
-              <a className={styles.primaryAction} href="#products">
-                Browse products
-              </a>
-              <a className={styles.secondaryAction} href="/shipping-returns">
-                Shipping terms
-              </a>
-            </div>
           </div>
           <div className={styles.heroVisual}>
             <img src={heroImage.src} alt={heroImage.alt} />
@@ -412,6 +421,11 @@ export default async function CatalogPage() {
             <p className={styles.eyebrow}>Products</p>
             <h2 id="catalog-products-title">Ready for the next match.</h2>
           </div>
+          {catalog.products.data && products.length > 0 ? (
+            <p className={styles.shippingNote}>
+              {V1_FREE_SHIPPING_COPY} {V1_FLAT_RATE_SHIPPING_COPY}
+            </p>
+          ) : null}
 
           {catalog.products.data && products.length > 0 ? (
             <div className={styles.productGroups}>

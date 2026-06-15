@@ -85,6 +85,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Browse Tiger Ping Pong tables with secure checkout, product details, and Canada-wide shipping terms.",
       heroImageSlug: "tiger-portland-outdoor-table",
       navLinks: tableNavLinks,
+      productLayout: "editorial",
       productFilter: isTable
     }),
     "indoor-tables": categoryConfig({
@@ -95,6 +96,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Explore indoor Tiger Ping Pong table options, including Portland and Whistler indoor table products where available.",
       heroImageSlug: "tiger-portland-indoor-table",
       navLinks: tableNavLinks,
+      productLayout: "editorial",
       productFilter: (product) => isTable(product) && hasMarker(product, "indoor")
     }),
     "outdoor-tables": categoryConfig({
@@ -105,6 +107,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
         "Explore outdoor Tiger Ping Pong table options with storefront checkout and Canada-wide shipping terms.",
       heroImageSlug: "tiger-portland-outdoor-table",
       navLinks: tableNavLinks,
+      productLayout: "editorial",
       productFilter: (product) => isTable(product) && hasMarker(product, "outdoor")
     }),
     accessories: categoryConfig({

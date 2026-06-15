@@ -2,7 +2,7 @@
 
 import fsp from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -13,6 +13,11 @@ const FALLBACK_MEDIA_TS = path.join(REPO_ROOT, "apps/web/src/lib/public-storefro
 const DEFAULT_MANIFEST = path.join(REPO_ROOT, "docs/media/043-cloudinary-upload-manifest-v1.json");
 const REPORT_DIR = path.join(REPO_ROOT, "var/reports");
 const CLOUDINARY_PRODUCT_PREFIX = "tigerpingpong/products";
+const PRISMA_CLIENT_ENTRY = path.join(
+  REPO_ROOT,
+  "packages/db/node_modules/@prisma/client/default.js"
+);
+const PRISMA_GENERATE_COMMAND = "pnpm --filter @tigerpingpong/db prisma:generate";
 const APPLY_FLAG = "--apply";
 const HELP_FLAG = "--help";
 const MANIFEST_FLAG = "--manifest";
@@ -82,6 +87,10 @@ async function main() {
 
   await writeReport(report, report.reportPath);
   printSummary(report);
+
+  if (args.apply && !report.applyResult?.applied) {
+    process.exitCode = 1;
+  }
 }
 
 function parseArgs(argv) {
@@ -144,6 +153,7 @@ Dry run, default:
   node scripts/repair-product-media-mappings.mjs
 
 Apply high-confidence database changes:
+  pnpm --filter @tigerpingpong/db prisma:generate
   DATABASE_URL='<postgres connection string>' node scripts/repair-product-media-mappings.mjs --apply
 
 Options:
@@ -196,7 +206,7 @@ async function readDatabaseMediaRows(isApply) {
   let prisma = null;
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
+    const { PrismaClient } = await loadPrismaClient();
     prisma = new PrismaClient();
     const rows = await prisma.productMedia.findMany({
       orderBy: [{ product: { slug: "asc" } }, { isPrimary: "desc" }, { sortOrder: "asc" }],
@@ -253,6 +263,38 @@ async function readDatabaseMediaRows(isApply) {
       await prisma.$disconnect();
     }
   }
+}
+
+async function loadPrismaClient() {
+  try {
+    await fsp.access(PRISMA_CLIENT_ENTRY);
+  } catch {
+    throw new Error(
+      `Prisma client is not available at ${relativePath(PRISMA_CLIENT_ENTRY)}. Run ${PRISMA_GENERATE_COMMAND} first.`
+    );
+  }
+
+  try {
+    const prismaClientModule = await import(pathToFileURL(PRISMA_CLIENT_ENTRY).href);
+
+    if (typeof prismaClientModule.PrismaClient === "function") {
+      return {
+        PrismaClient: prismaClientModule.PrismaClient
+      };
+    }
+  } catch (error) {
+    throw new Error(
+      `Unable to load generated Prisma client from ${relativePath(
+        PRISMA_CLIENT_ENTRY
+      )}: ${error.message}. Run ${PRISMA_GENERATE_COMMAND} first.`
+    );
+  }
+
+  throw new Error(
+    `Generated Prisma client at ${relativePath(
+      PRISMA_CLIENT_ENTRY
+    )} did not export PrismaClient. Run ${PRISMA_GENERATE_COMMAND} first.`
+  );
 }
 
 function buildReport(context, args) {
@@ -648,7 +690,7 @@ async function applyHighConfidenceMappings(report) {
   const changes = [];
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
+    const { PrismaClient } = await loadPrismaClient();
     prisma = new PrismaClient();
 
     await prisma.$transaction(async (transaction) => {

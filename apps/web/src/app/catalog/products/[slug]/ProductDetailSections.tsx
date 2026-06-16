@@ -181,7 +181,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         visual: { variant: "wheel" }
       }
     ],
-    moreFeaturesHeading: "Small touches that make outdoor play easier.",
+    moreFeaturesHeading: "The little details.",
     moreFeatures: [
       {
         title: "Single Frame Rollaway",
@@ -243,7 +243,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
       }
     ],
     moreFeaturesEyebrow: "Permanent details",
-    moreFeaturesHeading: "Built for spaces where the table stays out.",
+    moreFeaturesHeading: "The little details.",
     moreFeatures: [
       {
         title: "Thick Outdoor Top",
@@ -301,7 +301,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         visual: { variant: "wheel" }
       }
     ],
-    moreFeaturesHeading: "Small touches that make indoor play easier.",
+    moreFeaturesHeading: "The little details.",
     moreFeatures: [
       {
         title: "Indoor Top",
@@ -374,7 +374,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         }
       }
     ],
-    moreFeaturesHeading: "Small touches that make setup feel easy.",
+    moreFeaturesHeading: "The little details.",
     moreFeatures: [
       {
         title: "Single Person Playback",
@@ -441,7 +441,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         visual: { variant: "wheel" }
       }
     ],
-    moreFeaturesHeading: "Small touches that make serious play easier.",
+    moreFeaturesHeading: "The little details.",
     moreFeatures: [
       {
         title: "Professional Top",
@@ -584,7 +584,7 @@ export function QuickFactsSection({
           </p>
           <h2 id="quick-facts-title">{getDetailStripHeading(product)}</h2>
         </div>
-        <p>{getDetailStripIntro(product)}</p>
+        {!isTableProduct(product) ? <p>{getDetailStripIntro(product)}</p> : null}
       </div>
       <dl className={styles.detailStatGrid}>
         {facts.map((fact) => (
@@ -691,9 +691,11 @@ export function EverydayDetailsSection({
   return (
     <section className={styles.moreFeatures} aria-labelledby="everyday-details-title">
       <div className={styles.moreFeaturesHeading}>
-        <p className={styles.eyebrow}>
-          {displayContent?.moreFeaturesEyebrow ?? "Everyday details"}
-        </p>
+        {!isTableProduct(product) ? (
+          <p className={styles.eyebrow}>
+            {displayContent?.moreFeaturesEyebrow ?? "Everyday details"}
+          </p>
+        ) : null}
         <h2 id="everyday-details-title">{getEverydayHeading(product)}</h2>
       </div>
       <div className={styles.detailGrid}>

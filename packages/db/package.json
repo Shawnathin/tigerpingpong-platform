@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint src --max-warnings=0",
     "import:tiger:dev": "node scripts/import-tiger-dev-catalog.mjs",
+    "import:tiger:deployed": "node scripts/import-tiger-deployed-catalog.mjs",
     "prisma:format": "prisma format --schema prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
     "prisma:validate": "prisma validate --schema prisma/schema.prisma"

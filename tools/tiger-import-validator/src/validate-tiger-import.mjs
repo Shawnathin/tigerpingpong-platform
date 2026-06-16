@@ -13,6 +13,11 @@ const OUTPUT_DIR = path.join(
 );
 const SCHEMA_PATH = path.join(REPO_ROOT, "packages/db/prisma/schema.prisma");
 const TIGER_BRAND_KEY = "tiger-pingpong";
+const CLOUDINARY_DELIVERY_HOST = "res.cloudinary.com";
+const ACCEPTED_CLOUDINARY_FOLDER_PREFIXES = [
+  "tigerpingpong/products/",
+  "tiger-pingpong/products/"
+];
 
 const EXPECTED_FILES = [
   {
@@ -1245,16 +1250,50 @@ function validateMediaRules() {
   const primaryByProduct = new Map();
 
   for (const row of mediaFile?.rows ?? []) {
-    if (value(row, "cloudinary_secure_url") !== "") {
+    const cloudinaryPublicId = value(row, "cloudinary_public_id");
+    const cloudinarySecureUrl = value(row, "cloudinary_secure_url");
+    const parsedCloudinaryUrl =
+      cloudinarySecureUrl === "" ? null : parseCloudinaryDeliveryUrl(cloudinarySecureUrl);
+
+    if (cloudinarySecureUrl !== "" && !parsedCloudinaryUrl) {
       addIssue({
         level: "error",
-        code: "cloudinary_secure_url_present",
+        code: "cloudinary_secure_url_invalid",
         file: mediaFile.relativePath,
         row: row.__rowNumber,
         entityType: "media",
         entityKey: value(row, "media_key"),
         message:
-          "cloudinary_secure_url must remain blank until a later explicit Cloudinary upload task."
+          "cloudinary_secure_url must be blank or a valid HTTPS Cloudinary image delivery URL."
+      });
+    }
+
+    if (cloudinarySecureUrl !== "" && cloudinaryPublicId === "") {
+      addIssue({
+        level: "error",
+        code: "cloudinary_public_id_missing_for_secure_url",
+        file: mediaFile.relativePath,
+        row: row.__rowNumber,
+        entityType: "media",
+        entityKey: value(row, "media_key"),
+        message: "cloudinary_public_id is required when cloudinary_secure_url is populated."
+      });
+    }
+
+    if (
+      parsedCloudinaryUrl?.publicId &&
+      cloudinaryPublicId !== "" &&
+      parsedCloudinaryUrl.publicId !== cloudinaryPublicId
+    ) {
+      addIssue({
+        level: "error",
+        code: "cloudinary_public_id_url_mismatch",
+        file: mediaFile.relativePath,
+        row: row.__rowNumber,
+        entityType: "media",
+        entityKey: value(row, "media_key"),
+        message: "cloudinary_public_id must match the public ID in cloudinary_secure_url.",
+        details: `URL public ID ${parsedCloudinaryUrl.publicId}; CSV public ID ${cloudinaryPublicId}.`
       });
     }
 
@@ -1273,7 +1312,7 @@ function validateMediaRules() {
 
     if (
       value(row, "suggested_cloudinary_folder") !== "" &&
-      !value(row, "suggested_cloudinary_folder").startsWith("tiger-pingpong/")
+      !hasAcceptedCloudinaryFolderPrefix(value(row, "suggested_cloudinary_folder"))
     ) {
       addIssue({
         level: "warning",
@@ -1283,7 +1322,7 @@ function validateMediaRules() {
         entityType: "media",
         entityKey: value(row, "media_key"),
         message:
-          "Suggested Cloudinary folder should stay under the tiger-pingpong brand prefix."
+          "Suggested Cloudinary folder should stay under an accepted Tiger PingPong product media prefix."
       });
     }
 
@@ -1667,6 +1706,55 @@ function asBoolean(text) {
 
 function isHttpUrl(url) {
   return /^https?:\/\//.test(url);
+}
+
+function hasAcceptedCloudinaryFolderPrefix(folder) {
+  const normalizedFolder = folder.replace(/^\/+/, "");
+
+  return ACCEPTED_CLOUDINARY_FOLDER_PREFIXES.some((prefix) =>
+    normalizedFolder.startsWith(prefix)
+  );
+}
+
+function parseCloudinaryDeliveryUrl(url) {
+  let parsedUrl;
+
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    return null;
+  }
+
+  if (
+    parsedUrl.protocol !== "https:" ||
+    parsedUrl.hostname !== CLOUDINARY_DELIVERY_HOST
+  ) {
+    return null;
+  }
+
+  const parts = parsedUrl.pathname.split("/").filter(Boolean);
+  const uploadIndex = parts.indexOf("upload");
+
+  if (parts.length < 4 || parts[1] !== "image" || uploadIndex < 0) {
+    return null;
+  }
+
+  const publicPathParts = parts.slice(uploadIndex + 1);
+
+  if (publicPathParts[0]?.match(/^v\d+$/)) {
+    publicPathParts.shift();
+  }
+
+  const publicPath = publicPathParts.join("/");
+
+  if (!publicPath) {
+    return null;
+  }
+
+  return {
+    cloudName: parts[0],
+    publicId: decodeURIComponent(publicPath.replace(/\.[A-Za-z0-9]+$/, ""))
+  };
 }
 
 function isAggregateReviewKey(entityKey) {

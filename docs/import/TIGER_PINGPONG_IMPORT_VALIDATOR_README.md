@@ -34,7 +34,8 @@ Are these CSV review artifacts structurally ready for a future import task?
 - Confirms table rows remain marked for shipping/freight policy review.
 - Confirms the business-approved Aqua prices and Net & Post checkout-ready
   status stay reflected in the CSVs.
-- Confirms Cloudinary secure URLs are still blank.
+- Confirms Cloudinary secure URLs are blank or valid Cloudinary HTTPS delivery
+  URLs that match the row's Cloudinary public ID.
 - Surfaces open review flags as warnings.
 - Writes a local import validation report.
 
@@ -97,7 +98,9 @@ Examples:
 - Invalid Prisma enum values.
 - Replacement Parts marked as public navigation or checkout scope.
 - Table products treated as fully approved checkout without policy review.
-- Non-blank `cloudinary_secure_url` values before a Cloudinary upload task.
+- Invalid `cloudinary_secure_url` values.
+- Populated `cloudinary_secure_url` values without a matching
+  `cloudinary_public_id`.
 
 Warnings are readiness notes. They keep known business, content, checkout, and
 media issues visible without blocking the dry run.
@@ -111,11 +114,25 @@ Examples:
 - Open resource article crawl review.
 - Draft redirect or media quality issues that need later manual approval.
 
+For deployed catalog import planning, the minimum validator status is `PASS`
+with zero errors. Warnings may remain only when they are understood and either
+outside the import scope or explicitly accepted for the next import step.
+Blocker-severity warnings, such as table shipping policy and checkout policy
+review, still block public checkout/publishing decisions until resolved or
+formally signed off.
+
 ## Cloudinary Context
 
-Cloudinary remains out of scope for this dry run. The confirmed cloud name for a
-later media task is `djfcisldm`, but the validator does not use Cloudinary
-credentials and does not upload images.
+Cloudinary uploads remain out of scope for this dry run. The confirmed cloud
+name for reviewed V1 product media is `djfcisldm`, but the validator does not
+use Cloudinary credentials and does not upload images.
+
+Reviewed `cloudinary_secure_url` values are allowed in
+`product_media_import_v1.csv` when they are valid
+`https://res.cloudinary.com/.../image/upload/...` URLs and the parsed public ID
+matches `cloudinary_public_id`. Source-only rows, including current Aqua media
+rows without reviewed Cloudinary assignments, should keep the Cloudinary fields
+blank.
 
 If Cloudinary environment variables are documented or added in a later task, use
 placeholders only:

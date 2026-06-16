@@ -20,8 +20,10 @@ BigCommerce CDN image URLs from the scrape are source metadata only. Keep them
 for traceability and migration review, but do not use them as the final
 production media strategy.
 
-Do not upload images to Cloudinary until the schema, product mapping, variant
-mapping, and media-role mapping are ready for review.
+Do not upload additional images to Cloudinary until the schema, product mapping,
+variant mapping, and media-role mapping for that media set are ready for
+review. Existing PR 43 reviewed uploads are accepted V1 product media
+assignments.
 
 ## Source Media Reality
 
@@ -200,6 +202,11 @@ Media is not ready for production import until:
 - Duplicate and thumbnail images are removed.
 - Cloudinary public IDs are approved.
 - Source BigCommerce URLs are retained as metadata only.
+
+Reviewed Cloudinary secure URLs are allowed in `product_media_import_v1.csv`
+when they are valid `https://res.cloudinary.com/.../image/upload/...` delivery
+URLs and match the row's Cloudinary public ID. Source-only rows should keep
+Cloudinary fields blank until a reviewed assignment exists.
 
 ## Out Of Scope For This Documentation
 

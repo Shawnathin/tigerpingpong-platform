@@ -93,8 +93,12 @@ not duplicate option-link rows.
 - Table products remain checkout candidates only and keep
   `shipping_review_required=true`.
 - Existing BigCommerce image URLs are stored as source metadata only.
-- `cloudinary_secure_url` stays blank until a later explicit upload task.
-- Product media is imported as non-public and `needs_review`.
+- Reviewed `cloudinary_secure_url` values are allowed when they are valid
+  Cloudinary HTTPS delivery URLs and match the row's `cloudinary_public_id`.
+- Source-only media rows keep Cloudinary fields blank until reviewed Cloudinary
+  assignments exist.
+- Product media with reviewed secure URLs is imported as public and `approved`;
+  source-only media is imported as non-public and `needs_review`.
 
 ## How To Verify In Supabase
 
@@ -151,7 +155,7 @@ production rows, and do not point this script at production.
 
 - Table freight, curbside, tax, regional, and shipping policy review.
 - Final checkout policy review before any public checkout enablement.
-- Cloudinary media upload and media dedupe.
+- Remaining Cloudinary media upload/dedupe for source-only rows.
 - Aqua source URL and source media review.
 - Final frontend route patterns before redirect approval.
 - Resource article crawl/content work.

@@ -1,81 +1,121 @@
 import type { Metadata } from "next";
 
+import {
+  formatResourceDate,
+  RESOURCE_ARTICLES,
+  type ResourceArticle
+} from "../../lib/resource-articles";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
-import styles from "../info-page.module.css";
+import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Resources | Tiger Ping Pong",
-  description: "Tiger Ping Pong shopping resources for tables, accessories, shipping, and support."
+  title: "Ping Pong Resources | Tiger PingPong",
+  description:
+    "Helpful guides for choosing a ping pong table, planning your room, learning the rules, and comparing indoor and outdoor table tennis tables."
 };
 
-const RESOURCE_LINKS = [
-  { href: "/tables/", label: "Shop tables" },
-  { href: "/tables/indoor-tables/", label: "Indoor tables" },
-  { href: "/tables/outdoor-tables/", label: "Outdoor tables" },
-  { href: "/accessories/", label: "Accessories" },
-  { href: "/shipping-returns", label: "Shipping & returns" },
-  { href: "/contact", label: "Contact support" }
-];
+const featuredArticle = RESOURCE_ARTICLES[0];
+
+function getPrimaryCta(article: ResourceArticle) {
+  return article.ctas.find((cta) => cta.variant === "primary") ?? article.ctas[0];
+}
 
 export default function ResourcesPage() {
   return (
     <>
       <PublicStorefrontNav activeItem="resources" />
-      <main className={`${styles.page} ${styles.resourcesPage}`}>
-        <section
-          className={`${styles.hero} ${styles.resourcesHero}`}
-          aria-labelledby="resources-title"
-        >
-          <div className={styles.resourcesHeroCopy}>
+      <main className={styles.page}>
+        <section className={styles.hero} aria-labelledby="resources-title">
+          <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>Resources</p>
-            <h1 id="resources-title">Useful starting points for choosing Tiger Ping Pong gear.</h1>
-            <p>
-              Start with the active shopping categories, shipping terms, and support paths that are
-              ready on the storefront today.
+            <h1 className={styles.title} id="resources-title">
+              Ping Pong Resources
+            </h1>
+            <p className={styles.intro}>
+              Helpful guides for choosing the right ping pong table, planning your room, learning
+              the rules, and deciding whether an indoor or outdoor table is best for your space.
             </p>
           </div>
 
-          <nav className={styles.resourcesHeroLinks} aria-label="Featured resources">
-            {RESOURCE_LINKS.slice(0, 4).map((link) => (
-              <a href={link.href} key={`featured-${link.href}`}>
-                {link.label}
-              </a>
-            ))}
-          </nav>
+          <aside className={styles.heroPanel} aria-label="Resource topics">
+            <p className={styles.eyebrow}>Start here</p>
+            <strong>Buying, room planning, indoor vs outdoor choice, and rules basics.</strong>
+            <p>Short, practical guides for the questions customers ask before the next rally.</p>
+          </aside>
         </section>
 
-        <section
-          className={`${styles.section} ${styles.resourcesSection}`}
-          aria-labelledby="resources-links-title"
-        >
-          <p className={styles.eyebrow}>Browse</p>
-          <h2 id="resources-links-title">Current storefront resources.</h2>
-          <ul className={styles.linkList}>
-            {RESOURCE_LINKS.map((link) => (
-              <li key={link.href}>
-                <a href={link.href}>{link.label}</a>
-              </li>
-            ))}
-          </ul>
+        <section className={styles.featuredGuide} aria-labelledby="featured-resource-title">
+          <div className={styles.featuredCopy}>
+            <p className={styles.eyebrow}>Featured guide</p>
+            <h2 id="featured-resource-title">{featuredArticle.title}</h2>
+            <p>{featuredArticle.excerpt}</p>
+            <div className={styles.cardActions}>
+              {featuredArticle.ctas.map((cta) => (
+                <a
+                  className={
+                    cta.variant === "primary" ? styles.primaryAction : styles.secondaryAction
+                  }
+                  href={cta.href}
+                  key={cta.href}
+                >
+                  {cta.label}
+                </a>
+              ))}
+            </div>
+          </div>
+          <aside className={styles.featuredAside} aria-label="Featured guide details">
+            <p className={styles.tag}>{featuredArticle.category}</p>
+            <strong>{formatResourceDate(featuredArticle.publishedDate)}</strong>
+            <p>{featuredArticle.subtitle}</p>
+          </aside>
         </section>
 
-        <section className={styles.panelGrid} aria-label="Resource notes">
-          <article>
-            <span>Tables</span>
-            <strong>Indoor and outdoor table paths are live.</strong>
-            <p>Use the table pages to compare current table products and shipping terms.</p>
-          </article>
-          <article>
-            <span>Accessories</span>
-            <strong>Paddles, balls, covers, and nets are organized by route.</strong>
-            <p>Accessory pages use the live catalog data available to the storefront.</p>
-          </article>
-          <article>
-            <span>Support</span>
-            <strong>Shipping and contact pages are ready for customer questions.</strong>
-            <p>Policy-heavy pages not backed by real content are intentionally not linked yet.</p>
-          </article>
+        <section className={styles.section} aria-labelledby="resource-guides-title">
+          <div className={styles.sectionHeader}>
+            <p className={styles.eyebrow}>Guides</p>
+            <h2 id="resource-guides-title">Choose, plan, compare, and play.</h2>
+          </div>
+          <div className={styles.cardGrid}>
+            {RESOURCE_ARTICLES.map((article) => {
+              const primaryCta = getPrimaryCta(article);
+
+              return (
+                <article className={styles.card} key={article.slug}>
+                  <p className={styles.tag}>{article.category}</p>
+                  <h3>{article.title}</h3>
+                  <p className={styles.meta}>
+                    {article.postedBy} - {formatResourceDate(article.publishedDate)}
+                  </p>
+                  <p>{article.excerpt}</p>
+                  <div className={styles.cardActions}>
+                    <a className={styles.primaryAction} href={primaryCta.href}>
+                      {primaryCta.label}
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className={styles.footerCta} aria-labelledby="resources-help-title">
+          <div>
+            <p className={styles.eyebrow}>Need help choosing a table?</p>
+            <h2 id="resources-help-title">Start with the table lineup or ask Tiger PingPong.</h2>
+            <p>
+              Use the guides to narrow the decision, then compare current tables or contact us for
+              help matching a table to your space.
+            </p>
+          </div>
+          <div className={styles.footerActions}>
+            <a className={styles.primaryAction} href="/tables/">
+              Shop tables
+            </a>
+            <a className={styles.secondaryAction} href="/contact">
+              Contact
+            </a>
+          </div>
         </section>
       </main>
       <PublicStorefrontFooter />

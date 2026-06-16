@@ -145,6 +145,78 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       title: "Paddle set box"
     }
   ],
+  "tiger-aqua-outdoor-indoor-paddle": [
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "Ocean Blue single paddle",
+      role: "primary",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/782/Single_Ble_Overhead__45821.1759532868.jpg?c=1",
+      title: "Aqua Outdoor / Indoor Paddle"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "Coral Red single paddle",
+      role: "alternate",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/785/SIngle_red_-_overhead__33741.1759532868.jpg?c=1",
+      title: "Aqua Outdoor / Indoor Paddle"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "True Bounce Technology",
+      role: "detail",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/787/Paddle_Technology__03652.1759532868.jpg?c=1",
+      title: "Aqua paddle technology"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "Ultra durable",
+      role: "detail",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/788/Ultra_Durable__06886.1759532868.jpg?c=1",
+      title: "Aqua paddle durability"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "Weather resistant",
+      role: "detail",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/791/Weather_-_Text_Bottom__86208.1759532868.jpg?c=1",
+      title: "Aqua paddle weather resistance"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "100% recyclable packaging",
+      role: "packaging",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/790/00_Recyclable_Packaging_-_Gift__99267.1759532868.jpg?c=1",
+      title: "Aqua paddle packaging"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "2-Pack w/ 3 Balls",
+      role: "alternate",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/783/2_pack_paddles_balls_only__62724.1759532868.jpg?c=1",
+      title: "Aqua paddle 2-pack"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "4-Pack w/ 3 Balls",
+      role: "alternate",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/789/4_pack_paddles_balls_only__30232.1759532868.jpg?c=1",
+      title: "Aqua paddle 4-pack"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "Coral Red paddle",
+      role: "alternate",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/786/Single_Red_Paddle__77243.1759532868.jpg?c=1",
+      title: "Aqua Coral Red paddle"
+    },
+    {
+      alt: "Aqua Outdoor / Indoor Paddle",
+      caption: "Ocean Blue paddle",
+      role: "alternate",
+      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/784/Blue_Paddle_Single__26045.1759532868.jpg?c=1",
+      title: "Aqua Ocean Blue paddle"
+    }
+  ],
   "tiger-whistler-indoor-table": [
     {
       alt: "Whistler Indoor table",

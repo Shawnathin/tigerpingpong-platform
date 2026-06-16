@@ -5,10 +5,7 @@ import { PublicStorefrontFooter } from "../../../PublicStorefrontFooter";
 import { PublicStorefrontNav, type PublicStorefrontNavItem } from "../../../PublicStorefrontNav";
 import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
 import type { CartProductInput } from "../../../../lib/cart";
-import {
-  normalizeMediaSrc,
-  resolveProductMediaUrl
-} from "../../../../lib/product-media";
+import { normalizeMediaSrc, resolveProductMediaUrl } from "../../../../lib/product-media";
 import {
   getProductMediaFallbacks,
   getPrimaryProductMediaFallback
@@ -103,10 +100,16 @@ const NET_RECOMMENDATION_SLUGS = [
   "tiger-premium-balls-6-white",
   "tiger-premium-balls-6-orange"
 ];
-const TABLE_HERO_DISPLAY_TITLES: Record<string, string> = {
+const PRODUCT_HERO_DISPLAY_TITLES: Record<string, string> = {
   "tiger-expo-outdoor-table": "Expo Outdoor",
+  "tiger-net-post-set": "Net & Post Set",
+  "tiger-premium-balls-140": "140-Pack Balls",
+  "tiger-premium-balls-6-orange": "6-Pack Orange Balls",
+  "tiger-premium-balls-6-white": "6-Pack White Balls",
   "tiger-portland-indoor-table": "Portland Indoor",
   "tiger-portland-outdoor-table": "Portland Outdoor",
+  "tiger-table-cover-black-polyester": "Table Cover",
+  "tiger-vice-paddle": "Vice Paddle",
   "tiger-whistler-indoor-table": "Whistler",
   "tiger-plaza-outdoor-table": "Plaza",
   "tiger-plaza-outdoor-table-grey": "Plaza"
@@ -632,7 +635,7 @@ function getHeroSummary(
 }
 
 function getHeroDisplayTitle(product: CatalogProductDetail): string {
-  return TABLE_HERO_DISPLAY_TITLES[product.slug] ?? product.name;
+  return PRODUCT_HERO_DISPLAY_TITLES[product.slug] ?? product.name;
 }
 
 function getHeroEyebrow(product: CatalogProductDetail): string {
@@ -718,6 +721,10 @@ function serializeJsonLd(jsonLd: ProductJsonLd): string {
   return JSON.stringify(jsonLd).replace(/</g, "\\u003c");
 }
 
+function isTableProduct(product: { productKind: string }): boolean {
+  return normalizeOptionKey(product.productKind) === "table";
+}
+
 function ErrorState({ error }: { error: string }) {
   return (
     <>
@@ -754,6 +761,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const heroEyebrow = getHeroEyebrow(product);
   const heroPriceSummary = getHeroPriceSummary(product, normalizedContent);
   const productJsonLd = getProductJsonLd(product, normalizedContent, mediaItems);
+  const isTable = isTableProduct(product);
+  const heroClassName = isTable
+    ? styles.productHero
+    : `${styles.productHero} ${styles.accessoryHero}`;
 
   return (
     <>
@@ -767,11 +778,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       <main className={styles.page}>
         <ProductFamilySwitcher product={product} products={publicProducts} />
 
-        <section className={styles.productHero} aria-labelledby="product-title">
+        <section className={heroClassName} aria-labelledby="product-title">
           <ProductMediaGallery
             categoryName={product.category.name}
             mediaItems={mediaItems}
-            productName={product.name}
+            productName={isTable ? product.name : heroDisplayTitle}
           />
 
           <aside className={styles.purchasePanel} aria-label={`${product.name} purchase panel`}>
@@ -805,8 +816,17 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         <QuickFactsSection normalizedContent={normalizedContent} product={product} />
         <ProductStorySection normalizedContent={normalizedContent} product={product} />
-        <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
-        <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
+        {isTable ? (
+          <>
+            <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
+            <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
+          </>
+        ) : (
+          <>
+            <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
+            <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
+          </>
+        )}
         <SpecsGridSection normalizedContent={normalizedContent} product={product} />
         <TableComparisonSection currentSlug={product.slug} products={tableComparisonProducts} />
       </main>

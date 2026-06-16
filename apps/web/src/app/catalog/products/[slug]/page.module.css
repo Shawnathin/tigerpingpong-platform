@@ -1699,6 +1699,156 @@
   color: var(--tiger-orange-deep);
 }
 
+.accessoryHero {
+  width: min(1040px, calc(100vw - 44px));
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 380px);
+  align-items: start;
+}
+
+.accessoryHero .mainMedia {
+  min-height: clamp(310px, 34vw, 430px);
+  border-radius: 22px;
+}
+
+.accessoryHero .mainMedia img,
+.accessoryHero .mediaPlaceholder {
+  min-height: clamp(280px, 30vw, 390px);
+}
+
+.accessoryHero .mainMedia img {
+  padding: clamp(16px, 3vw, 28px);
+}
+
+.accessoryHero .thumbnailGrid {
+  grid-auto-columns: clamp(58px, 6vw, 72px);
+}
+
+.accessoryHero .purchasePanel {
+  min-height: clamp(310px, 34vw, 430px);
+  border-radius: 22px;
+  padding: clamp(20px, 2vw, 24px);
+}
+
+.accessoryHero .title {
+  max-width: 12ch;
+  font-size: clamp(2rem, 3vw, 2.55rem);
+}
+
+.accessoryHero .priceRow {
+  margin-top: 14px;
+}
+
+.accessoryHero .priceRow strong {
+  font-size: clamp(1.8rem, 2.4vw, 2.1rem);
+}
+
+.accessoryHero .shippingNote {
+  margin-top: 22px;
+}
+
+.accessoryHero .checkoutPanel {
+  margin-top: 22px;
+}
+
+.accessoryDetailStrip,
+.accessoryDescriptionBand,
+.accessorySection,
+.accessoryMoreFeatures,
+.accessorySpecSection {
+  width: min(1040px, 100%);
+}
+
+.accessoryDetailStrip {
+  grid-template-columns: minmax(220px, 0.85fr) repeat(3, minmax(0, 1fr));
+  border-radius: 24px;
+  padding: 22px;
+}
+
+.accessoryDetailStrip .detailStripHeading {
+  grid-column: auto;
+  margin-bottom: 0;
+}
+
+.accessoryDetailStrip .detailStripHeading h2,
+.accessoryMoreFeatures .moreFeaturesHeading h2,
+.accessorySpecSection .specHeading h2,
+.accessorySection .sectionHeader h2 {
+  font-size: clamp(1.55rem, 2.2vw, 2.1rem);
+  line-height: 1.05;
+}
+
+.accessoryDetailStrip .detailStripHeading p {
+  font-size: 0.92rem;
+}
+
+.accessoryDetailStrip .detailStatCard {
+  min-height: 118px;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.accessoryDetailStrip .detailStatCard strong {
+  font-size: clamp(1.2rem, 2.1vw, 1.85rem);
+}
+
+.accessoryDescriptionBand {
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.accessoryDescriptionBand h2 {
+  font-size: clamp(1.65rem, 2.3vw, 2.25rem);
+}
+
+.accessoryMoreFeatures {
+  gap: 14px;
+}
+
+.accessoryMoreFeatures .moreFeaturesHeading {
+  align-items: start;
+}
+
+.accessoryMoreFeatures .detailGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.accessoryMoreFeatures .detailGrid article {
+  min-height: 0;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.accessoryMoreFeatures .detailGrid article > :not(img):not(.miniPlaceholder) {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.accessoryMoreFeatures .detailGrid h3 {
+  font-size: 1.05rem;
+}
+
+.accessorySection .featureChipList {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.accessorySection .featureChip {
+  min-height: 48px;
+}
+
+.accessorySpecSection {
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.accessorySpecSection .specGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.accessorySpecSection .specGrid div {
+  min-height: 92px;
+  border-radius: 16px;
+}
+
 .tableComparisonSection {
   display: grid;
   gap: 18px;
@@ -1758,8 +1908,7 @@
 
 .fullComparisonTable thead th:first-child {
   background:
-    linear-gradient(135deg, rgb(255 244 234 / 96%), rgb(238 248 253 / 96%)),
-    rgb(255 255 255 / 92%);
+    linear-gradient(135deg, rgb(255 244 234 / 96%), rgb(238 248 253 / 96%)), rgb(255 255 255 / 92%);
 }
 
 .fullComparisonTable th {
@@ -1795,8 +1944,7 @@
 .fullComparisonTable thead .currentComparisonCell {
   color: var(--tiger-ink);
   background:
-    linear-gradient(135deg, rgb(255 173 93 / 38%), rgb(255 255 255 / 86%)),
-    rgb(255 244 234 / 96%);
+    linear-gradient(135deg, rgb(255 173 93 / 38%), rgb(255 255 255 / 86%)), rgb(255 244 234 / 96%);
 }
 
 .error {
@@ -1857,8 +2005,16 @@
   }
 
   .moreFeatures .detailGrid,
+  .accessoryDetailStrip,
+  .accessoryMoreFeatures .detailGrid,
+  .accessorySection .featureChipList,
+  .accessorySpecSection .specGrid,
   .specSection .specGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .accessoryDetailStrip .detailStripHeading {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1872,6 +2028,10 @@
     width: 100%;
     border-radius: 0;
     padding: 0;
+  }
+
+  .accessoryHero {
+    gap: 16px;
   }
 
   .productHero::before {
@@ -1895,10 +2055,19 @@
     border-radius: 20px;
   }
 
+  .accessoryHero .mainMedia {
+    min-height: 270px;
+  }
+
   .mainMedia img,
   .mediaPlaceholder {
     min-height: 280px;
     padding: 18px;
+  }
+
+  .accessoryHero .mainMedia img,
+  .accessoryHero .mediaPlaceholder {
+    min-height: 240px;
   }
 
   .mediaPlaceholder strong {
@@ -1933,8 +2102,16 @@
     padding: 22px;
   }
 
+  .accessoryHero .purchasePanel {
+    min-height: 0;
+    padding: 20px;
+  }
+
   .optionChoices,
   .moreFeatures .detailGrid,
+  .accessoryMoreFeatures .detailGrid,
+  .accessorySection .featureChipList,
+  .accessorySpecSection .specGrid,
   .specSection .specGrid {
     grid-template-columns: 1fr;
   }

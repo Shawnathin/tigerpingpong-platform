@@ -102,6 +102,7 @@ const UNSAFE_TEXT_MARKERS = [
   "google drive",
   "gtin",
   "human review",
+  "language appears",
   "missing/not visible",
   "msrp",
   "page also lists",
@@ -109,6 +110,7 @@ const UNSAFE_TEXT_MARKERS = [
   "review needed",
   "schema",
   "source-page",
+  "title / color option",
   "upc",
   "usually ships",
   "verify whether",
@@ -185,7 +187,8 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
     moreFeatures: [
       {
         title: "Single Frame Rollaway",
-        value: "A compact frame and quick-lock folding system help one person fold and roll the table away.",
+        value:
+          "A compact frame and quick-lock folding system help one person fold and roll the table away.",
         visual: { variant: "lock" }
       },
       {
@@ -576,7 +579,14 @@ export function QuickFactsSection({
   }
 
   return (
-    <section className={styles.detailStrip} aria-labelledby="quick-facts-title">
+    <section
+      className={
+        isTableProduct(product)
+          ? styles.detailStrip
+          : `${styles.detailStrip} ${styles.accessoryDetailStrip}`
+      }
+      aria-labelledby="quick-facts-title"
+    >
       <div className={styles.detailStripHeading}>
         <div>
           <p className={styles.eyebrow}>
@@ -616,7 +626,14 @@ export function ProductStorySection({
   }
 
   return (
-    <section className={styles.descriptionBand} aria-labelledby="product-description-title">
+    <section
+      className={
+        isTableProduct(product)
+          ? styles.descriptionBand
+          : `${styles.descriptionBand} ${styles.accessoryDescriptionBand}`
+      }
+      aria-labelledby="product-description-title"
+    >
       <p className={styles.eyebrow}>Product details</p>
       <h2 id="product-description-title">{getStoryHeading(product)}</h2>
       <p>{storyCopy}</p>
@@ -658,7 +675,12 @@ export function FeatureHighlightsSection({
   }
 
   return (
-    <section className={styles.section} aria-labelledby="feature-highlights-title">
+    <section
+      className={
+        isTableProduct(product) ? styles.section : `${styles.section} ${styles.accessorySection}`
+      }
+      aria-labelledby="feature-highlights-title"
+    >
       <div className={styles.sectionHeader}>
         <p className={styles.eyebrow}>Highlights</p>
         <h2 id="feature-highlights-title">Highlights that matter.</h2>
@@ -689,7 +711,14 @@ export function EverydayDetailsSection({
   }
 
   return (
-    <section className={styles.moreFeatures} aria-labelledby="everyday-details-title">
+    <section
+      className={
+        isTableProduct(product)
+          ? styles.moreFeatures
+          : `${styles.moreFeatures} ${styles.accessoryMoreFeatures}`
+      }
+      aria-labelledby="everyday-details-title"
+    >
       <div className={styles.moreFeaturesHeading}>
         {!isTableProduct(product) ? (
           <p className={styles.eyebrow}>
@@ -732,7 +761,15 @@ export function SpecsGridSection({
   }
 
   return (
-    <section className={styles.specSection} id="specs" aria-labelledby="product-specs-title">
+    <section
+      className={
+        isTableProduct(product)
+          ? styles.specSection
+          : `${styles.specSection} ${styles.accessorySpecSection}`
+      }
+      id="specs"
+      aria-labelledby="product-specs-title"
+    >
       <div className={styles.specHeading}>
         <p className={styles.eyebrow}>Specifications</p>
         <h2 id="product-specs-title">Specs and dimensions.</h2>
@@ -1186,7 +1223,7 @@ function getSpecificationFields(
     }
   }
 
-  return dedupeLabeledValues(fields).slice(0, isTableProduct(product) ? 18 : 8);
+  return dedupeLabeledValues(fields).slice(0, isTableProduct(product) ? 18 : 6);
 }
 
 function getUseFact(
@@ -1313,9 +1350,7 @@ function getWarrantyStat(
   return null;
 }
 
-function getSafeWarrantyNotes(
-  normalizedContent: NormalizedProductContent | null
-): string | null {
+function getSafeWarrantyNotes(normalizedContent: NormalizedProductContent | null): string | null {
   const warrantyNotes = normalizeWhitespace(normalizedContent?.warrantyNotes);
 
   if (!warrantyNotes || hasAnyMarker(warrantyNotes, ["missing/not visible", "confirm"])) {

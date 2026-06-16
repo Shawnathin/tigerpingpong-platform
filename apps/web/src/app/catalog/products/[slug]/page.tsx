@@ -502,11 +502,13 @@ function getPurchaseShippingLines(product: CatalogProductDetail): string[] {
   const qualifiesForFreeShipping = product.priceCents !== null && product.priceCents > 10000;
   const isTable = normalizeOptionKey(product.productKind) === "table";
 
+  if (!isTable) {
+    return [V1_IN_STOCK_HANDLING_COPY, "Free Canada-wide shipping over $100. $15 flat-rate below."];
+  }
+
   if (qualifiesForFreeShipping) {
     return [
-      isTable
-        ? "Tables typically leave the warehouse in about 24 business hours."
-        : V1_IN_STOCK_HANDLING_COPY,
+      "Tables typically leave the warehouse in about 24 business hours.",
       "Free Canada-wide shipping included."
     ];
   }
@@ -638,11 +640,7 @@ function getHeroDisplayTitle(product: CatalogProductDetail): string {
   return PRODUCT_HERO_DISPLAY_TITLES[product.slug] ?? product.name;
 }
 
-function getHeroEyebrow(product: CatalogProductDetail): string {
-  if (normalizeOptionKey(product.productKind) !== "table") {
-    return product.category.name;
-  }
-
+function getHeroEyebrow(): string {
   return "Tiger PingPong";
 }
 
@@ -758,7 +756,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const recommendedProducts = getRecommendedAddOns(product, publicProducts);
   const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
   const heroDisplayTitle = getHeroDisplayTitle(product);
-  const heroEyebrow = getHeroEyebrow(product);
+  const heroEyebrow = getHeroEyebrow();
   const heroPriceSummary = getHeroPriceSummary(product, normalizedContent);
   const productJsonLd = getProductJsonLd(product, normalizedContent, mediaItems);
   const isTable = isTableProduct(product);

@@ -1,4 +1,3 @@
-import { V1_IN_STOCK_HANDLING_COPY } from "../../../../lib/shipping";
 import {
   getProductContentBySlug,
   type NormalizedProductContent
@@ -122,6 +121,7 @@ const UNSAFE_SPEC_LABEL_MARKERS = [
   "current stock",
   "download link",
   "gtin",
+  "material language",
   "msrp",
   "shipping",
   "sku",
@@ -573,6 +573,7 @@ export function QuickFactsSection({
   product: CatalogProductDetail;
 }) {
   const facts = getQuickFacts(product, normalizedContent);
+  const isTable = isTableProduct(product);
 
   if (facts.length === 0) {
     return null;
@@ -581,20 +582,16 @@ export function QuickFactsSection({
   return (
     <section
       className={
-        isTableProduct(product)
-          ? styles.detailStrip
-          : `${styles.detailStrip} ${styles.accessoryDetailStrip}`
+        isTable ? styles.detailStrip : `${styles.detailStrip} ${styles.accessoryDetailStrip}`
       }
       aria-labelledby="quick-facts-title"
     >
       <div className={styles.detailStripHeading}>
         <div>
-          <p className={styles.eyebrow}>
-            {isTableProduct(product) ? "Why this table" : "Quick facts"}
-          </p>
+          <p className={styles.eyebrow}>{isTable ? "Why this table" : "Quick facts"}</p>
           <h2 id="quick-facts-title">{getDetailStripHeading(product)}</h2>
         </div>
-        {!isTableProduct(product) ? <p>{getDetailStripIntro(product)}</p> : null}
+        {!isTable ? <p>{getDetailStripIntro(product)}</p> : null}
       </div>
       <dl className={styles.detailStatGrid}>
         {facts.map((fact) => (
@@ -619,7 +616,7 @@ export function ProductStorySection({
   product: CatalogProductDetail;
 }) {
   const storyCopy =
-    getSafeLongDescription(normalizedContent?.longDescription) ?? getSafeCopy(product.description);
+    getProductStoryCopy(product, normalizedContent) ?? getSafeCopy(product.description);
 
   if (!storyCopy) {
     return null;
@@ -649,7 +646,7 @@ export function FeatureHighlightsSection({
   product: CatalogProductDetail;
 }) {
   const featureMoments = getFeatureMoments(product);
-  const highlights = getSafeFeatureHighlights(product, normalizedContent).slice(0, 8);
+  const highlights = getSafeFeatureHighlights(product, normalizedContent);
 
   if (featureMoments.length === 0 && highlights.length === 0) {
     return null;
@@ -705,6 +702,7 @@ export function EverydayDetailsSection({
 }) {
   const displayContent = getTableDisplayContent(product.slug);
   const details = getEverydayDetails(product, normalizedContent);
+  const isTable = isTableProduct(product);
 
   if (details.length === 0) {
     return null;
@@ -713,19 +711,17 @@ export function EverydayDetailsSection({
   return (
     <section
       className={
-        isTableProduct(product)
-          ? styles.moreFeatures
-          : `${styles.moreFeatures} ${styles.accessoryMoreFeatures}`
+        isTable ? styles.moreFeatures : `${styles.moreFeatures} ${styles.accessoryGoodToKnow}`
       }
       aria-labelledby="everyday-details-title"
     >
       <div className={styles.moreFeaturesHeading}>
-        {!isTableProduct(product) ? (
-          <p className={styles.eyebrow}>
-            {displayContent?.moreFeaturesEyebrow ?? "Everyday details"}
-          </p>
+        {isTable && displayContent?.moreFeaturesEyebrow ? (
+          <p className={styles.eyebrow}>{displayContent.moreFeaturesEyebrow}</p>
         ) : null}
-        <h2 id="everyday-details-title">{getEverydayHeading(product)}</h2>
+        <h2 id="everyday-details-title">
+          {isTable ? getEverydayHeading(product) : "Good to know."}
+        </h2>
       </div>
       <div className={styles.detailGrid}>
         {details.map((detail) => (
@@ -755,6 +751,7 @@ export function SpecsGridSection({
   product: CatalogProductDetail;
 }) {
   const fields = getSpecificationFields(product, normalizedContent);
+  const isTable = isTableProduct(product);
 
   if (fields.length === 0) {
     return null;
@@ -763,16 +760,14 @@ export function SpecsGridSection({
   return (
     <section
       className={
-        isTableProduct(product)
-          ? styles.specSection
-          : `${styles.specSection} ${styles.accessorySpecSection}`
+        isTable ? styles.specSection : `${styles.specSection} ${styles.accessorySpecSection}`
       }
       id="specs"
       aria-labelledby="product-specs-title"
     >
       <div className={styles.specHeading}>
         <p className={styles.eyebrow}>Specifications</p>
-        <h2 id="product-specs-title">Specs and dimensions.</h2>
+        <h2 id="product-specs-title">{isTable ? "Specs and dimensions." : "Specs."}</h2>
       </div>
       <dl className={styles.specGrid}>
         {fields.map((field) => (
@@ -958,6 +953,10 @@ function getStoryHeading(product: CatalogProductDetail): string {
   const kind = normalizeKind(product.productKind);
   const useFact = getUseFact(product, null);
 
+  if (kind !== "table") {
+    return "Product details.";
+  }
+
   if (kind === "table" && useFact === "Outdoor") {
     return "Built for outdoor rallies.";
   }
@@ -1003,7 +1002,7 @@ function getEverydayHeading(product: CatalogProductDetail): string {
 
 function getDetailStripHeading(product: CatalogProductDetail): string {
   if (!isTableProduct(product)) {
-    return "Ready for the next rally.";
+    return "Key facts.";
   }
 
   if (product.slug === "tiger-expo-outdoor-table") {
@@ -1015,7 +1014,7 @@ function getDetailStripHeading(product: CatalogProductDetail): string {
 
 function getDetailStripIntro(product: CatalogProductDetail): string {
   if (!isTableProduct(product)) {
-    return "A short read on the sourced product details that matter most.";
+    return "Only the sourced product details that help with the purchase decision.";
   }
 
   const useFact = getUseFact(product, null);
@@ -1039,46 +1038,7 @@ function getQuickFacts(
     return getTableDetailStats(product, normalizedContent);
   }
 
-  const facts: LabeledValue[] = [];
-  const productType =
-    getSafeCopy(normalizedContent?.productType) ?? formatLabel(product.productKind);
-  const colorOptions = getDisplayColorOptions(product, normalizedContent);
-  const useFact = getUseFact(product, normalizedContent);
-  const includedItem = getShortIncludedFact(normalizedContent);
-
-  facts.push({
-    label: productType,
-    value: formatLabel(product.productKind)
-  });
-
-  if (useFact) {
-    facts.push({
-      label: "Use",
-      value: useFact
-    });
-  }
-
-  if (colorOptions.length > 0) {
-    facts.push({
-      label: "Active colours",
-      value: joinShortList(colorOptions)
-    });
-  }
-
-  if (includedItem) {
-    facts.push({
-      label: includedItem,
-      value: "Included"
-    });
-  }
-
-  facts.push({
-    label: V1_IN_STOCK_HANDLING_COPY,
-    note: "Shipping",
-    value: "In stock"
-  });
-
-  return facts.slice(0, 4);
+  return getAccessoryQuickFacts(product, normalizedContent);
 }
 
 function getTableDetailStats(
@@ -1142,19 +1102,113 @@ function getTableDetailStats(
   return stats.slice(0, 4);
 }
 
+function getAccessoryQuickFacts(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null
+): LabeledValue[] {
+  if (normalizeKind(product.productKind) !== "ball") {
+    return [];
+  }
+
+  const facts = [
+    getSpecFact(normalizedContent, "Quantity", ["Quantity"]),
+    getBallColourFact(product, normalizedContent),
+    getSpecFact(normalizedContent, "Ball size", ["Ball size"])
+  ].filter((fact): fact is LabeledValue => Boolean(fact));
+
+  return dedupeLabeledValues(facts).slice(0, 3);
+}
+
+function getBallColourFact(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null
+): LabeledValue | null {
+  if (product.slug.includes("6-orange")) {
+    return { label: "Colour", value: "Orange" };
+  }
+
+  if (product.slug.includes("6-white")) {
+    return { label: "Colour", value: "White" };
+  }
+
+  const colourFeature = getSafeList(normalizedContent?.keyFeatures, product).find((feature) =>
+    /^white\s+or\s+orange$/i.test(feature)
+  );
+
+  if (colourFeature) {
+    return { label: "Colours", value: "White or orange" };
+  }
+
+  return null;
+}
+
+function getSpecFact(
+  normalizedContent: NormalizedProductContent | null,
+  label: string,
+  candidateLabels: string[]
+): LabeledValue | null {
+  const value = getFirstSpecValue(normalizedContent, candidateLabels);
+
+  if (!value) {
+    return null;
+  }
+
+  return {
+    label,
+    value
+  };
+}
+
 function getSafeFeatureHighlights(
   product: { productKind: string },
   normalizedContent: NormalizedProductContent | null
 ): string[] {
-  const limit = isTableProduct(product) ? 8 : 4;
+  if (isTableProduct(product)) {
+    return getSafeList(normalizedContent?.keyFeatures, product)
+      .filter((feature) => !isCompatibilityNote(feature))
+      .slice(0, 8);
+  }
 
-  return getSafeList(normalizedContent?.keyFeatures, product)
-    .filter((feature) => !isCompatibilityNote(feature))
-    .slice(0, limit);
+  return [];
 }
 
 function getFeatureMoments(product: CatalogProductDetail): ProductFeatureMoment[] {
   return getTableDisplayContent(product.slug)?.featureMoments ?? [];
+}
+
+function getProductStoryCopy(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null
+): string | null {
+  if (isTableProduct(product)) {
+    return getSafeLongDescription(normalizedContent?.longDescription);
+  }
+
+  return getAccessoryStoryCopy(normalizedContent?.longDescription);
+}
+
+function getAccessoryStoryCopy(value: string | null | undefined): string | null {
+  const copy = normalizeWhitespace(value);
+
+  if (!copy) {
+    return null;
+  }
+
+  const safeSentences = copy
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => getSafeCopy(sentence))
+    .filter((sentence): sentence is string => Boolean(sentence))
+    .filter((sentence) => !isCompatibilityNote(sentence))
+    .filter((sentence) => !hasAnyMarker(sentence, ["fit most", "specifically designed to fit"]))
+    .filter((sentence) => !hasAnyMarker(sentence, BALL_REVIEW_MARKERS))
+    .filter((sentence) => !hasAnyMarker(sentence, ["standard 40mm"]))
+    .filter((sentence) => !hasAnyMarker(sentence, ["feature sections describe"]));
+
+  if (safeSentences.length === 0) {
+    return null;
+  }
+
+  return safeSentences.join(" ");
 }
 
 function getEverydayDetails(
@@ -1167,9 +1221,13 @@ function getEverydayDetails(
     return tableDetails;
   }
 
+  if (["ball", "paddle"].includes(normalizeKind(product.productKind))) {
+    return [];
+  }
+
   const details: DetailCard[] = [];
   const includedItems = getSafeIncludedItems(normalizedContent);
-  const compatibilityNotes = getCompatibilityNotes(normalizedContent);
+  const compatibilityNotes = getCompatibilityNotes(product, normalizedContent);
   const setupFacts = getPracticalSetupFacts(product, normalizedContent);
 
   if (includedItems.length > 0) {
@@ -1223,7 +1281,17 @@ function getSpecificationFields(
     }
   }
 
-  return dedupeLabeledValues(fields).slice(0, isTableProduct(product) ? 18 : 6);
+  const uniqueFields = dedupeLabeledValues(fields);
+
+  if (isTableProduct(product)) {
+    return uniqueFields.slice(0, 18);
+  }
+
+  if (normalizeKind(product.productKind) === "ball" || uniqueFields.length < 2) {
+    return [];
+  }
+
+  return uniqueFields.slice(0, 6);
 }
 
 function getUseFact(
@@ -1707,6 +1775,10 @@ function parseSpecification(
     return null;
   }
 
+  if (!isTableProduct(product) && isCompatibilityNote(`${parsedSpec.label} ${parsedSpec.value}`)) {
+    return null;
+  }
+
   if (
     normalizeKind(product.productKind) === "ball" &&
     (parsedSpec.label.toLowerCase().includes("color options") ||
@@ -1789,12 +1861,31 @@ function getSpecCandidateValues(
   return dedupeStrings(values);
 }
 
-function getCompatibilityNotes(normalizedContent: NormalizedProductContent | null): string[] {
+function getCompatibilityNotes(
+  product: CatalogProductDetail,
+  normalizedContent: NormalizedProductContent | null
+): string[] {
+  if (product.slug === "tiger-net-post-set") {
+    return getSearchableProductText(normalizedContent).includes("not compatible")
+      ? ["Not compatible with Tiger Expo, Portland, and Whistler indoor/outdoor tables."]
+      : [];
+  }
+
+  if (product.slug === "tiger-table-cover-black-polyester") {
+    const text = getSearchableProductText(normalizedContent);
+
+    if (text.includes("not compatible") && text.includes("plaza")) {
+      return [
+        "Fits most ping pong tables and Tiger tables. Not compatible with the Tiger Plaza Table."
+      ];
+    }
+  }
+
   const candidates = [
     normalizedContent?.longDescription,
     ...(normalizedContent?.keyFeatures ?? []),
     ...(normalizedContent?.specifications ?? [])
-  ];
+  ].flatMap((candidate) => splitIntoSentences(candidate));
 
   return dedupeStrings(
     candidates
@@ -1803,6 +1894,16 @@ function getCompatibilityNotes(normalizedContent: NormalizedProductContent | nul
       .filter(isCompatibilityNote)
       .map((candidate) => stripSpecLabel(candidate))
   );
+}
+
+function splitIntoSentences(value: string | null | undefined): string[] {
+  const copy = normalizeWhitespace(value);
+
+  if (!copy) {
+    return [];
+  }
+
+  return copy.split(/(?<=[.!?])\s+/);
 }
 
 function getPracticalSetupFacts(
@@ -1876,14 +1977,6 @@ function normalizeKind(productKind: string): string {
 
 function normalizeSpecLabel(label: string): string {
   return normalizeKind(label).replace(/[^a-z0-9-]/g, "");
-}
-
-function formatLabel(value: string): string {
-  return value
-    .split(/[-_]/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
 }
 
 function formatSpecLabel(label: string): string {

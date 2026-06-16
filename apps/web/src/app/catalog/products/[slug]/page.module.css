@@ -1701,22 +1701,32 @@
 
 .accessoryHero {
   width: min(1040px, calc(100vw - 44px));
-  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 380px);
-  align-items: start;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 370px);
+  align-items: stretch;
+  border: 1px solid rgb(255 255 255 / 76%);
+  border-radius: 26px;
+  padding: clamp(12px, 1.5vw, 18px);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 58%), rgb(255 255 255 / 34%)),
+    linear-gradient(120deg, rgb(242 138 46 / 6%), rgb(116 200 242 / 7%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 86%),
+    0 20px 56px rgb(27 36 65 / 7%);
 }
 
 .accessoryHero .mainMedia {
-  min-height: clamp(310px, 34vw, 430px);
-  border-radius: 22px;
+  min-height: clamp(260px, 29vw, 360px);
+  border-radius: 18px;
+  box-shadow: none;
 }
 
 .accessoryHero .mainMedia img,
 .accessoryHero .mediaPlaceholder {
-  min-height: clamp(280px, 30vw, 390px);
+  min-height: clamp(235px, 26vw, 325px);
 }
 
 .accessoryHero .mainMedia img {
-  padding: clamp(16px, 3vw, 28px);
+  padding: clamp(14px, 2.4vw, 24px);
 }
 
 .accessoryHero .thumbnailGrid {
@@ -1724,9 +1734,10 @@
 }
 
 .accessoryHero .purchasePanel {
-  min-height: clamp(310px, 34vw, 430px);
-  border-radius: 22px;
-  padding: clamp(20px, 2vw, 24px);
+  min-height: clamp(260px, 29vw, 360px);
+  border-radius: 18px;
+  padding: clamp(18px, 2vw, 22px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 90%);
 }
 
 .accessoryHero .title {
@@ -1743,17 +1754,17 @@
 }
 
 .accessoryHero .shippingNote {
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 .accessoryHero .checkoutPanel {
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 .accessoryDetailStrip,
 .accessoryDescriptionBand,
 .accessorySection,
-.accessoryMoreFeatures,
+.accessoryGoodToKnow,
 .accessorySpecSection {
   width: min(1040px, 100%);
 }
@@ -1770,7 +1781,7 @@
 }
 
 .accessoryDetailStrip .detailStripHeading h2,
-.accessoryMoreFeatures .moreFeaturesHeading h2,
+.accessoryGoodToKnow .moreFeaturesHeading h2,
 .accessorySpecSection .specHeading h2,
 .accessorySection .sectionHeader h2 {
   font-size: clamp(1.55rem, 2.2vw, 2.1rem);
@@ -1800,30 +1811,30 @@
   font-size: clamp(1.65rem, 2.3vw, 2.25rem);
 }
 
-.accessoryMoreFeatures {
+.accessoryGoodToKnow {
   gap: 14px;
 }
 
-.accessoryMoreFeatures .moreFeaturesHeading {
+.accessoryGoodToKnow .moreFeaturesHeading {
   align-items: start;
 }
 
-.accessoryMoreFeatures .detailGrid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.accessoryGoodToKnow .detailGrid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.accessoryMoreFeatures .detailGrid article {
+.accessoryGoodToKnow .detailGrid article {
   min-height: 0;
   border-radius: 18px;
-  padding: 20px;
+  padding: 18px;
 }
 
-.accessoryMoreFeatures .detailGrid article > :not(img):not(.miniPlaceholder) {
+.accessoryGoodToKnow .detailGrid article > :not(img):not(.miniPlaceholder) {
   margin-right: 0;
   margin-left: 0;
 }
 
-.accessoryMoreFeatures .detailGrid h3 {
+.accessoryGoodToKnow .detailGrid h3 {
   font-size: 1.05rem;
 }
 
@@ -2006,7 +2017,7 @@
 
   .moreFeatures .detailGrid,
   .accessoryDetailStrip,
-  .accessoryMoreFeatures .detailGrid,
+  .accessoryGoodToKnow .detailGrid,
   .accessorySection .featureChipList,
   .accessorySpecSection .specGrid,
   .specSection .specGrid {
@@ -2109,7 +2120,7 @@
 
   .optionChoices,
   .moreFeatures .detailGrid,
-  .accessoryMoreFeatures .detailGrid,
+  .accessoryGoodToKnow .detailGrid,
   .accessorySection .featureChipList,
   .accessorySpecSection .specGrid,
   .specSection .specGrid {

@@ -2,26 +2,23 @@
 
 ## Purpose
 
-This runbook defines the minimum gate for planning and eventually applying
-reviewed Tiger PingPong catalog CSVs to deployed Render/Supabase catalog
-databases.
+This runbook defines the minimum gate for planning and applying reviewed Tiger
+PingPong catalog CSVs to deployed Render/Supabase catalog databases.
 
 The existing Tiger dev importer remains dev-only and must not be pointed at
-deployed databases. PR 083 adds a separate deployed-safe command:
+deployed databases. PR 083 added a separate deployed-safe command:
 
 ```bash
 pnpm import:tiger:deployed
 ```
 
-In PR 083 this command is planning-only. It validates the reviewed CSVs and
-prints the affected deployed catalog areas. It does not implement deployed
-writes.
+PR 084 adds a guarded write path. Dry runs remain connectionless, and writes
+require an additional explicit `--write` flag after validation passes.
 
 ## Hard Boundaries
 
 - Do not run `pnpm import:tiger:dev` against deployed Render/Supabase databases.
 - Do not change product publishing status as part of validator cleanup.
-- Do not publish Aqua through this runbook.
 - Do not change checkout, payment, webhook, order truth, tax, shipment/admin
   work, or public styling.
 - Do not upload media from this runbook.
@@ -56,9 +53,9 @@ Warnings are not all equal:
 ## Dry-Run Planning Command
 
 Use a deployed/staging database URL only after confirming the intended target.
-PR 083 dry runs do not open a database connection, but `DATABASE_URL` is still
-required so operators practice the same invocation shape that a future guarded
-write command will require.
+Dry runs do not open a database connection, but `DATABASE_URL` is still required
+so operators practice the same invocation shape that the guarded write command
+requires.
 
 Staging dry run:
 
@@ -77,7 +74,7 @@ The deployed importer refuses to run unless all of these are true:
 - `DATABASE_URL` is set.
 - `--confirm-deployed-import` is present.
 - Exactly one target is present: `--target=staging` or `--target=production`.
-- `--dry-run` is present.
+- Exactly one mode is present: `--dry-run` or `--write`.
 - `pnpm validate:tiger-import` exits successfully with 0 errors.
 - No unknown or ambiguous arguments are passed.
 
@@ -90,22 +87,36 @@ Dry run behavior:
 - Opens no Prisma/database connection.
 - Writes no rows.
 
-## Actual Import Command Status
+## Actual Import Command
 
-PR 083 does not implement deployed writes. This command shape is reserved for a
-future PR after the planning output, backup steps, and Aqua checklist are
-reviewed:
+Only run this after the preflight gate, backup steps, dry-run output, and Aqua
+checklist are reviewed for the intended target.
 
 ```bash
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=production
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=staging --write
 ```
 
-Until a future PR explicitly implements and validates deployed writes, the
-approved operational command is dry-run only.
+Production uses the same shape with `--target=production`:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=production --write
+```
+
+Write behavior:
+
+- Runs `pnpm validate:tiger-import` before opening Prisma.
+- Refuses to write if validation exits non-zero.
+- Connects with Prisma only in `--write` mode.
+- Prints reviewed row counts and existing stable-key matches before the
+  transaction writes.
+- Uses stable-key upserts for catalog rows where supported.
+- Refreshes variant option links only for imported variants.
+- Does not delete unknown catalog rows.
+- Does not write redirect rows.
 
 ## Expected Affected Tables
 
-The deployed import plan covers reviewed CSV rows for:
+The deployed import writes reviewed CSV rows for:
 
 - `brands`
 - `categories`
@@ -113,7 +124,6 @@ The deployed import plan covers reviewed CSV rows for:
 - `products`
 - `product_variants`
 - `product_media`
-- `redirects`
 - `import_review_flags`
 
 Variant option CSV columns also imply refreshed rows in:
@@ -122,18 +132,24 @@ Variant option CSV columns also imply refreshed rows in:
 - `product_option_values`
 - `product_variant_option_values`
 
+Reviewed rows in `redirects_draft_v1.csv` are still validated and printed in
+planning output, but deployed writes skip the `redirects` table until URL
+structure and redirect policy are explicitly approved.
+
 No checkout, Stripe, order, tax, shipment, admin, SEO infrastructure, product
 media upload, or public styling tables should be touched by this work.
 
 ## Backup Before Import
 
-Before any future deployed write is approved:
+Before any deployed write is approved:
 
 1. Capture the exact git SHA and CSV artifact state being imported.
 2. Export or snapshot the deployed database through the approved Supabase/Render
    database backup process.
-3. Export the affected catalog tables listed above to a dated local/private
-   backup location.
+3. Export the affected catalog tables listed above plus any existing Aqua rows
+   from `products`, `product_variants`, `product_options`,
+   `product_option_values`, `product_variant_option_values`, and
+   `product_media` to a dated local/private backup location.
 4. Record the target label, database host, operator, backup location, and import
    command in the launch notes.
 5. Re-run `pnpm validate:tiger-import` and the deployed dry run immediately
@@ -143,19 +159,115 @@ Do not commit backups, customer/order data, credentials, or raw private exports.
 
 ## Rollback Approach
 
-If bad public catalog data appears after a future deployed import:
+If bad public catalog data appears after a deployed import:
 
 1. Disable or hide the bad public catalog rows through a minimal safe follow-up
    import or database operation, preserving checkout/payment/order truth.
 2. Restore affected catalog rows from the pre-import table exports or database
    snapshot.
 3. Re-run the deployed dry-run planner against the corrected CSV state.
-4. If the CSVs were wrong, fix the reviewed CSVs first, then re-run the future
-   guarded deployed import to restore the intended rows.
+4. If the CSVs were wrong, fix the reviewed CSVs first, then re-run the guarded
+   deployed import to restore the intended rows.
 5. Verify public pages, cart behavior, and Stripe Checkout prices again before
    considering the rollback complete.
 
 Do not manually delete production rows without an approved rollback plan.
+
+## Identifying Rows Changed By Import
+
+Use the reviewed stable keys in `data/import-review/tigerpingpong/v1/*.csv`.
+The deployed importer upserts by:
+
+- `brands.key`
+- `categories.key`
+- `product_families.key`
+- `products.key`
+- `product_variants.key`
+- `product_media.media_key`
+- `import_review_flags` matched by `entity_type`, `entity_key`, `source_url`,
+  and `flag`
+
+For Aqua-specific inspection:
+
+```sql
+select key, slug, status, v1_public_navigation, v1_checkout_scope, purchase_mode
+from products
+where key in (
+  'tiger-aqua-outdoor-indoor-paddle',
+  'tiger-aqua-single-coral',
+  'tiger-aqua-single-ocean-blue',
+  'tiger-aqua-outdoor-paddle-pack-2',
+  'tiger-aqua-outdoor-paddle-pack-4'
+)
+order by key;
+
+select pv.key, pv.sku, pv.name, pv.price_cents, pv.is_active
+from product_variants pv
+join products p on p.id = pv.product_id
+where p.key = 'tiger-aqua-outdoor-indoor-paddle'
+order by pv.key;
+```
+
+## Aqua Visibility Rollback
+
+If Aqua needs to be removed from public storefront visibility while preserving
+traceability, restore the pre-import values from the backup or apply a reviewed
+CSV/SQL rollback that sets:
+
+- `tiger-aqua-outdoor-indoor-paddle`: previous `status`,
+  `v1_public_navigation`, `v1_checkout_scope`, and `purchase_mode`.
+- `tiger-aqua-single-coral`, `tiger-aqua-single-ocean-blue`,
+  `tiger-aqua-outdoor-paddle-pack-2`, and
+  `tiger-aqua-outdoor-paddle-pack-4`: previous visibility/status values if the
+  package rows need to be returned to their prior deployed state.
+
+Minimum SQL shape for an emergency visibility rollback, after comparing against
+the backup and getting approval:
+
+```sql
+update products
+set status = 'draft',
+    v1_public_navigation = false,
+    v1_checkout_scope = false,
+    purchase_mode = 'disabled'
+where key = 'tiger-aqua-outdoor-indoor-paddle';
+```
+
+Prefer a corrected CSV plus guarded deployed import over manual SQL whenever the
+situation is not urgent.
+
+## Rerun From Previous CSV State
+
+To rerun from a previous reviewed CSV state:
+
+1. Check out the prior git SHA or restore the previous CSV artifacts.
+2. Run `pnpm validate:tiger-import`.
+3. Run the deployed dry run against the same target:
+
+   ```bash
+   DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=staging --dry-run
+   ```
+
+4. Review the affected-row summary and Aqua snapshot.
+5. Run the guarded write only after approval:
+
+   ```bash
+   DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=staging --write
+   ```
+
+## Rollback Verification
+
+After rollback or rerun:
+
+- Re-run `pnpm validate:tiger-import`.
+- Re-run the deployed dry run and compare the planned rows to the approved CSV
+  state.
+- Verify Aqua public product visibility and package option behavior in the
+  deployed storefront/API.
+- Confirm the archived package slugs do not appear public unless the rollback
+  intentionally restored them.
+- Confirm no checkout, webhook, order status, tax, shipment/admin, redirect,
+  canonical, sitemap, robots, DNS, or styling behavior changed.
 
 ## Media Policy
 
@@ -180,7 +292,7 @@ reviewed non-Aqua media rows. Aqua rows validate with blank Cloudinary fields.
 
 ## Aqua Post-Import Verification Checklist
 
-After a future deployed write, verify all of the following against the deployed
+After a deployed write, verify all of the following against the deployed
 storefront and API-backed checkout flow:
 
 - `/accessories/` loads successfully and does not expose duplicate Aqua package

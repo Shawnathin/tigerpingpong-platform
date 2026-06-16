@@ -19,6 +19,7 @@ interface ProductMediaGalleryProps {
   categoryName: string;
   mediaItems: ProductMediaGalleryItem[];
   productName: string;
+  productSlug: string;
 }
 
 function getMediaLabel(media: ProductMediaGalleryItem, fallback: string): string {
@@ -29,7 +30,8 @@ function getMediaLabel(media: ProductMediaGalleryItem, fallback: string): string
 export function ProductMediaGallery({
   categoryName,
   mediaItems,
-  productName
+  productName,
+  productSlug
 }: ProductMediaGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [failedMediaKeys, setFailedMediaKeys] = useState<Set<string>>(() => new Set());
@@ -49,7 +51,7 @@ export function ProductMediaGallery({
   }
 
   return (
-    <div className={styles.gallery}>
+    <div className={styles.gallery} data-product-slug={productSlug}>
       <figure className={styles.mainMedia}>
         {selectedSrc ? (
           <img

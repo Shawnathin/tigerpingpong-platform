@@ -781,6 +781,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             categoryName={product.category.name}
             mediaItems={mediaItems}
             productName={isTable ? product.name : heroDisplayTitle}
+            productSlug={product.slug}
           />
 
           <aside className={styles.purchasePanel} aria-label={`${product.name} purchase panel`}>

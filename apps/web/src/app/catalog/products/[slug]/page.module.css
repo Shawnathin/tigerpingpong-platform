@@ -1757,6 +1757,11 @@
   padding: clamp(18px, 3vw, 32px);
 }
 
+.accessoryHero .gallery[data-product-slug="tiger-vice-paddle"] .mainMedia img {
+  object-position: 44% center;
+  transform: translateX(-4%);
+}
+
 .accessoryHero .thumbnailGrid {
   width: fit-content;
   max-width: min(100%, 470px);
@@ -1767,6 +1772,10 @@
   margin: 0 auto;
   overflow-x: auto;
   overflow-y: hidden;
+}
+
+.accessoryHero .gallery[data-product-slug="tiger-vice-paddle"] .thumbnailGrid {
+  max-width: min(100%, 438px);
 }
 
 .accessoryHero .thumbnailButton {

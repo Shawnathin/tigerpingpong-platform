@@ -52,6 +52,7 @@ export function CartPageClient() {
         items: items.map((item) => ({
           productSlug: item.productSlug,
           quantity: item.quantity,
+          selectedVariantKey: item.selectedVariantKey,
           selectedOptions: item.selectedOptions.map((option) => ({
             name: option.name,
             value: option.value

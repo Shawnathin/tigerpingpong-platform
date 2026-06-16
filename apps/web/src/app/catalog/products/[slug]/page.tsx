@@ -206,13 +206,21 @@ function isReplacementPartsProduct(product: CatalogProductDetail): boolean {
   );
 }
 
-function isProductCheckoutEligible(product: CatalogProductDetail): boolean {
+function isProductCheckoutEligible(
+  product: CatalogProductDetail,
+  checkoutOptionGroups: CheckoutOptionGroup[]
+): boolean {
+  const hasCheckoutPrice =
+    (product.priceCents !== null && product.priceCents > 0) ||
+    checkoutOptionGroups.some((optionGroup) =>
+      optionGroup.values.some((optionValue) => (optionValue.priceCents ?? 0) > 0)
+    );
+
   return (
     product.v1PublicNavigation &&
     product.v1CheckoutScope &&
     CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
-    product.priceCents !== null &&
-    product.priceCents > 0 &&
+    hasCheckoutPrice &&
     product.currency.trim().toLowerCase() === "cad"
   );
 }
@@ -370,8 +378,11 @@ function getUniqueMediaItems(mediaItems: ProductMediaGalleryItem[]): ProductMedi
 }
 
 interface CheckoutOptionValue {
+  currency?: string;
   label: string;
+  priceCents?: number;
   value: string;
+  variantKey?: string;
 }
 
 interface CheckoutOptionGroup {
@@ -397,64 +408,170 @@ function isCheckoutVariantActive(variant: CatalogProductVariantSummary): boolean
 }
 
 function getCheckoutOptionGroups(product: CatalogProductDetail): CheckoutOptionGroup[] {
-  if (normalizeOptionKey(product.productKind) !== "table") {
+  const checkoutableVariants = (product.variants ?? []).filter(isCheckoutVariantActive);
+
+  if (checkoutableVariants.length === 0) {
     return [];
   }
 
-  const valuesByNormalizedValue = new Map<
+  const optionGroupsByName = new Map<
     string,
     {
-      label: string;
-      sortOrder: number;
-      value: string;
+      displayName: string;
+      name: string;
+      optionSortOrder: number;
+      values: Map<
+        string,
+        {
+          currency?: string;
+          label: string;
+          priceCents?: number;
+          sortOrder: number;
+          value: string;
+          variantKey?: string;
+        }
+      >;
     }
   >();
 
-  for (const variant of product.variants ?? []) {
-    if (!isCheckoutVariantActive(variant)) {
-      continue;
+  for (const variant of checkoutableVariants) {
+    for (const option of variant.options) {
+      const normalizedName = normalizeOptionKey(option.name);
+      const normalizedValue = normalizeOptionKey(option.value);
+
+      if (!normalizedName || !normalizedValue) {
+        continue;
+      }
+
+      const optionGroup = optionGroupsByName.get(normalizedName) ?? {
+        displayName: getOptionDisplayName(option.name, option.displayName, product),
+        name: option.name,
+        optionSortOrder: option.optionSortOrder,
+        values: new Map<
+          string,
+          {
+            currency?: string;
+            label: string;
+            priceCents?: number;
+            sortOrder: number;
+            value: string;
+            variantKey?: string;
+          }
+        >()
+      };
+      const existingValue = optionGroup.values.get(normalizedValue);
+
+      if (!existingValue) {
+        optionGroup.values.set(normalizedValue, {
+          currency: variant.currency,
+          label: option.label ?? option.value,
+          priceCents: getValidVariantPriceCents(variant.priceCents),
+          sortOrder: option.sortOrder,
+          value: option.value,
+          variantKey: variant.key
+        });
+      } else if (
+        existingValue.priceCents !== variant.priceCents ||
+        existingValue.currency !== variant.currency
+      ) {
+        optionGroup.values.set(normalizedValue, {
+          ...existingValue,
+          currency: undefined,
+          priceCents: undefined,
+          variantKey: undefined
+        });
+      }
+
+      optionGroupsByName.set(normalizedName, optionGroup);
     }
-
-    const colorOption = variant.options.find(
-      (option) => normalizeOptionKey(option.name) === "color"
-    );
-
-    if (!colorOption) {
-      continue;
-    }
-
-    const normalizedValue = normalizeOptionKey(colorOption.value);
-
-    if (!normalizedValue || valuesByNormalizedValue.has(normalizedValue)) {
-      continue;
-    }
-
-    valuesByNormalizedValue.set(normalizedValue, {
-      label: colorOption.label ?? colorOption.value,
-      sortOrder: colorOption.sortOrder,
-      value: colorOption.value
-    });
   }
 
-  const values = [...valuesByNormalizedValue.values()].sort(
-    (left, right) => left.sortOrder - right.sortOrder || left.label.localeCompare(right.label)
+  return [...optionGroupsByName.values()]
+    .map((optionGroup) => {
+      const values = [...optionGroup.values.values()].sort(
+        (left, right) => left.sortOrder - right.sortOrder || left.label.localeCompare(right.label)
+      );
+
+      return {
+        displayName: optionGroup.displayName,
+        name: optionGroup.name,
+        required: true,
+        values: values.map(({ currency, label, priceCents, value, variantKey }) => ({
+          currency,
+          label,
+          priceCents,
+          value,
+          variantKey
+        })),
+        optionSortOrder: optionGroup.optionSortOrder
+      };
+    })
+    .filter(
+      (optionGroup) =>
+        optionGroup.values.length > 1 && isRequiredCheckoutOptionGroup(product, optionGroup)
+    )
+    .sort((left, right) => left.optionSortOrder - right.optionSortOrder)
+    .map((optionGroup) => ({
+      displayName: optionGroup.displayName,
+      name: optionGroup.name,
+      required: optionGroup.required,
+      values: optionGroup.values
+    }));
+}
+
+function isRequiredCheckoutOptionGroup(
+  product: CatalogProductDetail,
+  optionGroup: CheckoutOptionGroup
+): boolean {
+  if (
+    normalizeOptionKey(product.productKind) === "table" &&
+    normalizeOptionKey(optionGroup.name) === "color"
+  ) {
+    return true;
+  }
+
+  const distinctPrices = new Set(
+    optionGroup.values
+      .map((value) => value.priceCents)
+      .filter((priceCents): priceCents is number => typeof priceCents === "number")
   );
 
-  if (values.length <= 1) {
-    return [];
+  return distinctPrices.size > 1;
+}
+
+function getOptionDisplayName(
+  optionName: string,
+  displayName: string | null,
+  product: CatalogProductDetail
+): string {
+  if (
+    normalizeOptionKey(product.productKind) === "table" &&
+    normalizeOptionKey(optionName) === "color"
+  ) {
+    return "Top colour";
   }
 
-  return [
-    {
-      displayName: "Top colour",
-      name: "Color",
-      required: true,
-      values: values.map(({ label, value }) => ({
-        label,
-        value
-      }))
-    }
-  ];
+  return displayName?.trim() || formatLabel(optionName);
+}
+
+function getValidVariantPriceCents(priceCents: number | null): number | undefined {
+  return typeof priceCents === "number" && Number.isInteger(priceCents) && priceCents > 0
+    ? priceCents
+    : undefined;
+}
+
+function getCartProductPriceCents(product: CatalogProductDetail): number {
+  const checkoutOptionGroups = getCheckoutOptionGroups(product);
+
+  if (checkoutOptionGroups.length !== 1) {
+    return product.priceCents ?? 0;
+  }
+
+  const prices = checkoutOptionGroups[0].values
+    .map((value) => value.priceCents)
+    .filter((priceCents): priceCents is number => typeof priceCents === "number");
+
+  return prices.length > 0 ? Math.min(...prices) : (product.priceCents ?? 0);
 }
 
 function getCartImage(product: CatalogProductDetail): string | null {
@@ -483,7 +600,8 @@ function toCartProductInput(
     name: product.name,
     productKind: product.productKind,
     productSlug: product.slug,
-    unitPriceCents: product.priceCents ?? 0
+    unitPriceCents:
+      "variants" in product ? getCartProductPriceCents(product) : (product.priceCents ?? 0)
   };
 }
 
@@ -762,8 +880,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     return <ErrorState error={error ?? "Product details are temporarily unavailable."} />;
   }
 
-  const isCheckoutEligible = isProductCheckoutEligible(product);
   const checkoutOptionGroups = getCheckoutOptionGroups(product);
+  const isCheckoutEligible = isProductCheckoutEligible(product, checkoutOptionGroups);
   const mediaItems = getMediaItems(product);
   const normalizedContent = getProductContentBySlug(product.slug);
   const catalogProducts = await loadCatalogProductSummaries();

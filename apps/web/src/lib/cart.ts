@@ -15,6 +15,7 @@ export interface CartItem {
   productKind?: string;
   productSlug: string;
   quantity: number;
+  selectedVariantKey?: string;
   selectedOptions: CartItemOption[];
   unitPriceCents: number;
 }
@@ -26,6 +27,7 @@ export interface CartProductInput {
   name: string;
   productKind?: string;
   productSlug: string;
+  selectedVariantKey?: string;
   selectedOptions?: CartItemOption[];
   unitPriceCents: number;
 }
@@ -110,6 +112,7 @@ export function addCartItem(product: CartProductInput, quantity = 1): CartItem[]
       name: product.name.trim() || existingItem.name,
       productKind: product.productKind,
       quantity: Math.min(existingItem.quantity + nextQuantity, MAX_CART_QUANTITY_PER_LINE),
+      selectedVariantKey: normalizeOptionalText(product.selectedVariantKey),
       selectedOptions,
       unitPriceCents: normalizePrice(product.unitPriceCents)
     };
@@ -123,6 +126,7 @@ export function addCartItem(product: CartProductInput, quantity = 1): CartItem[]
       productKind: product.productKind,
       productSlug,
       quantity: nextQuantity,
+      selectedVariantKey: normalizeOptionalText(product.selectedVariantKey),
       selectedOptions,
       unitPriceCents: normalizePrice(product.unitPriceCents)
     });
@@ -278,6 +282,7 @@ function sanitizeCartItems(value: unknown): CartItem[] {
       productKind: typeof item.productKind === "string" ? item.productKind : undefined,
       productSlug,
       quantity,
+      selectedVariantKey: normalizeOptionalText(item.selectedVariantKey),
       selectedOptions,
       unitPriceCents
     });
@@ -300,6 +305,10 @@ function normalizePrice(value: unknown): number {
 
 function normalizeCurrency(value: unknown): string {
   return typeof value === "string" && value.trim() ? value.trim().toUpperCase() : "CAD";
+}
+
+function normalizeOptionalText(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
 function normalizeCartLineId(value: string): string {

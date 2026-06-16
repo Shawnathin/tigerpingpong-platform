@@ -29,6 +29,7 @@ interface CheckoutRequestSelectedOption {
 interface CheckoutRequestItem {
   productSlug: string;
   quantity: number;
+  selectedVariantKey: string | null;
   selectedOptions: CheckoutRequestSelectedOption[];
 }
 
@@ -187,6 +188,8 @@ const checkoutProductSelect = {
       key: true,
       sku: true,
       name: true,
+      priceCents: true,
+      currency: true,
       purchaseModeOverride: true,
       isActive: true,
       optionValues: {
@@ -220,6 +223,13 @@ type CheckoutProductVariantRecord = CheckoutProductRecord["variants"][number];
 interface ValidatedLineItemOptions {
   selectedOptions: ValidatedLineItemOption[];
   variant: CheckoutProductVariantRecord | null;
+}
+
+interface RequiredVariantOption {
+  displayName: string;
+  name: string;
+  sortOrder: number;
+  values: Map<string, { label: string; sortOrder: number; value: string }>;
 }
 
 @Injectable()
@@ -401,6 +411,7 @@ export class CheckoutService implements OnModuleDestroy {
       return {
         productSlug,
         quantity,
+        selectedVariantKey: this.validateSelectedVariantKey(item.selectedVariantKey, index),
         selectedOptions
       };
     });
@@ -489,6 +500,28 @@ export class CheckoutService implements OnModuleDestroy {
     }
 
     return normalized;
+  }
+
+  private validateSelectedVariantKey(value: unknown, itemIndex: number): string | null {
+    if (value === undefined || value === null || value === "") {
+      return null;
+    }
+
+    if (typeof value !== "string") {
+      throw new BadRequestException({
+        message: `items[${itemIndex}].selectedVariantKey must be a string.`
+      });
+    }
+
+    const variantKey = value.trim();
+
+    if (!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/.test(variantKey)) {
+      throw new BadRequestException({
+        message: `items[${itemIndex}].selectedVariantKey is invalid.`
+      });
+    }
+
+    return variantKey;
   }
 
   private getRequestLineKey(
@@ -643,7 +676,7 @@ export class CheckoutService implements OnModuleDestroy {
       }
 
       const optionValidation = this.validateLineItemOptions(item, product);
-      const unitPriceCents = product.priceCents;
+      const unitPriceCents = this.resolveUnitPriceCents(product, optionValidation.variant);
 
       if (
         typeof unitPriceCents !== "number" ||
@@ -680,12 +713,18 @@ export class CheckoutService implements OnModuleDestroy {
     item: CheckoutRequestItem,
     product: CheckoutProductRecord
   ): ValidatedLineItemOptions {
-    const requiredColorOption = this.getRequiredTableColorOption(product);
+    const requiredOptions = this.getRequiredVariantOptions(product);
 
-    if (!requiredColorOption) {
+    if (requiredOptions.length === 0) {
       if (item.selectedOptions.length > 0) {
         throw new BadRequestException({
           message: "Selected options are not supported for one or more requested items."
+        });
+      }
+
+      if (item.selectedVariantKey) {
+        throw new BadRequestException({
+          message: "A selected product variant is invalid."
         });
       }
 
@@ -695,38 +734,60 @@ export class CheckoutService implements OnModuleDestroy {
       };
     }
 
-    if (item.selectedOptions.length !== 1) {
+    if (item.selectedOptions.length !== requiredOptions.length) {
       throw new BadRequestException({
         message: "A required product option is missing."
       });
     }
 
-    const selectedOption = item.selectedOptions[0];
+    const requiredOptionsByName = new Map(
+      requiredOptions.map((option) => [this.normalizeOptionKey(option.name), option])
+    );
+    const selectedOptionsByName = new Map(
+      item.selectedOptions.map((option) => [this.normalizeOptionKey(option.name), option])
+    );
+    const selectedOptions: ValidatedLineItemOption[] = [];
 
-    if (this.normalizeOptionKey(selectedOption.name) !== "color") {
-      throw new BadRequestException({
-        message: "A selected product option is invalid."
-      });
+    for (const selectedOption of item.selectedOptions) {
+      if (!requiredOptionsByName.has(this.normalizeOptionKey(selectedOption.name))) {
+        throw new BadRequestException({
+          message: "A selected product option is invalid."
+        });
+      }
     }
 
-    const normalizedValue = this.normalizeOptionKey(selectedOption.value);
-    const canonicalValue = requiredColorOption.values.get(normalizedValue);
+    for (const requiredOption of requiredOptions) {
+      const selectedOption = selectedOptionsByName.get(
+        this.normalizeOptionKey(requiredOption.name)
+      );
 
-    if (!canonicalValue) {
-      throw new BadRequestException({
-        message: "A selected product option value is invalid."
+      if (!selectedOption) {
+        throw new BadRequestException({
+          message: "A required product option is missing."
+        });
+      }
+
+      const canonicalValue = requiredOption.values.get(
+        this.normalizeOptionKey(selectedOption.value)
+      );
+
+      if (!canonicalValue) {
+        throw new BadRequestException({
+          message: "A selected product option value is invalid."
+        });
+      }
+
+      selectedOptions.push({
+        displayName: requiredOption.displayName,
+        label: canonicalValue.label,
+        name: requiredOption.name,
+        value: canonicalValue.value
       });
     }
 
     const matchingVariants = product.variants
       .filter((variant) => this.isVariantCheckoutable(variant))
-      .filter((variant) =>
-        variant.optionValues.some(
-          ({ productOptionValue }) =>
-            this.normalizeOptionKey(productOptionValue.option.name) === "color" &&
-            this.normalizeOptionKey(productOptionValue.value) === normalizedValue
-        )
-      );
+      .filter((variant) => this.variantMatchesSelectedOptions(variant, selectedOptionsByName));
 
     if (matchingVariants.length !== 1) {
       throw new BadRequestException({
@@ -734,65 +795,165 @@ export class CheckoutService implements OnModuleDestroy {
       });
     }
 
-    return {
-      selectedOptions: [
-        {
-          displayName: requiredColorOption.displayName,
-          label: canonicalValue.label,
-          name: requiredColorOption.name,
-          value: canonicalValue.value
-        }
-      ],
-      variant: matchingVariants[0]
-    };
-  }
+    const matchedVariant = matchingVariants[0];
 
-  private getRequiredTableColorOption(product: CheckoutProductRecord): {
-    displayName: string;
-    name: string;
-    values: Map<string, { label: string; sortOrder: number; value: string }>;
-  } | null {
-    if (product.productKind !== "table") {
-      return null;
-    }
-
-    const values = new Map<string, { label: string; sortOrder: number; value: string }>();
-
-    for (const variant of product.variants) {
-      if (!this.isVariantCheckoutable(variant)) {
-        continue;
-      }
-
-      const colorOption = variant.optionValues.find(
-        ({ productOptionValue }) =>
-          this.normalizeOptionKey(productOptionValue.option.name) === "color"
-      );
-
-      if (!colorOption) {
-        continue;
-      }
-
-      const { productOptionValue } = colorOption;
-      const normalizedValue = this.normalizeOptionKey(productOptionValue.value);
-
-      if (!normalizedValue || values.has(normalizedValue)) {
-        continue;
-      }
-
-      values.set(normalizedValue, {
-        label: productOptionValue.label ?? productOptionValue.value,
-        sortOrder: productOptionValue.sortOrder,
-        value: productOptionValue.value
+    if (item.selectedVariantKey && item.selectedVariantKey !== matchedVariant.key) {
+      throw new BadRequestException({
+        message: "A selected product variant is invalid."
       });
     }
 
-    return values.size > 1
-      ? {
-          displayName: "Top colour",
-          name: "Color",
-          values
+    return {
+      selectedOptions,
+      variant: matchedVariant
+    };
+  }
+
+  private getRequiredVariantOptions(product: CheckoutProductRecord): RequiredVariantOption[] {
+    const checkoutableVariants = product.variants.filter((variant) =>
+      this.isVariantCheckoutable(variant)
+    );
+    const optionsByName = new Map<string, RequiredVariantOption & { variantCount: number }>();
+
+    for (const variant of checkoutableVariants) {
+      const optionNamesSeenForVariant = new Set<string>();
+
+      for (const { productOptionValue } of variant.optionValues) {
+        const normalizedName = this.normalizeOptionKey(productOptionValue.option.name);
+        const normalizedValue = this.normalizeOptionKey(productOptionValue.value);
+
+        if (!normalizedName || !normalizedValue || optionNamesSeenForVariant.has(normalizedName)) {
+          continue;
         }
-      : null;
+
+        const option = optionsByName.get(normalizedName) ?? {
+          displayName: this.getOptionDisplayName(
+            product,
+            productOptionValue.option.name,
+            productOptionValue.option.displayName
+          ),
+          name: productOptionValue.option.name,
+          sortOrder: productOptionValue.option.sortOrder,
+          values: new Map<string, { label: string; sortOrder: number; value: string }>(),
+          variantCount: 0
+        };
+
+        if (!option.values.has(normalizedValue)) {
+          option.values.set(normalizedValue, {
+            label: productOptionValue.label ?? productOptionValue.value,
+            sortOrder: productOptionValue.sortOrder,
+            value: productOptionValue.value
+          });
+        }
+
+        option.variantCount += 1;
+        optionNamesSeenForVariant.add(normalizedName);
+        optionsByName.set(normalizedName, option);
+      }
+    }
+
+    return [...optionsByName.values()]
+      .filter(
+        (option) =>
+          option.variantCount === checkoutableVariants.length &&
+          option.values.size > 1 &&
+          this.isRequiredCheckoutOption(product, checkoutableVariants, option)
+      )
+      .sort((left, right) => left.sortOrder - right.sortOrder)
+      .map((option) => ({
+        displayName: option.displayName,
+        name: option.name,
+        sortOrder: option.sortOrder,
+        values: option.values
+      }));
+  }
+
+  private isRequiredCheckoutOption(
+    product: CheckoutProductRecord,
+    variants: CheckoutProductVariantRecord[],
+    option: RequiredVariantOption
+  ): boolean {
+    if (product.productKind === "table" && this.normalizeOptionKey(option.name) === "color") {
+      return true;
+    }
+
+    const distinctPrices = new Set<number>();
+
+    for (const variant of variants) {
+      const hasOptionValue = variant.optionValues.some(
+        ({ productOptionValue }) =>
+          this.normalizeOptionKey(productOptionValue.option.name) ===
+            this.normalizeOptionKey(option.name) &&
+          option.values.has(this.normalizeOptionKey(productOptionValue.value))
+      );
+
+      if (!hasOptionValue || !this.isValidPriceCents(variant.priceCents)) {
+        return false;
+      }
+
+      distinctPrices.add(variant.priceCents);
+    }
+
+    return distinctPrices.size > 1;
+  }
+
+  private isValidPriceCents(value: unknown): value is number {
+    return typeof value === "number" && Number.isInteger(value) && value > 0;
+  }
+
+  private getOptionDisplayName(
+    product: CheckoutProductRecord,
+    optionName: string,
+    displayName: string | null
+  ): string {
+    if (product.productKind === "table" && this.normalizeOptionKey(optionName) === "color") {
+      return "Top colour";
+    }
+
+    return displayName?.trim() || this.formatOptionLabel(optionName);
+  }
+
+  private formatOptionLabel(value: string): string {
+    return value
+      .split(/[-_]/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  }
+
+  private variantMatchesSelectedOptions(
+    variant: CheckoutProductVariantRecord,
+    selectedOptionsByName: Map<string, CheckoutRequestSelectedOption>
+  ): boolean {
+    return [...selectedOptionsByName.entries()].every(([selectedName, selectedOption]) =>
+      variant.optionValues.some(
+        ({ productOptionValue }) =>
+          this.normalizeOptionKey(productOptionValue.option.name) === selectedName &&
+          this.normalizeOptionKey(productOptionValue.value) ===
+            this.normalizeOptionKey(selectedOption.value)
+      )
+    );
+  }
+
+  private resolveUnitPriceCents(
+    product: CheckoutProductRecord,
+    variant: CheckoutProductVariantRecord | null
+  ): number | null {
+    if (!variant) {
+      return product.priceCents;
+    }
+
+    const currency = variant.currency.trim().toLowerCase();
+
+    if (currency !== V1_CURRENCY) {
+      return null;
+    }
+
+    if (this.isValidPriceCents(variant.priceCents)) {
+      return variant.priceCents;
+    }
+
+    return product.productKind === "table" ? product.priceCents : null;
   }
 
   private isVariantCheckoutable(variant: CheckoutProductVariantRecord): boolean {

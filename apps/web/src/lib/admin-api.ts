@@ -6,6 +6,9 @@ const ADMIN_API_TOKEN_HEADER = "x-internal-orders-token";
 export type AdminSectionStatus = "not_configured" | "ok" | "unavailable" | string;
 
 export interface AdminStripeReferences {
+  amountTaxCents: number | null;
+  amountTotalCents: number | null;
+  automaticTaxStatus: string | null;
   checkoutSessionId: string | null;
   customerId: string | null;
   paymentIntentId: string | null;
@@ -23,6 +26,7 @@ export interface AdminOrderListItem {
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  taxAmountCents: number | null;
   orderStatus: string;
   paymentStatus: string;
   itemCount: number;

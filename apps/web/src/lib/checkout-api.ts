@@ -45,6 +45,10 @@ export interface CheckoutSessionStatus {
   subtotalCents?: number;
   shippingCents?: number;
   totalCents?: number;
+  taxAmountCents?: number;
+  stripeAmountTotalCents?: number;
+  stripeAmountTaxCents?: number;
+  stripeAutomaticTaxStatus?: string;
   customerEmail?: string;
   paidAt?: string;
   createdAt?: string;

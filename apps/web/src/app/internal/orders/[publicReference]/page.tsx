@@ -48,6 +48,10 @@ function formatMoney(cents: number, currency: string): string {
   }).format(cents / 100);
 }
 
+function formatNullableMoney(cents: number | null | undefined, currency: string): string {
+  return typeof cents === "number" ? formatMoney(cents, currency) : "Not set";
+}
+
 function formatDateTime(value: string | null): string {
   if (!value) {
     return "Not set";
@@ -154,7 +158,7 @@ export default async function InternalOrderDetailPage({ params }: InternalOrderD
             <strong>{formatDateTime(order.paidAt)}</strong>
           </div>
           <div className={styles.summaryCard}>
-            <span>Total</span>
+            <span>App total</span>
             <strong>{formatMoney(order.totalCents, order.currency)}</strong>
           </div>
         </div>
@@ -205,8 +209,16 @@ export default async function InternalOrderDetailPage({ params }: InternalOrderD
               <dd>{formatMoney(order.shippingCents, order.currency)}</dd>
             </div>
             <div>
-              <dt>Total</dt>
+              <dt>App total before tax</dt>
               <dd>{formatMoney(order.totalCents, order.currency)}</dd>
+            </div>
+            <div>
+              <dt>Stripe tax</dt>
+              <dd>{formatNullableMoney(order.stripeAmountTaxCents, order.currency)}</dd>
+            </div>
+            <div>
+              <dt>Stripe charged total</dt>
+              <dd>{formatNullableMoney(order.stripeAmountTotalCents, order.currency)}</dd>
             </div>
             <div>
               <dt>Currency</dt>
@@ -278,6 +290,10 @@ export default async function InternalOrderDetailPage({ params }: InternalOrderD
             <div>
               <dt>Customer ID</dt>
               <dd className={styles.mono}>{formatNullable(order.stripeCustomerId)}</dd>
+            </div>
+            <div>
+              <dt>Automatic tax status</dt>
+              <dd className={styles.mono}>{formatNullable(order.stripeAutomaticTaxStatus)}</dd>
             </div>
             <div>
               <dt>Created</dt>

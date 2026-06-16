@@ -108,7 +108,8 @@ const TABLE_HERO_DISPLAY_TITLES: Record<string, string> = {
   "tiger-portland-indoor-table": "Portland Indoor",
   "tiger-portland-outdoor-table": "Portland Outdoor",
   "tiger-whistler-indoor-table": "Whistler",
-  "tiger-plaza-outdoor-table": "Plaza"
+  "tiger-plaza-outdoor-table": "Plaza",
+  "tiger-plaza-outdoor-table-grey": "Plaza"
 };
 
 async function loadProduct(slug: string): Promise<ProductResource> {

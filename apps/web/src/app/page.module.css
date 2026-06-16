@@ -6,7 +6,6 @@
 
 .hero,
 .positioning,
-.featured,
 .productFeatures,
 .shippingBand,
 .supportBand {
@@ -70,7 +69,6 @@
 }
 
 .title,
-.sectionHeader h2,
 .shippingBand h2,
 .supportBand h2 {
   margin: 0;
@@ -233,101 +231,11 @@
   line-height: 1.28;
 }
 
-.featured {
-  display: grid;
-  gap: 22px;
-}
-
-.sectionHeader {
-  display: grid;
-  gap: 10px;
-}
-
-.sectionHeader h2,
 .shippingBand h2,
 .supportBand h2 {
   max-width: 760px;
   font-size: 3.2rem;
   line-height: 0.96;
-}
-
-.categoryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.categoryCard {
-  position: relative;
-  display: grid;
-  min-height: 420px;
-  overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 82%);
-  border-radius: 8px;
-  padding: 28px;
-  color: inherit;
-  text-decoration: none;
-  background: rgb(255 255 255 / 72%);
-  box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 82%),
-    0 22px 54px rgb(27 36 65 / 8%);
-}
-
-.categoryCard::before {
-  position: absolute;
-  inset: auto -18% -30% auto;
-  width: 280px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: linear-gradient(145deg, rgb(242 138 46 / 42%), rgb(116 200 242 / 8%));
-  content: "";
-}
-
-.cardCopy {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  max-width: 360px;
-  gap: 10px;
-}
-
-.cardCopy small {
-  color: var(--tiger-orange-deep);
-  font-weight: 950;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.cardCopy strong {
-  color: var(--tiger-ink);
-  font-size: 2.15rem;
-  font-weight: 950;
-  line-height: 1;
-}
-
-.cardCopy span {
-  color: #586174;
-  font-size: 0.98rem;
-  font-weight: 750;
-  line-height: 1.45;
-}
-
-.cardCopy em {
-  color: var(--tiger-orange-deep);
-  font-size: 0.96rem;
-  font-style: normal;
-  font-weight: 950;
-}
-
-.categoryCard img {
-  position: absolute;
-  right: -8%;
-  bottom: -2%;
-  z-index: 1;
-  width: min(82%, 520px);
-  max-height: 270px;
-  object-fit: contain;
-  filter: drop-shadow(0 24px 38px rgb(27 36 65 / 16%));
 }
 
 .productFeatures {
@@ -506,10 +414,6 @@
     font-size: 4.4rem;
   }
 
-  .categoryGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .productFeature,
   .productFeature[data-layout="image-left"] {
     grid-template-columns: 1fr;
@@ -551,19 +455,13 @@
     max-width: calc(100% - 28px);
   }
 
-  .positioning,
-  .categoryGrid {
+  .positioning {
     grid-template-columns: 1fr;
   }
 
-  .sectionHeader h2,
   .shippingBand h2,
   .supportBand h2 {
     font-size: 2.25rem;
-  }
-
-  .categoryCard {
-    min-height: 360px;
   }
 
   .productFeature {

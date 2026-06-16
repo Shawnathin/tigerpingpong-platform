@@ -16,38 +16,6 @@ const WHISTLER_IMAGE =
   "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/116/623/whistler_indoor-04__70000.1665858593.jpg?c=1";
 const NET_POST_IMAGE =
   "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/128/images/644/home_accessories-net_post_set__11719.1650711219__23376.1659982669.386.513.png?c=1";
-const VICE_PADDLE_IMAGE =
-  "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/122/images/642/Asset_39__72425__25086.1659982440.386.513.jpg?c=1";
-
-const CATEGORY_CARDS = [
-  {
-    body: "Weather-ready outdoor builds and polished indoor tables for home, school, and club play.",
-    cta: "Explore tables",
-    href: "/tables/",
-    imageAlt: "Portland Outdoor table",
-    imageSrc: PORTLAND_IMAGE,
-    label: "Tables",
-    title: "From rec room to rain-ready."
-  },
-  {
-    body: "Entry-level paddle options for quick matches and everyday rallies.",
-    cta: "Shop paddles",
-    href: "/accessories/paddles/",
-    imageAlt: "Tiger Ping Pong Vice paddle",
-    imageSrc: VICE_PADDLE_IMAGE,
-    label: "Paddles",
-    title: "Add a clean, fast first serve."
-  },
-  {
-    body: "Covers and simple setup extras keep the table ready between matches.",
-    cta: "View accessories",
-    href: "/accessories/",
-    imageAlt: "Tiger Ping Pong outdoor table cover",
-    imageSrc: "/storefront/prototype/table-cover-transparent.png",
-    label: "Accessories",
-    title: "Protection that still looks party-ready."
-  }
-];
 
 const PRODUCT_FEATURES = [
   {
@@ -109,37 +77,19 @@ export default function Home() {
 
         <section className={styles.positioning} aria-label="Tiger Ping Pong promise">
           <div>
-            <span>Canada only</span>
-            <strong>Ships across Canada with a simple order rule.</strong>
+            <span>Canadian table tennis</span>
+            <strong>Vancouver-based and serving players across Canada for nearly 20 years.</strong>
           </div>
           <div>
-            <span>Secure checkout</span>
-            <strong>Product pages keep the path to purchase simple.</strong>
+            <span>Shipping promise</span>
+            <strong>Free shipping over $100 across Canada.</strong>
           </div>
           <div>
-            <span>Product lineup</span>
-            <strong>Shop tables, paddles, balls, and accessories.</strong>
-          </div>
-        </section>
-
-        <section className={styles.featured} aria-labelledby="featured-title">
-          <div className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Shop the lineup</p>
-            <h2 id="featured-title">Everything for the next match.</h2>
-          </div>
-
-          <div className={styles.categoryGrid}>
-            {CATEGORY_CARDS.map((card) => (
-              <a className={styles.categoryCard} href={card.href} key={card.label}>
-                <span className={styles.cardCopy}>
-                  <small>{card.label}</small>
-                  <strong>{card.title}</strong>
-                  <span>{card.body}</span>
-                  <em>{card.cta}</em>
-                </span>
-                <img src={card.imageSrc} alt={card.imageAlt} />
-              </a>
-            ))}
+            <span>Built to support play</span>
+            <strong>
+              Clear product pages, real support, and up to 10-year warranty coverage on select
+              tables.
+            </strong>
           </div>
         </section>
 

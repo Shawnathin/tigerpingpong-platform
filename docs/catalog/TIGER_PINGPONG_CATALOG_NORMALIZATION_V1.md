@@ -242,21 +242,25 @@ Rules:
 
 ## Media Normalization
 
-Cloudinary is the future media host.
+Cloudinary is the V1 media host for reviewed product media.
 
 Current scrape reality:
 
 - All source image URLs are BigCommerce CDN URLs.
 - The media manifest includes duplicate sizes/thumbnails.
 - Source URLs should be preserved as `source_url`.
-- Cloudinary public IDs and folders are suggestions, not approved uploaded
-  assets.
+- Older generated Cloudinary public IDs and folders from scrape output are
+  planning hints only.
+- Reviewed PR 43 Cloudinary media rows may include final public IDs and secure
+  URLs.
 
 Recommended media rule:
 
 - Do not hotlink BigCommerce/CDN images as final production media.
-- Do not import image rows as final product media until a later Cloudinary
-  migration task dedupes, uploads, and records Cloudinary references.
+- Import reviewed Cloudinary media rows only when the public ID and secure URL
+  are present and valid.
+- Keep source-only image rows, including current Aqua media, non-public until a
+  reviewed Cloudinary assignment exists.
 
 ## Import Readiness
 

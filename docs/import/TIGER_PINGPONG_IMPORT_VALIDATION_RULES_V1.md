@@ -180,17 +180,25 @@ is a warning.
 ## Media Rules
 
 BigCommerce and source image URLs are source metadata only. Cloudinary is the
-future production media host, but uploads happen in a later explicit task.
+accepted V1 product media host for reviewed media assignments. The validator
+does not upload media or call Cloudinary APIs.
 
 Rules:
 
 - Media `source_url` must be populated.
-- Media `cloudinary_secure_url` must remain blank.
+- Media `cloudinary_secure_url` may be blank for source-only or deferred media.
+- Populated `cloudinary_secure_url` values must be HTTPS Cloudinary image
+  delivery URLs under `res.cloudinary.com`.
+- Populated `cloudinary_secure_url` values require `cloudinary_public_id`, and
+  the public ID parsed from the URL must match the CSV public ID.
 - Media source URLs should be HTTP(S) metadata URLs.
-- Suggested Cloudinary folders should stay under the `tiger-pingpong/` prefix.
+- Suggested Cloudinary folders should stay under an accepted Tiger PingPong
+  product media prefix. Current uploaded media uses `tigerpingpong/products/`;
+  older source-only planning rows may still use `tiger-pingpong/products/`.
 - More than one primary media row for the same product is a warning.
 
-Non-blank `cloudinary_secure_url` values are errors.
+Invalid or mismatched Cloudinary secure URLs are errors. Valid reviewed
+Cloudinary secure URLs are allowed.
 
 ## Confirmed Business Update Rules
 
@@ -242,3 +250,12 @@ present.
 
 Warnings represent known review work. Errors represent structural problems that
 should block a future import task.
+
+Minimum deployed import gate:
+
+- `pnpm validate:tiger-import` must return `PASS` with zero errors before any
+  deployed catalog import tooling is run.
+- Warning rows must be reviewed before a deployed import. Blocker-severity
+  warnings, including table shipping policy and checkout policy review, block
+  public checkout/publishing decisions unless explicitly resolved or accepted
+  in the import runbook scope.

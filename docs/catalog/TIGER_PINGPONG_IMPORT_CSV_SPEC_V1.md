@@ -184,8 +184,8 @@ Variant options requiring manual approval:
 | `product_key` | Yes | References product. |
 | `variant_key` | No | Optional variant-specific media reference. |
 | `source_url` | Yes | Original BigCommerce/CDN image URL. |
-| `cloudinary_public_id` | No | Planned or final Cloudinary public ID. |
-| `cloudinary_secure_url` | No | Blank until uploaded in later task. |
+| `cloudinary_public_id` | No | Planned or reviewed final Cloudinary public ID. Required when `cloudinary_secure_url` is populated. |
+| `cloudinary_secure_url` | No | Blank for source-only/deferred media, or a reviewed `https://res.cloudinary.com/.../image/upload/...` delivery URL that matches `cloudinary_public_id`. |
 | `suggested_cloudinary_folder` | No | Planning helper. |
 | `suggested_final_filename` | No | Planning helper. |
 | `alt_text` | No | Reviewed alt text. |
@@ -204,6 +204,10 @@ Rules:
 - Do not hotlink BigCommerce/CDN images as the final production strategy.
 - Dedupe thumbnails and alternate sizes before upload.
 - Keep source image URLs for traceability.
+- Existing reviewed Cloudinary media rows may include final public IDs and
+  secure URLs.
+- Aqua source media currently remains source-only and should keep Cloudinary
+  fields blank until a reviewed Cloudinary assignment exists.
 
 ## `redirects_draft_v1.csv`
 

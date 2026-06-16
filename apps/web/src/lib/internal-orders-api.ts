@@ -52,6 +52,22 @@ export interface InternalOrderItem {
   createdAt: string | null;
 }
 
+export interface InternalOrderShipment {
+  carrier: string | null;
+  internalNote: string | null;
+  shippedAt: string | null;
+  trackingNumber: string | null;
+  trackingUrl: string | null;
+}
+
+export interface InternalOrderShipmentInput {
+  carrier: string;
+  internalNote: string;
+  shippedDate: string;
+  trackingNumber: string;
+  trackingUrl: string;
+}
+
 export interface InternalOrderDetail {
   publicReference: string;
   status: string;
@@ -74,6 +90,7 @@ export interface InternalOrderDetail {
   stripeAmountTotalCents: number | null;
   stripeAmountTaxCents: number | null;
   stripeAutomaticTaxStatus: string | null;
+  shipment: InternalOrderShipment;
   paidAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -132,22 +149,52 @@ export async function getInternalOrder(
   return response?.order ?? null;
 }
 
+export async function updateInternalOrderShipment(
+  publicReference: string,
+  input: InternalOrderShipmentInput
+): Promise<InternalOrderDetail> {
+  const response = await fetchInternalOrders<{ order: InternalOrderDetail }>(
+    `/internal/orders/${encodeURIComponent(publicReference)}/shipment`,
+    {
+      body: input,
+      method: "PATCH"
+    }
+  );
+
+  if (!response) {
+    throw new InternalOrdersApiError("Internal orders API returned no response.", null, "");
+  }
+
+  return response.order;
+}
+
 async function fetchInternalOrders<TResponse>(
   path: string,
-  options: { allowNotFound?: boolean } = {}
+  options: {
+    allowNotFound?: boolean;
+    body?: unknown;
+    method?: "GET" | "PATCH";
+  } = {}
 ): Promise<TResponse | null> {
   const url = `${getInternalOrdersApiBaseUrl()}${path}`;
   const apiToken = readInternalOrdersApiToken(url);
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    "x-internal-orders-token": apiToken
+  };
+
+  if (options.body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
 
   let response: Response;
 
   try {
     response = await fetch(url, {
       cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        "x-internal-orders-token": apiToken
-      }
+      method: options.method ?? "GET",
+      headers,
+      body: options.body === undefined ? undefined : JSON.stringify(options.body)
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Internal orders API request failed.";

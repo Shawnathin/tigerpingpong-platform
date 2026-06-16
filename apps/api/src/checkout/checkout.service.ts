@@ -6,7 +6,7 @@ import {
   ServiceUnavailableException
 } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
-import StripeConstructor from "stripe";
+import Stripe from "stripe";
 
 import { CheckoutConfig, getCheckoutConfig } from "../config";
 
@@ -17,6 +17,7 @@ const MAX_ITEMS = 20;
 const MAX_QUANTITY_PER_LINE = 10;
 const SHIPPING_RULE = "canada_free_over_100_flat_15";
 const STRIPE_CHECKOUT_SOURCE = "stripe_checkout";
+const STRIPE_TAX_BEHAVIOR = "exclusive" as const;
 const V1_CURRENCY = "cad";
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
 const NON_CHECKOUT_VARIANT_PURCHASE_MODES = new Set(["deferred_from_v1", "disabled"]);
@@ -243,7 +244,7 @@ interface RequiredVariantOption {
 @Injectable()
 export class CheckoutService implements OnModuleDestroy {
   private prisma: PrismaClient | null = null;
-  private stripe: ReturnType<typeof StripeConstructor> | null = null;
+  private stripe: ReturnType<typeof Stripe> | null = null;
   private stripeSecretKey: string | null = null;
 
   async onModuleDestroy(): Promise<void> {
@@ -1079,54 +1080,61 @@ export class CheckoutService implements OnModuleDestroy {
   private async createStripeSession(config: CheckoutConfig, order: CreatedCheckoutOrder) {
     const stripe = this.getStripe(config.stripeSecretKey);
     const metadata = this.createOrderMetadata(config, order);
-
-    return stripe.checkout.sessions.create(
-      {
-        mode: "payment",
-        automatic_tax: {
-          enabled: config.stripeTaxEnabled
-        },
-        line_items: order.items.map((item) => this.createStripeLineItem(item)),
-        shipping_address_collection: {
-          allowed_countries: ["CA"]
-        },
-        shipping_options: [
-          {
-            shipping_rate_data: {
-              type: "fixed_amount",
-              fixed_amount: {
-                amount: order.shippingCents,
-                currency: V1_CURRENCY
-              },
-              display_name:
-                order.shippingCents === 0
-                  ? "Standard shipping \u2014 Free"
-                  : "Standard shipping \u2014 $15"
+    const sessionParams = {
+      mode: "payment" as const,
+      ...(config.stripeTaxEnabled
+        ? {
+            automatic_tax: {
+              enabled: true
             }
           }
-        ],
-        success_url: config.successUrl,
-        cancel_url: config.cancelUrl,
-        client_reference_id: order.id,
-        metadata,
-        payment_intent_data: {
-          metadata: {
-            orderId: order.id,
-            publicReference: order.publicReference,
-            source: CHECKOUT_SOURCE,
-            website: "tigerpingpong",
-            environment: config.appEnv
-          }
-        },
-        customer_email: order.customerEmail ?? undefined
+        : {}),
+      line_items: order.items.map((item) => this.createStripeLineItem(config, item)),
+      shipping_address_collection: {
+        allowed_countries: ["CA" as const]
       },
-      {
-        idempotencyKey: `checkout_session_create:${order.id}`
-      }
-    );
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount" as const,
+            fixed_amount: {
+              amount: order.shippingCents,
+              currency: V1_CURRENCY
+            },
+            display_name:
+              order.shippingCents === 0
+                ? "Standard shipping \u2014 Free"
+                : "Standard shipping \u2014 $15",
+            ...(config.stripeTaxEnabled
+              ? {
+                  tax_behavior: STRIPE_TAX_BEHAVIOR
+                }
+              : {})
+          }
+        }
+      ],
+      success_url: config.successUrl,
+      cancel_url: config.cancelUrl,
+      client_reference_id: order.id,
+      metadata,
+      payment_intent_data: {
+        metadata: {
+          orderId: order.id,
+          publicReference: order.publicReference,
+          source: CHECKOUT_SOURCE,
+          website: "tigerpingpong",
+          environment: config.appEnv
+        }
+      },
+      customer_email: order.customerEmail ?? undefined
+    };
+
+    return stripe.checkout.sessions.create(sessionParams, {
+      idempotencyKey: `checkout_session_create:${order.id}`
+    });
   }
 
-  private createStripeLineItem(item: CreatedCheckoutOrder["items"][number]) {
+  private createStripeLineItem(config: CheckoutConfig, item: CreatedCheckoutOrder["items"][number]) {
     const productData: { images?: string[]; name: string } = {
       name: item.name
     };
@@ -1139,7 +1147,12 @@ export class CheckoutService implements OnModuleDestroy {
       price_data: {
         currency: V1_CURRENCY,
         unit_amount: item.unitPriceCents,
-        product_data: productData
+        product_data: productData,
+        ...(config.stripeTaxEnabled
+          ? {
+              tax_behavior: STRIPE_TAX_BEHAVIOR
+            }
+          : {})
       },
       quantity: item.quantity
     };
@@ -1215,9 +1228,9 @@ export class CheckoutService implements OnModuleDestroy {
     return this.prisma;
   }
 
-  private getStripe(secretKey: string): ReturnType<typeof StripeConstructor> {
+  private getStripe(secretKey: string): ReturnType<typeof Stripe> {
     if (!this.stripe || this.stripeSecretKey !== secretKey) {
-      this.stripe = new StripeConstructor(secretKey, {
+      this.stripe = new Stripe(secretKey, {
         appInfo: {
           name: "Tiger Ping Pong Checkout",
           version: "1.0.0"

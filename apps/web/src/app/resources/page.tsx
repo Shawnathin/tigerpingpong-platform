@@ -17,8 +17,24 @@ export const metadata: Metadata = {
 
 const featuredArticle = RESOURCE_ARTICLES[0];
 
-function getPrimaryCta(article: ResourceArticle) {
-  return article.ctas.find((cta) => cta.variant === "primary") ?? article.ctas[0];
+function getArticleHref(article: ResourceArticle) {
+  return `/resources/${article.slug}`;
+}
+
+function getArticleCtaLabel(article: ResourceArticle) {
+  if (article.category === "Buying Guide") {
+    return "Read the Buyer's Guide";
+  }
+
+  if (article.category === "Rules") {
+    return "Learn the Rules";
+  }
+
+  if (article.category === "Room Planning") {
+    return "Check Room Size";
+  }
+
+  return "Compare Indoor vs Outdoor";
 }
 
 export default function ResourcesPage() {
@@ -51,17 +67,12 @@ export default function ResourcesPage() {
             <h2 id="featured-resource-title">{featuredArticle.title}</h2>
             <p>{featuredArticle.excerpt}</p>
             <div className={styles.cardActions}>
-              {featuredArticle.ctas.map((cta) => (
-                <a
-                  className={
-                    cta.variant === "primary" ? styles.primaryAction : styles.secondaryAction
-                  }
-                  href={cta.href}
-                  key={cta.href}
-                >
-                  {cta.label}
-                </a>
-              ))}
+              <a className={styles.primaryAction} href={getArticleHref(featuredArticle)}>
+                Read the Buyer's Guide
+              </a>
+              <a className={styles.secondaryAction} href="/tables/">
+                Shop tables
+              </a>
             </div>
           </div>
           <aside className={styles.featuredAside} aria-label="Featured guide details">
@@ -78,8 +89,6 @@ export default function ResourcesPage() {
           </div>
           <div className={styles.cardGrid}>
             {RESOURCE_ARTICLES.map((article) => {
-              const primaryCta = getPrimaryCta(article);
-
               return (
                 <article className={styles.card} key={article.slug}>
                   <p className={styles.tag}>{article.category}</p>
@@ -89,8 +98,8 @@ export default function ResourcesPage() {
                   </p>
                   <p>{article.excerpt}</p>
                   <div className={styles.cardActions}>
-                    <a className={styles.primaryAction} href={primaryCta.href}>
-                      {primaryCta.label}
+                    <a className={styles.primaryAction} href={getArticleHref(article)}>
+                      {getArticleCtaLabel(article)}
                     </a>
                   </div>
                 </article>

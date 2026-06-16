@@ -20,6 +20,7 @@
     "validate:tiger-import": "node tools/tiger-import-validator/src/validate-tiger-import.mjs",
     "media:cloudinary:products": "node scripts/upload-product-media-to-cloudinary.mjs",
     "import:tiger:dev": "pnpm --filter @tigerpingpong/db import:tiger:dev",
+    "import:tiger:deployed": "pnpm --filter @tigerpingpong/db import:tiger:deployed",
     "db:generate": "pnpm --filter @tigerpingpong/db prisma:generate",
     "db:validate": "pnpm --filter @tigerpingpong/db prisma:validate"
   },

@@ -19,6 +19,7 @@ import {
   getProductContentBySlug,
   type NormalizedProductContent
 } from "../../../../lib/product-content";
+import { getCanonicalUrl } from "../../../../lib/seo";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
@@ -153,9 +154,23 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   const normalizedContent = getProductContentBySlug(product.slug);
 
+  const title = `${product.name} | Tiger Ping Pong`;
+  const description = getProductMetadataDescription(product, normalizedContent);
+  const canonicalUrl = getCanonicalUrl(`/catalog/products/${product.slug}`);
+
   return {
-    title: `${product.name} | Tiger Ping Pong`,
-    description: getProductMetadataDescription(product, normalizedContent)
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl
+    },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: canonicalUrl,
+      siteName: "Tiger Ping Pong"
+    }
   };
 }
 

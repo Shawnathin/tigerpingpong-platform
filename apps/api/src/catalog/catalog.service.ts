@@ -389,9 +389,7 @@ export class CatalogService implements OnModuleDestroy {
               }
             },
             media: {
-              where: {
-                isActive: true
-              },
+              where: this.getMediaWhere(options.includeInternal),
               orderBy: [
                 {
                   isPrimary: "desc"
@@ -450,9 +448,7 @@ export class CatalogService implements OnModuleDestroy {
           }
         },
         media: {
-          where: {
-            isActive: true
-          },
+          where: this.getMediaWhere(options.includeInternal),
           orderBy: [
             {
               isPrimary: "desc"
@@ -550,9 +546,7 @@ export class CatalogService implements OnModuleDestroy {
           }
         },
         media: {
-          where: {
-            isActive: true
-          },
+          where: this.getMediaWhere(options.includeInternal),
           orderBy: [
             {
               isPrimary: "desc"
@@ -605,7 +599,7 @@ export class CatalogService implements OnModuleDestroy {
           }
         },
         sourceRelationships: {
-          where: this.getRelationshipWhere(options.includeInternal),
+          where: this.getOutgoingRelationshipWhere(options.includeInternal),
           orderBy: {
             sortOrder: "asc"
           },
@@ -619,7 +613,7 @@ export class CatalogService implements OnModuleDestroy {
           }
         },
         targetRelationships: {
-          where: this.getRelationshipWhere(options.includeInternal),
+          where: this.getIncomingRelationshipWhere(options.includeInternal),
           orderBy: {
             sortOrder: "asc"
           },
@@ -672,22 +666,53 @@ export class CatalogService implements OnModuleDestroy {
     return {
       status: "active",
       v1PublicNavigation: true,
-      productKind: {
-        not: "replacement_part"
-      },
       purchaseMode: {
         not: "deferred_from_v1"
       }
     };
   }
 
-  private getRelationshipWhere(includeInternal: boolean): Prisma.ProductRelationshipWhereInput {
+  private getMediaWhere(includeInternal: boolean): Prisma.ProductMediaWhereInput {
     return {
       isActive: true,
       ...(includeInternal
         ? {}
         : {
             isPublic: true
+          })
+    };
+  }
+
+  private getOutgoingRelationshipWhere(
+    includeInternal: boolean
+  ): Prisma.ProductRelationshipWhereInput {
+    return {
+      isActive: true,
+      ...(includeInternal
+        ? {}
+        : {
+            isPublic: true,
+            targetProduct: this.getPublicProductWhere({
+              includeInternal: false,
+              includeReplacementParts: false
+            })
+          })
+    };
+  }
+
+  private getIncomingRelationshipWhere(
+    includeInternal: boolean
+  ): Prisma.ProductRelationshipWhereInput {
+    return {
+      isActive: true,
+      ...(includeInternal
+        ? {}
+        : {
+            isPublic: true,
+            sourceProduct: this.getPublicProductWhere({
+              includeInternal: false,
+              includeReplacementParts: false
+            })
           })
     };
   }

@@ -7,6 +7,7 @@ import {
   RESOURCE_ARTICLES,
   type ResourceArticle
 } from "../../../lib/resource-articles";
+import { getCanonicalUrl, getPathMetadata } from "../../../lib/seo";
 import { PublicStorefrontFooter } from "../../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 import styles from "../page.module.css";
@@ -33,12 +34,17 @@ export function generateMetadata({ params }: ResourceArticlePageProps): Metadata
     };
   }
 
-  return {
+  const metadata = getPathMetadata({
+    pathname: `/resources/${article.slug}`,
     title: article.metaTitle,
     description: article.metaDescription,
+    type: "article"
+  });
+
+  return {
+    ...metadata,
     openGraph: {
-      title: article.metaTitle,
-      description: article.metaDescription,
+      ...metadata.openGraph,
       type: "article",
       publishedTime: `${article.publishedDate}T00:00:00.000Z`,
       modifiedTime: `${article.updatedDate}T00:00:00.000Z`
@@ -60,7 +66,7 @@ function getArticleJsonLd(article: ResourceArticle) {
     headline: article.metaTitle,
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://tigerpingpong.ca/resources/${article.slug}`
+      "@id": getCanonicalUrl(`/resources/${article.slug}`)
     },
     publisher: {
       "@type": "Organization",

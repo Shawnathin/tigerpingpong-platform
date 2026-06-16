@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { getSiteUrl } from "../lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Tiger Ping Pong",
-  description: "TigerPingPong.ca public storefront."
+  description: "TigerPingPong.ca public storefront.",
+  metadataBase: new URL(getSiteUrl())
 };
 
 export default function RootLayout({

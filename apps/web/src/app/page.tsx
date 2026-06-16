@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 
+import { getPathMetadata } from "../lib/seo";
 import { PublicStorefrontFooter } from "./PublicStorefrontFooter";
 import { PublicStorefrontNav } from "./PublicStorefrontNav";
 import styles from "./page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = getPathMetadata({
+  pathname: "/",
   title: "Tiger Ping Pong | Tables, Paddles, Balls, and Accessories",
   description:
-    "Shop Tiger Ping Pong tables, paddles, balls, and accessories with Canada-wide shipping."
-};
+    "Shop Tiger Ping Pong tables, paddles, balls, and accessories with secure checkout and simple Canada-wide shipping."
+});
 
 const PORTLAND_IMAGE =
   "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1";

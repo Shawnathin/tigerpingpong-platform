@@ -5,15 +5,17 @@ import {
   RESOURCE_ARTICLES,
   type ResourceArticle
 } from "../../lib/resource-articles";
+import { getPathMetadata } from "../../lib/seo";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import styles from "./page.module.css";
 
-export const metadata: Metadata = {
-  title: "Ping Pong Resources | Tiger PingPong",
+export const metadata: Metadata = getPathMetadata({
+  pathname: "/resources",
+  title: "Ping Pong Resources | Tiger Ping Pong",
   description:
-    "Helpful guides for choosing a ping pong table, planning your room, learning the rules, and comparing indoor and outdoor table tennis tables."
-};
+    "Read Tiger Ping Pong guides for choosing a table, planning room size, learning rules, and comparing indoor and outdoor table tennis tables."
+});
 
 const featuredArticle = RESOURCE_ARTICLES[0];
 

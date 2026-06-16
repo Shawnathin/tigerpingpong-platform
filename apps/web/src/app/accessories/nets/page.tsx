@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 
+import { getPathMetadata } from "../../../lib/seo";
 import { CategoryLandingPage } from "../../CategoryLandingPage";
 import { getCategoryPageConfig } from "../../category-pages";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = getPathMetadata({
+  pathname: "/accessories/nets",
   title: "Ping Pong Nets | Tiger Ping Pong",
-  description: "Shop Tiger Ping Pong table tennis nets and post sets."
-};
+  description:
+    "Shop Tiger Ping Pong table tennis nets and post sets for reliable everyday table setup."
+});
 
 export default function NetsPage() {
   return <CategoryLandingPage config={getCategoryPageConfig("nets")} />;

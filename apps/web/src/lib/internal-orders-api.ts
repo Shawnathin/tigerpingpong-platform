@@ -12,10 +12,14 @@ export interface InternalOrderListItem {
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  taxAmountCents: number | null;
   itemCount: number;
   stripeCheckoutSessionId: string | null;
   stripePaymentIntentId: string | null;
   stripeCustomerId: string | null;
+  stripeAmountTotalCents: number | null;
+  stripeAmountTaxCents: number | null;
+  stripeAutomaticTaxStatus: string | null;
   paidAt: string | null;
   createdAt: string | null;
 }
@@ -61,11 +65,15 @@ export interface InternalOrderDetail {
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  taxAmountCents: number | null;
   shippingRule: string;
   checkoutSource: string;
   stripeCheckoutSessionId: string | null;
   stripePaymentIntentId: string | null;
   stripeCustomerId: string | null;
+  stripeAmountTotalCents: number | null;
+  stripeAmountTaxCents: number | null;
+  stripeAutomaticTaxStatus: string | null;
   paidAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;

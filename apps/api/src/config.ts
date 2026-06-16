@@ -7,11 +7,13 @@ export interface CheckoutConfig {
   appEnv: string;
   cancelUrl: string;
   stripeSecretKey: string;
+  stripeTaxEnabled: boolean;
   successUrl: string;
 }
 
 export interface StripeWebhookConfig {
   expectedLivemode?: boolean;
+  stripeTaxEnabled: boolean;
   stripeWebhookSecret: string;
 }
 
@@ -82,6 +84,7 @@ export function getCheckoutConfig(env: NodeJS.ProcessEnv = process.env): Checkou
     appEnv: env.APP_ENV?.trim() || env.NODE_ENV?.trim() || "development",
     cancelUrl: readRequiredString(env.CHECKOUT_CANCEL_URL, "CHECKOUT_CANCEL_URL"),
     stripeSecretKey: readRequiredString(env.STRIPE_SECRET_KEY, "STRIPE_SECRET_KEY"),
+    stripeTaxEnabled: readOptionalBoolean(env.STRIPE_TAX_ENABLED, "STRIPE_TAX_ENABLED") ?? false,
     successUrl: readRequiredString(env.CHECKOUT_SUCCESS_URL, "CHECKOUT_SUCCESS_URL")
   };
 }
@@ -89,6 +92,7 @@ export function getCheckoutConfig(env: NodeJS.ProcessEnv = process.env): Checkou
 export function getStripeWebhookConfig(env: NodeJS.ProcessEnv = process.env): StripeWebhookConfig {
   return {
     expectedLivemode: readOptionalBoolean(env.STRIPE_EXPECTED_LIVEMODE, "STRIPE_EXPECTED_LIVEMODE"),
+    stripeTaxEnabled: readOptionalBoolean(env.STRIPE_TAX_ENABLED, "STRIPE_TAX_ENABLED") ?? false,
     stripeWebhookSecret: readRequiredString(env.STRIPE_WEBHOOK_SECRET, "STRIPE_WEBHOOK_SECRET")
   };
 }

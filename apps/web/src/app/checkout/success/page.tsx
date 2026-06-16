@@ -73,6 +73,18 @@ function formatMoney(cents: number, currency: string): string {
   }).format(cents / 100);
 }
 
+function getPaidDisplayTotalCents(status: CheckoutSessionStatus | null): number | null {
+  if (!status || status.status !== "paid") {
+    return null;
+  }
+
+  if (typeof status.stripeAmountTotalCents === "number") {
+    return status.stripeAmountTotalCents;
+  }
+
+  return typeof status.totalCents === "number" ? status.totalCents : null;
+}
+
 function formatDateTime(value: string): string {
   const date = new Date(value);
 
@@ -193,6 +205,7 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
   const isPaid = status?.found && status.status === "paid";
   const currency = status?.currency ?? "cad";
   const publicReference = status?.found ? status.publicReference : null;
+  const paidDisplayTotalCents = getPaidDisplayTotalCents(status);
 
   return (
     <>
@@ -248,10 +261,16 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
                 <dd>{status.publicReference}</dd>
               </div>
             ) : null}
-            {isPaid && typeof status.totalCents === "number" ? (
+            {isPaid && typeof paidDisplayTotalCents === "number" ? (
               <div>
                 <dt>Total</dt>
-                <dd>{formatMoney(status.totalCents, currency)}</dd>
+                <dd>{formatMoney(paidDisplayTotalCents, currency)}</dd>
+              </div>
+            ) : null}
+            {isPaid && typeof status?.stripeAmountTaxCents === "number" ? (
+              <div>
+                <dt>Tax</dt>
+                <dd>{formatMoney(status.stripeAmountTaxCents, currency)}</dd>
               </div>
             ) : null}
             {isPaid && status.paidAt ? (

@@ -61,6 +61,9 @@ interface VerifiedStripeEvent {
 interface StripeCheckoutSessionPayload {
   amount_subtotal: number | null;
   amount_total: number | null;
+  automatic_tax?: {
+    status?: unknown;
+  } | null;
   client_reference_id: string | null;
   collected_information?: {
     shipping_details?: unknown;
@@ -85,6 +88,20 @@ interface StripeCheckoutSessionPayload {
     amount_total?: unknown;
   } | null;
   status: string | null;
+  total_details?: {
+    amount_discount?: unknown;
+    amount_shipping?: unknown;
+    amount_tax?: unknown;
+  } | null;
+}
+
+interface StripeTotalSnapshot {
+  automaticTaxStatus: string | null;
+  discountCents: number | null;
+  shippingCents: number | null;
+  subtotalCents: number | null;
+  taxCents: number | null;
+  totalCents: number | null;
 }
 
 @Injectable()
@@ -337,25 +354,15 @@ export class StripeWebhookService implements OnModuleDestroy {
       return "checkout_session_currency_mismatch";
     }
 
-    if (session.amount_total !== order.totalCents) {
-      return "checkout_session_total_mismatch";
-    }
+    const stripeTotals = this.createStripeTotalSnapshot(session);
+    const totalValidationIssue = this.validateStripeTotalsForOrder(
+      stripeTotals,
+      order,
+      config.stripeTaxEnabled
+    );
 
-    if (
-      typeof session.amount_subtotal === "number" &&
-      session.amount_subtotal !== order.subtotalCents
-    ) {
-      return "checkout_session_subtotal_mismatch";
-    }
-
-    if (session.shipping_cost) {
-      if (typeof session.shipping_cost.amount_total !== "number") {
-        return "checkout_session_shipping_cost_missing_amount";
-      }
-
-      if (session.shipping_cost.amount_total !== order.shippingCents) {
-        return "checkout_session_shipping_cost_mismatch";
-      }
+    if (totalValidationIssue) {
+      return totalValidationIssue;
     }
 
     const shippingDetails = this.readShippingDetails(session);
@@ -424,8 +431,13 @@ export class StripeWebhookService implements OnModuleDestroy {
     paymentIntentId: string | null,
     paidAt: Date
   ): Prisma.OrderUpdateInput {
+    const stripeTotals = this.createStripeTotalSnapshot(session);
     const data: Prisma.OrderUpdateInput = {
       paidAt,
+      stripeAmountTaxCents: stripeTotals.taxCents,
+      stripeAmountTotalCents: stripeTotals.totalCents,
+      stripeAutomaticTaxStatus: stripeTotals.automaticTaxStatus,
+      taxAmountCents: stripeTotals.taxCents,
       status: "paid"
     };
 
@@ -530,6 +542,85 @@ export class StripeWebhookService implements OnModuleDestroy {
     }
 
     return addressJson;
+  }
+
+  private createStripeTotalSnapshot(session: StripeCheckoutSessionPayload): StripeTotalSnapshot {
+    const totalDetailsShippingCents = this.readOptionalCents(
+      session.total_details?.amount_shipping
+    );
+    const legacyShippingCents = this.readOptionalCents(session.shipping_cost?.amount_total);
+
+    return {
+      automaticTaxStatus: this.normalizeOptionalString(session.automatic_tax?.status),
+      discountCents: this.readOptionalCents(session.total_details?.amount_discount),
+      shippingCents: totalDetailsShippingCents ?? legacyShippingCents,
+      subtotalCents: this.readOptionalCents(session.amount_subtotal),
+      taxCents: this.readOptionalCents(session.total_details?.amount_tax),
+      totalCents: this.readOptionalCents(session.amount_total)
+    };
+  }
+
+  private validateStripeTotalsForOrder(
+    stripeTotals: StripeTotalSnapshot,
+    order: CheckoutOrder,
+    stripeTaxEnabled: boolean
+  ): string | null {
+    if (stripeTotals.totalCents === null) {
+      return "checkout_session_total_missing";
+    }
+
+    if (stripeTotals.subtotalCents === null) {
+      return "checkout_session_subtotal_missing";
+    }
+
+    if (stripeTotals.subtotalCents !== order.subtotalCents) {
+      return "checkout_session_subtotal_mismatch";
+    }
+
+    if (stripeTotals.shippingCents === null) {
+      return "checkout_session_shipping_cost_missing_amount";
+    }
+
+    if (stripeTotals.shippingCents !== order.shippingCents) {
+      return "checkout_session_shipping_cost_mismatch";
+    }
+
+    if (stripeTotals.discountCents !== null && stripeTotals.discountCents !== 0) {
+      return "checkout_session_discount_not_supported";
+    }
+
+    if (!stripeTaxEnabled) {
+      if (stripeTotals.totalCents !== order.totalCents) {
+        return "checkout_session_total_mismatch";
+      }
+
+      return null;
+    }
+
+    if (stripeTotals.automaticTaxStatus !== "complete") {
+      return "checkout_session_automatic_tax_not_complete";
+    }
+
+    if (stripeTotals.taxCents === null) {
+      return "checkout_session_tax_amount_missing";
+    }
+
+    if (stripeTotals.taxCents < 0) {
+      return "checkout_session_tax_amount_invalid";
+    }
+
+    const expectedStripeTotalCents =
+      order.subtotalCents + order.shippingCents + stripeTotals.taxCents;
+
+    if (stripeTotals.totalCents !== expectedStripeTotalCents) {
+      return "checkout_session_tax_inclusive_total_mismatch";
+    }
+
+    return null;
+  }
+
+  private readOptionalCents(value: unknown): number | null {
+    return typeof value === "number" && Number.isInteger(value) ? value : null;
   }
 
   private normalizeOptionalString(value: unknown): string | null {

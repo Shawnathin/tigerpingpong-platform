@@ -96,6 +96,10 @@ interface CheckoutSessionStatusResponse {
   subtotalCents?: number;
   shippingCents?: number;
   totalCents?: number;
+  taxAmountCents?: number;
+  stripeAmountTotalCents?: number;
+  stripeAmountTaxCents?: number;
+  stripeAutomaticTaxStatus?: string;
   customerEmail?: string;
   paidAt?: string;
   createdAt?: string;
@@ -115,6 +119,10 @@ const checkoutStatusOrderSelect = {
   subtotalCents: true,
   shippingCents: true,
   totalCents: true,
+  taxAmountCents: true,
+  stripeAmountTotalCents: true,
+  stripeAmountTaxCents: true,
+  stripeAutomaticTaxStatus: true,
   customerEmail: true,
   paidAt: true,
   createdAt: true
@@ -600,6 +608,10 @@ export class CheckoutService implements OnModuleDestroy {
       subtotalCents: order.subtotalCents,
       shippingCents: order.shippingCents,
       totalCents: order.totalCents,
+      taxAmountCents: order.taxAmountCents ?? undefined,
+      stripeAmountTotalCents: order.stripeAmountTotalCents ?? undefined,
+      stripeAmountTaxCents: order.stripeAmountTaxCents ?? undefined,
+      stripeAutomaticTaxStatus: order.stripeAutomaticTaxStatus ?? undefined,
       customerEmail: order.customerEmail ?? undefined,
       paidAt: order.paidAt?.toISOString(),
       createdAt: order.createdAt.toISOString(),
@@ -1071,6 +1083,9 @@ export class CheckoutService implements OnModuleDestroy {
     return stripe.checkout.sessions.create(
       {
         mode: "payment",
+        automatic_tax: {
+          enabled: config.stripeTaxEnabled
+        },
         line_items: order.items.map((item) => this.createStripeLineItem(item)),
         shipping_address_collection: {
           allowed_countries: ["CA"]
@@ -1143,7 +1158,8 @@ export class CheckoutService implements OnModuleDestroy {
       shippingRuleVersion: "v1",
       subtotalCents: String(order.subtotalCents),
       shippingCents: String(order.shippingCents),
-      totalCents: String(order.totalCents)
+      totalCents: String(order.totalCents),
+      stripeTaxEnabled: config.stripeTaxEnabled ? "true" : "false"
     };
   }
 

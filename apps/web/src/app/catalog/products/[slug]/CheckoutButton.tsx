@@ -21,8 +21,11 @@ export interface ProductOptionGroup {
 }
 
 export interface ProductOptionValue {
+  currency?: string;
   label: string;
+  priceCents?: number;
   value: string;
+  variantKey?: string;
 }
 
 interface CheckoutButtonProps {
@@ -196,6 +199,10 @@ export function CheckoutButton({
     () => getSelectedOptions(productOptions, selectedOptionValues),
     [productOptions, selectedOptionValues]
   );
+  const selectedOptionPrice = useMemo(
+    () => getSelectedOptionPrice(productOptions, selectedOptionValues),
+    [productOptions, selectedOptionValues]
+  );
   const isSelectionComplete = productOptions.every(
     (optionGroup) => !optionGroup.required || Boolean(selectedOptionValues[optionGroup.name])
   );
@@ -208,8 +215,14 @@ export function CheckoutButton({
 
     const productForCart = {
       ...product,
+      selectedVariantKey: selectedOptionPrice?.variantKey,
       selectedOptions
     };
+
+    if (selectedOptionPrice) {
+      productForCart.currency = selectedOptionPrice.currency;
+      productForCart.unitPriceCents = selectedOptionPrice.priceCents;
+    }
 
     addItem(productForCart);
     setAddedProduct(productForCart);
@@ -290,6 +303,14 @@ export function CheckoutButton({
                       <span className={getOptionSwatchClassName(optionValue)} aria-hidden="true" />
                       <span className={styles.optionChoiceText}>
                         <strong>{optionValue.label}</strong>
+                        {optionValue.priceCents ? (
+                          <small>
+                            {formatCartMoney(
+                              optionValue.priceCents,
+                              optionValue.currency ?? product.currency
+                            )}
+                          </small>
+                        ) : null}
                       </span>
                     </label>
                   );
@@ -357,4 +378,34 @@ function getSelectionError(productOptions: ProductOptionGroup[]): string {
   return firstRequiredOption
     ? `Select ${firstRequiredOption.displayName.toLowerCase()} to add this item.`
     : "Select the required option to add this item.";
+}
+
+function getSelectedOptionPrice(
+  productOptions: ProductOptionGroup[],
+  selectedOptionValues: Record<string, string>
+): { currency: string; priceCents: number; variantKey?: string } | null {
+  const pricedSelections = productOptions
+    .map((optionGroup) => {
+      const selectedValue = selectedOptionValues[optionGroup.name];
+      return optionGroup.values.find((value) => value.value === selectedValue);
+    })
+    .filter(
+      (
+        optionValue
+      ): optionValue is ProductOptionValue & {
+        priceCents: number;
+      } => Boolean(optionValue && typeof optionValue.priceCents === "number")
+    );
+
+  if (pricedSelections.length !== 1) {
+    return null;
+  }
+
+  const pricedSelection = pricedSelections[0];
+
+  return {
+    currency: pricedSelection.currency ?? "CAD",
+    priceCents: pricedSelection.priceCents,
+    variantKey: pricedSelection.variantKey
+  };
 }

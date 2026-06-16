@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, Headers, Param, Query } from "@nestjs/common";
 
+import { AdminAuthHeaderValue, assertAdminApiAuthorized } from "../admin/admin-auth";
 import { CatalogService } from "./catalog.service";
 
 interface CatalogQuery {
@@ -9,6 +10,23 @@ interface CatalogQuery {
 
 function isEnabled(value: string | undefined): boolean {
   return value === "1" || value === "true" || value === "yes";
+}
+
+function getCatalogRequestOptions(
+  query: CatalogQuery,
+  requestToken: AdminAuthHeaderValue
+) {
+  const includeInternal = isEnabled(query.includeInternal);
+  const includeReplacementParts = isEnabled(query.includeReplacementParts);
+
+  if (includeInternal || includeReplacementParts) {
+    assertAdminApiAuthorized(requestToken);
+  }
+
+  return {
+    includeInternal,
+    includeReplacementParts
+  };
 }
 
 @Controller("catalog")
@@ -21,46 +39,52 @@ export class CatalogController {
   }
 
   @Get("categories")
-  categories(@Query() query: CatalogQuery): Promise<unknown> {
-    return this.catalogService.getCategories({
-      includeInternal: isEnabled(query.includeInternal)
-    });
+  categories(
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Query() query: CatalogQuery
+  ): Promise<unknown> {
+    return this.catalogService.getCategories(getCatalogRequestOptions(query, requestToken));
   }
 
   @Get("product-families")
-  productFamilies(@Query() query: CatalogQuery): Promise<unknown> {
-    return this.catalogService.getProductFamilies({
-      includeInternal: isEnabled(query.includeInternal)
-    });
+  productFamilies(
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Query() query: CatalogQuery
+  ): Promise<unknown> {
+    return this.catalogService.getProductFamilies(
+      getCatalogRequestOptions(query, requestToken)
+    );
   }
 
   @Get("families/:slug")
   familyBySlug(
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
     @Param("slug") slug: string,
     @Query() query: CatalogQuery
   ): Promise<unknown> {
-    return this.catalogService.getFamilyBySlug(slug, {
-      includeInternal: isEnabled(query.includeInternal),
-      includeReplacementParts: isEnabled(query.includeReplacementParts)
-    });
+    return this.catalogService.getFamilyBySlug(
+      slug,
+      getCatalogRequestOptions(query, requestToken)
+    );
   }
 
   @Get("products")
-  products(@Query() query: CatalogQuery): Promise<unknown> {
-    return this.catalogService.getProducts({
-      includeInternal: isEnabled(query.includeInternal),
-      includeReplacementParts: isEnabled(query.includeReplacementParts)
-    });
+  products(
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Query() query: CatalogQuery
+  ): Promise<unknown> {
+    return this.catalogService.getProducts(getCatalogRequestOptions(query, requestToken));
   }
 
   @Get("products/:slug")
   productBySlug(
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
     @Param("slug") slug: string,
     @Query() query: CatalogQuery
   ): Promise<unknown> {
-    return this.catalogService.getProductBySlug(slug, {
-      includeInternal: isEnabled(query.includeInternal),
-      includeReplacementParts: isEnabled(query.includeReplacementParts)
-    });
+    return this.catalogService.getProductBySlug(
+      slug,
+      getCatalogRequestOptions(query, requestToken)
+    );
   }
 }

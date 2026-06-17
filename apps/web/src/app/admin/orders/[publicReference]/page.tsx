@@ -7,11 +7,11 @@ import { saveShipmentRecord } from "./actions";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Internal Order Detail | Tiger Ping Pong Platform",
-  description: "Protected internal order detail."
+  title: "Admin Order Detail | Tiger Ping Pong",
+  description: "Protected Tiger Ping Pong staff order detail."
 };
 
-interface InternalOrderDetailPageProps {
+interface AdminOrderDetailPageProps {
   params: {
     publicReference: string;
   };
@@ -21,14 +21,14 @@ interface InternalOrderDetailPageProps {
   };
 }
 
-export default function InternalOrderDetailPage({
+export default function AdminOrderDetailPage({
   params,
   searchParams
-}: InternalOrderDetailPageProps) {
+}: AdminOrderDetailPageProps) {
   return (
     <StaffOrderDetailPage
-      backHref="/internal/orders"
-      eyebrow="Tiger Ping Pong internal"
+      backHref="/admin/orders"
+      eyebrow="Tiger Ping Pong admin"
       publicReference={params.publicReference}
       saveShipmentRecord={saveShipmentRecord}
       searchParams={searchParams}

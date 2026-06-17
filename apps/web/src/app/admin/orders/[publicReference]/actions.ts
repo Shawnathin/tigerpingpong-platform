@@ -8,5 +8,5 @@ export async function saveShipmentRecord(formData: FormData): Promise<void> {
   const result = await updateShipmentFromForm(formData);
   const statusParam = result.saved ? "shipmentSaved=1" : "shipmentError=1";
 
-  redirect(`/internal/orders/${encodeURIComponent(result.publicReference)}?${statusParam}`);
+  redirect(`/admin/orders/${encodeURIComponent(result.publicReference)}?${statusParam}`);
 }

@@ -273,6 +273,17 @@
   background: #104b2b;
 }
 
+.button:disabled {
+  border-color: #b9c4b5;
+  background: #d8dfd4;
+  color: #65746b;
+  cursor: not-allowed;
+}
+
+.button:disabled:hover {
+  background: #d8dfd4;
+}
+
 .successText,
 .errorText {
   margin: 0;

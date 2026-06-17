@@ -535,6 +535,9 @@ model Order {
   shipmentTrackingUrl     String?     @map("shipment_tracking_url")
   shipmentShippedAt       DateTime?   @map("shipment_shipped_at")
   shipmentInternalNote    String?     @map("shipment_internal_note") @db.Text
+  shipmentNotificationSentAt   DateTime?   @map("shipment_notification_sent_at")
+  shipmentNotificationStatus   String?     @map("shipment_notification_status")
+  shipmentNotificationLastError String?     @map("shipment_notification_last_error") @db.Text
   paidAt                  DateTime?   @map("paid_at")
   createdAt               DateTime    @default(now()) @map("created_at")
   updatedAt               DateTime    @updatedAt @map("updated_at")

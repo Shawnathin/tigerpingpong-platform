@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import StaffOrderDetailPage from "../../../../components/staff-orders/StaffOrderDetailPage";
 
-import { saveShipmentRecord } from "./actions";
+import { saveShipmentRecord, sendShipmentEmail } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +18,7 @@ interface AdminOrderDetailPageProps {
   searchParams?: {
     shipmentError?: string | string[];
     shipmentSaved?: string | string[];
+    shipmentEmail?: string | string[];
   };
 }
 
@@ -31,6 +32,7 @@ export default function AdminOrderDetailPage({
       eyebrow="Tiger Ping Pong admin"
       publicReference={params.publicReference}
       saveShipmentRecord={saveShipmentRecord}
+      sendShipmentEmail={sendShipmentEmail}
       searchParams={searchParams}
     />
   );

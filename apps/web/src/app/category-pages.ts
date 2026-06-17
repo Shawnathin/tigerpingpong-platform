@@ -87,11 +87,13 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
   const configs: Record<string, CategoryLandingPageConfig> = {
     tables: categoryConfig({
       activeItem: "tables",
+      activeNavHref: "/tables/",
       eyebrow: "Shop tables",
       title: "Ping pong tables for home, school, club, and outdoor play.",
       intro:
         "Browse Tiger Ping Pong tables with secure checkout, product details, and Canada-wide shipping terms.",
       heroImageSlug: "tiger-portland-outdoor-table",
+      mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,
       productLayout: "editorial",
       productOrder: getTableProductOrder("all"),
@@ -101,11 +103,13 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     }),
     "indoor-tables": categoryConfig({
       activeItem: "tables",
+      activeNavHref: "/tables/indoor-tables/",
       eyebrow: "Indoor tables",
       title: "Indoor ping pong tables for practice, family play, and game rooms.",
       intro:
         "Explore indoor Tiger Ping Pong table options, including Portland and Whistler indoor table products where available.",
       heroImageSlug: "tiger-portland-indoor-table",
+      mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,
       productLayout: "editorial",
       productOrder: getTableProductOrder("indoor"),
@@ -119,11 +123,13 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     }),
     "outdoor-tables": categoryConfig({
       activeItem: "tables",
+      activeNavHref: "/tables/outdoor-tables/",
       eyebrow: "Outdoor tables",
       title: "Outdoor ping pong tables built for patios, parks, and fresh-air rallies.",
       intro:
         "Explore outdoor Tiger Ping Pong table options with storefront checkout and Canada-wide shipping terms.",
       heroImageSlug: "tiger-portland-outdoor-table",
+      mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,
       productLayout: "editorial",
       productOrder: getTableProductOrder("outdoor"),

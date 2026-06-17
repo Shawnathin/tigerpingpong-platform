@@ -60,6 +60,12 @@ export interface InternalOrderShipment {
   trackingUrl: string | null;
 }
 
+export interface InternalOrderShipmentNotification {
+  lastError: string | null;
+  sentAt: string | null;
+  status: string | null;
+}
+
 export interface InternalOrderShipmentInput {
   carrier: string;
   internalNote: string;
@@ -91,6 +97,7 @@ export interface InternalOrderDetail {
   stripeAmountTaxCents: number | null;
   stripeAutomaticTaxStatus: string | null;
   shipment: InternalOrderShipment;
+  shipmentNotification: InternalOrderShipmentNotification;
   paidAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -168,12 +175,29 @@ export async function updateInternalOrderShipment(
   return response.order;
 }
 
+export async function sendInternalOrderShipmentEmail(
+  publicReference: string
+): Promise<InternalOrderDetail> {
+  const response = await fetchInternalOrders<{ order: InternalOrderDetail }>(
+    `/internal/orders/${encodeURIComponent(publicReference)}/shipment-email`,
+    {
+      method: "POST"
+    }
+  );
+
+  if (!response) {
+    throw new InternalOrdersApiError("Internal orders API returned no response.", null, "");
+  }
+
+  return response.order;
+}
+
 async function fetchInternalOrders<TResponse>(
   path: string,
   options: {
     allowNotFound?: boolean;
     body?: unknown;
-    method?: "GET" | "PATCH";
+    method?: "GET" | "PATCH" | "POST";
   } = {}
 ): Promise<TResponse | null> {
   const url = `${getInternalOrdersApiBaseUrl()}${path}`;
@@ -206,8 +230,10 @@ async function fetchInternalOrders<TResponse>(
   }
 
   if (!response.ok) {
+    const message = await readInternalOrdersErrorMessage(response);
+
     throw new InternalOrdersApiError(
-      `Internal orders API returned HTTP ${response.status}.`,
+      message ?? `Internal orders API returned HTTP ${response.status}.`,
       response.status,
       url
     );
@@ -222,6 +248,20 @@ async function fetchInternalOrders<TResponse>(
       url
     );
   }
+}
+
+async function readInternalOrdersErrorMessage(response: Response): Promise<string | null> {
+  try {
+    const body = (await response.json()) as { message?: unknown };
+
+    if (typeof body.message === "string" && body.message.trim()) {
+      return body.message.trim();
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
 }
 
 function readInternalOrdersApiToken(url: string): string {

@@ -1,6 +1,8 @@
 "use server";
 
 import {
+  InternalOrdersApiError,
+  sendInternalOrderShipmentEmail,
   updateInternalOrderShipment,
   type InternalOrderShipmentInput
 } from "../../lib/internal-orders-api";
@@ -23,6 +25,43 @@ export async function updateShipmentFromForm(formData: FormData): Promise<{
   return {
     publicReference,
     saved: true
+  };
+}
+
+export async function sendShipmentEmailFromForm(formData: FormData): Promise<{
+  publicReference: string;
+  status: "sent" | "blocked" | "config" | "failed";
+}> {
+  const publicReference = readRequiredFormString(formData, "publicReference");
+
+  try {
+    await sendInternalOrderShipmentEmail(publicReference);
+  } catch (error) {
+    if (error instanceof InternalOrdersApiError) {
+      if (error.status === 400) {
+        return {
+          publicReference,
+          status: "blocked"
+        };
+      }
+
+      if (error.status === 503 && error.message.includes("webhook is not configured")) {
+        return {
+          publicReference,
+          status: "config"
+        };
+      }
+    }
+
+    return {
+      publicReference,
+      status: "failed"
+    };
+  }
+
+  return {
+    publicReference,
+    status: "sent"
   };
 }
 

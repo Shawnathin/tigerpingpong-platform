@@ -530,6 +530,11 @@ model Order {
   stripeAmountTotalCents  Int?        @map("stripe_amount_total_cents")
   stripeAmountTaxCents    Int?        @map("stripe_amount_tax_cents")
   stripeAutomaticTaxStatus String?    @map("stripe_automatic_tax_status")
+  shipmentCarrier         String?     @map("shipment_carrier")
+  shipmentTrackingNumber  String?     @map("shipment_tracking_number")
+  shipmentTrackingUrl     String?     @map("shipment_tracking_url")
+  shipmentShippedAt       DateTime?   @map("shipment_shipped_at")
+  shipmentInternalNote    String?     @map("shipment_internal_note") @db.Text
   paidAt                  DateTime?   @map("paid_at")
   createdAt               DateTime    @default(now()) @map("created_at")
   updatedAt               DateTime    @updatedAt @map("updated_at")

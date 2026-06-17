@@ -208,6 +208,87 @@
   align-items: center;
 }
 
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field,
+.fieldFull {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+.field span,
+.fieldFull span {
+  color: #60717a;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.field input,
+.fieldFull input,
+.fieldFull textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cfd8ca;
+  border-radius: 6px;
+  padding: 10px 11px;
+  background: #ffffff;
+  color: #26343a;
+  font: inherit;
+}
+
+.fieldFull textarea {
+  resize: vertical;
+}
+
+.formActions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.button {
+  min-height: 40px;
+  border: 1px solid #17633a;
+  border-radius: 6px;
+  padding: 0 14px;
+  background: #17633a;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #104b2b;
+}
+
+.successText,
+.errorText {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.successText {
+  color: #17633a;
+}
+
+.errorText {
+  color: #8a2d1d;
+}
+
 @media (max-width: 760px) {
   .page {
     padding: 22px 16px 44px;
@@ -218,7 +299,8 @@
   }
 
   .summaryGrid,
-  .definitionList {
+  .definitionList,
+  .formGrid {
     grid-template-columns: 1fr;
   }
 }

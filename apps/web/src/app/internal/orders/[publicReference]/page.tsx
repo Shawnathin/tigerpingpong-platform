@@ -7,18 +7,23 @@ import {
   type InternalShippingAddress
 } from "../../../../lib/internal-orders-api";
 
+import { saveShipmentRecord } from "./actions";
 import styles from "../page.module.css";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Internal Order Detail | Tiger Ping Pong Platform",
-  description: "Protected read-only internal order detail."
+  description: "Protected internal order detail."
 };
 
 interface InternalOrderDetailPageProps {
   params: {
     publicReference: string;
+  };
+  searchParams?: {
+    shipmentError?: string | string[];
+    shipmentSaved?: string | string[];
   };
 }
 
@@ -69,6 +74,20 @@ function formatDateTime(value: string | null): string {
   }).format(date);
 }
 
+function formatDateInputValue(value: string | null): string {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toISOString().slice(0, 10);
+}
+
 function formatNullable(value: string | null | undefined): string {
   return value?.trim() || "Not set";
 }
@@ -89,6 +108,14 @@ function formatAddress(address: InternalShippingAddress | null): string {
   const lines = [address.line1, address.line2, cityLine, address.country].filter(Boolean);
 
   return lines.length > 0 ? lines.join("\n") : "Not set";
+}
+
+function getSearchParam(value: string | string[] | undefined): string | null {
+  if (Array.isArray(value)) {
+    return value[0] ?? null;
+  }
+
+  return value ?? null;
 }
 
 function renderFallback(publicReference: string, error: boolean) {
@@ -118,9 +145,14 @@ function renderFallback(publicReference: string, error: boolean) {
   );
 }
 
-export default async function InternalOrderDetailPage({ params }: InternalOrderDetailPageProps) {
+export default async function InternalOrderDetailPage({
+  params,
+  searchParams
+}: InternalOrderDetailPageProps) {
   const resource = await loadOrder(params.publicReference);
   const order = resource.order;
+  const shipmentSaved = getSearchParam(searchParams?.shipmentSaved) === "1";
+  const shipmentError = getSearchParam(searchParams?.shipmentError) === "1";
 
   if (!order) {
     return renderFallback(params.publicReference, resource.error);
@@ -134,8 +166,8 @@ export default async function InternalOrderDetailPage({ params }: InternalOrderD
           Order {order.publicReference}
         </h1>
         <p className={styles.intro}>
-          This protected staff page is read-only. It does not mutate payment, fulfillment, refund,
-          or customer data.
+          This protected staff page can save shipment details. It does not mutate payment, refund,
+          checkout, or customer data.
         </p>
       </section>
 
@@ -145,7 +177,7 @@ export default async function InternalOrderDetailPage({ params }: InternalOrderD
             <h2 id="internal-order-summary-title">Summary</h2>
             <p>Backend order status and Stripe references.</p>
           </div>
-          <span className={styles.badge}>Read-only</span>
+          <span className={styles.badge}>Protected</span>
         </div>
 
         <div className={styles.summaryGrid}>
@@ -162,6 +194,80 @@ export default async function InternalOrderDetailPage({ params }: InternalOrderD
             <strong>{formatMoney(order.totalCents, order.currency)}</strong>
           </div>
         </div>
+      </section>
+
+      <section className={styles.panel} aria-labelledby="internal-order-shipment-title">
+        <div className={styles.panelHeader}>
+          <div>
+            <h2 id="internal-order-shipment-title">Shipment record</h2>
+            <p>Manual staff tracking details only. This does not send customer email.</p>
+          </div>
+          <span className={styles.badge}>Manual</span>
+        </div>
+
+        {shipmentSaved ? <p className={styles.successText}>Shipment details saved.</p> : null}
+        {shipmentError ? (
+          <p className={styles.errorText}>Shipment details could not be saved.</p>
+        ) : null}
+
+        <form className={styles.formGrid} action={saveShipmentRecord}>
+          <input type="hidden" name="publicReference" value={order.publicReference} />
+          <label className={styles.field}>
+            <span>Carrier</span>
+            <input
+              name="carrier"
+              required
+              maxLength={500}
+              defaultValue={order.shipment.carrier ?? ""}
+              autoComplete="off"
+            />
+          </label>
+          <label className={styles.field}>
+            <span>Tracking number</span>
+            <input
+              name="trackingNumber"
+              required
+              maxLength={500}
+              defaultValue={order.shipment.trackingNumber ?? ""}
+              autoComplete="off"
+            />
+          </label>
+          <label className={styles.fieldFull}>
+            <span>Tracking URL</span>
+            <input
+              name="trackingUrl"
+              type="url"
+              required
+              maxLength={1000}
+              defaultValue={order.shipment.trackingUrl ?? ""}
+              autoComplete="off"
+            />
+          </label>
+          <label className={styles.field}>
+            <span>Shipped date</span>
+            <input
+              name="shippedDate"
+              type="date"
+              required
+              defaultValue={formatDateInputValue(order.shipment.shippedAt)}
+            />
+          </label>
+          <label className={styles.fieldFull}>
+            <span>Internal note</span>
+            <textarea
+              name="internalNote"
+              required
+              maxLength={2000}
+              rows={4}
+              defaultValue={order.shipment.internalNote ?? ""}
+            />
+          </label>
+          <div className={styles.formActions}>
+            <button className={styles.button} type="submit">
+              Save shipment details
+            </button>
+          </div>
+        </form>
       </section>
 
       <section className={styles.panel} aria-labelledby="internal-order-contact-title">

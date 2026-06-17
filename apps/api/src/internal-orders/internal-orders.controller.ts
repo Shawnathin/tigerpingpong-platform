@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, Param, Query, Res } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Param, Patch, Query, Res } from "@nestjs/common";
 
 import { InternalOrdersService } from "./internal-orders.service";
 
@@ -9,6 +9,14 @@ interface InternalOrdersQuery {
 
 interface HeaderResponse {
   setHeader(name: string, value: string): void;
+}
+
+interface InternalOrderShipmentBody {
+  carrier?: unknown;
+  internalNote?: unknown;
+  shippedDate?: unknown;
+  trackingNumber?: unknown;
+  trackingUrl?: unknown;
 }
 
 const INTERNAL_RESPONSE_HEADERS = {
@@ -42,6 +50,18 @@ export class InternalOrdersController {
     setInternalResponseHeaders(response);
 
     return this.internalOrdersService.getOrder(requestToken, publicReference);
+  }
+
+  @Patch(":publicReference/shipment")
+  updateShipment(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: string | string[] | undefined,
+    @Param("publicReference") publicReference: string,
+    @Body() body: InternalOrderShipmentBody
+  ): Promise<unknown> {
+    setInternalResponseHeaders(response);
+
+    return this.internalOrdersService.updateShipment(requestToken, publicReference, body);
   }
 }
 

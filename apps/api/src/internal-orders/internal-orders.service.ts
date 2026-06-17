@@ -33,8 +33,26 @@ interface ShippingAddress {
   state?: string;
 }
 
+interface InternalOrderShipmentInput {
+  carrier?: unknown;
+  internalNote?: unknown;
+  shippedDate?: unknown;
+  trackingNumber?: unknown;
+  trackingUrl?: unknown;
+}
+
+interface NormalizedInternalOrderShipmentInput {
+  carrier: string;
+  internalNote: string;
+  shippedAt: Date;
+  trackingNumber: string;
+  trackingUrl: string;
+}
+
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
+const MAX_SHIPMENT_TEXT_LENGTH = 500;
+const MAX_SHIPMENT_NOTE_LENGTH = 2000;
 const INTERNAL_ORDER_STATUSES: readonly InternalOrderStatus[] = [
   "checkout_pending",
   "checkout_failed",
@@ -92,6 +110,11 @@ const internalOrderDetailSelect = {
   stripeAmountTotalCents: true,
   stripeAmountTaxCents: true,
   stripeAutomaticTaxStatus: true,
+  shipmentCarrier: true,
+  shipmentTrackingNumber: true,
+  shipmentTrackingUrl: true,
+  shipmentShippedAt: true,
+  shipmentInternalNote: true,
   paidAt: true,
   createdAt: true,
   updatedAt: true,
@@ -206,6 +229,48 @@ export class InternalOrdersService implements OnModuleDestroy {
     };
   }
 
+  async updateShipment(
+    requestToken: string | string[] | undefined,
+    publicReferenceParam: string,
+    input: InternalOrderShipmentInput
+  ): Promise<unknown> {
+    this.assertAuthorized(requestToken);
+    const publicReference = this.parsePublicReference(publicReferenceParam);
+    const shipment = this.normalizeShipmentInput(input);
+
+    let order: InternalOrderDetailRecord | null;
+
+    try {
+      order = await this.getPrisma().order.update({
+        where: {
+          publicReference
+        },
+        data: {
+          shipmentCarrier: shipment.carrier,
+          shipmentTrackingNumber: shipment.trackingNumber,
+          shipmentTrackingUrl: shipment.trackingUrl,
+          shipmentShippedAt: shipment.shippedAt,
+          shipmentInternalNote: shipment.internalNote
+        },
+        select: internalOrderDetailSelect
+      });
+    } catch (error) {
+      if (this.isPrismaRecordNotFound(error)) {
+        throw new NotFoundException({
+          message: "Internal order was not found."
+        });
+      }
+
+      throw new ServiceUnavailableException({
+        message: "Internal order shipment could not be saved."
+      });
+    }
+
+    return {
+      order: this.serializeDetailOrder(order)
+    };
+  }
+
   private assertAuthorized(requestTokenValue: string | string[] | undefined): void {
     const requestToken = this.normalizeHeaderValue(requestTokenValue);
 
@@ -264,6 +329,107 @@ export class InternalOrdersService implements OnModuleDestroy {
     return publicReference;
   }
 
+  private normalizeShipmentInput(
+    input: InternalOrderShipmentInput
+  ): NormalizedInternalOrderShipmentInput {
+    if (!this.isRecord(input)) {
+      throw new BadRequestException({
+        message: "Shipment input is required."
+      });
+    }
+
+    return {
+      carrier: this.readRequiredShipmentString(input, "carrier", "carrier"),
+      trackingNumber: this.readRequiredShipmentString(
+        input,
+        "trackingNumber",
+        "tracking number"
+      ),
+      trackingUrl: this.normalizeShipmentTrackingUrl(input.trackingUrl),
+      shippedAt: this.normalizeShipmentDate(input.shippedDate),
+      internalNote: this.readRequiredShipmentString(input, "internalNote", "internal note", {
+        maxLength: MAX_SHIPMENT_NOTE_LENGTH
+      })
+    };
+  }
+
+  private readRequiredShipmentString(
+    input: Record<string, unknown>,
+    key: string,
+    label: string,
+    options: { maxLength?: number } = {}
+  ): string {
+    const value = this.normalizeOptionalString(input[key]);
+    const maxLength = options.maxLength ?? MAX_SHIPMENT_TEXT_LENGTH;
+
+    if (!value) {
+      throw new BadRequestException({
+        message: `${label} is required.`
+      });
+    }
+
+    if (value.length > maxLength) {
+      throw new BadRequestException({
+        message: `${label} is too long.`
+      });
+    }
+
+    return value;
+  }
+
+  private normalizeShipmentTrackingUrl(value: unknown): string {
+    const trackingUrl = this.readRequiredShipmentString(
+      { trackingUrl: value },
+      "trackingUrl",
+      "tracking URL",
+      {
+        maxLength: 1000
+      }
+    );
+
+    let url: URL;
+
+    try {
+      url = new URL(trackingUrl);
+    } catch {
+      throw new BadRequestException({
+        message: "tracking URL must be a valid URL."
+      });
+    }
+
+    if (url.protocol !== "https:" && url.protocol !== "http:") {
+      throw new BadRequestException({
+        message: "tracking URL must use http or https."
+      });
+    }
+
+    return trackingUrl;
+  }
+
+  private normalizeShipmentDate(value: unknown): Date {
+    const shippedDate = this.readRequiredShipmentString(
+      { shippedDate: value },
+      "shippedDate",
+      "shipped date"
+    );
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(shippedDate)) {
+      throw new BadRequestException({
+        message: "shipped date must use YYYY-MM-DD."
+      });
+    }
+
+    const date = new Date(`${shippedDate}T00:00:00.000Z`);
+
+    if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== shippedDate) {
+      throw new BadRequestException({
+        message: "shipped date is invalid."
+      });
+    }
+
+    return date;
+  }
+
   private serializeListOrder(order: InternalOrderListRecord) {
     return {
       publicReference: order.publicReference,
@@ -311,6 +477,13 @@ export class InternalOrdersService implements OnModuleDestroy {
       stripeAmountTotalCents: order.stripeAmountTotalCents,
       stripeAmountTaxCents: order.stripeAmountTaxCents,
       stripeAutomaticTaxStatus: order.stripeAutomaticTaxStatus,
+      shipment: {
+        carrier: order.shipmentCarrier,
+        trackingNumber: order.shipmentTrackingNumber,
+        trackingUrl: order.shipmentTrackingUrl,
+        shippedAt: this.serializeDate(order.shipmentShippedAt),
+        internalNote: order.shipmentInternalNote
+      },
       paidAt: this.serializeDate(order.paidAt),
       createdAt: this.serializeDate(order.createdAt),
       updatedAt: this.serializeDate(order.updatedAt),
@@ -434,6 +607,10 @@ export class InternalOrdersService implements OnModuleDestroy {
 
   private isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
+  }
+
+  private isPrismaRecordNotFound(error: unknown): boolean {
+    return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025";
   }
 
   private getString(record: Record<string, unknown>, key: string): string | null {

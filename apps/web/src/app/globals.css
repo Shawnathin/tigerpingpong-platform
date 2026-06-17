@@ -381,6 +381,10 @@ select {
   color: var(--tiger-orange-deep);
 }
 
+.publicFooterMobileNav {
+  display: none;
+}
+
 @media (max-width: 1060px) {
   .glassNav {
     align-items: stretch;
@@ -608,11 +612,111 @@ select {
   }
 
   .publicFooterInner {
-    padding: 22px;
+    gap: 18px;
+    padding: 18px;
+  }
+
+  .publicFooterBrand {
+    gap: 10px;
+  }
+
+  .publicFooterBrand .publicBrand {
+    transform: scale(0.94);
+    transform-origin: left center;
+  }
+
+  .publicFooterBrand p {
+    max-width: none;
+    font-size: 0.88rem;
+    line-height: 1.45;
   }
 
   .publicFooterNav {
-    grid-template-columns: 1fr;
+    display: none;
+  }
+
+  .publicFooterMobileNav {
+    display: grid;
+    gap: 0;
+  }
+
+  .publicFooterMobileNav section {
+    gap: 0;
+    border-top: 1px solid rgb(23 30 46 / 10%);
+  }
+
+  .publicFooterMobileNav section:last-child {
+    border-bottom: 1px solid rgb(23 30 46 / 10%);
+  }
+
+  .publicFooterMobileNav h2 {
+    margin: 0;
+  }
+
+  .publicFooterMobileNav button {
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+    padding: 0;
+    gap: 16px;
+    color: #263044;
+    font-size: 0.82rem;
+    font-weight: 950;
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: uppercase;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .publicFooterMobileNav button span[aria-hidden="true"] {
+    display: inline-grid;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--tiger-orange-deep);
+    font-size: 1.05rem;
+    line-height: 1;
+    background: rgb(242 138 46 / 10%);
+  }
+
+  .publicFooterMobileNav section[data-open="true"] button span[aria-hidden="true"] {
+    transform: rotate(45deg);
+  }
+
+  .publicFooterMobileNav ul {
+    display: none;
+    gap: 0;
+    margin: 0;
+    padding: 0 0 12px;
+    list-style: none;
+  }
+
+  .publicFooterMobileNav section[data-open="true"] ul {
+    display: grid;
+  }
+
+  .publicFooterMobileNav a {
+    display: flex;
+    min-height: 40px;
+    align-items: center;
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    font-weight: 760;
+    color: #4d586c;
+    text-decoration: none;
+  }
+
+  .publicFooterMobileNav a:hover,
+  .publicFooterMobileNav a:focus-visible {
+    color: var(--tiger-orange-deep);
+    background: rgb(242 138 46 / 10%);
   }
 }
 

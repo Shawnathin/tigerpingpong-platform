@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const FOOTER_SECTIONS = [
   {
     title: "Shop",
@@ -38,6 +42,22 @@ const FOOTER_SECTIONS = [
 ];
 
 export function PublicStorefrontFooter() {
+  const [openSections, setOpenSections] = useState<Set<string>>(() => new Set());
+
+  function toggleSection(title: string) {
+    setOpenSections((currentOpenSections) => {
+      const nextOpenSections = new Set(currentOpenSections);
+
+      if (nextOpenSections.has(title)) {
+        nextOpenSections.delete(title);
+      } else {
+        nextOpenSections.add(title);
+      }
+
+      return nextOpenSections;
+    });
+  }
+
   return (
     <footer className="publicFooter" aria-label="Tiger Ping Pong footer">
       <div className="publicFooterInner">
@@ -64,6 +84,32 @@ export function PublicStorefrontFooter() {
             <section key={section.title} aria-labelledby={`footer-${section.title.toLowerCase()}`}>
               <h2 id={`footer-${section.title.toLowerCase()}`}>{section.title}</h2>
               <ul>
+                {section.links.map((link) => (
+                  <li key={`${section.title}-${link.href}-${link.label}`}>
+                    <a href={link.href}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </nav>
+
+        <nav className="publicFooterMobileNav" aria-label="Footer navigation">
+          {FOOTER_SECTIONS.map((section) => (
+            <section key={section.title} data-open={openSections.has(section.title)}>
+              <h2>
+                <button
+                  id={`footer-${section.title.toLowerCase()}-button`}
+                  type="button"
+                  aria-expanded={openSections.has(section.title)}
+                  aria-controls={`footer-${section.title.toLowerCase()}-links`}
+                  onClick={() => toggleSection(section.title)}
+                >
+                  <span>{section.title}</span>
+                  <span aria-hidden="true">+</span>
+                </button>
+              </h2>
+              <ul id={`footer-${section.title.toLowerCase()}-links`}>
                 {section.links.map((link) => (
                   <li key={`${section.title}-${link.href}-${link.label}`}>
                     <a href={link.href}>{link.label}</a>

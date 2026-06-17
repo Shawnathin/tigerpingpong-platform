@@ -19,11 +19,16 @@ import styles from "./category-landing.module.css";
 
 export interface CategoryLandingPageConfig {
   activeItem: PublicStorefrontNavItem;
+  activeNavHref?: string;
   eyebrow: string;
   title: string;
   intro: string;
   heroImageSlug?: string;
   navLinks?: Array<{
+    href: string;
+    label: string;
+  }>;
+  mobileCategoryNavLinks?: Array<{
     href: string;
     label: string;
   }>;
@@ -216,13 +221,56 @@ function ProductRail({
   );
 }
 
+function CategoryRail({
+  activeHref,
+  className,
+  links
+}: {
+  activeHref?: string;
+  className: string;
+  links: Array<{
+    href: string;
+    label: string;
+  }>;
+}) {
+  if (links.length <= 1) {
+    return null;
+  }
+
+  return (
+    <nav className={className} aria-label="Table categories">
+      <div className={styles.categoryRailInner}>
+        {links.map((link) => {
+          const isActive = link.href === activeHref;
+
+          return (
+            <a
+              aria-current={isActive ? "page" : undefined}
+              data-active={isActive ? "true" : undefined}
+              href={link.href}
+              key={link.href}
+            >
+              {link.label}
+            </a>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
 function BrowseTools({
+  mobileCategoryNavLinks,
   productRailLabels,
   products,
   showProductRail,
   shippingMessage,
   title
 }: {
+  mobileCategoryNavLinks?: Array<{
+    href: string;
+    label: string;
+  }>;
   productRailLabels?: Record<string, string>;
   products: CatalogProductSummary[];
   showProductRail: boolean;
@@ -236,6 +284,9 @@ function BrowseTools({
   return (
     <div
       className={styles.browseTools}
+      data-mobile-category={
+        mobileCategoryNavLinks && mobileCategoryNavLinks.length > 1 ? "true" : undefined
+      }
       data-sticky={showProductRail && products.length > 1 ? "true" : undefined}
       data-rail={showProductRail ? "true" : undefined}
     >
@@ -287,6 +338,14 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
   return (
     <>
       <PublicStorefrontNav activeItem={config.activeItem} />
+      {config.mobileCategoryNavLinks ? (
+        <CategoryRail
+          activeHref={config.activeNavHref}
+          className={`${styles.categoryRail} ${styles.mobileCategoryRail}`}
+          links={config.mobileCategoryNavLinks}
+        />
+      ) : null}
+
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="category-title">
           <div className={styles.heroCopy}>
@@ -299,6 +358,7 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
 
         {productResource.data && products.length > 0 ? (
           <BrowseTools
+            mobileCategoryNavLinks={config.mobileCategoryNavLinks}
             productRailLabels={config.productRailLabels}
             products={products}
             showProductRail={config.showProductRail ?? false}

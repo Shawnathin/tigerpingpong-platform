@@ -8,6 +8,7 @@
 .hero,
 .section,
 .error,
+.categoryRail,
 .productRail {
   width: min(1240px, 100%);
   margin: 0 auto;
@@ -147,6 +148,10 @@
 .browseTools[data-sticky="true"] {
   position: sticky;
   z-index: 12;
+}
+
+.categoryRail {
+  display: none;
 }
 
 .productRail {
@@ -554,11 +559,73 @@
   }
 
   .browseTools {
-    top: 98px;
+    top: 74px;
     justify-self: stretch;
     overflow: hidden;
     width: 100%;
     max-width: 100%;
+  }
+
+  .browseTools[data-mobile-category="true"] {
+    display: none;
+  }
+
+  .mobileCategoryRail {
+    position: sticky;
+    top: 74px;
+    z-index: 12;
+    display: block;
+    width: calc(100% - 24px);
+    max-width: 100%;
+    margin: 10px auto 0;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 76%);
+    border-radius: 999px;
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 86%), rgb(255 255 255 / 58%)),
+      rgb(255 255 255 / 34%);
+    box-shadow:
+      0 12px 28px rgb(27 36 65 / 9%),
+      inset 0 1px 0 rgb(255 255 255 / 92%);
+    backdrop-filter: blur(18px) saturate(1.18);
+  }
+
+  .mobileCategoryRail .categoryRailInner {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .mobileCategoryRail .categoryRailInner a {
+    display: inline-flex;
+    min-width: 0;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0 8px;
+    color: #263049;
+    font-size: 0.78rem;
+    font-weight: 900;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+    text-align: center;
+    text-decoration: none;
+    background: rgb(255 255 255 / 42%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 56%);
+  }
+
+  .mobileCategoryRail .categoryRailInner a:hover,
+  .mobileCategoryRail .categoryRailInner a:focus-visible {
+    color: var(--tiger-orange-deep);
+    background: rgb(255 255 255 / 86%);
+  }
+
+  .mobileCategoryRail .categoryRailInner a[data-active="true"] {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ffad5d, var(--tiger-orange-deep));
+    box-shadow: 0 10px 20px rgb(232 111 24 / 18%);
   }
 
   .productRail {

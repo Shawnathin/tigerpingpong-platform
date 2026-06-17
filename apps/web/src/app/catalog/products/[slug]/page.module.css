@@ -2119,15 +2119,7 @@
   }
 
   .productCategoryJump {
-    border-radius: 24px;
-  }
-
-  .tableSubnavLinks {
-    grid-template-columns: 1fr;
-  }
-
-  .tableSubnavLinks .siblingLink {
-    min-height: 42px;
+    display: none;
   }
 
   .mainMedia {

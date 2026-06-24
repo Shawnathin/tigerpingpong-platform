@@ -2,7 +2,7 @@
 
 ## Active task
 
-Launch-readiness review for TigerPingPong.ca: determine what blocks going live today and define exact next actions.
+TigerPingPong.ca cutover planning: produce a precise production readiness proof plan for domain cutover.
 
 ## Current task card
 
@@ -14,12 +14,11 @@ A launch decision requires a clean answer on blockers before domain launch, not 
 
 ## What must happen next
 
-1. Finish custom-domain/cutover plan (canonical + redirect targets).
-2. Align API/web env vars for final web origin and Stripe return URLs.
-3. Run final paid checkout webhook smoke and protected staff-route smoke.
+1. Finalize domain/canonical decision and who owns DNS + Render domain mapping.
+2. Confirm production env names/ownership for web, API, Stripe, Supabase, and Cloudinary in a cutover contract.
+3. Execute final read-only proof on final domain: home/category/product/cart/checkout/session/webhook/admin and mobile smoke.
 
 ## Status update
 
-- Discovery completed.
-- Audit draft created.
-- Required validation checks completed (`lint`, `typecheck`, `db:validate`, `build`) and passed.
+- Launch readiness review confirmed and documented blockers were operational rather than code.
+- Created `docs/launch/cutover-environment-readiness.md` with exact cutover proof contract and go/no-go checks.

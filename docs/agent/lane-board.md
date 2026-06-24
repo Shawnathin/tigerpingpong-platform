@@ -2,14 +2,13 @@
 
 ## In Progress
 
-- `Launch domain readiness` — pending env/domain finalization and cutover smoke.
+- `TigerPingPong.ca cutover environment readiness` — produce final production cutover proof checklist and execution plan.
 
 ## To Do
 
-- `Update domain cutover envs` (`CHECKOUT_SUCCESS_URL`, `CHECKOUT_CANCEL_URL`, `CORS_ORIGIN`, `NEXT_PUBLIC_SITE_URL`).
 - `Run final paid checkout + webhook smoke` on final domain.
-- `Verify protected route and token gates on launch domain.`
 - `Confirm catalog/media launch quality and any must-fix content gaps.`
+- `Prepare production env contract doc` with service owners and exact values for required variables.
 
 ## Done
 

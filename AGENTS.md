@@ -34,6 +34,17 @@ The project is past the basic-feasibility stage. The current work is launch disc
 4. Make URL/SEO decisions deliberately before redirects, canonicals, sitemap, robots, or DNS changes.
 5. Keep raw media local; use Cloudinary as the asset store.
 
+## Build-control workflow
+
+- This repo uses the master build-control chat to choose one task at a time.
+- `goals.md` is the current version source of truth.
+- `docs/agent/current-task.md` is the current task source of truth.
+- Codex executes only the selected task card. Side chats may recommend work, but they do not choose tasks.
+- Side quests, useful ideas, and not-now work go to `docs/agent/parking-lot.md` unless Shawn explicitly selects them.
+- During onboarding, do not make runtime, deployment, schema, migration, dependency, env, hosting, payment, or app behavior changes.
+- Every future task must produce code, config, script, test/proof, a commit-ready workflow record, or a precise blocker.
+- Keep workflow docs updated when a task changes lanes, creates a decision, records proof, or parks follow-up work.
+
 ## Non-goals unless explicitly requested
 
 - Do not rebuild this as Shopify, BigCommerce, or a theme shortcut.
@@ -264,24 +275,31 @@ Branch / PR:
 Status:
 
 ## Decision made
+
 What changed or what was decided.
 
 ## Why
+
 Why this decision was made.
 
 ## What changed
+
 Human-readable summary.
 
 ## What did not change
+
 Important boundaries / safety rules.
 
 ## Deferred
+
 What we intentionally did not do yet.
 
 ## Follow-up
+
 What Shawn or a future Codex session needs to do later.
 
 ## Human notes
+
 Anything Shawn needs to remember.
 ```
 

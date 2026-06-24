@@ -50,3 +50,14 @@ Validation results will be recorded in the task final report.
 - The exact targeted Prettier command without `--ignore-unknown` stopped on `.gitignore` because no parser was inferred; Markdown files passed after unknown files were ignored, and `.gitignore` whitespace was covered by `git diff --check`.
 - Recorded the repo-wide Markdown Prettier baseline failure as pre-existing, unrelated formatting debt and left unrelated docs untouched.
 - Committed the scoped media evidence/ignore change.
+
+## 2026-06-24 - Focused media script safety review
+
+- Confirmed repo path: `/Users/shawncleve/Code/tigerpingpong-platform`.
+- Confirmed branch: `codex/media-cloudinary-app-mapping`.
+- Inspected untracked `scripts/media/*.py` and `scripts/media/*.mjs` with read-only source commands only.
+- Did not run, rewrite, move, delete, stage, or commit any media script.
+- Classified four export-generation scripts as `needs edit before commit`.
+- Classified `scripts/media/upload_tpp_cloudinary_approved.mjs` as `needs Shawn review` because it reads Cloudinary credentials and performs real Cloudinary Admin/Upload API calls.
+- Created `docs/agent/media-script-safety-review.md`.
+- Recommended a follow-up hardening task before preserving any source scripts.

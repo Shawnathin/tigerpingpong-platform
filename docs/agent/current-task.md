@@ -2,77 +2,65 @@
 
 Status: completed on 2026-06-24.
 
-Result: scoped media evidence/ignore changes are ready to commit with targeted validation; the unrelated repo-wide Markdown Prettier baseline failure is recorded as future cleanup.
+Result: source-level safety review completed in `docs/agent/media-script-safety-review.md`; no media scripts were run, staged, moved, deleted, or rewritten.
 
 ## Task name
 
-Commit scoped media evidence/ignore change with validation caveat recorded
+Focused script-safety review of scripts/media/_.py and scripts/media/_.mjs
 
 ## Goal
 
-Commit only the scoped media evidence/ignore changes that are already implemented, while recording the repo-wide Markdown Prettier baseline failure as a known unrelated blocker/parking-lot item.
+Review the untracked `scripts/media/*.py` and `scripts/media/*.mjs` source tooling, classify whether each script is safe/useful to preserve, and produce a clear recommendation before any Cloudinary mapping, import, upload, cleanup, or runtime work continues.
 
 ## Why now
 
-The selected media evidence task is complete and safe. Unrelated formatting debt should not block Git hygiene work or drag the launch lane into repo-wide cleanup.
+The repo now ignores generated exports and preserves Markdown media evidence. The only intentional remaining untracked items are media source scripts. Before committing, deleting, rewriting, or running them, we need a source-level safety review.
 
 ## Expected implementation outcome
 
-A single scoped commit contains `.gitignore`, committed Markdown evidence under `docs/media/cloudinary-upload-prep/`, and workflow docs. Bulk generated exports and unreviewed `scripts/media` source files remain unstaged.
+A docs-only review report classifies each untracked source script by purpose, inputs, outputs, write/upload behavior, env requirements, risks, and recommended action. No scripts are committed in this review task.
 
 ## Acceptance criteria
 
-- Confirm working tree changes are limited to the scoped media evidence/ignore task plus workflow docs.
-- Confirm preserved evidence files exist under `docs/media/cloudinary-upload-prep/`.
-- Confirm bulk generated exports are ignored and not staged.
-- Run targeted validation only for touched files.
-- Record the repo-wide Markdown Prettier baseline failure as unrelated future cleanup.
-- Stage only scoped docs/ignore files and commit them.
+- Inspect every `scripts/media/*.py` and `scripts/media/*.mjs` file with read-only source commands.
+- Do not run scripts that upload, mutate files, import data, call APIs, change mappings, or require credentials.
+- Classify each source script as `commit-ready source`, `needs edit before commit`, `local-only helper`, `needs Shawn review`, or `do not preserve`.
+- Create `docs/agent/media-script-safety-review.md`.
+- Update workflow docs with validation proof and next recommended task.
+- Stage and commit only review/workflow docs if validation passes.
 
 ## Expected files/folders
 
-- `.gitignore`
-- `docs/media/cloudinary-upload-prep/README.md`
-- Selected evidence files copied into `docs/media/cloudinary-upload-prep/`
+- `docs/agent/media-script-safety-review.md`
 - `docs/agent/current-task.md`
 - `docs/agent/worklog.md`
 - `docs/agent/lane-board.md`
-- `docs/agent/parking-lot.md` if remaining out-of-scope media follow-up changes
+- `docs/agent/parking-lot.md`
 
 ## Recommended next task
 
-Review `scripts/media/*.py` and `scripts/media/*.mjs` as source tooling in a focused script-safety task before any Cloudinary mapping, import, upload, or cleanup work continues.
+Harden and preserve the non-upload media recovery scripts with usage docs and output-root guardrails; leave the Cloudinary upload script local-only unless Shawn explicitly selects a live-upload-tool hardening task.
 
 ## Out of scope
 
 - No app runtime behavior changes.
-- No Cloudinary upload, deletion, import, cleanup, mapping change, or credential use.
+- No Cloudinary upload, deletion, import, cleanup, mapping change, API call, or credential use.
 - No database writes, imports, migrations, or Prisma schema changes.
 - No checkout, Stripe, webhook, order, tax, DNS, SEO, or deployment changes.
 - No committing raw media, secrets, `.env` files, credentials, private data, or production customer/order data.
-- No script review or script staging.
+- No script execution, script rewrite, script move/delete, or script staging.
 
 ## Validation commands
 
 ```bash
-git status --short
-git check-ignore -v --no-index exports || true
-find docs/media/cloudinary-upload-prep -maxdepth 3 -type f | sort
 git diff --check
-pnpm exec prettier --check .gitignore docs/agent/current-task.md docs/agent/worklog.md docs/agent/lane-board.md docs/agent/parking-lot.md docs/media/cloudinary-upload-prep/README.md docs/media/cloudinary-upload-prep/qa/upload-prep-review-sheet.md docs/media/cloudinary-upload-prep/reports/app-media-mapping-report.md docs/media/cloudinary-upload-prep/reports/cloudinary-upload-results.md docs/media/cloudinary-upload-prep/reports/do-not-upload.md docs/media/cloudinary-upload-prep/reports/media-mapping-qa-report.md docs/media/cloudinary-upload-prep/reports/needs-shawn-review.md docs/media/cloudinary-upload-prep/reports/upload-prep-summary.md docs/media/cloudinary-upload-prep/reports/upload-readiness-by-target.md
-```
-
-Also verify staged files before committing:
-
-```bash
-git diff --name-only --cached
-git status --short
+pnpm exec prettier --check docs/agent/current-task.md docs/agent/worklog.md docs/agent/lane-board.md docs/agent/parking-lot.md docs/agent/media-script-safety-review.md
 ```
 
 ## Workflow-doc update rule
 
-When this task finishes, update `docs/agent/worklog.md`, move the task on `docs/agent/lane-board.md`, and add the repo-wide Markdown Prettier baseline cleanup to `docs/agent/parking-lot.md`.
+When this task finishes, update `docs/agent/worklog.md`, move the task on `docs/agent/lane-board.md`, and park follow-up script hardening/preservation work.
 
 ## Stop condition
 
-Stop after scoped files are committed. Do not proceed into script review, media cleanup, mapping changes, imports, uploads, or app changes.
+Stop after the review report and workflow docs are complete, validated, and committed if only review/workflow docs changed. Do not proceed into script cleanup, script commit, Cloudinary mapping, imports, uploads, or app changes.

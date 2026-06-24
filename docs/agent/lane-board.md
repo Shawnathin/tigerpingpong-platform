@@ -2,13 +2,9 @@
 
 ## In Progress
 
-- `Create production env contract doc` — finalize launch surface variable ownership and validation contract.
-
-## To Do
-
 - `Run final paid checkout + webhook smoke` on final domain.
 - `Confirm catalog/media launch quality and any must-fix content gaps.`
-- `Create read-only production env validation script` after env contract proofing.
+- `Prepare final cutover proof record with validator output and smoke smoke plan evidence.`
 
 ## Done
 
@@ -18,3 +14,4 @@
 - `docs/launch/launch-readiness-audit` — draft complete and validation checks pass.
 - `docs/launch/cutover-environment-readiness.md` — cutover readiness plan completed.
 - `docs/launch/production-env-contract.md` — production variable ownership and validation contract completed.
+- `Create read-only production env validation script` — implemented `scripts/launch/validate-production-env.mjs` and `docs/launch/production-env-validation.md`.

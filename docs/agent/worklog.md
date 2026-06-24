@@ -71,3 +71,15 @@ Validation results will be recorded in the task final report.
 - Added `docs/media/cloudinary-upload-prep/media-scripts.md` with script purposes, run order, inputs, outputs, safe commands, and generated-output warnings.
 - Confirmed the scripts do not read secrets or call Cloudinary.
 - Did not run media generation, uploads, imports, mapping changes, cleanup, or app changes.
+
+## 2026-06-24 - Cloudinary app media mapping/import plan
+
+- Confirmed repo path: `/Users/shawncleve/Code/tigerpingpong-platform`.
+- Confirmed branch: `codex/media-cloudinary-app-mapping`.
+- Reviewed the committed Cloudinary upload-prep evidence under `docs/media/cloudinary-upload-prep/`.
+- Inspected the current `ProductMedia` schema, product media import scripts, catalog API media serialization, web media resolver, and category hero config with read-only commands.
+- Confirmed the running app path is CSV import source to Prisma `ProductMedia`, API catalog responses, then web Cloudinary URL resolution; the app does not read the CSV directly.
+- Confirmed category pages currently use product `heroImageSlug` media and do not have a standalone category media import/config target.
+- Created `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`.
+- Recommended a dry-run media mapping validator/report as the next implementation task before any CSV edit, import, upload, or app behavior change.
+- Did not edit catalog data, app runtime files, generated exports, database schema/migrations, env/deployment config, package files, or the live Cloudinary upload script.

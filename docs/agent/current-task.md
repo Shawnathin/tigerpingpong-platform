@@ -2,42 +2,36 @@
 
 Status: completed on 2026-06-24.
 
-Result: hardened and committed the four non-upload `scripts/media/` recovery/prep scripts with dry-run defaults, output-root guardrails, readable argument validation, and usage docs. The live Cloudinary upload script remains uncommitted/local-only.
+Result: reviewed committed Cloudinary upload-prep evidence against the current catalog/media architecture and created `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`. No imports, uploads, app changes, catalog data edits, or live-upload script changes were made.
 
 ## Task name
 
-Harden and preserve non-upload media recovery scripts
+Review Cloudinary evidence for app media mapping/import plan
 
 ## Goal
 
-Harden and commit only the useful non-upload media scripts from `scripts/media/`, with guardrails and usage docs. Leave the live Cloudinary upload script uncommitted/local-only unless Shawn explicitly selects a separate live-upload-tool hardening task.
+Review the committed Cloudinary/media evidence and produce a precise mapping/import plan for how uploaded Cloudinary assets should feed the app catalog/media system, without running uploads, imports, app changes, or database changes.
 
 ## Why now
 
-The script safety review found four non-upload scripts worth preserving after edits. These scripts support media recovery/prep work and should be safe, documented, and committed before future Cloudinary mapping/import/upload/cleanup work continues.
+The generated exports are ignored, the reviewed Markdown evidence is preserved, and non-upload scripts are hardened. Before changing app media mappings or import data, the repo needs a clear plan that ties the evidence to the current app structure and identifies gaps/risks.
 
 ## Expected implementation outcome
 
-The four non-upload scripts are committed with guarded CLI behavior. Documentation explains run order, inputs, outputs, safe example commands, generated output locations, and the intentional exclusion of live Cloudinary upload tooling.
+A docs-only plan explains the current `ProductMedia` import/API/web path, evidence-backed ready mapping areas, assets needing Shawn review, do-not-use risks, import safety gates, and the safest next implementation task.
 
 ## Acceptance criteria
 
-- Add dry-run/help behavior where appropriate.
-- Add argument validation and readable error messages.
-- Add output-root guardrails so scripts write only under intended generated `exports/` folders.
-- Avoid accidental overwrite where practical.
-- Keep the scripts free of secrets and Cloudinary calls.
-- Create `docs/media/cloudinary-upload-prep/media-scripts.md`.
-- Do not stage, rewrite, run, or commit `scripts/media/upload_tpp_cloudinary_approved.mjs`.
-- Validate script syntax and touched Markdown docs before committing.
+- Inspect the committed Cloudinary upload-prep evidence.
+- Inspect app/media/catalog architecture with read-only commands.
+- Create `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`.
+- Recommend a small safe first implementation task.
+- Do not edit app runtime files, catalog data, mappings, schema, env, deployment, package files, generated exports, or the live upload script.
+- Validate touched docs before committing.
 
 ## Expected files/folders
 
-- `scripts/media/prepare_tpp_cloudinary_upload.py`
-- `scripts/media/process_tpp_media_pack.py`
-- `scripts/media/recover-tpp-source-images.mjs`
-- `scripts/media/triage-tpp-source-images.mjs`
-- `docs/media/cloudinary-upload-prep/media-scripts.md`
+- `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`
 - `docs/agent/current-task.md`
 - `docs/agent/worklog.md`
 - `docs/agent/lane-board.md`
@@ -45,32 +39,29 @@ The four non-upload scripts are committed with guarded CLI behavior. Documentati
 
 ## Recommended next task
 
-Review how committed Cloudinary upload evidence should feed the app media mapping/import plan without running uploads, imports, or app changes yet.
+Create a dry-run Cloudinary media mapping validator/report that checks the current product media import CSV against committed evidence and app constraints without editing data, importing to a database, uploading, or changing app behavior.
 
 ## Out of scope
 
 - No app runtime behavior changes.
-- No Cloudinary upload, deletion, import, cleanup, mapping change, or credential use.
+- No catalog/media mapping file edits.
+- No product data edits.
+- No Cloudinary upload, deletion, import, cleanup, credential use, or live upload script change.
 - No database writes, imports, migrations, or Prisma schema changes.
-- No checkout, Stripe, webhook, order, tax, DNS, SEO, or deployment changes.
-- No committing raw media, secrets, `.env` files, credentials, private data, or production customer/order data.
-- No live upload script staging or hardening.
+- No checkout, Stripe, webhook, order, tax, DNS, SEO, deployment, env, package, or lockfile changes.
 - No generated export output staging.
 
 ## Validation commands
 
 ```bash
 git diff --check
-pnpm exec prettier --check docs/agent/current-task.md docs/agent/worklog.md docs/agent/lane-board.md docs/agent/parking-lot.md docs/media/cloudinary-upload-prep/media-scripts.md
-python3 -m py_compile scripts/media/prepare_tpp_cloudinary_upload.py scripts/media/process_tpp_media_pack.py
-node --check scripts/media/recover-tpp-source-images.mjs
-node --check scripts/media/triage-tpp-source-images.mjs
+pnpm exec prettier --check docs/agent/current-task.md docs/agent/worklog.md docs/agent/lane-board.md docs/agent/parking-lot.md docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md
 ```
 
 ## Workflow-doc update rule
 
-When this task finishes, update `docs/agent/worklog.md`, move the task on `docs/agent/lane-board.md`, and leave any live-upload-tool work parked unless Shawn explicitly selects it.
+When this task finishes, update `docs/agent/worklog.md`, move the task on `docs/agent/lane-board.md`, and park any future category-media or best-available-image follow-up that is not selected.
 
 ## Stop condition
 
-Stop after the hardened non-upload scripts, docs, and workflow updates are committed. Do not begin Cloudinary mapping, imports, uploads, cleanup, or app changes.
+Stop after the plan and workflow updates are committed. Do not begin validator implementation, script cleanup, mapping edits, imports, uploads, cleanup, or app changes.

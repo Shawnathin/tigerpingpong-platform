@@ -1,21 +1,7 @@
 # Parking Lot
 
-Useful ideas that are not selected for the current task. Parking an item does not approve it for implementation.
-
-## Not selected now
-
-- Refresh `docs/deployment/render-setup.md` for current Render env reality: Stripe Tax, checkout URLs, CORS, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_BASE_URL`, Basic Auth, internal token, optional shipment email webhook, Cloudinary secrets, and migration checks.
-- Run final approved Stripe test-mode checkout smoke covering simple accessory, Aqua package, table checkout, cancel/success, webhook-paid transition, admin/internal visibility, Canada shipping, and tax totals.
-- Add or refine pre-domain security headers only through a focused, tested PR that preserves Stripe Checkout, Cloudinary images, Render hosting, and admin/internal behavior.
-- Review whether public catalog DTOs should expose `shippingReviewRequired`.
-- Improve add-to-cart modal focus trap and focus restoration.
-- Complete human/mobile QA at 390px for storefront, product pages, cart, and staff pages.
-- Decide final domain behavior for `www`, `.com`, Search Console, sitemap submission, redirects, and post-cutover canonical verification.
-- Decide whether minimal shipped-order record work is required before launch or remains parked while staff send tracking emails manually.
-- Improve Aqua media quality if better approved final media is available.
-- Review any remaining Cloudinary upload-prep CSV/JSON manifests and binary contact sheets only if a future task needs more media evidence than the committed Markdown subset.
-- Create a dry-run Cloudinary media mapping validator/report only if the launch readiness audit selects media import/mapping proof as a blocker.
-- Decide whether `scripts/media/upload_tpp_cloudinary_approved.mjs` should be preserved at all; if yes, require explicit Shawn approval and add a no-upload default plus live-upload gate before commit/use.
-- Run a separate repo-wide Markdown Prettier baseline cleanup for pre-existing docs so future all-docs formatting checks can pass without unrelated noise.
-- Design a standalone category media import/config target later if uploaded category hero assets should be used directly instead of product `heroImageSlug` media.
-- Replace best-available table primary images later if stronger approved source assets become available for Expo, Plaza, Portland Indoor, or Whistler.
+- Full SEO polish (title/description optimization, canonical redirect strategy refinement, richer page metadata).
+- Optional security hardening pass (CSP and HSTS policy tuning).
+- Accessibility remediation beyond current modal keyboard support baseline.
+- Advanced admin product tooling and long-term inventory/audit workflow expansion.
+- Any optional marketplace/marketing tasks after launch green-light.

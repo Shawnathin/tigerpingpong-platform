@@ -1,34 +1,19 @@
-# Agent Lane Board
-
-Use this as a simple queue. The master build-control chat chooses what moves to `Ready` and `In Progress`.
-
-## Backlog
-
-- Render env/cutover checklist refresh.
-- Final approved Stripe Tax checkout smoke.
-- Public catalog DTO review for internal-ish flags.
-- Add-to-cart modal focus trap and mobile accessibility polish.
-- Final 390px mobile QA pass.
-
-## Ready
-
-- Launch readiness audit.
+# Launch Lane Board
 
 ## In Progress
 
-- None.
+- `Launch domain readiness` — pending env/domain finalization and cutover smoke.
 
-## Blocked
+## To Do
 
-- None.
+- `Update domain cutover envs` (`CHECKOUT_SUCCESS_URL`, `CHECKOUT_CANCEL_URL`, `CORS_ORIGIN`, `NEXT_PUBLIC_SITE_URL`).
+- `Run final paid checkout + webhook smoke` on final domain.
+- `Verify protected route and token gates on launch domain.`
+- `Confirm catalog/media launch quality and any must-fix content gaps.`
 
 ## Done
 
-- Build-control workflow installed.
-- Cloudinary media artifact git-safety triage.
-- Preserve reviewed media evidence and add generated export ignore rules.
-- Commit scoped media evidence/ignore change with validation caveat recorded.
-- Focused script-safety review of `scripts/media/*.py` and `scripts/media/*.mjs`.
-- Harden and preserve non-upload media recovery scripts.
-- Review Cloudinary evidence for app media mapping/import plan.
-- Align goals.md to website launch.
+- Route/auth architecture and payment-truth design reviewed.
+- Checkout API and webhook security behavior confirmed in code.
+- Launch audit and workflow docs generated.
+- `docs/launch/launch-readiness-audit` — draft complete and validation checks pass.

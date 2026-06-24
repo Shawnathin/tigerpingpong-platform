@@ -12,3 +12,6 @@
 
 - **2026-06-24 02:05 UTC**: Drafted `docs/launch/final-checkout-webhook-smoke-runbook.md` to define final-domain customer path checks, checkout/session behavior, webhook proof, failure triage, go/no-go, and rollback criteria.
 - **2026-06-24 02:10 UTC**: Updated launch workflow docs to track the checkout/webhook smoke runbook task (`docs/agent/current-task.md`, `docs/agent/lane-board.md`, `docs/agent/parking-lot.md`).
+
+- **2026-06-24 02:30 UTC**: Ran local production env validator checks (`node --check`, `--help`, `pnpm launch:env:validate` for all scoped modes). Validation runs were redacted and syntax-safe; all required variables were missing in local shell as expected without target env context.
+- **2026-06-24 02:35 UTC**: Documented target-environment access blocker and recorded results in `docs/launch/production-env-validation-results.md`.

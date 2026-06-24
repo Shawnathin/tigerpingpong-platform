@@ -4,6 +4,7 @@
 
 - `Create final checkout + webhook smoke runbook`.
 - `Run final paid checkout + webhook smoke` on final domain (execution blocked until approvals and env validator pass).
+- `Run production env validator in target environment` (blocked: target web/API env context not available in this run).
 - `Confirm catalog/media launch quality and any must-fix content gaps.`
 - `Prepare final cutover proof record with validator output and smoke smoke plan evidence.`
 

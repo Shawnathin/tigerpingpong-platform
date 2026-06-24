@@ -7,4 +7,6 @@
 - Any optional marketplace/marketing tasks after launch green-light.
 - Finalize which domain variant and DNS provider owns canonical launch routing (`tigerpingpong.ca`/`www`/`.com`) outside this task scope.
 
+- Obtain Render/API and Render/web target environment context (or secure operator shell with production env vars) to run `pnpm launch:env:validate` in target context.
+
 - Real paid checkout smoke execution on final domain (test/live) after environment validation and operator approvals are complete.

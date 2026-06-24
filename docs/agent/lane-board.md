@@ -18,3 +18,7 @@
 - `docs/launch/cutover-environment-readiness.md` — cutover readiness plan completed.
 - `docs/launch/production-env-contract.md` — production variable ownership and validation contract completed.
 - `Create read-only production env validation script` — implemented `scripts/launch/validate-production-env.mjs` and `docs/launch/production-env-validation.md`.
+
+## In Progress (Environment validation blocker)
+
+- `Run production env validator in target environment` (blocked: target web/API production env context not available in local shell; requires Render shell or secure operator shell).

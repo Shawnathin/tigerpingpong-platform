@@ -116,3 +116,97 @@ No-go (target validation not completed).
 ## 14) Recommended next executable task
 
 Obtain Render/operator target env access and rerun validator
+
+## Target Environment Validation Attempt
+
+### Date/context
+
+2026-06-24 (operator-controlled environment context not available in this run)
+
+### Branch/commit tested
+
+- Branch: `codex/media-cloudinary-app-mapping`
+- Commit: `$(git rev-parse --short HEAD)`
+
+### Where validator ran
+
+- local shell
+- Render web service: not available
+- Render API service: not available
+- Operator shell: not available
+
+### Expected mode used
+
+- test
+- live: undecided
+
+### Commands run
+
+- `node --check scripts/launch/validate-production-env.mjs`
+- `node scripts/launch/validate-production-env.mjs --help`
+- `pnpm launch:env:validate --surface web --expected-mode test`
+- `pnpm launch:env:validate --surface api --expected-mode test`
+- `pnpm launch:env:validate --surface all --expected-mode test`
+
+### Redacted results summary
+
+- Script syntax check passed.
+- Validator help output printed usage and did not show values.
+- All validation runs executed from non-target shell context and reported missing variables because required production vars were not loaded locally.
+
+### Missing required variables
+
+#### Web surface
+
+- `NEXT_PUBLIC_API_BASE_URL`
+- `NEXT_PUBLIC_SITE_URL`
+- `INTERNAL_ORDERS_API_TOKEN`
+- `INTERNAL_ORDERS_BASIC_AUTH_USER`
+- `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD`
+
+#### API surface
+
+- `DATABASE_URL`
+- `CORS_ORIGIN`
+- `PORT`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `CHECKOUT_SUCCESS_URL`
+- `CHECKOUT_CANCEL_URL`
+- `INTERNAL_ORDERS_API_TOKEN`
+
+### Invalid variables
+
+- None parsed in this run.
+
+### Optional/needs-review variables
+
+#### Web surface
+
+- `CLOUDINARY_CLOUD_NAME`
+- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
+
+#### API surface
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `APP_ENV`
+- `STRIPE_EXPECTED_LIVEMODE`
+- `STRIPE_TAX_ENABLED`
+- `SHIPMENT_EMAIL_WEBHOOK_URL`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+- `DIRECT_URL`
+- `NEXT_PUBLIC_API_URL`
+
+### No-secrets confirmation
+
+No secret values were shown in outputs.
+
+### Blockers
+
+- Target env validation blocked because no Render shell/operator target env context is available.
+
+### Go/no-go recommendation for checkout/webhook smoke
+
+No-go (required production target env variables were not validated in target web/API contexts).

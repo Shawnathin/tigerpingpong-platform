@@ -10,3 +10,4 @@
 - Obtain Render/API and Render/web target environment context (or secure operator shell with production env vars) to run `pnpm launch:env:validate` in target context.
 
 - Real paid checkout smoke execution on final domain (test/live) after environment validation and operator approvals are complete.
+- Validation run completed locally only; target Render web/API/operator env context still missing. Keep `Obtain Render/API and Render/web target environment context (or secure operator shell with production env vars)` as active parking item until access is provided.

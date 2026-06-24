@@ -24,3 +24,9 @@ The checkout + webhook runbook is ready, so we now need proof that target produc
 - Added `docs/launch/production-env-validation.md`.
 - Added `launch:env:validate` script for operator use.
 - Updated launch lane/workflow cards accordingly.
+
+## Latest validation blocker
+
+- `2026-06-24`: `Obtain Render/operator target env access and rerun validator` is blocked by unavailable target environment context.
+- `Target environment validation attempted` with only local shell context; command outputs correctly redacted and did not include secret values.
+- Next executable task remains: `Obtain Render shell/operator env access`.

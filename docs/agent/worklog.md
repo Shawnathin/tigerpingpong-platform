@@ -61,3 +61,13 @@ Validation results will be recorded in the task final report.
 - Classified `scripts/media/upload_tpp_cloudinary_approved.mjs` as `needs Shawn review` because it reads Cloudinary credentials and performs real Cloudinary Admin/Upload API calls.
 - Created `docs/agent/media-script-safety-review.md`.
 - Recommended a follow-up hardening task before preserving any source scripts.
+
+## 2026-06-24 - Harden non-upload media recovery scripts
+
+- Confirmed repo path: `/Users/shawncleve/Code/tigerpingpong-platform`.
+- Confirmed branch: `codex/media-cloudinary-app-mapping`.
+- Hardened four non-upload media scripts with dry-run defaults, help text, readable argument validation, output-root checks, and overwrite/reset gates.
+- Kept `scripts/media/upload_tpp_cloudinary_approved.mjs` unmodified and uncommitted.
+- Added `docs/media/cloudinary-upload-prep/media-scripts.md` with script purposes, run order, inputs, outputs, safe commands, and generated-output warnings.
+- Confirmed the scripts do not read secrets or call Cloudinary.
+- Did not run media generation, uploads, imports, mapping changes, cleanup, or app changes.

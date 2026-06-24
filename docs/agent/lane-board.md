@@ -29,3 +29,4 @@ Use this as a simple queue. The master build-control chat chooses what moves to 
 - Preserve reviewed media evidence and add generated export ignore rules.
 - Commit scoped media evidence/ignore change with validation caveat recorded.
 - Focused script-safety review of `scripts/media/*.py` and `scripts/media/*.mjs`.
+- Harden and preserve non-upload media recovery scripts.

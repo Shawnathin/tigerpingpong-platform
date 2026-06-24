@@ -2,11 +2,11 @@
 
 ## Active task
 
-TigerPingPong.ca cutover planning: produce a precise production readiness proof plan for domain cutover.
+TigerPingPong.ca launch readiness: create and publish production environment configuration contract before final domain cutover.
 
 ## Current task card
 
-TigerPingPong.ca cutover environment readiness
+Create production env contract doc
 
 ## Why this task exists now
 
@@ -14,11 +14,11 @@ A launch decision requires a clean answer on blockers before domain launch, not 
 
 ## What must happen next
 
-1. Finalize domain/canonical decision and who owns DNS + Render domain mapping.
-2. Confirm production env names/ownership for web, API, Stripe, Supabase, and Cloudinary in a cutover contract.
-3. Execute final read-only proof on final domain: home/category/product/cart/checkout/session/webhook/admin and mobile smoke.
+1. Finalize domain/canonical decision and DNS ownership.
+2. Confirm production env names/ownership for web, API, Stripe, Supabase, and Cloudinary in this contract.
+3. Validate env contract with a read-only production smoke checklist before final cutover.
 
 ## Status update
 
-- Launch readiness review confirmed and documented blockers were operational rather than code.
-- Created `docs/launch/cutover-environment-readiness.md` with exact cutover proof contract and go/no-go checks.
+- Launch readiness review confirmed blockers were operational rather than code.
+- Created `docs/launch/production-env-contract.md` and updated all launch workflow notes for this task.

@@ -2,13 +2,13 @@
 
 ## In Progress
 
-- `TigerPingPong.ca cutover environment readiness` — produce final production cutover proof checklist and execution plan.
+- `Create production env contract doc` — finalize launch surface variable ownership and validation contract.
 
 ## To Do
 
 - `Run final paid checkout + webhook smoke` on final domain.
 - `Confirm catalog/media launch quality and any must-fix content gaps.`
-- `Prepare production env contract doc` with service owners and exact values for required variables.
+- `Create read-only production env validation script` after env contract proofing.
 
 ## Done
 
@@ -16,3 +16,5 @@
 - Checkout API and webhook security behavior confirmed in code.
 - Launch audit and workflow docs generated.
 - `docs/launch/launch-readiness-audit` — draft complete and validation checks pass.
+- `docs/launch/cutover-environment-readiness.md` — cutover readiness plan completed.
+- `docs/launch/production-env-contract.md` — production variable ownership and validation contract completed.

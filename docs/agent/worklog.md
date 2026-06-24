@@ -83,3 +83,13 @@ Validation results will be recorded in the task final report.
 - Created `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`.
 - Recommended a dry-run media mapping validator/report as the next implementation task before any CSV edit, import, upload, or app behavior change.
 - Did not edit catalog data, app runtime files, generated exports, database schema/migrations, env/deployment config, package files, or the live Cloudinary upload script.
+
+## 2026-06-24 - Align goals to website launch
+
+- Confirmed repo path: `/Users/shawncleve/Code/tigerpingpong-platform`.
+- Confirmed branch: `codex/media-cloudinary-app-mapping`.
+- Updated `goals.md` from a broader custom ecommerce launch-readiness goal to the active `TigerPingPong Website Launch v1` goal.
+- Reframed the ship definition around a live production domain, working catalog/product/cart/Stripe/order/admin paths, production configuration, and launch-blocking QA.
+- Set the next current task card to `Launch readiness audit`, a review/proof task asking what blocks TigerPingPong.ca from going live today.
+- Moved media-validator follow-up work out of the immediate lane unless the launch audit selects it as a blocker.
+- Did not change app runtime files, catalog/media mappings, imports, uploads, schema/migrations, env/deployment config, package files, or generated exports.

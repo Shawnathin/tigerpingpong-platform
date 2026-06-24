@@ -14,6 +14,7 @@ Useful ideas that are not selected for the current task. Parking an item does no
 - Decide whether minimal shipped-order record work is required before launch or remains parked while staff send tracking emails manually.
 - Improve Aqua media quality if better approved final media is available.
 - Review any remaining Cloudinary upload-prep CSV/JSON manifests and binary contact sheets only if a future task needs more media evidence than the committed Markdown subset.
+- Create a dry-run Cloudinary media mapping validator/report only if the launch readiness audit selects media import/mapping proof as a blocker.
 - Decide whether `scripts/media/upload_tpp_cloudinary_approved.mjs` should be preserved at all; if yes, require explicit Shawn approval and add a no-upload default plus live-upload gate before commit/use.
 - Run a separate repo-wide Markdown Prettier baseline cleanup for pre-existing docs so future all-docs formatting checks can pass without unrelated noise.
 - Design a standalone category media import/config target later if uploaded category hero assets should be used directly instead of product `heroImageSlug` media.

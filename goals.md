@@ -1,66 +1,97 @@
-# TigerPingPong Custom Ecommerce Launch V1
+# TigerPingPong Website Launch v1
 
 ## Version name
 
-Custom ecommerce launch / V1 launch readiness for TigerPingPong.
+TigerPingPong Website Launch v1
 
 ## Why this version matters
 
-This version gets TigerPingPong to a working custom ecommerce launch without breaking the existing payment and order foundation. The business value is a shoppable storefront with real product content, trusted checkout, protected staff review, media readiness, and a clear path to domain cutover later.
+This version proves TigerPingPong.ca can operate as a real ecommerce website, not just a local/staging build. It needs to be live, customer-usable, and safe enough to take real orders.
 
 ## Ship definition
 
-Customers can browse launch products, view polished product pages with accurate media/options/content, add valid items to cart, complete hosted Stripe Checkout, and land on a success flow that reflects backend-confirmed order/payment status. Staff can review paid orders through protected internal/admin routes.
+The website is live online at the intended production domain, with the v1 catalog visible, product pages working, cart and Stripe checkout working, paid order capture working, essential admin/order visibility working, production environment variables configured, and launch-blocking QA issues resolved or explicitly accepted.
 
 ## Primary users
 
-- Customers shopping for TigerPingPong tables, paddles, balls, nets, covers, and accessories.
-- TigerPingPong staff reviewing paid orders and fulfillment details.
-- Shawn and future Codex sessions coordinating launch-critical work.
+- Customers buying Tiger PingPong products in Canada.
+- Shawn / Home Billiards operators reviewing orders and fulfillment state.
+- Future admin users managing catalog/media/order details.
 
 ## Must-have scope
 
-- Public storefront, category, resource, cart, checkout success, and checkout cancel paths remain usable.
-- Product pages use sourced facts only, Cloudinary-first media where verified, fallback media where still needed, and required options before add-to-cart.
-- Hosted Stripe Checkout remains the payment collection surface.
-- Backend/webhook-confirmed paid order status remains payment truth.
-- Canada-only shipping remains over `$100 CAD` free, `$100 CAD` or under `$15 CAD`, including exactly `$100.00 CAD`.
-- `/admin` and `/internal/*` remain protected, and public navigation does not expose them.
-- Launch URL/SEO/domain decisions are reviewed before DNS, redirects, canonicals, sitemap, or robots changes.
-- Cloudinary media workflows keep raw media local and credentials out of git.
+- Production website is reachable.
+- Core navigation works.
+- Category pages work.
+- Product pages work.
+- V1 reviewed catalog is visible.
+- Product images/media are acceptable for launch, even if not perfect.
+- Cart works.
+- Stripe checkout works in the correct production/test mode selected for launch.
+- Stripe webhook records paid orders correctly.
+- Canada-only shipping behavior is correct enough for launch.
+- Basic order/admin visibility exists.
+- Critical SEO/page metadata is not obviously broken.
+- Production env/config is documented without exposing secrets.
+- Render/Supabase/Stripe/Cloudinary production setup is verified.
+- No obvious security foot-guns: secrets not committed, unsafe debug endpoints not exposed, no test checkout accidentally live.
+- Launch QA checklist exists and passes.
 
 ## Explicit non-goals
 
-- No Shopify, BigCommerce, or theme-platform rebuild.
-- No custom payment form.
-- No DNS or domain cutover until explicitly selected.
-- No unreviewed redirects, canonical-domain changes, sitemap changes, or robots changes.
-- No invented product facts, prices, dimensions, colours, warranties, availability, or shipping promises.
-- No full admin clone, inventory system, refund flow, automated shipment email, analytics/tracking, or new paid service unless explicitly selected.
+- Perfect media pipeline.
+- Perfect Cloudinary automation.
+- Full admin CMS.
+- Full inventory management.
+- Full SEO rebuild.
+- Full redesign.
+- International shipping.
+- BigCommerce migration.
+- Major architecture rewrite.
+- Repo-wide formatting cleanup unless blocking.
+- Live Cloudinary upload tooling unless explicitly selected.
+- Any unrelated side quests.
 
 ## Required proof before ship
 
 - `pnpm lint` passes.
 - `pnpm typecheck` passes.
-- `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com pnpm build` passes.
-- `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tigerpingpong_validation pnpm db:validate` passes when Prisma/database-facing code changes.
-- Final safe launch smoke verifies public routes, cart, required options, Stripe Checkout handoff, success/cancel behavior, protected admin/internal routes, webhook/payment truth, and mobile 390px usability.
-- Any production-like checkout smoke uses approved Stripe test-mode steps and does not create real/live payment activity without explicit approval.
+- Production build passes.
+- Prisma/schema validation passes if applicable.
+- Stripe checkout smoke test documented.
+- Stripe webhook paid-order proof documented.
+- Production env checklist reviewed without exposing secrets.
+- Core customer path QA documented:
+  - home
+  - category
+  - product page
+  - cart
+  - checkout
+  - paid order
+- Admin/order visibility proof documented.
+- Mobile smoke test documented.
+- Known launch caveats listed.
 
 ## Release/ship checklist
 
-- [ ] Current task lane board has no launch-blocking item in `Blocked`.
-- [ ] Product media/content readiness is reviewed for launch products.
-- [ ] Checkout, shipping, tax, webhook, and success-page behavior are smoke-tested.
-- [ ] Render env/deployment checklist is current and reviewed without printing secrets.
-- [ ] Admin/internal protection is verified.
-- [ ] Footer/header public links are reviewed for approved URL decisions.
-- [ ] Domain cutover plan is reviewed separately before any DNS or canonical redirect work.
+- [ ] Confirm production branch.
+- [ ] Confirm clean Git status.
+- [ ] Confirm deployment target.
+- [ ] Confirm production domain/DNS.
+- [ ] Confirm Render services healthy.
+- [ ] Confirm Supabase production database reachable.
+- [ ] Confirm Stripe production configuration.
+- [ ] Confirm Cloudinary production asset URLs.
+- [ ] Confirm checkout/order/webhook flow.
+- [ ] Confirm fulfillment statuses/order records.
+- [ ] Confirm launch-blocking visual/media issues reviewed.
+- [ ] Confirm rollback plan.
+- [ ] Confirm post-launch monitoring plan.
 
 ## Parking lot rule
 
-Anything useful but not required for this V1 launch goes to `docs/agent/parking-lot.md`. Parking an idea means it is remembered, not selected.
+Anything not required to safely launch v1 goes to `docs/agent/parking-lot.md`. Media polish, deeper admin tools, product description upgrades, image automation, SEO expansion, design refinements, and repo-wide formatting cleanup are parked unless selected as launch blockers.
 
 ## What happens after this version ships
 
-After V1 launch, choose the next version goal from observed launch needs: richer fulfillment/admin operations, broader SEO redirects/search-console work, media cleanup, accessibility polish, product expansion, analytics, or post-launch customer-support improvements.
+After v1 is live, the next version can focus on polish: media cleanup, product cards, richer admin tools, SEO expansion, inventory/availability controls, catalog editing, and conversion improvements.

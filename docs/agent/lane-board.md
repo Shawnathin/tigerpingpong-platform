@@ -4,7 +4,6 @@ Use this as a simple queue. The master build-control chat chooses what moves to 
 
 ## Backlog
 
-- Create a dry-run Cloudinary media mapping validator/report.
 - Render env/cutover checklist refresh.
 - Final approved Stripe Tax checkout smoke.
 - Public catalog DTO review for internal-ish flags.
@@ -13,7 +12,7 @@ Use this as a simple queue. The master build-control chat chooses what moves to 
 
 ## Ready
 
-- None.
+- Launch readiness audit.
 
 ## In Progress
 
@@ -32,3 +31,4 @@ Use this as a simple queue. The master build-control chat chooses what moves to 
 - Focused script-safety review of `scripts/media/*.py` and `scripts/media/*.mjs`.
 - Harden and preserve non-upload media recovery scripts.
 - Review Cloudinary evidence for app media mapping/import plan.
+- Align goals.md to website launch.

@@ -1,67 +1,71 @@
 # Current Task Card
 
-Status: completed on 2026-06-24.
-
-Result: reviewed committed Cloudinary upload-prep evidence against the current catalog/media architecture and created `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`. No imports, uploads, app changes, catalog data edits, or live-upload script changes were made.
+Status: ready / not started.
 
 ## Task name
 
-Review Cloudinary evidence for app media mapping/import plan
+Launch readiness audit
 
 ## Goal
 
-Review the committed Cloudinary/media evidence and produce a precise mapping/import plan for how uploaded Cloudinary assets should feed the app catalog/media system, without running uploads, imports, app changes, or database changes.
+Inspect the repo and deployment assumptions to produce a launch-blocker list and exact task sequence to get TigerPingPong.ca live.
+
+## Key question
+
+What exactly blocks TigerPingPong.ca from going live today?
 
 ## Why now
 
-The generated exports are ignored, the reviewed Markdown evidence is preserved, and non-upload scripts are hardened. Before changing app media mappings or import data, the repo needs a clear plan that ties the evidence to the current app structure and identifies gaps/risks.
+The active version goal is now `TigerPingPong Website Launch v1`. Recent media work remains useful launch support, but the next selected work needs to identify the concrete blockers between the current repo/deployment state and a customer-usable production website.
 
 ## Expected implementation outcome
 
-A docs-only plan explains the current `ProductMedia` import/API/web path, evidence-backed ready mapping areas, assets needing Shawn review, do-not-use risks, import safety gates, and the safest next implementation task.
+A review/proof report classifies launch findings and recommends the exact next task sequence. The audit should not implement fixes.
 
-## Acceptance criteria
+## Finding classification
 
-- Inspect the committed Cloudinary upload-prep evidence.
-- Inspect app/media/catalog architecture with read-only commands.
-- Create `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`.
-- Recommend a small safe first implementation task.
-- Do not edit app runtime files, catalog data, mappings, schema, env, deployment, package files, generated exports, or the live upload script.
-- Validate touched docs before committing.
+- Must fix before live
+- Should fix before live
+- Can ship with caveat
+- Parking lot
 
 ## Expected files/folders
 
-- `docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md`
+- `docs/agent/launch-readiness-audit.md`
 - `docs/agent/current-task.md`
 - `docs/agent/worklog.md`
 - `docs/agent/lane-board.md`
 - `docs/agent/parking-lot.md`
+- `docs/agent/decisions.md` only if a real launch decision is recorded
 
-## Recommended next task
+## Suggested review areas
 
-Create a dry-run Cloudinary media mapping validator/report that checks the current product media import CSV against committed evidence and app constraints without editing data, importing to a database, uploading, or changing app behavior.
+- Current branch, Git state, recent commits, and untracked local-only files.
+- Package scripts and safe validation commands.
+- Render web/API deployment assumptions.
+- Supabase/Prisma schema and import expectations.
+- Stripe checkout, webhook, paid-order truth, and shipping assumptions.
+- Public storefront routes, category/product/cart/checkout paths, and protected admin/internal routes.
+- Production env/config documentation without printing secrets.
+- Cloudinary/media state only as launch readiness requires.
+- SEO/domain/DNS assumptions and known guardrails.
+- Existing docs, QA notes, deployment notes, and known parked work.
 
 ## Out of scope
 
-- No app runtime behavior changes.
-- No catalog/media mapping file edits.
-- No product data edits.
-- No Cloudinary upload, deletion, import, cleanup, credential use, or live upload script change.
-- No database writes, imports, migrations, or Prisma schema changes.
-- No checkout, Stripe, webhook, order, tax, DNS, SEO, deployment, env, package, or lockfile changes.
-- No generated export output staging.
+- No app runtime changes.
+- No catalog/media mapping changes.
+- No imports, uploads, cleanup, or generated export changes.
+- No database writes, schema edits, or migrations.
+- No env/deployment/DNS/config changes.
+- No Stripe, webhook, payment, shipping, checkout, admin, SEO, or route behavior changes.
+- No dependency installs or package/lockfile changes.
+- No repo-wide formatting cleanup.
 
-## Validation commands
+## Validation expectation
 
-```bash
-git diff --check
-pnpm exec prettier --check docs/agent/current-task.md docs/agent/worklog.md docs/agent/lane-board.md docs/agent/parking-lot.md docs/media/cloudinary-upload-prep/app-media-mapping-import-plan.md
-```
-
-## Workflow-doc update rule
-
-When this task finishes, update `docs/agent/worklog.md`, move the task on `docs/agent/lane-board.md`, and park any future category-media or best-available-image follow-up that is not selected.
+Run only review-safe commands needed to support the audit. If the audit creates docs, validate touched docs with `git diff --check` and targeted Prettier.
 
 ## Stop condition
 
-Stop after the plan and workflow updates are committed. Do not begin validator implementation, script cleanup, mapping edits, imports, uploads, cleanup, or app changes.
+Stop after the launch readiness audit report and workflow docs are complete. Do not start implementation fixes.

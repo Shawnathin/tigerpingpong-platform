@@ -6,3 +6,5 @@
 - Advanced admin product tooling and long-term inventory/audit workflow expansion.
 - Any optional marketplace/marketing tasks after launch green-light.
 - Finalize which domain variant and DNS provider owns canonical launch routing (`tigerpingpong.ca`/`www`/`.com`) outside this task scope.
+
+- Real paid checkout smoke execution on final domain (test/live) after environment validation and operator approvals are complete.

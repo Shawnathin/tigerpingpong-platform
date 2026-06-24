@@ -2,12 +2,14 @@
 
 ## In Progress
 
-- `Run final paid checkout + webhook smoke` on final domain.
+- `Create final checkout + webhook smoke runbook`.
+- `Run final paid checkout + webhook smoke` on final domain (execution blocked until approvals and env validator pass).
 - `Confirm catalog/media launch quality and any must-fix content gaps.`
 - `Prepare final cutover proof record with validator output and smoke smoke plan evidence.`
 
 ## Done
 
+- `docs/launch/final-checkout-webhook-smoke-runbook` — doc-only final checkout/webhook smoke plan completed.
 - Route/auth architecture and payment-truth design reviewed.
 - Checkout API and webhook security behavior confirmed in code.
 - Launch audit and workflow docs generated.

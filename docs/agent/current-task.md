@@ -2,21 +2,21 @@
 
 ## Active task
 
-TigerPingPong.ca launch readiness: create production env validation proofing before final cutover.
+TigerPingPong.ca launch readiness: create final checkout + webhook smoke runbook.
 
 ## Current task card
 
-Create read-only production env validation script
+Create final checkout + webhook smoke runbook
 
 ## Why this task exists now
 
-A launch decision should be supported by a safe local/operator env proof command that validates required runtime settings before final domain cutover and before paid smoke tests are re-run.
+After safe runtime validation is in place, the next launch proof is a final checkout + webhook smoke runbook for the final domain.
 
 ## What must happen next
 
-1. Finish validator implementation and docs alignment.
-2. Run validation commands in web/API operator context (`--surface web`, `--surface api`, `--surface all`).
-3. Record cutover proof command results before moving into final domain smoke testing.
+1. Draft a final smoke runbook for checkout + webhook proof.
+2. Keep the plan strictly read-only (no payments, no env mutation) until all operator confirmations are captured.
+3. Document required evidence, pass/fail criteria, and rollback conditions.
 
 ## Status update
 

@@ -2,66 +2,77 @@
 
 Status: completed on 2026-06-24.
 
-Result: see `docs/agent/media-artifact-git-safety-triage.md`.
+Result: scoped media evidence/ignore changes are ready to commit with targeted validation; the unrelated repo-wide Markdown Prettier baseline failure is recorded as future cleanup.
 
 ## Task name
 
-Cloudinary media artifact git-safety triage
+Commit scoped media evidence/ignore change with validation caveat recorded
 
 ## Goal
 
-Decide which current untracked Cloudinary/media export artifacts belong in git, which must stay local, and what proof is needed before any media cleanup or PR shipping.
+Commit only the scoped media evidence/ignore changes that are already implemented, while recording the repo-wide Markdown Prettier baseline failure as a known unrelated blocker/parking-lot item.
 
 ## Why now
 
-The current branch has untracked media/export artifacts under `exports/` and `scripts/media/`. This is launch-relevant because Cloudinary media readiness is a V1 goal, but raw media, secrets, and local upload outputs must not be committed accidentally.
+The selected media evidence task is complete and safe. Unrelated formatting debt should not block Git hygiene work or drag the launch lane into repo-wide cleanup.
 
 ## Expected implementation outcome
 
-A short triage record classifies the untracked media/export paths as commit-ready, local-only, needs Shawn review, or ignore-rule candidates. If needed, make a minimal `.gitignore` or docs update in the selected task, but do not upload media, delete media, rewrite app behavior, or touch secrets.
+A single scoped commit contains `.gitignore`, committed Markdown evidence under `docs/media/cloudinary-upload-prep/`, and workflow docs. Bulk generated exports and unreviewed `scripts/media` source files remain unstaged.
 
 ## Acceptance criteria
 
-- The task reports every currently untracked `exports/` and `scripts/media/` top-level path.
-- Candidate files are checked for obvious secret/env-token strings without printing secret values.
-- Raw media or local-only bulk export folders are not staged.
-- Any recommended git additions are limited to reviewed manifests, reports, scripts, docs, or ignore rules.
-- The task records exact files touched, validation commands, and remaining Shawn-review items.
+- Confirm working tree changes are limited to the scoped media evidence/ignore task plus workflow docs.
+- Confirm preserved evidence files exist under `docs/media/cloudinary-upload-prep/`.
+- Confirm bulk generated exports are ignored and not staged.
+- Run targeted validation only for touched files.
+- Record the repo-wide Markdown Prettier baseline failure as unrelated future cleanup.
+- Stage only scoped docs/ignore files and commit them.
 
 ## Expected files/folders
 
-- `exports/tpp-cloudinary-upload-prep/`
-- `exports/tpp-media-processed-pack/`
-- `exports/tpp-media-recovery-source/`
-- `exports/tpp-media-recovery-triage/`
-- `scripts/media/`
-- Optional task record under `docs/planning/`
-- Optional `.gitignore` update only if needed to prevent unsafe raw-media commits
+- `.gitignore`
+- `docs/media/cloudinary-upload-prep/README.md`
+- Selected evidence files copied into `docs/media/cloudinary-upload-prep/`
+- `docs/agent/current-task.md`
+- `docs/agent/worklog.md`
+- `docs/agent/lane-board.md`
+- `docs/agent/parking-lot.md` if remaining out-of-scope media follow-up changes
+
+## Recommended next task
+
+Review `scripts/media/*.py` and `scripts/media/*.mjs` as source tooling in a focused script-safety task before any Cloudinary mapping, import, upload, or cleanup work continues.
 
 ## Out of scope
 
 - No app runtime behavior changes.
-- No Cloudinary upload, deletion, or credential use.
+- No Cloudinary upload, deletion, import, cleanup, mapping change, or credential use.
 - No database writes, imports, migrations, or Prisma schema changes.
 - No checkout, Stripe, webhook, order, tax, DNS, SEO, or deployment changes.
 - No committing raw media, secrets, `.env` files, credentials, private data, or production customer/order data.
+- No script review or script staging.
 
 ## Validation commands
 
 ```bash
 git status --short
-find exports scripts/media -maxdepth 3 -type f | sort
-rg -n "CLOUDINARY_API_SECRET|CLOUDINARY_URL|STRIPE_SECRET|STRIPE_WEBHOOK|DATABASE_URL|SUPABASE_SERVICE_ROLE|INTERNAL_ORDERS_API_TOKEN|PASSWORD|PRIVATE_KEY|BEGIN [A-Z ]*PRIVATE KEY" exports scripts/media
-pnpm lint
-pnpm typecheck
+git check-ignore -v --no-index exports || true
+find docs/media/cloudinary-upload-prep -maxdepth 3 -type f | sort
+git diff --check
+pnpm exec prettier --check .gitignore docs/agent/current-task.md docs/agent/worklog.md docs/agent/lane-board.md docs/agent/parking-lot.md docs/media/cloudinary-upload-prep/README.md docs/media/cloudinary-upload-prep/qa/upload-prep-review-sheet.md docs/media/cloudinary-upload-prep/reports/app-media-mapping-report.md docs/media/cloudinary-upload-prep/reports/cloudinary-upload-results.md docs/media/cloudinary-upload-prep/reports/do-not-upload.md docs/media/cloudinary-upload-prep/reports/media-mapping-qa-report.md docs/media/cloudinary-upload-prep/reports/needs-shawn-review.md docs/media/cloudinary-upload-prep/reports/upload-prep-summary.md docs/media/cloudinary-upload-prep/reports/upload-readiness-by-target.md
 ```
 
-Use safe subsets if full validation is too broad for the selected task. Do not run uploads, imports, migrations, deploys, or dependency installs.
+Also verify staged files before committing:
+
+```bash
+git diff --name-only --cached
+git status --short
+```
 
 ## Workflow-doc update rule
 
-When this task finishes, update `docs/agent/worklog.md`, move the task on `docs/agent/lane-board.md`, and add follow-ups to `docs/agent/parking-lot.md` if any media work remains unselected.
+When this task finishes, update `docs/agent/worklog.md`, move the task on `docs/agent/lane-board.md`, and add the repo-wide Markdown Prettier baseline cleanup to `docs/agent/parking-lot.md`.
 
 ## Stop condition
 
-Stop after the triage record and any selected docs/ignore updates are complete, safe validation is reported, and a commit-ready state is prepared. Do not proceed into media upload, product-page fixes, cleanup, or app implementation.
+Stop after scoped files are committed. Do not proceed into script review, media cleanup, mapping changes, imports, uploads, or app changes.

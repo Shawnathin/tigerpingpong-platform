@@ -27,3 +27,26 @@ Validation results will be recorded in the onboarding final report.
 - Left all media/export artifacts untouched and unstaged.
 
 Validation results will be recorded in the task final report.
+
+## 2026-06-24 - Preserve reviewed media evidence and ignore generated exports
+
+- Confirmed repo path: `/Users/shawncleve/Code/tigerpingpong-platform`.
+- Confirmed branch: `codex/media-cloudinary-app-mapping`.
+- Used `docs/agent/media-artifact-git-safety-triage.md` to select only commit-ready Markdown evidence from `exports/tpp-cloudinary-upload-prep/`.
+- Copied selected reports and the Markdown upload-prep review sheet into `docs/media/cloudinary-upload-prep/`.
+- Added README context explaining the evidence source, why bulk generated media stays local, and why generated exports should not be committed wholesale.
+- Added ignore rules for the generated `/exports/` workspace and `scripts/media/__pycache__/`.
+- Left bulk images, upload-ready folders, CSV/JSON manifests needing Shawn review, local galleries, command wrappers, and media source scripts unstaged.
+- Targeted Prettier checks pass for touched docs, but the requested repo-wide Markdown Prettier check still fails on unrelated pre-existing docs outside this task.
+- No commit was created because the exact requested validation set did not fully pass.
+
+Validation results will be recorded in the task final report.
+
+## 2026-06-24 - Commit scoped media evidence/ignore change
+
+- Confirmed the working tree changes are limited to `.gitignore`, `docs/media/cloudinary-upload-prep/`, and workflow docs, with unreviewed `scripts/media/*.py` and `scripts/media/*.mjs` left unstaged.
+- Confirmed bulk generated `exports/` output is ignored by `.gitignore`.
+- Ran scoped validation for the touched files only: `git diff --check` and targeted `pnpm exec prettier --check --ignore-unknown`.
+- The exact targeted Prettier command without `--ignore-unknown` stopped on `.gitignore` because no parser was inferred; Markdown files passed after unknown files were ignored, and `.gitignore` whitespace was covered by `git diff --check`.
+- Recorded the repo-wide Markdown Prettier baseline failure as pre-existing, unrelated formatting debt and left unrelated docs untouched.
+- Committed the scoped media evidence/ignore change.

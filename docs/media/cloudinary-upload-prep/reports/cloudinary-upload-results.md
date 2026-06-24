@@ -1,0 +1,118 @@
+# Cloudinary Upload Results
+
+Manifest rows intended for upload: 55
+Uploaded: 55
+Failed: 0
+
+## Uploaded Assets
+
+- tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-primary-01 (1600x1600, jpg, 153287 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745048/tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-primary-01.jpg
+- tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-01 (1600x1600, jpg, 93485 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745049/tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-01.jpg
+- tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-02 (1600x1600, jpg, 82164 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745049/tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-02.jpg
+- tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-03 (1600x1600, jpg, 80033 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745050/tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-03.jpg
+- tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-04 (1600x1600, jpg, 185087 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745051/tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-04.jpg
+- tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-05 (1600x1600, jpg, 118227 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745051/tigerpingpong/recovered/products/expo-outdoor/tpp-expo-outdoor-gallery-05.jpg
+- tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-primary-01 (1600x1600, jpg, 150385 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745052/tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-primary-01.jpg
+- tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-01 (1600x1600, jpg, 113586 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745053/tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-01.jpg
+- tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-02 (1600x1600, jpg, 101883 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745053/tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-02.jpg
+- tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-03 (1600x1600, jpg, 103139 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745054/tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-03.jpg
+- tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-04 (1600x1600, jpg, 91830 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745055/tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-04.jpg
+- tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-05 (1600x1600, jpg, 83410 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745056/tigerpingpong/recovered/products/portland-indoor/tpp-portland-indoor-gallery-05.jpg
+- tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-primary-01 (1600x1600, jpg, 118305 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-primary-01.jpg
+- tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01 (1600x1600, jpg, 140717 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg
+- tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02 (1600x1600, jpg, 138325 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745058/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02.jpg
+- tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03 (1600x1600, jpg, 93565 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03.jpg
+- tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04 (1600x1600, jpg, 96024 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04.jpg
+- tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05 (1600x1600, jpg, 123275 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745060/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05.jpg
+- tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-primary-01 (1600x1600, jpg, 123867 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745061/tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-primary-01.jpg
+- tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-01 (1600x1600, jpg, 93671 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745062/tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-01.jpg
+- tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-02 (1600x1600, jpg, 100174 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745062/tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-02.jpg
+- tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-03 (1600x1600, jpg, 103394 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745063/tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-03.jpg
+- tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-04 (1600x1600, jpg, 89426 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745064/tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-04.jpg
+- tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-05 (1600x1600, jpg, 76672 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745065/tigerpingpong/recovered/products/whistler-indoor/tpp-whistler-indoor-gallery-05.jpg
+- tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-primary-01 (1600x1600, jpg, 75233 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745065/tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-primary-01.jpg
+- tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-01 (1600x1600, jpg, 60639 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745067/tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-01.jpg
+- tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-02 (1600x1600, jpg, 65345 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745068/tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-02.jpg
+- tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-03 (1600x1600, jpg, 59453 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745069/tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-03.jpg
+- tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-04 (1600x1600, jpg, 59000 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745069/tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-04.jpg
+- tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-05 (1600x1600, jpg, 58022 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745070/tigerpingpong/recovered/products/plaza-outdoor/tpp-plaza-outdoor-gallery-05.jpg
+- tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-01 (1600x1600, png, 1439099 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745071/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-01.png
+- tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-02 (1600x1600, png, 1527808 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745073/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-02.png
+- tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-03 (1600x1600, png, 1021017 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745074/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-03.png
+- tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-04 (1600x1600, png, 980299 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745075/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-04.png
+- tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-05 (1600x1600, png, 1005080 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745077/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-05.png
+- tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-primary-01 (1600x1600, jpg, 409226 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745078/tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-primary-01.jpg
+- tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-01 (1600x1600, jpg, 242768 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745080/tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-01.jpg
+- tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-02 (1600x1600, jpg, 247757 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745080/tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-02.jpg
+- tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-03 (1600x1600, jpg, 285899 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745081/tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-03.jpg
+- tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-04 (1600x1600, jpg, 144395 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745081/tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-04.jpg
+- tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-05 (1600x1600, jpg, 109987 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745082/tigerpingpong/recovered/products/aqua-paddle/tpp-aqua-paddle-gallery-05.jpg
+- tigerpingpong/recovered/products/covers/tpp-covers-primary-01 (1600x1600, png, 503972 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745082/tigerpingpong/recovered/products/covers/tpp-covers-primary-01.png
+- tigerpingpong/recovered/products/covers/tpp-covers-gallery-01 (1600x1600, png, 248607 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745083/tigerpingpong/recovered/products/covers/tpp-covers-gallery-01.png
+- tigerpingpong/recovered/products/net-post-set/tpp-net-post-set-primary-01 (1600x1600, png, 724763 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745084/tigerpingpong/recovered/products/net-post-set/tpp-net-post-set-primary-01.png
+- tigerpingpong/recovered/categorys/category-tables/tpp-category-tables-primary-01 (2400x1470, jpg, 1422129 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745084/tigerpingpong/recovered/categorys/category-tables/tpp-category-tables-primary-01.jpg
+- tigerpingpong/recovered/categorys/category-indoor-tables/tpp-category-indoor-tables-primary-01 (800x600, jpg, 135136 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745085/tigerpingpong/recovered/categorys/category-indoor-tables/tpp-category-indoor-tables-primary-01.jpg
+- tigerpingpong/recovered/categorys/category-outdoor-tables/tpp-category-outdoor-tables-primary-01 (1677x1599, jpg, 166440 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745086/tigerpingpong/recovered/categorys/category-outdoor-tables/tpp-category-outdoor-tables-primary-01.jpg
+- tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-primary-01 (1600x1600, jpg, 562127 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745086/tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-primary-01.jpg
+- tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-gallery-01 (1600x1600, jpg, 211404 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745088/tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-gallery-01.jpg
+- tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-gallery-02 (1600x1600, jpg, 159190 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745088/tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-gallery-02.jpg
+- tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-gallery-03 (1600x1600, jpg, 262612 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745089/tigerpingpong/recovered/categorys/category-paddles/tpp-category-paddles-gallery-03.jpg
+- tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-primary-01 (1600x1600, jpg, 758202 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745090/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-primary-01.jpg
+- tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01 (1600x1600, jpg, 438225 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745091/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01.jpg
+- tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-02 (1600x1600, jpg, 423072 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745092/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-02.jpg
+- tigerpingpong/recovered/categorys/category-accessories/tpp-category-accessories-primary-01 (1600x1600, jpg, 436976 bytes)
+  - https://res.cloudinary.com/djfcisldm/image/upload/v1781745093/tigerpingpong/recovered/categorys/category-accessories/tpp-category-accessories-primary-01.jpg

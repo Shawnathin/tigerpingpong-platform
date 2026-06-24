@@ -26,3 +26,5 @@ Use this as a simple queue. The master build-control chat chooses what moves to 
 
 - Build-control workflow installed.
 - Cloudinary media artifact git-safety triage.
+- Preserve reviewed media evidence and add generated export ignore rules.
+- Commit scoped media evidence/ignore change with validation caveat recorded.

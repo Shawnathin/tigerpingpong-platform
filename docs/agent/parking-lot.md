@@ -13,3 +13,6 @@ Useful ideas that are not selected for the current task. Parking an item does no
 - Decide final domain behavior for `www`, `.com`, Search Console, sitemap submission, redirects, and post-cutover canonical verification.
 - Decide whether minimal shipped-order record work is required before launch or remains parked while staff send tracking emails manually.
 - Improve Aqua media quality if better approved final media is available.
+- Decide whether to commit selected media triage reports/manifests from `exports/tpp-cloudinary-upload-prep/` after Shawn review.
+- Review and possibly commit `scripts/media/*.py` and `scripts/media/*.mjs` as source tooling in a script-focused task.
+- Add ignore rules for generated media export roots, Python cache files, and remaining local-only media artifacts after reviewed evidence is preserved.

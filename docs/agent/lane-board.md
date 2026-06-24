@@ -12,7 +12,7 @@ Use this as a simple queue. The master build-control chat chooses what moves to 
 
 ## Ready
 
-- Cloudinary media artifact git-safety triage.
+- None.
 
 ## In Progress
 
@@ -25,3 +25,4 @@ Use this as a simple queue. The master build-control chat chooses what moves to 
 ## Done
 
 - Build-control workflow installed.
+- Cloudinary media artifact git-safety triage.

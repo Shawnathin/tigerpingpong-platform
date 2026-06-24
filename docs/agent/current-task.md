@@ -1,5 +1,9 @@
 # Current Task Card
 
+Status: completed on 2026-06-24.
+
+Result: see `docs/agent/media-artifact-git-safety-triage.md`.
+
 ## Task name
 
 Cloudinary media artifact git-safety triage

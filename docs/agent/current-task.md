@@ -38,6 +38,10 @@ final customer-path checkout + webhook smoke on the final domain.
 - No secret values were printed or recorded.
 - Optional warnings remain for operator review but are not launch-blocking unless
   the operator decides otherwise.
+- `2026-06-26`: Created
+  `docs/launch/final-checkout-webhook-smoke-results.md` as a hold record. The
+  final smoke has not been run because required operator confirmations are still
+  pending.
 
 ## Latest validation status
 
@@ -45,3 +49,6 @@ final customer-path checkout + webhook smoke on the final domain.
   test mode.
 - Recommended next executable task:
   `Run final checkout + webhook smoke on final domain`.
+- Current blocker: collect written operator confirmations for final smoke
+  domain, Stripe test mode, dashboard/log/admin access owners, and permission to
+  create one Stripe test checkout/order record with a small test cart item.

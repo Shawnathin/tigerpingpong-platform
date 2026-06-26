@@ -16,3 +16,7 @@
 - Live-mode or real paid checkout smoke execution on final domain remains parked
   until separately approved. The next recommended task is Stripe test-mode final
   checkout + webhook smoke on the final domain.
+
+- Final checkout + webhook smoke execution remains held until operator
+  confirmations are recorded for final domain, Stripe mode, dashboard/log/admin
+  access owners, and permission to create one Stripe test checkout/order record.

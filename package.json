@@ -19,6 +19,7 @@
     "scrape:tiger:test": "node tools/tiger-scraper/src/tiger-scraper.mjs --seed=/tables/ --seed=/accessories/ --limit=12 --max-depth=2 --output=var/scrapes/tigerpingpong/test",
     "validate:tiger-import": "node tools/tiger-import-validator/src/validate-tiger-import.mjs",
     "media:cloudinary:products": "node scripts/upload-product-media-to-cloudinary.mjs",
+    "launch:env:validate": "node scripts/launch/validate-production-env.mjs",
     "import:tiger:dev": "pnpm --filter @tigerpingpong/db import:tiger:dev",
     "import:tiger:deployed": "pnpm --filter @tigerpingpong/db import:tiger:deployed",
     "db:generate": "pnpm --filter @tigerpingpong/db prisma:generate",

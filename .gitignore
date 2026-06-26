@@ -18,6 +18,7 @@ var/scrapes/
 var/import-validation/
 var/reports/
 /images/
+/exports
 
 # Coverage
 coverage
@@ -54,6 +55,7 @@ web_modules
 .eslintcache
 .stylelintcache
 *.tsbuildinfo
+/scripts/media/__pycache__/
 
 # Environment variables
 .env

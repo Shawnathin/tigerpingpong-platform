@@ -42,6 +42,11 @@ final customer-path checkout + webhook smoke on the final domain.
   `docs/launch/final-checkout-webhook-smoke-results.md` as a hold record. The
   final smoke has not been run because required operator confirmations are still
   pending.
+- `2026-06-26`: Started public-path smoke against
+  `https://tigerpingpong-web.onrender.com`. Home/category/product/add-to-cart,
+  below-`$100 CAD` cart shipping, and mobile public/cart checks passed. Checkout
+  was not started because fresh target Render API/web service-shell env
+  validation could not be confirmed from this local session.
 
 ## Latest validation status
 
@@ -52,3 +57,6 @@ final customer-path checkout + webhook smoke on the final domain.
 - Current blocker: collect written operator confirmations for final smoke
   domain, Stripe test mode, dashboard/log/admin access owners, and permission to
   create one Stripe test checkout/order record with a small test cart item.
+- Current smoke blocker: run or provide redacted output for the required fresh
+  Render API and web service-shell validators in expected Stripe `test` mode,
+  then complete checkout/webhook/admin proof.

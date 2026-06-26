@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- `Run final checkout + webhook smoke on final domain` in Stripe test mode — blocked until operator confirmations are recorded.
+- `Run final checkout + webhook smoke on final domain` in Stripe test mode - public-path smoke passed on Render URL; checkout/webhook/admin proof blocked until fresh target Render service-shell env validation is confirmed.
 - `Confirm catalog/media launch quality and any must-fix content gaps.`
 - `Prepare final cutover proof record with validator output and smoke plan evidence.`
 
@@ -10,7 +10,7 @@
 
 - `docs/launch/final-checkout-webhook-smoke-runbook` — doc-only final checkout/webhook smoke plan completed.
 - `Run production env validator in target environment` — target Render API/web required env validation passed in expected Stripe `test` mode; optional warnings remain for operator review and no secret values were printed.
-- `docs/launch/final-checkout-webhook-smoke-results.md` — initial hold record created; smoke execution and evidence remain pending.
+- `docs/launch/final-checkout-webhook-smoke-results.md` - updated with partial public-path smoke pass and checkout/webhook/admin proof blocker.
 - Route/auth architecture and payment-truth design reviewed.
 - Checkout API and webhook security behavior confirmed in code.
 - Launch audit and workflow docs generated.

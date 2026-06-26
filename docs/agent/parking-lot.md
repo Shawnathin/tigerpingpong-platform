@@ -17,6 +17,8 @@
   until separately approved. The next recommended task is Stripe test-mode final
   checkout + webhook smoke on the final domain.
 
-- Final checkout + webhook smoke execution remains held until operator
-  confirmations are recorded for final domain, Stripe mode, dashboard/log/admin
-  access owners, and permission to create one Stripe test checkout/order record.
+- Final checkout + webhook smoke execution remains held at the checkout step
+  until fresh target Render API/web service-shell env validator output is
+  confirmed in expected Stripe `test` mode. Public storefront/cart checks passed
+  on `https://tigerpingpong-web.onrender.com`; Stripe webhook and paid-order
+  admin proof remain pending.

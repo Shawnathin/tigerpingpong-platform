@@ -2,21 +2,26 @@
 
 ## Active task
 
-TigerPingPong.ca launch readiness: run production env validator in target environment.
+TigerPingPong.ca launch readiness: run final checkout + webhook smoke on final domain.
 
 ## Current task card
 
-Run production env validator in target environment
+Run final checkout + webhook smoke on final domain
 
 ## Why this task exists now
 
-The checkout + webhook runbook is ready, so we now need proof that target production env vars are loaded and shaped correctly in the actual execution context before any final smoke check.
+The target Render API/web environment validator has passed for required variables
+in Stripe test mode. The launch lane can now move from env-gate proof to the
+final customer-path checkout + webhook smoke on the final domain.
 
 ## What must happen next
 
-1. Run the committed validator in the target web/API production environments.
-2. Capture redacted results in `docs/launch/production-env-validation-results.md`.
-3. Recommend the next launch step only after target validation pass/fail is confirmed.
+1. Confirm the final-domain/operator approvals required by
+   `docs/launch/final-checkout-webhook-smoke-runbook.md`.
+2. Run the final checkout + webhook smoke on the final domain in Stripe test
+   mode.
+3. Capture redacted smoke evidence without secret values.
+4. Record the go/no-go result for launch review.
 
 ## Status update
 
@@ -24,9 +29,19 @@ The checkout + webhook runbook is ready, so we now need proof that target produc
 - Added `docs/launch/production-env-validation.md`.
 - Added `launch:env:validate` script for operator use.
 - Updated launch lane/workflow cards accordingly.
+- `2026-06-26`: Recorded target Render API/web validator pass in
+  `docs/launch/production-env-validation-results.md`.
+- Target API env validation passed for required vars in expected Stripe `test`
+  mode.
+- Target web env validation passed for required vars in expected Stripe `test`
+  mode.
+- No secret values were printed or recorded.
+- Optional warnings remain for operator review but are not launch-blocking unless
+  the operator decides otherwise.
 
-## Latest validation blocker
+## Latest validation status
 
-- `2026-06-24`: `Obtain Render/operator target env access and rerun validator` is blocked by unavailable target environment context.
-- `Target environment validation attempted` with only local shell context; command outputs correctly redacted and did not include secret values.
-- Next executable task remains: `Obtain Render shell/operator env access`.
+- `2026-06-26`: Env gate cleared for final checkout + webhook smoke in Stripe
+  test mode.
+- Recommended next executable task:
+  `Run final checkout + webhook smoke on final domain`.

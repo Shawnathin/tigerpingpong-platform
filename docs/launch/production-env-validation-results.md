@@ -2,211 +2,116 @@
 
 ## 1) Executive summary
 
-The production environment validator was executed successfully in the current local shell, confirming the script is readable, runnable, and safe (redacted/no-secret output). However, the target production web/API environment context was not available from this run, so no launch-safe go/no-go decision can be made yet for final checkout/webhook smoke.
+The production environment validator has now passed for required variables in the
+actual Render target service shells for both API and web.
+
+- Target API env validation: PASS for required vars.
+- Target web env validation: PASS for required vars.
+- Expected Stripe mode used: `test`.
+- Secret values printed: no.
+- Optional warnings remain for operator review, but they are not launch-blocking
+  unless the operator decides otherwise.
+
+Go/no-go recommendation: env gate cleared for final checkout + webhook smoke in
+Stripe test mode.
+
+Recommended next executable task:
+
+`Run final checkout + webhook smoke on final domain`
 
 ## 2) Validation date/context
 
-- Date: 2026-06-24 (UTC)
-- Local shell: this operator notebook shell at `/Users/shawncleve/Code/tigerpingpong-platform`
-- Target production context: not accessed
-- Branch: `codex/media-cloudinary-app-mapping`
-- Commit validated: `c736fbb1666c05d08ec889a071781d798575d8d3`
+- Date recorded: 2026-06-26
+- Target context: actual Render API and Render web service shells
+- Branch at documentation update: `codex/media-cloudinary-app-mapping`
+- Local HEAD at documentation update: `86ec1f5`
+- Validator deployment context: validator commit deployed to `main` before target
+  service-shell validation was run
 
 ## 3) Where validation was run
 
-- Local shell: ✅ run.
-- Render web service environment: ❌ not available for this run.
-- Render API service environment: ❌ not available for this run.
-- Other operator shell with target vars loaded: ❌ not used.
+- Render API service environment: PASS.
+- Render web service environment: PASS.
+- Local shell: earlier local-only attempts were blocked by missing target env
+  context and are superseded by this target validation pass.
 
 ## 4) Expected mode used
 
-- Local execution used `--expected-mode test` and `--expected-mode live`.
-- Target environment mode decision: ❌ unknown/blocked (no target context available).
+- Expected Stripe mode: `test`.
+- Target API and web validation results below are for Stripe test-mode launch
+  smoke readiness.
 
-## 5) Commands run
+## 5) Redacted target API validation summary
 
-```bash
-node --check scripts/launch/validate-production-env.mjs
-node scripts/launch/validate-production-env.mjs --help
-pnpm launch:env:validate --surface all --expected-mode test
-pnpm launch:env:validate --surface web --expected-mode test
-pnpm launch:env:validate --surface api --expected-mode test
-pnpm launch:env:validate --surface web --expected-mode live
-pnpm launch:env:validate --surface api --expected-mode live
-```
+- Surface: `api`
+- Expected mode: `test`
+- Required failures: `0`
+- Invalid required vars: `0`
+- `APP_ENV`: fixed and now validates as an allowed runtime mode.
+- Optional warnings/review: `7`
+- Secret values printed: no.
 
-All commands were run from the local shell. Target-environment commands were not run because the operator target env context was not available.
+Target API required env status: PASS.
 
-## 6) Redacted results summary
+## 6) Redacted target web validation summary
 
-- Script syntax check: passed.
-- Validator help: printed usage and surfaced no secret values.
-- Local validator runs failed with missing required environment variables (expected because target vars are not loaded locally).
+- Surface: `web`
+- Expected mode: `test`
+- Required failures: `0`
+- Invalid required vars: `0`
+- Optional warnings/review: `2`
+- Secret values printed: no.
 
-## 7) Missing required variables (local shell)
+Target web required env status: PASS.
 
-### Web surface
+## 7) Optional / needs-review variables
 
-- `NEXT_PUBLIC_API_BASE_URL`
-- `NEXT_PUBLIC_SITE_URL`
-- `INTERNAL_ORDERS_API_TOKEN`
-- `INTERNAL_ORDERS_BASIC_AUTH_USER`
-- `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD`
-
-### API surface
-
-- `DATABASE_URL`
-- `CORS_ORIGIN`
-- `PORT`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `CHECKOUT_SUCCESS_URL`
-- `CHECKOUT_CANCEL_URL`
-- `INTERNAL_ORDERS_API_TOKEN`
-
-## 8) Invalid variables
-
-- None parsed in this run.
-
-## 9) Optional / needs-review variables
-
-### Web surface
-
-- `CLOUDINARY_CLOUD_NAME` (optional)
-- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (optional)
+Optional warnings remain for operator review. They are not launch-blocking unless
+the operator decides otherwise.
 
 ### API surface
 
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `APP_ENV`
-- `STRIPE_EXPECTED_LIVEMODE`
-- `STRIPE_TAX_ENABLED`
 - `SHIPMENT_EMAIL_WEBHOOK_URL`
 - `CLOUDINARY_API_KEY`
 - `CLOUDINARY_API_SECRET`
 - `DIRECT_URL`
 - `NEXT_PUBLIC_API_URL`
 
-## 10) No-secrets confirmation
-
-- Confirmed. The validator output included only status names and required/optional flags.
-- No secret values were printed by any command run in this task.
-
-## 11) Blockers
-
-- No target production environment context was available (web/API).
-- Local shell lacked production web/API environment variables, so `--surface all` and scoped checks failed by design.
-
-## 12) Required operator follow-up
-
-1. Run this validator inside the target production web service and API service envs (or a secure operator shell with those env vars loaded).
-2. Re-run at minimum:
-   - `pnpm launch:env:validate --surface web --expected-mode test` (or `--expected-mode live` if approved)
-   - `pnpm launch:env:validate --surface api --expected-mode test` (or `--expected-mode live` if approved)
-   - Optional: `pnpm launch:env:validate --surface all --expected-mode test`
-3. Confirm `STRIPE_EXPECTED_LIVEMODE` aligns with approved checkout mode.
-4. Paste results into master build-control with explicit redacted summary.
-
-## 13) Go/no-go recommendation for final checkout/webhook smoke
-
-No-go (target validation not completed).
-
-## 14) Recommended next executable task
-
-Obtain Render/operator target env access and rerun validator
-
-## Target Environment Validation Attempt
-
-### Date/context
-
-2026-06-24 (operator-controlled environment context not available in this run)
-
-### Branch/commit tested
-
-- Branch: `codex/media-cloudinary-app-mapping`
-- Commit: `$(git rev-parse --short HEAD)`
-
-### Where validator ran
-
-- local shell
-- Render web service: not available
-- Render API service: not available
-- Operator shell: not available
-
-### Expected mode used
-
-- test
-- live: undecided
-
-### Commands run
-
-- `node --check scripts/launch/validate-production-env.mjs`
-- `node scripts/launch/validate-production-env.mjs --help`
-- `pnpm launch:env:validate --surface web --expected-mode test`
-- `pnpm launch:env:validate --surface api --expected-mode test`
-- `pnpm launch:env:validate --surface all --expected-mode test`
-
-### Redacted results summary
-
-- Script syntax check passed.
-- Validator help output printed usage and did not show values.
-- All validation runs executed from non-target shell context and reported missing variables because required production vars were not loaded locally.
-
-### Missing required variables
-
-#### Web surface
-
-- `NEXT_PUBLIC_API_BASE_URL`
-- `NEXT_PUBLIC_SITE_URL`
-- `INTERNAL_ORDERS_API_TOKEN`
-- `INTERNAL_ORDERS_BASIC_AUTH_USER`
-- `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD`
-
-#### API surface
-
-- `DATABASE_URL`
-- `CORS_ORIGIN`
-- `PORT`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `CHECKOUT_SUCCESS_URL`
-- `CHECKOUT_CANCEL_URL`
-- `INTERNAL_ORDERS_API_TOKEN`
-
-### Invalid variables
-
-- None parsed in this run.
-
-### Optional/needs-review variables
-
-#### Web surface
+### Web surface
 
 - `CLOUDINARY_CLOUD_NAME`
 - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
 
-#### API surface
+## 8) Missing required variables
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `APP_ENV`
-- `STRIPE_EXPECTED_LIVEMODE`
-- `STRIPE_TAX_ENABLED`
-- `SHIPMENT_EMAIL_WEBHOOK_URL`
-- `CLOUDINARY_API_KEY`
-- `CLOUDINARY_API_SECRET`
-- `DIRECT_URL`
-- `NEXT_PUBLIC_API_URL`
+- API surface: none.
+- Web surface: none.
 
-### No-secrets confirmation
+## 9) Invalid required variables
 
-No secret values were shown in outputs.
+- API surface: none.
+- Web surface: none.
 
-### Blockers
+## 10) No-secrets confirmation
 
-- Target env validation blocked because no Render shell/operator target env context is available.
+Confirmed. The recorded validator results include only variable names, statuses,
+counts, and redacted proof summaries. No secret values were printed or recorded.
 
-### Go/no-go recommendation for checkout/webhook smoke
+## 11) Blockers
 
-No-go (required production target env variables were not validated in target web/API contexts).
+- No required environment variable blockers remain for the target API/web
+  validation gate in Stripe test mode.
+
+## 12) Go/no-go recommendation for final checkout/webhook smoke
+
+Go for final checkout + webhook smoke in Stripe test mode, subject to the
+operator confirmations and smoke constraints in
+`docs/launch/final-checkout-webhook-smoke-runbook.md`.
+
+Do not run live-mode checkout or webhook smoke unless separately approved.
+
+## 13) Recommended next executable task
+
+`Run final checkout + webhook smoke on final domain`

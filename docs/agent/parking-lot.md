@@ -7,7 +7,18 @@
 - Any optional marketplace/marketing tasks after launch green-light.
 - Finalize which domain variant and DNS provider owns canonical launch routing (`tigerpingpong.ca`/`www`/`.com`) outside this task scope.
 
-- Obtain Render/API and Render/web target environment context (or secure operator shell with production env vars) to run `pnpm launch:env:validate` in target context.
+- Optional target env warnings that remain for operator review:
+  `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
+  `SHIPMENT_EMAIL_WEBHOOK_URL`, `CLOUDINARY_API_KEY`,
+  `CLOUDINARY_API_SECRET`, `DIRECT_URL`, `NEXT_PUBLIC_API_URL`,
+  `CLOUDINARY_CLOUD_NAME`, and `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`.
 
-- Real paid checkout smoke execution on final domain (test/live) after environment validation and operator approvals are complete.
-- Validation run completed locally only; target Render web/API/operator env context still missing. Keep `Obtain Render/API and Render/web target environment context (or secure operator shell with production env vars)` as active parking item until access is provided.
+- Live-mode or real paid checkout smoke execution on final domain remains parked
+  until separately approved. The next recommended task is Stripe test-mode final
+  checkout + webhook smoke on the final domain.
+
+- Final checkout + webhook smoke execution remains held at the checkout step
+  until fresh target Render API/web service-shell env validator output is
+  confirmed in expected Stripe `test` mode. Public storefront/cart checks passed
+  on `https://tigerpingpong-web.onrender.com`; Stripe webhook and paid-order
+  admin proof remain pending.

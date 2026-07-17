@@ -793,7 +793,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <ProductFamilySwitcher product={product} products={publicProducts} />
 
         <ProductHeroPurchase
-          availabilityMessage="Contact support to confirm current availability."
           basePriceLabel={formatPrice(product.priceCents, product.currency)}
           categoryName={product.category.name}
           heroClassName={heroClassName}

@@ -61,8 +61,7 @@ function categoryConfig(
 ): CategoryLandingPageConfig {
   return {
     emptyTitle: "This page is being prepared.",
-    emptyBody:
-      "The storefront is ready for this category route. Contact Tiger Ping Pong for current availability or product help.",
+    emptyBody: "No products are currently listed in this category.",
     productCtaLabel: "View product",
     ...config
   };

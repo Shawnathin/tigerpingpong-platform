@@ -9,7 +9,6 @@ import { ProductMediaGallery, type ProductMediaGalleryItem } from "./ProductMedi
 import styles from "./page.module.css";
 
 interface ProductHeroPurchaseProps {
-  availabilityMessage: string;
   basePriceLabel: string;
   categoryName: string;
   heroClassName: string;
@@ -26,7 +25,6 @@ interface ProductHeroPurchaseProps {
 }
 
 export function ProductHeroPurchase({
-  availabilityMessage,
   basePriceLabel,
   categoryName,
   heroClassName,
@@ -60,7 +58,6 @@ export function ProductHeroPurchase({
         </h1>
 
         <CheckoutButton
-          availabilityMessage={availabilityMessage}
           basePriceLabel={basePriceLabel}
           isCheckoutEligible={isCheckoutEligible}
           onVariantChange={setSelectedVariantKey}

@@ -9,7 +9,10 @@ import {
   type CartItemOption,
   type CartProductInput
 } from "../../../../lib/cart";
-import { getV1ShippingMessage } from "../../../../lib/shipping";
+import {
+  getV1ShippingMessage,
+  V1_IN_STOCK_HANDLING_COPY
+} from "../../../../lib/shipping";
 import { useCart } from "../../../../lib/use-cart";
 
 import styles from "./page.module.css";
@@ -30,7 +33,6 @@ export interface ProductOptionValue {
 }
 
 interface CheckoutButtonProps {
-  availabilityMessage: string;
   basePriceLabel: string;
   isCheckoutEligible: boolean;
   onVariantChange?: (variantKey: string | null) => void;
@@ -182,7 +184,6 @@ function AddToCartModal({ onClose, product }: { onClose: () => void; product: Ca
 }
 
 export function CheckoutButton({
-  availabilityMessage,
   basePriceLabel,
   isCheckoutEligible,
   onVariantChange,
@@ -278,7 +279,7 @@ export function CheckoutButton({
       </div>
 
       <div className={styles.shippingNote}>
-        <strong>{availabilityMessage}</strong>
+        <strong>{V1_IN_STOCK_HANDLING_COPY}</strong>
         {displayedShippingLines.map((line) => (
           <span key={line}>{line}</span>
         ))}

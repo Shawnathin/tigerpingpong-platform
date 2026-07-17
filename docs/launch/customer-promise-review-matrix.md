@@ -1,32 +1,32 @@
 # Customer Promise Review Matrix
 
-Status: owner review required before deployment
+Status: policy wording approved by Shawn; tax configuration proof remains a separate launch gate
 
-| Promise area         | Public wording/source                                                                                                 | Evidence or constraint                                                    | Owner decision                |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------- |
-| Shipping geography   | Canada-only online orders; serving customers across Canada                                                            | Locked V1 shipping rule                                                   | Approve / edit / reject       |
-| Shipping threshold   | Over `$100 CAD` ships free; `$100 CAD` or under costs `$15 CAD`; exactly `$100.00` costs `$15 CAD`                    | Shared and server tests cover `$99.99`, `$100.00`, `$100.01`              | Approve / edit / reject       |
-| Shipping timing      | “In stock — ships within 24 business hours.”                                                                          | Owner-confirmed launch promise; fulfillment timing is not system-tracked  | Approved by Shawn, 2026-07-17 |
-| Availability         | “In stock — ships within 24 business hours.”                                                                          | Product and variant availability remain controlled in the protected admin | Approved by Shawn, 2026-07-17 |
-| Pricing/currency     | CAD; final amount and taxes shown at hosted checkout                                                                  | Backend catalog price is authoritative                                    | Approve / edit / reject       |
-| Taxes                | Taxes are determined and shown at checkout                                                                            | Stripe/tax configuration requires Plan B accounting validation            | Approve / edit / reject       |
-| Payment confirmation | Redirect does not prove payment; validated backend/webhook status does                                                | Locked payment-truth architecture                                         | Approve / edit / reject       |
-| Warranty             | Coverage varies by product; review product facts or contact support                                                   | Blanket “up to 10-year warranty” claim removed                            | Approve / edit / reject       |
-| Returns              | Contact support before returning; eligibility, instructions, freight, and resolution require confirmation             | No confirmed window, fee, or blanket guarantee                            | Approve / edit / reject       |
-| Damage               | Report promptly, preserve packaging, and provide requested evidence                                                   | Operational draft only                                                    | Approve / edit / reject       |
-| Refunds              | An approved resolution determines method/timing; request alone is not approval                                        | Stripe and business rules require owner confirmation                      | Approve / edit / reject       |
-| Support              | Phone and `info@tigerpingpong.com`; product/order/shipping/setup help                                                 | Existing storefront contact identity                                      | Approve / edit / reject       |
-| Business identity    | Customer-facing identity is “Tiger Ping Pong”; Vancouver, BC is service location context                              | No unconfirmed legal entity or street address claimed                     | Approve / edit / reject       |
-| Privacy              | Cart local storage; order/contact processing; Stripe and service providers; limited retention principles and requests | Draft matches implemented architecture; not legal advice                  | Approve / edit / reject       |
+| Promise area         | Public wording/source                                                                                                 | Evidence or constraint                                                      | Owner decision                |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------- |
+| Shipping geography   | Canada-only online orders; serving customers across Canada                                                            | Locked V1 shipping rule                                                     | Approved by Shawn, 2026-07-17 |
+| Shipping threshold   | Over `$100 CAD` ships free; `$100 CAD` or under costs `$15 CAD`; exactly `$100.00` costs `$15 CAD`                    | Shared and server tests cover `$99.99`, `$100.00`, `$100.01`                | Approved by Shawn, 2026-07-17 |
+| Shipping timing      | “In stock — ships within 24 business hours.”                                                                          | Owner-confirmed launch promise; fulfillment timing is not system-tracked    | Approved by Shawn, 2026-07-17 |
+| Availability         | “In stock — ships within 24 business hours.”                                                                          | Product and variant availability remain controlled in the protected admin   | Approved by Shawn, 2026-07-17 |
+| Pricing/currency     | CAD; final amount and taxes shown at hosted checkout                                                                  | Backend catalog price is authoritative                                      | Approved by Shawn, 2026-07-17 |
+| Taxes                | Applicable taxes are calculated and displayed by Stripe Checkout before payment                                       | Stripe configuration and province testing remain required operational proof | Approved by Shawn, 2026-07-17 |
+| Payment confirmation | Redirect does not prove payment; validated backend/webhook status does                                                | Locked payment-truth architecture                                           | Approved by Shawn, 2026-07-17 |
+| Warranty             | Manufacturer warranty terms vary; labour is excluded unless stated otherwise                                          | Adapted from owner-supplied Home Billiards terms                            | Approved by Shawn, 2026-07-17 |
+| Returns              | Contact support before returning; package goods properly; return shipping may apply to tables                         | Adapted from the existing TigerPingPong shipping and returns page           | Approved by Shawn, 2026-07-17 |
+| Damage               | Inspect on delivery, note carrier damage, and notify Tiger Ping Pong within five days                                 | Adapted from the existing TigerPingPong shipping and returns page           | Approved by Shawn, 2026-07-17 |
+| Refunds              | No general refund timing or outcome is promised; support confirms the return process                                  | Source policy does not define an automatic refund entitlement               | Approved by Shawn, 2026-07-17 |
+| Support              | `1-888-552-5259`, Monday–Friday 9–5 Pacific, and `info@tigerpingpong.com`                                             | Existing TigerPingPong contact and returns wording                          | Approved by Shawn, 2026-07-17 |
+| Business identity    | Customer-facing identity is “Tiger Ping Pong”; 1644 S.E. Marine Drive, Vancouver, BC                                  | Existing TigerPingPong and Home Billiards public contact information        | Approved by Shawn, 2026-07-17 |
+| Privacy              | Order/support and technical data; hosted Stripe payments; service providers; no sale or third-party marketing sharing | Adapted from Home Billiards and aligned to the implemented storefront       | Approved by Shawn, 2026-07-17 |
 
 ## Sign-off
 
-Reviewer name: [enter name]
+Reviewer name: Shawn
 
-Decision date/time: [enter date/time]
+Decision date/time: 2026-07-17 11:47 PDT
 
-Approved rows or edits linked: [enter reference]
+Approved rows or edits linked: availability and shipping-timing approval in PR #108; revised policy approval recorded in the launch operator task on 2026-07-17
 
-Unresolved promises: [enter details]
+Unresolved promises: none; Canadian tax configuration and province testing remain required operational proof
 
 Any unresolved row is a launch stop unless the go/no-go owner records explicit, scoped risk acceptance.

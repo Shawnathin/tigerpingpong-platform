@@ -19,6 +19,20 @@ test("public and policy routes render with baseline security headers", async ({ 
   await page.goto("/privacy-policy");
   await expect(page.getByRole("link", { name: "Terms & Conditions" }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: "Returns Policy" }).first()).toBeVisible();
+  await expect(page.getByText(/do not sell personal information/i)).toBeVisible();
+  await expect(page.getByText(/owner review draft/i)).toHaveCount(0);
+
+  await page.goto("/terms-and-conditions");
+  await expect(page.getByText(/checkout redirect alone does not confirm payment/i)).toBeVisible();
+  await expect(page.getByText(/orders over \$100 CAD ship free/i)).toBeVisible();
+  await expect(page.getByText(/Stripe calculates and displays applicable taxes/i)).toBeVisible();
+
+  await page.goto("/returns-policy");
+  await expect(page.getByText(/within five days of receiving the product/i)).toBeVisible();
+  await expect(
+    page.getByText(/return shipping charges may apply to returned tables/i)
+  ).toBeVisible();
+  await expect(page.getByText(/14 days/i)).toHaveCount(0);
 });
 
 test("homepage promotions balance desktop headlines and keep one complete panel in view", async ({
@@ -208,7 +222,13 @@ test("primary discovery and shipping routes retain factual storefront behavior",
 test("critical public routes do not overflow at a mobile viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
-  for (const path of ["/", "/cart", "/privacy-policy", "/returns-policy"]) {
+  for (const path of [
+    "/",
+    "/cart",
+    "/privacy-policy",
+    "/terms-and-conditions",
+    "/returns-policy"
+  ]) {
     await page.goto(path);
     const dimensions = await page.evaluate(() => ({
       clientWidth: document.documentElement.clientWidth,

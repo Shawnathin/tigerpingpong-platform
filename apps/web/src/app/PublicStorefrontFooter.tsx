@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { PublicBrandLogo } from "./PublicBrandLogo";
+
 const FOOTER_SECTIONS = [
   {
     title: "Shop",
@@ -68,15 +70,7 @@ export function PublicStorefrontFooter() {
       <div className="publicFooterInner">
         <div className="publicFooterBrand">
           <a className="publicBrand" href="/" aria-label="Tiger Ping Pong home">
-            <span className="publicBrandMark" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </span>
-            <span className="publicBrandText">
-              <strong>Tiger</strong>
-              <span>Ping Pong</span>
-            </span>
+            <PublicBrandLogo />
           </a>
         </div>
 

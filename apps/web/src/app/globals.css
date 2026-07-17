@@ -92,61 +92,16 @@ select {
 .publicBrand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
   min-width: max-content;
   padding: 6px 8px;
   border-radius: 999px;
   text-decoration: none;
 }
 
-.publicBrandMark {
-  position: relative;
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-}
-
-.publicBrandMark span {
-  position: absolute;
-  width: 9px;
-  height: 30px;
-  border-radius: 999px 999px 4px 4px;
-  background: linear-gradient(180deg, #ffb15e, var(--tiger-orange-deep));
-  transform: rotate(24deg);
-}
-
-.publicBrandMark span:nth-child(1) {
-  left: 7px;
-  top: 5px;
-}
-
-.publicBrandMark span:nth-child(2) {
-  left: 16px;
-  top: 2px;
-}
-
-.publicBrandMark span:nth-child(3) {
-  left: 25px;
-  top: 5px;
-}
-
-.publicBrandText {
-  display: grid;
-  color: #11131f;
-  font-weight: 900;
-  line-height: 0.92;
-  text-transform: uppercase;
-}
-
-.publicBrandText strong {
-  font-size: 1.04rem;
-  letter-spacing: 0;
-}
-
-.publicBrandText span {
-  font-size: 0.72rem;
-  letter-spacing: 0;
+.publicBrandLogo {
+  display: block;
+  width: 154px;
+  height: auto;
 }
 
 .publicNavLinks {
@@ -375,41 +330,11 @@ select {
   .publicBrand {
     min-width: 0;
     justify-content: center;
-    gap: 8px;
     padding: 4px 2px;
   }
 
-  .publicBrandMark {
-    width: 31px;
-    height: 31px;
-  }
-
-  .publicBrandMark span {
-    width: 7px;
-    height: 23px;
-  }
-
-  .publicBrandMark span:nth-child(1) {
-    left: 5px;
-    top: 4px;
-  }
-
-  .publicBrandMark span:nth-child(2) {
-    left: 12px;
-    top: 2px;
-  }
-
-  .publicBrandMark span:nth-child(3) {
-    left: 19px;
-    top: 4px;
-  }
-
-  .publicBrandText strong {
-    font-size: 0.88rem;
-  }
-
-  .publicBrandText span {
-    font-size: 0.61rem;
+  .publicBrandLogo {
+    width: min(132px, 100%);
   }
 
   .publicNavLinks,

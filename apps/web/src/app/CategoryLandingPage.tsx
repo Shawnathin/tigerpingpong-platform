@@ -23,6 +23,11 @@ export interface CategoryLandingPageConfig {
   eyebrow: string;
   title: string;
   intro?: string;
+  heroImage?: {
+    alt: string;
+    fit?: "contain" | "cover";
+    src: string;
+  };
   heroImageSlug?: string;
   navLinks?: Array<{
     href: string;
@@ -299,12 +304,22 @@ function BrowseTools({
 }
 
 function CategoryHeroImage({
+  image: explicitImage,
   products,
   slug
 }: {
+  image?: CategoryLandingPageConfig["heroImage"];
   products: CatalogProductSummary[];
   slug?: string;
 }) {
+  if (explicitImage) {
+    return (
+      <div className={styles.heroVisual} data-fit={explicitImage.fit ?? "contain"}>
+        <img src={explicitImage.src} alt={explicitImage.alt} fetchPriority="high" loading="eager" />
+      </div>
+    );
+  }
+
   const featuredProduct =
     products.find((product) => product.slug === slug) ??
     products.find((product) => getProductImage(product).src);
@@ -353,7 +368,11 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
             <h1 id="category-title">{config.title}</h1>
             {config.intro ? <p>{config.intro}</p> : null}
           </div>
-          <CategoryHeroImage products={products} slug={config.heroImageSlug} />
+          <CategoryHeroImage
+            image={config.heroImage}
+            products={products}
+            slug={config.heroImageSlug}
+          />
         </section>
 
         {productResource.data && products.length > 0 ? (

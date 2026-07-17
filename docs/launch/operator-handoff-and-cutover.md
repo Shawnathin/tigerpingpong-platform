@@ -65,6 +65,11 @@ Record each decision, named owner, date, expiration/review date, and evidence re
 - [ ] Review Aqua media against all four package SKUs, then assign each approved option image to the exact `ProductVariant` through `ProductMedia.variantId`. Current Aqua import media rows have blank `variant_key` values, so the storefront deliberately keeps the current gallery image when no explicit mapping exists.
 - [ ] RLS, counts, paid-order visibility, connection health, and DB rollback owner confirmed.
 - [ ] Stripe tax treatment and test cases approved; mode, URLs, webhook, duplicate/manual-review, and paid-order proof complete.
+- [ ] In the intended Stripe mode, confirm **Settings → Business → Customer emails → Successful payments** is enabled.
+- [ ] Review Stripe receipt branding and public support details for Tiger Ping Pong, then send a test receipt to an owner-controlled address and verify delivery, identity, line items, shipping, tax, totals, and support information.
+- [ ] Capture redacted receipt evidence without exposing a full email address, payment identifier, customer information, or card details.
+- [ ] Confirm the application sends no duplicate order-confirmation email. Stripe's successful-payment receipt and the backend-confirmed order-status page are the launch customer confirmations; shipment email remains manual V1 operations.
+- [ ] Keep Stripe invoice creation off unless the business separately approves paid invoices and their customer/accounting implications.
 - [ ] Render variables validated in actual web/API shells using `--expected-mode` and `--expected-origin`.
 - [ ] Health checks, alerts, notifications, support/on-call, and rollback origin active.
 - [ ] Apex/`www`/`.com` policy, DNS records, certificates, TTL/rollback records confirmed.
@@ -73,7 +78,7 @@ Record each decision, named owner, date, expiration/review date, and evidence re
 
 ## Stop conditions
 
-STOP on any payment-mode mismatch, webhook signature/delivery/amount/country inconsistency, missing paid-order transition, database uncertainty, missing backup/restore evidence, failing health/readiness/CORS/auth, invalid SSL, unexpected customer promise, unowned risk, unavailable support/monitoring coverage, or any high/critical advisory. Do not make more payment attempts while a payment-path stop is active.
+STOP on any payment-mode mismatch, webhook signature/delivery/amount/country inconsistency, missing paid-order transition, unknown/disabled successful-payment receipt setting, failed test receipt, incorrect receipt identity/support details, database uncertainty, missing backup/restore evidence, failing health/readiness/CORS/auth, invalid SSL, unexpected customer promise, unowned risk, unavailable support/monitoring coverage, or any high/critical advisory. Do not make more payment attempts while a payment-path stop is active.
 
 ## Rollback checklist
 

@@ -1,0 +1,458 @@
+{
+  "schemaVersion": "product-detail-image-map-v1",
+  "generatedAt": "2026-07-17T08:21:32.643Z",
+  "sourceRoot": "/Users/shawncleve/Downloads/tiger - photos reorganized",
+  "policy": "Only high-confidence exact product/feature matches are eligible for implementation.",
+  "entries": [
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "5mm Melamine Resin Top",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/5mm Melamine Resin Top.webp",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275352/tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top.webp",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "50mm Powder-Coated Frame",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/50mm Powder-Coated Frame.webp",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275353/tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame.webp",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "Quick-Lock Folding System",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/Quick-Lock Folding System.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 913,
+        "height": 1000
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "Fixed Adjustable Net",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/Fixed Adjustable Net.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "Double Outdoor Wheels",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/Double Outdoor Wheels.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 6144,
+        "height": 4096
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275355/tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "Single Frame Rollaway",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/Single Frame Rollaway.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 500
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275356/tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "Playback Position",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/Playback Position.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 450,
+        "height": 450
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/playback-position",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275357/tigerpingpong/products/tiger-expo-outdoor-table/details/playback-position.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "productName": "Expo Outdoor",
+      "feature": "Built-In Storage",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Expo Outdoor/Table Details/Built-In Storage.webp",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275357/tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage.webp",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-plaza-outdoor-table-grey",
+      "productName": "Plaza",
+      "feature": "10mm Resin Playing Surface",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Plaza/Table Details/10mm Resin Playing Surface.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-plaza-outdoor-table-grey",
+      "productName": "Plaza",
+      "feature": "Galvanized Steel Frame",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Plaza/Table Details/Galvanized Steel Frame.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-plaza-outdoor-table-grey",
+      "productName": "Plaza",
+      "feature": "Ground Anchoring Kit",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Plaza/Table Details/Ground Anchoring Kit.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 500
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275359/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-plaza-outdoor-table-grey",
+      "productName": "Plaza",
+      "feature": "Solid Metal Net",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Plaza/Table Details/Solid Metal Net.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 500
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275360/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "7/8 Inch Chipboard Top",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/78 Inch Chipboard Top.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 450,
+        "height": 450
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "50mm Powder-Coated Frame",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/50mm Powder-Coated Frame.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "Smart Locking System",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/Smart Locking System.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 913,
+        "height": 1000
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275362/tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "Fixed Adjustable Net",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/Fixed Adjustable Net.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275363/tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "Locking Indoor Wheels",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/Easy Roll Locking Wheels.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "Indoor Top",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/Indoor Top.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "Playback Position",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/Playback Position.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 450,
+        "height": 450
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/playback-position",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275366/tigerpingpong/products/tiger-portland-indoor-table/details/playback-position.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "productName": "Portland Indoor",
+      "feature": "Built-In Storage",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Portland Indoor/Table Details/Built-In Storage.webp",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage.webp",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-whistler-indoor-table",
+      "productName": "Whistler",
+      "feature": "1 Inch Chipboard Top",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Whistler/Table Details/1 Inch Chipboard Top.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-whistler-indoor-table",
+      "productName": "Whistler",
+      "feature": "60mm Powder-Coated Frame",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Whistler/Table Details/60mm Powder-Coated Frame.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-whistler-indoor-table",
+      "productName": "Whistler",
+      "feature": "Drawbar Locking System",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Whistler/Table Details/Drawbar Locking System - Option 1.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-whistler-indoor-table",
+      "productName": "Whistler",
+      "feature": "Fixed Adjustable Net",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Whistler/Table Details/Fixed Adjustable Net.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 800,
+        "height": 600
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275369/tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    },
+    {
+      "productSlug": "tiger-whistler-indoor-table",
+      "productName": "Whistler",
+      "feature": "Locking Indoor Wheels",
+      "existingImage": "generated placeholder or legacy remote detail image",
+      "proposedSource": "Whistler/Table Details/Locking Indoor Wheels.jpg",
+      "matchMethod": "exact product folder and feature filename",
+      "confidence": "high",
+      "sourceDimensions": {
+        "width": 450,
+        "height": 450
+      },
+      "processing": "original bytes; Cloudinary delivery uses automatic format and quality",
+      "cloudinaryPublicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275370/tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels.jpg",
+      "status": "implemented",
+      "notes": "No catalog database or product-media row change; presentation-only feature asset."
+    }
+  ]
+}

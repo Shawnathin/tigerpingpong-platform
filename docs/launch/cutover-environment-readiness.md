@@ -56,6 +56,11 @@ Status: **Needs manual cutover proof execution before release.**
 - Success/cancel URLs must reflect selected public domain and include:
   - `?session_id={CHECKOUT_SESSION_ID}` on success route.
 - Checkout mode (test/live) must align with Stripe mode and `STRIPE_EXPECTED_LIVEMODE`.
+- In the intended Stripe mode, **Settings → Business → Customer emails → Successful payments** must be enabled and evidenced.
+- Stripe receipt branding and public support details must identify Tiger Ping Pong accurately.
+- Send a test receipt to an owner-controlled address and verify delivery, line items, shipping, tax, totals, and support information.
+- The application does not send a separate order-confirmation email; avoid a duplicate customer message.
+- Keep paid-invoice creation off unless the business separately approves that workflow.
 
 ### Stripe webhook
 
@@ -196,6 +201,8 @@ All steps are read-only and should be executed on the selected final public doma
 - paid/test paid order path
   - Complete end-to-end test-mode flow using selected Stripe mode.
   - Verify backend status endpoint returns `paid` for session after webhook.
+  - Verify the Stripe successful-payment receipt arrives at an owner-controlled address with approved branding and correct totals.
+  - Verify no duplicate application order-confirmation email is sent.
 - webhook order write proof
   - Confirm API internal/admin endpoint shows paid state and no duplicate paid transition.
 - admin/order visibility
@@ -208,6 +215,7 @@ All steps are read-only and should be executed on the selected final public doma
 - Screenshot or shared notes for:
   - checkout session creation URL,
   - success page paid status text,
+  - redacted Stripe receipt delivery and branding proof,
   - admin internal order visibility,
   - protected route denied behavior without token/auth.
 

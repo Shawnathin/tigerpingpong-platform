@@ -1,0 +1,112 @@
+[
+  {
+    "alt": "",
+    "complete": true,
+    "height": 49,
+    "loading": "auto",
+    "naturalHeight": 168,
+    "naturalWidth": 535,
+    "objectFit": "fill",
+    "src": "https://tigerpingpong-web.onrender.com/_next/image?url=%2Fbrand%2Ftiger-ping-pong-logo-black.png&w=3840&q=75",
+    "width": 154
+  },
+  {
+    "alt": "Tiger PingPong Expo Outdoor Ping Pong Table Grey or Blue",
+    "complete": true,
+    "height": 518,
+    "loading": "auto",
+    "naturalHeight": 2500,
+    "naturalWidth": 5000,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
+    "width": 812
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 70,
+    "loading": "auto",
+    "naturalHeight": 2500,
+    "naturalWidth": 5000,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
+    "width": 70
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 70,
+    "loading": "auto",
+    "naturalHeight": 241,
+    "naturalWidth": 386,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1781303680/tigerpingpong/products/tiger-expo-outdoor-table/02-gallery.jpg",
+    "width": 70
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 70,
+    "loading": "auto",
+    "naturalHeight": 241,
+    "naturalWidth": 386,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1781303680/tigerpingpong/products/tiger-expo-outdoor-table/03-gallery.jpg",
+    "width": 70
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 70,
+    "loading": "auto",
+    "naturalHeight": 241,
+    "naturalWidth": 386,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1781303681/tigerpingpong/products/tiger-expo-outdoor-table/04-gallery.jpg",
+    "width": 70
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 70,
+    "loading": "auto",
+    "naturalHeight": 241,
+    "naturalWidth": 386,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1781303682/tigerpingpong/products/tiger-expo-outdoor-table/05-gallery.jpg",
+    "width": 70
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 70,
+    "loading": "auto",
+    "naturalHeight": 241,
+    "naturalWidth": 386,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1781303682/tigerpingpong/products/tiger-expo-outdoor-table/06-gallery.jpg",
+    "width": 70
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 70,
+    "loading": "auto",
+    "naturalHeight": 241,
+    "naturalWidth": 386,
+    "objectFit": "contain",
+    "src": "https://res.cloudinary.com/djfcisldm/image/upload/v1781303683/tigerpingpong/products/tiger-expo-outdoor-table/07-gallery.jpg",
+    "width": 70
+  },
+  {
+    "alt": "",
+    "complete": true,
+    "height": 49,
+    "loading": "lazy",
+    "naturalHeight": 168,
+    "naturalWidth": 535,
+    "objectFit": "fill",
+    "src": "https://tigerpingpong-web.onrender.com/_next/image?url=%2Fbrand%2Ftiger-ping-pong-logo-black.png&w=3840&q=75",
+    "width": 154
+  }
+]

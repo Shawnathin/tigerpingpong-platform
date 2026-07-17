@@ -2,28 +2,29 @@
 
 ## Active task
 
-Lightweight protected product and availability editor.
+Product imagery audit and exact-match technical-detail refresh.
 
 ## Selected task card
 
-Allow staff to edit existing product names, base and variant prices, whole-product availability, and individual variant availability without adding product creation, hard deletion, stock accounting, or schema changes. Reconcile stale cart prices and unavailable items before creating an order or Stripe Checkout session.
+Audit the full local product-image library against the public catalog, preserve the current design and product behavior, and connect only exact, uncontested product-detail photos to existing feature cards. Add the owner-selected lifestyle image to the PingPong Tables category hero. Record all mappings, unresolved products, unused sources, Cloudinary results, and visual proof.
 
 ## Boundaries
 
-- Do not change slugs, purchase modes, media, categories, product descriptions, payment truth, webhook authority, Prisma schema, or migrations.
-- Do not add products, hard-delete products, or implement stock quantities/reservations.
-- Preserve immutable historical order-item snapshots.
-- Preserve the unrelated untracked media script without modification or staging.
-- Do not deploy or mutate production catalog data during repository work.
+- Do not change product names, descriptions, prices, inventory, variants, category assignments, routes, menus, checkout, payment truth, webhook authority, Prisma schema, or migrations.
+- Do not redesign cards, galleries, or carousels.
+- Do not apply ambiguous colour, model-revision, primary, or gallery mappings.
+- Keep raw source media local and outside Git.
+- Cloudinary uploads must use deterministic IDs, refuse collisions, and never expose credentials.
+- Do not mutate production catalog records or product-media rows.
 
 ## Required proof
 
-- Product and variant writes are protected, allow-listed, atomic, validated, and optimistic-lock protected.
-- Hiding blocks new checkout without deleting catalog or order history; restoring requires current launch gates.
-- Stale prices or unavailable lines return `409 cart_changed` before order/Stripe creation, update the local cart, and require review.
-- Admin and cart workflows cover loading, success, validation, conflict, service failure, and mobile-safe presentation.
-- Full release preflight passes without external-service or production-data mutation.
+- Machine-readable exact-match manifest and unused-source inventory are committed.
+- Every implemented delivery URL returns `200`.
+- Desktop and mobile screenshots show no crop, stretch, layout shift, or carousel regression.
+- Lint, typecheck, tests, production build, secret scan, and production dependency audit pass.
+- Ambiguous products and variant-colour decisions remain unchanged and documented.
 
 ## Status
 
-Repository-local implementation and regression proof are complete. `pnpm launch:preflight` passes with 25 unit tests, 8 Chromium workflow tests, a clean tracked-secret scan, and zero high/critical production advisories. Production deployment and any reversible production product edit remain operator-controlled actions.
+Audit and exact-match implementation are complete on `codex/product-imagery-audit-refresh`. Twenty-five presentation-only detail assets were uploaded under new deterministic Cloudinary IDs and wired into four table PDP feature sections. The owner-selected Expo Outdoor lifestyle photo is now the responsive `PingPong Tables` category hero. All 26 delivery URLs return `200`; desktop/mobile visual QA passes; `pnpm launch:preflight` passes with 25 unit tests, 8 browser workflow tests, a clean tracked-secret scan, and zero high/critical production advisories. No catalog or database records changed.

@@ -143,6 +143,16 @@ const COLOR_OPTION_LABELS = new Set([
   "white"
 ]);
 
+const CLOUDINARY_PRODUCT_DETAIL_BASE =
+  "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto/tigerpingpong/products";
+
+function detailVisual(productSlug: string, assetSlug: string, alt: string): ProductFeatureVisual {
+  return {
+    alt,
+    src: `${CLOUDINARY_PRODUCT_DETAIL_BASE}/${productSlug}/details/${assetSlug}`
+  };
+}
+
 const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
   "tiger-expo-outdoor-table": {
     comparisonHeading: "See how Expo stacks up.",
@@ -152,35 +162,55 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
           "Expo uses a pure melamine resin board with a matte anti-reflective finish, made to resist weather, impact, and everyday outdoor play.",
         kicker: "Weather-ready bounce",
         title: "5mm Melamine Resin Top",
-        visual: { label: "5mm", variant: "top" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "5mm-melamine-resin-top",
+          "Close-up of the Expo Outdoor table's 5mm melamine resin playing surface"
+        )
       },
       {
         description:
           "The 50mm powder-coated steel frame and 30 x 30mm legs keep Expo steady while preserving an easy-to-move outdoor footprint.",
         kicker: "Strength and stability",
         title: "50mm Powder-Coated Frame",
-        visual: { variant: "frame" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "50mm-powder-coated-frame",
+          "Expo Outdoor table's powder-coated frame and undercarriage"
+        )
       },
       {
         description:
           "A highly visible handle and quick-lock folding system secure the table in play or storage position, so folding and rolling the table feels simple.",
         kicker: "Simple open and close",
         title: "Quick-Lock Folding System",
-        visual: { variant: "lock" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "quick-lock-folding-system",
+          "Red handle for the Expo Outdoor quick-lock folding system"
+        )
       },
       {
         description:
           "The included fixed black net is height and tension adjustable, and stays with the table when it is folded away.",
         kicker: "Ready when you open it",
         title: "Fixed Adjustable Net",
-        visual: { variant: "net" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "fixed-adjustable-net",
+          "Fixed adjustable net attached to the Expo Outdoor table"
+        )
       },
       {
         description:
           "Four 128mm double wheels with rubber tread make Expo easier to move across patios, garages, and backyard spaces.",
         kicker: "Rolls across patios",
         title: "Double Outdoor Wheels",
-        visual: { variant: "wheel" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "double-outdoor-wheels",
+          "Double outdoor wheels on the Expo Outdoor table"
+        )
       }
     ],
     moreFeaturesHeading: "The little details.",
@@ -189,17 +219,29 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "Single Frame Rollaway",
         value:
           "A compact frame and quick-lock folding system help one person fold and roll the table away.",
-        visual: { variant: "lock" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "single-frame-rollaway",
+          "Expo Outdoor table folded into its single-frame rollaway position"
+        )
       },
       {
         title: "Playback Position",
         value: "Fold one side up and practice solo between matches.",
-        visual: { label: "Solo", variant: "top" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "playback-position",
+          "Expo Outdoor table set in playback position"
+        )
       },
       {
         title: "Built-In Storage",
         value: "Storage for up to 4 paddles and 18 balls keeps gear close.",
-        visual: { variant: "frame" }
+        visual: detailVisual(
+          "tiger-expo-outdoor-table",
+          "built-in-storage",
+          "Built-in paddle and ball storage on the Expo Outdoor table"
+        )
       }
     ]
   },
@@ -211,28 +253,44 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
           "A 10mm melamine resin top gives Plaza its solid, confident outdoor feel, with a surface made for weather, public use, and repeat play.",
         kicker: "Permanent outdoor bounce",
         title: "10mm Resin Playing Surface",
-        visual: { label: "10mm", variant: "top" }
+        visual: detailVisual(
+          "tiger-plaza-outdoor-table-grey",
+          "10mm-resin-playing-surface",
+          "Close-up of the Plaza table's 10mm resin playing surface"
+        )
       },
       {
         description:
           "The galvanized steel frame is made for permanent placement, with a powder-coated finish that keeps the look clean and durable.",
         kicker: "Park-ready structure",
         title: "Galvanized Steel Frame",
-        visual: { variant: "frame" }
+        visual: detailVisual(
+          "tiger-plaza-outdoor-table-grey",
+          "galvanized-steel-frame",
+          "Galvanized steel frame underneath the Plaza outdoor table"
+        )
       },
       {
         description:
           "Plaza includes the hardware needed to secure the table in place, ideal for parks, resorts, schools, shared patios, and public play areas.",
         kicker: "Install and leave it ready",
         title: "Ground Anchoring Kit",
-        visual: { variant: "anchor" }
+        visual: detailVisual(
+          "tiger-plaza-outdoor-table-grey",
+          "ground-anchoring-kit",
+          "Ground anchoring bracket on the Plaza outdoor table"
+        )
       },
       {
         description:
           "The permanent metal net keeps the table ready for play without clips, tension straps, or a removable net that needs to be stored.",
         kicker: "No loose parts",
         title: "Solid Metal Net",
-        visual: { variant: "net" }
+        visual: detailVisual(
+          "tiger-plaza-outdoor-table-grey",
+          "solid-metal-net",
+          "Solid metal net on the Plaza outdoor table"
+        )
       },
       {
         description:
@@ -251,17 +309,29 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
       {
         title: "Thick Outdoor Top",
         value: "10mm resin surface for steady outdoor bounce and durability.",
-        visual: { label: "10mm", variant: "top" }
+        visual: detailVisual(
+          "tiger-plaza-outdoor-table-grey",
+          "10mm-resin-playing-surface",
+          "Close-up of the Plaza table's 10mm resin playing surface"
+        )
       },
       {
         title: "Anchored In Place",
         value: "Ground anchor kit helps keep the table secure in shared spaces.",
-        visual: { variant: "anchor" }
+        visual: detailVisual(
+          "tiger-plaza-outdoor-table-grey",
+          "ground-anchoring-kit",
+          "Ground anchoring bracket on the Plaza outdoor table"
+        )
       },
       {
         title: "Permanent Steel Net",
         value: "Solid net system stays attached and ready between matches.",
-        visual: { variant: "net" }
+        visual: detailVisual(
+          "tiger-plaza-outdoor-table-grey",
+          "solid-metal-net",
+          "Solid metal net on the Plaza outdoor table"
+        )
       }
     ]
   },
@@ -273,35 +343,55 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
           "Portland Indoor uses a 22mm chipboard playing surface manufactured with tournament-style production processes for a smooth, steady indoor bounce.",
         kicker: "Clean indoor bounce",
         title: "7/8 Inch Chipboard Top",
-        visual: { label: "22mm", variant: "top" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "seven-eighths-inch-chipboard-top",
+          "Close-up of the Portland Indoor table's 7/8 inch chipboard top"
+        )
       },
       {
         description:
           "The 50mm powder-coated frame and compact undercarriage give the table a sturdy, clean look for homes, schools, and club rooms.",
         kicker: "Strength and stability",
         title: "50mm Powder-Coated Frame",
-        visual: { variant: "frame" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "50mm-powder-coated-frame",
+          "Powder-coated frame and undercarriage of the Portland Indoor table"
+        )
       },
       {
         description:
           "A visible handle and safety lock system help one person fold, open, and store the table with a secure feel.",
         kicker: "Simple open and close",
         title: "Smart Locking System",
-        visual: { variant: "lock" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "smart-locking-system",
+          "Red handle for the Portland Indoor smart locking system"
+        )
       },
       {
         description:
           "The included net stays compact with the table and adjusts for height and tension, so setup feels quick before each match.",
         kicker: "Ready when you open it",
         title: "Fixed Adjustable Net",
-        visual: { variant: "net" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "fixed-adjustable-net",
+          "Fixed adjustable net attached to the Portland Indoor table"
+        )
       },
       {
         description:
           "Four 100mm rubber-tread wheels roll smoothly across indoor floors, and built-in paddle and ball storage keeps gear close.",
         kicker: "Roll out, lock in",
         title: "Locking Indoor Wheels",
-        visual: { variant: "wheel" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "easy-roll-locking-wheels",
+          "Locking indoor wheel on the Portland Indoor table"
+        )
       }
     ],
     moreFeaturesHeading: "The little details.",
@@ -309,17 +399,29 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
       {
         title: "Indoor Top",
         value: "7/8 inch chipboard gives Portland its confident indoor bounce.",
-        visual: { label: "22mm", variant: "top" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "indoor-top",
+          "Close-up of the Portland Indoor table top"
+        )
       },
       {
         title: "Easy Roll Locking Wheels",
         value: "Rubber-tread wheels help the table move smoothly indoors.",
-        visual: { variant: "wheel" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "easy-roll-locking-wheels",
+          "Locking indoor wheel on the Portland Indoor table"
+        )
       },
       {
         title: "Built-In Storage",
         value: "Storage for paddles and balls keeps the room organized.",
-        visual: { variant: "frame" }
+        visual: detailVisual(
+          "tiger-portland-indoor-table",
+          "built-in-storage",
+          "Built-in paddle and ball storage on the Portland Indoor table"
+        )
       }
     ]
   },
@@ -413,35 +515,55 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
           "Whistler uses a 25mm multi-coated chipboard surface, made to tournament specifications for the firm, consistent bounce serious indoor players expect.",
         kicker: "Tournament-minded bounce",
         title: "1 Inch Chipboard Top",
-        visual: { label: "25mm", variant: "top" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "one-inch-chipboard-top",
+          "Close-up of the Whistler table's one-inch chipboard top"
+        )
       },
       {
         description:
           "The A-60mm powder-coated frame and 40 x 40mm rectangle-tube legs give the table a solid, low-profile foundation for repeat play.",
         kicker: "Strength and stability",
         title: "60mm Powder-Coated Frame",
-        visual: { variant: "frame" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "60mm-powder-coated-frame",
+          "Powder-coated frame and undercarriage of the Whistler table"
+        )
       },
       {
         description:
           "A bright red drawbar unlocks both safety devices at once, making it simple to open, close, and store the table with confidence.",
         kicker: "Simple open and close",
         title: "Drawbar Locking System",
-        visual: { variant: "lock" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "drawbar-locking-system",
+          "Drawbar locking system underneath the Whistler table"
+        )
       },
       {
         description:
           "The included black polyethylene net stays fixed to the table and remains in place when folded, with height and tension adjustment.",
         kicker: "Ready when you open it",
         title: "Fixed Adjustable Net",
-        visual: { variant: "net" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "fixed-adjustable-net",
+          "Fixed adjustable net attached to the Whistler table"
+        )
       },
       {
         description:
           "Four 100mm rubber-tread wheels roll smoothly across home floors, with two locking wheels to hold Whistler in place during play.",
         kicker: "Roll out, lock in",
         title: "Locking Indoor Wheels",
-        visual: { variant: "wheel" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "locking-indoor-wheels",
+          "Locking indoor wheel on the Whistler table"
+        )
       }
     ],
     moreFeaturesHeading: "The little details.",
@@ -449,17 +571,29 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
       {
         title: "Professional Top",
         value: "1 inch multi-coated chipboard gives Whistler its tournament feel.",
-        visual: { label: "25mm", variant: "top" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "one-inch-chipboard-top",
+          "Close-up of the Whistler table's one-inch chipboard top"
+        )
       },
       {
         title: "Safe Folding",
         value: "The drawbar unlocks both safety devices together.",
-        visual: { variant: "lock" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "drawbar-locking-system",
+          "Drawbar locking system underneath the Whistler table"
+        )
       },
       {
         title: "Lockable Wheels",
         value: "Two wheels lock, and leg levelers adjust up to 25mm.",
-        visual: { variant: "wheel" }
+        visual: detailVisual(
+          "tiger-whistler-indoor-table",
+          "locking-indoor-wheels",
+          "Locking indoor wheel on the Whistler table"
+        )
       }
     ]
   }

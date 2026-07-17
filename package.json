@@ -21,7 +21,7 @@
     "media:cloudinary:products": "node scripts/upload-product-media-to-cloudinary.mjs",
     "launch:env:validate": "node scripts/launch/validate-production-env.mjs",
     "launch:smoke:read-only": "node scripts/launch/read-only-smoke.mjs",
-    "launch:preflight": "pnpm lint && pnpm typecheck && pnpm db:generate && DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tigerpingpong_validation pnpm db:validate && pnpm test && NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com NEXT_PUBLIC_SITE_URL=https://tigerpingpong.ca pnpm build && pnpm test:e2e && pnpm security:secrets && pnpm security:audit",
+    "launch:preflight": "pnpm lint && pnpm db:generate && pnpm typecheck && DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tigerpingpong_validation pnpm db:validate && pnpm test && NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com NEXT_PUBLIC_SITE_URL=https://tigerpingpong.ca pnpm build && pnpm test:e2e && pnpm security:secrets && pnpm security:audit",
     "security:audit": "pnpm audit --prod --audit-level high",
     "security:secrets": "node scripts/security/scan-tracked-secrets.mjs",
     "test": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build && vitest run",

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { useCart } from "../lib/use-cart";
+import { PublicBrandLogo } from "./PublicBrandLogo";
 
 export type PublicStorefrontNavItem =
   | "home"
@@ -131,15 +132,7 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
         </button>
 
         <a className="publicBrand" href="/" aria-label="Tiger Ping Pong home">
-          <span className="publicBrandMark" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-          <span className="publicBrandText">
-            <strong>Tiger</strong>
-            <span>Ping Pong</span>
-          </span>
+          <PublicBrandLogo priority />
         </a>
 
         <div className="publicNavLinks">

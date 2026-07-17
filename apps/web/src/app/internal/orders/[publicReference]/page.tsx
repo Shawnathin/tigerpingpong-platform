@@ -12,26 +12,29 @@ export const metadata: Metadata = {
 };
 
 interface InternalOrderDetailPageProps {
-  params: {
+  params: Promise<{
     publicReference: string;
-  };
-  searchParams?: {
+  }>;
+  searchParams?: Promise<{
     shipmentError?: string | string[];
     shipmentSaved?: string | string[];
-  };
+  }>;
 }
 
-export default function InternalOrderDetailPage({
+export default async function InternalOrderDetailPage({
   params,
   searchParams
 }: InternalOrderDetailPageProps) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+
   return (
     <StaffOrderDetailPage
       backHref="/internal/orders"
       eyebrow="Tiger Ping Pong internal"
-      publicReference={params.publicReference}
+      publicReference={resolvedParams.publicReference}
       saveShipmentRecord={saveShipmentRecord}
-      searchParams={searchParams}
+      searchParams={resolvedSearchParams}
     />
   );
 }

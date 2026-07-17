@@ -7,9 +7,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = getPathMetadata({
   pathname: "/",
-  title: "Tiger Ping Pong | Tables, Paddles, Balls, and Accessories",
-  description:
-    "Shop Tiger Ping Pong tables, paddles, balls, and accessories with secure checkout and simple Canada-wide shipping."
+  title: "Tiger Ping Pong | Tables, Paddles, Balls, and Accessories"
 });
 
 const PORTLAND_IMAGE =
@@ -22,7 +20,6 @@ const NET_POST_IMAGE =
 const PRODUCT_FEATURES = [
   {
     badge: "Indoor table",
-    body: "A serious indoor table with a tournament-spec playing surface.",
     cta: "View Whistler Indoor",
     href: "/catalog/products/tiger-whistler-indoor-table",
     imageAlt: "Whistler Indoor table",
@@ -32,7 +29,6 @@ const PRODUCT_FEATURES = [
   },
   {
     badge: "Accessory",
-    body: "A net and post set for keeping the table ready to play.",
     cta: "View Net & Post Set",
     href: "/catalog/products/tiger-net-post-set",
     imageAlt: "Tiger Ping Pong net and post set",
@@ -51,12 +47,8 @@ export default function Home() {
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>TigerPingPong.ca</p>
             <h1 className={styles.title} id="home-title">
-              Tables, paddles, and game-night gear for the next rally.
+              Tables, paddles, balls, and accessories.
             </h1>
-            <p className={styles.intro}>
-              Shop the Tiger Ping Pong product lineup with clear product pages, secure checkout, and
-              simple Canada-wide shipping.
-            </p>
             <div className={styles.heroActions}>
               <a className={styles.primaryAction} href="/tables/">
                 Shop tables
@@ -77,24 +69,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={styles.positioning} aria-label="Tiger Ping Pong promise">
-          <div>
-            <span>Canadian table tennis</span>
-            <strong>Vancouver-based and serving players across Canada for nearly 20 years.</strong>
-          </div>
-          <div>
-            <span>Shipping promise</span>
-            <strong>Free shipping over $100 across Canada.</strong>
-          </div>
-          <div>
-            <span>Built to support play</span>
-            <strong>
-              Clear product pages, real support, and up to 10-year warranty coverage on select
-              tables.
-            </strong>
-          </div>
-        </section>
-
         <section className={styles.productFeatures} aria-label="Featured products">
           {PRODUCT_FEATURES.map((feature, index) => (
             <a
@@ -106,7 +80,6 @@ export default function Home() {
               <span className={styles.productFeatureCopy}>
                 <small>{feature.label}</small>
                 <strong>{feature.title}</strong>
-                <span>{feature.body}</span>
                 <em>{feature.cta}</em>
               </span>
               <span className={styles.productFeatureVisual}>
@@ -117,20 +90,8 @@ export default function Home() {
           ))}
         </section>
 
-        <section className={styles.shippingBand} aria-labelledby="shipping-promise-title">
+        <section className={styles.supportBand} aria-label="Support">
           <div>
-            <p className={styles.eyebrow}>Shipping promise</p>
-            <h2 id="shipping-promise-title">Free shipping over $100 across Canada.</h2>
-          </div>
-          <a className={styles.secondaryAction} href="/shipping-returns">
-            Shipping details
-          </a>
-        </section>
-
-        <section className={styles.supportBand} aria-labelledby="support-title">
-          <div>
-            <p className={styles.eyebrow}>Need a local hand?</p>
-            <h2 id="support-title">Questions before the next match?</h2>
             <p>
               Call <a href="tel:+18885525259">1-888-552-5259</a> or email{" "}
               <a href="mailto:info@tigerpingpong.com">info@tigerpingpong.com</a>.

@@ -338,14 +338,9 @@ export default async function CatalogPage() {
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="catalog-title">
           <div className={styles.heroText}>
-            <p className={styles.eyebrow}>TigerPingPong.ca catalog</p>
             <h1 className={styles.title} id="catalog-title">
-              Shop tables, paddles, balls, and accessories.
+              Tables, paddles, balls, and accessories.
             </h1>
-            <p className={styles.intro}>
-              Browse the Tiger Ping Pong product lineup, then open any product page for details,
-              shipping terms, and secure checkout.
-            </p>
           </div>
           <div className={styles.heroVisual}>
             <img src={heroImage.src} alt={heroImage.alt} />
@@ -359,8 +354,7 @@ export default async function CatalogPage() {
         {families.length > 0 ? (
           <section className={styles.section} aria-labelledby="catalog-families-title">
             <div className={styles.sectionHeader}>
-              <p className={styles.eyebrow}>Product stories</p>
-              <h2 id="catalog-families-title">Choose by style of play.</h2>
+              <h2 id="catalog-families-title">Product families</h2>
             </div>
             <div className={styles.familyGrid}>
               {families.slice(0, 6).map((family) => (
@@ -372,8 +366,7 @@ export default async function CatalogPage() {
 
         <section className={styles.section} id="products" aria-labelledby="catalog-products-title">
           <div className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Products</p>
-            <h2 id="catalog-products-title">Ready for the next match.</h2>
+            <h2 id="catalog-products-title">Products</h2>
           </div>
           {catalog.products.data && products.length > 0 ? (
             <p className={styles.shippingNote}>{CATALOG_SHIPPING_MESSAGE}</p>

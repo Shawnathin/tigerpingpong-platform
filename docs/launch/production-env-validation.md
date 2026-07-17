@@ -6,9 +6,10 @@ This validator is a **read-only, operator-facing proof command** used before cut
 
 It is intentionally limited to:
 
-- presence checks (required vs optional),
-- safe shape checks for public URLs and booleans/modes,
-- `STRIPE_EXPECTED_LIVEMODE` mode checks,
+- required/optional presence checks,
+- HTTPS, PostgreSQL, public URL, boolean, and mode shape checks,
+- Stripe key-prefix and `STRIPE_EXPECTED_LIVEMODE` mode checks,
+- optional final-origin consistency across site, CORS, and checkout return URLs,
 - non-secret status reporting.
 
 It is not a runtime healthcheck.
@@ -24,8 +25,8 @@ It is not a runtime healthcheck.
 
 ### Web surface checks
 
-- `NEXT_PUBLIC_API_BASE_URL` required: valid HTTP(S) URL
-- `NEXT_PUBLIC_SITE_URL` required: valid HTTP(S) URL
+- `NEXT_PUBLIC_API_BASE_URL` required: valid HTTPS URL
+- `NEXT_PUBLIC_SITE_URL` required: valid HTTPS URL and expected-origin match when requested
 - `INTERNAL_ORDERS_API_TOKEN` required: present
 - `INTERNAL_ORDERS_BASIC_AUTH_USER` required: present
 - `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD` required: present
@@ -34,20 +35,19 @@ It is not a runtime healthcheck.
 
 ### API surface checks
 
-- `DATABASE_URL` required: present (non-empty, connection-style value expected)
-- `SUPABASE_URL` optional: URL shape if present
+- `DATABASE_URL` required: valid `postgres://` or `postgresql://` URL shape
+- `SUPABASE_URL` optional: HTTPS URL shape if present
 - `SUPABASE_SERVICE_ROLE_KEY` optional: present only
-- `CORS_ORIGIN` required: HTTP(S) URL(s), comma-separated if multiple
+- `CORS_ORIGIN` required: HTTPS URL(s), comma-separated if multiple; includes expected origin when requested
 - `PORT` required: positive integer
 - `APP_ENV` optional: expected value in `local|staging|production|test|live`
-- `STRIPE_SECRET_KEY` required: present and must start with `sk_`
+- `STRIPE_SECRET_KEY` required: `sk_test_` or `sk_live_` must agree with requested mode; otherwise `sk_` shape
 - `STRIPE_WEBHOOK_SECRET` required: present and must start with `whsec_`
-- `STRIPE_EXPECTED_LIVEMODE` optional: boolean (`true`/`false`/`1`/`0`), and optional `--expected-mode` consistency check
+- `STRIPE_EXPECTED_LIVEMODE`: boolean (`true`/`false`/`1`/`0`); required and consistent when `--expected-mode` is requested
 - `STRIPE_TAX_ENABLED` optional: boolean (`true`/`false`/`1`/`0`)
-- `CHECKOUT_SUCCESS_URL` required: valid HTTP(S) URL and includes `{CHECKOUT_SESSION_ID}`
-- `CHECKOUT_CANCEL_URL` required: valid HTTP(S) URL
+- `CHECKOUT_SUCCESS_URL` required: valid HTTPS URL, includes `{CHECKOUT_SESSION_ID}`, and matches expected origin when requested
+- `CHECKOUT_CANCEL_URL` required: valid HTTPS URL and matches expected origin when requested
 - `INTERNAL_ORDERS_API_TOKEN` required: present
-- `SHIPMENT_EMAIL_WEBHOOK_URL` optional: HTTP(S) URL shape if present
 - `CLOUDINARY_API_KEY` optional: numeric shape if present
 - `CLOUDINARY_API_SECRET` optional: present if set
 - `DIRECT_URL` optional: URL shape if present, flagged for review by default
@@ -98,6 +98,12 @@ node scripts/launch/validate-production-env.mjs --surface api --expected-mode te
 
 ```bash
 node scripts/launch/validate-production-env.mjs --surface api --expected-mode live
+```
+
+### Final-origin check
+
+```bash
+node scripts/launch/validate-production-env.mjs --surface all --expected-mode live --expected-origin https://tigerpingpong.ca
 ```
 
 ## Output meanings

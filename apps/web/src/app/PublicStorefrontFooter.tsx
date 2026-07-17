@@ -21,6 +21,7 @@ const FOOTER_SECTIONS = [
     title: "Support",
     links: [
       { href: "/shipping-returns", label: "Shipping & Returns" },
+      { href: "/returns-policy", label: "Returns Policy" },
       { href: "/contact", label: "Contact" }
     ]
   },
@@ -37,7 +38,11 @@ const FOOTER_SECTIONS = [
   },
   {
     title: "Legal",
-    links: [{ href: "/shipping-returns", label: "Refund / Returns Policy" }]
+    links: [
+      { href: "/privacy-policy", label: "Privacy Policy" },
+      { href: "/terms-and-conditions", label: "Terms & Conditions" },
+      { href: "/returns-policy", label: "Returns Policy" }
+    ]
   }
 ];
 
@@ -73,10 +78,6 @@ export function PublicStorefrontFooter() {
               <span>Ping Pong</span>
             </span>
           </a>
-          <p>
-            Tables, paddles, balls, accessories, and Canada-wide storefront support from Vancouver,
-            BC.
-          </p>
         </div>
 
         <nav className="publicFooterNav" aria-label="Footer navigation">

@@ -20,17 +20,27 @@
     "validate:tiger-import": "node tools/tiger-import-validator/src/validate-tiger-import.mjs",
     "media:cloudinary:products": "node scripts/upload-product-media-to-cloudinary.mjs",
     "launch:env:validate": "node scripts/launch/validate-production-env.mjs",
+    "launch:smoke:read-only": "node scripts/launch/read-only-smoke.mjs",
+    "launch:preflight": "pnpm lint && pnpm typecheck && pnpm db:generate && DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tigerpingpong_validation pnpm db:validate && pnpm test && NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com NEXT_PUBLIC_SITE_URL=https://tigerpingpong.ca pnpm build && pnpm test:e2e && pnpm security:secrets && pnpm security:audit",
+    "security:audit": "pnpm audit --prod --audit-level high",
+    "security:secrets": "node scripts/security/scan-tracked-secrets.mjs",
+    "test": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build && vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "import:tiger:dev": "pnpm --filter @tigerpingpong/db import:tiger:dev",
     "import:tiger:deployed": "pnpm --filter @tigerpingpong/db import:tiger:deployed",
     "db:generate": "pnpm --filter @tigerpingpong/db prisma:generate",
     "db:validate": "pnpm --filter @tigerpingpong/db prisma:validate"
   },
   "devDependencies": {
+    "@playwright/test": "1.61.1",
     "@eslint/js": "^9.15.0",
     "@types/node": "^20.14.0",
     "eslint": "^9.15.0",
     "prettier": "^3.3.3",
+    "stripe": "22.2.0",
     "typescript-eslint": "^8.16.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "vitest": "4.1.10"
   }
 }

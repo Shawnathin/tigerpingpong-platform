@@ -13,9 +13,9 @@ import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 import styles from "../page.module.css";
 
 interface ResourceArticlePageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export function generateStaticParams() {
@@ -24,8 +24,9 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: ResourceArticlePageProps): Metadata {
-  const article = getResourceArticle(params.slug);
+export async function generateMetadata({ params }: ResourceArticlePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = getResourceArticle(slug);
 
   if (!article) {
     return {
@@ -75,8 +76,9 @@ function getArticleJsonLd(article: ResourceArticle) {
   };
 }
 
-export default function ResourceArticlePage({ params }: ResourceArticlePageProps) {
-  const article = getResourceArticle(params.slug);
+export default async function ResourceArticlePage({ params }: ResourceArticlePageProps) {
+  const { slug } = await params;
+  const article = getResourceArticle(slug);
 
   if (!article) {
     notFound();

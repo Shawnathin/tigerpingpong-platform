@@ -2,61 +2,27 @@
 
 ## Active task
 
-TigerPingPong.ca launch readiness: run final checkout + webhook smoke on final domain.
+Admin recovery and removal-only storefront cleanup.
 
-## Current task card
+## Selected task card
 
-Run final checkout + webhook smoke on final domain
+Remove the Make shipment-email runtime dependency so protected order detail no longer requires notification columns, preserve manual shipment records, simplify the add-to-cart dialog, consolidate shipping presentation, and remove audited public marketing filler without changing product descriptions or payment behavior.
 
-## Why this task exists now
+## Boundaries
 
-The target Render API/web environment validator has passed for required variables
-in Stripe test mode. The launch lane can now move from env-gate proof to the
-final customer-path checkout + webhook smoke on the final domain.
+- Do not change payment truth, checkout totals, webhook authority, Prisma schema, or migrations.
+- Do not change product descriptions, product-story/detail sections, catalog data, policies, or media.
+- Preserve the unrelated untracked media script without modification or staging.
+- Do not deploy or perform production checkout/data operations.
 
-## What must happen next
+## Required proof
 
-1. Confirm the final-domain/operator approvals required by
-   `docs/launch/final-checkout-webhook-smoke-runbook.md`.
-2. Run the final checkout + webhook smoke on the final domain in Stripe test
-   mode.
-3. Capture redacted smoke evidence without secret values.
-4. Record the go/no-go result for launch review.
+- Admin order detail and shipment update work without notification columns.
+- The shipment-email endpoint, runtime configuration, response contract, and UI are absent.
+- The cart dialog has one cart destination, no add-on recommendations, and retains keyboard behavior.
+- Public copy removal follows the audit handoff exclusions and exact shipping rule.
+- Full release preflight passes without external service or production-data mutation.
 
-## Status update
+## Status
 
-- Implemented `scripts/launch/validate-production-env.mjs` (read-only, no secret output, no network).
-- Added `docs/launch/production-env-validation.md`.
-- Added `launch:env:validate` script for operator use.
-- Updated launch lane/workflow cards accordingly.
-- `2026-06-26`: Recorded target Render API/web validator pass in
-  `docs/launch/production-env-validation-results.md`.
-- Target API env validation passed for required vars in expected Stripe `test`
-  mode.
-- Target web env validation passed for required vars in expected Stripe `test`
-  mode.
-- No secret values were printed or recorded.
-- Optional warnings remain for operator review but are not launch-blocking unless
-  the operator decides otherwise.
-- `2026-06-26`: Created
-  `docs/launch/final-checkout-webhook-smoke-results.md` as a hold record. The
-  final smoke has not been run because required operator confirmations are still
-  pending.
-- `2026-06-26`: Started public-path smoke against
-  `https://tigerpingpong-web.onrender.com`. Home/category/product/add-to-cart,
-  below-`$100 CAD` cart shipping, and mobile public/cart checks passed. Checkout
-  was not started because fresh target Render API/web service-shell env
-  validation could not be confirmed from this local session.
-
-## Latest validation status
-
-- `2026-06-26`: Env gate cleared for final checkout + webhook smoke in Stripe
-  test mode.
-- Recommended next executable task:
-  `Run final checkout + webhook smoke on final domain`.
-- Current blocker: collect written operator confirmations for final smoke
-  domain, Stripe test mode, dashboard/log/admin access owners, and permission to
-  create one Stripe test checkout/order record with a small test cart item.
-- Current smoke blocker: run or provide redacted output for the required fresh
-  Render API and web service-shell validators in expected Stripe `test` mode,
-  then complete checkout/webhook/admin proof.
+Repository-local implementation and regression proof are complete on `codex/release-readiness-local-remediation`. `pnpm launch:preflight` passes with 19 unit tests, 6 Chromium workflow tests, a clean tracked-secret scan, and zero high/critical production advisories. The three dormant Prisma notification columns remain for database-owner cleanup after backup and production migration-state verification. External Stripe, database, hosting, DNS, policy approval, monitoring activation, security blockers, and final go/no-go remain Plan B.

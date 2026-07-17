@@ -10,20 +10,20 @@ export const metadata: Metadata = {
 };
 
 interface InternalOrdersPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     limit?: string | string[];
     status?: string | string[];
-  };
+  }>;
 }
 
-export default function InternalOrdersPage({ searchParams }: InternalOrdersPageProps) {
+export default async function InternalOrdersPage({ searchParams }: InternalOrdersPageProps) {
   return (
     <StaffOrdersListPage
       adminOrdersHref="/admin/orders"
       detailBasePath="/internal/orders"
       eyebrow="Tiger Ping Pong internal"
       intro="Protected internal order review remains available, but staff should use the admin orders route."
-      searchParams={searchParams}
+      searchParams={await searchParams}
       title="Paid order review"
     />
   );

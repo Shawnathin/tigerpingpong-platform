@@ -60,12 +60,6 @@ export interface InternalOrderShipment {
   trackingUrl: string | null;
 }
 
-export interface InternalOrderShipmentNotification {
-  lastError: string | null;
-  sentAt: string | null;
-  status: string | null;
-}
-
 export interface InternalOrderShipmentInput {
   carrier: string;
   internalNote: string;
@@ -97,7 +91,6 @@ export interface InternalOrderDetail {
   stripeAmountTaxCents: number | null;
   stripeAutomaticTaxStatus: string | null;
   shipment: InternalOrderShipment;
-  shipmentNotification: InternalOrderShipmentNotification;
   paidAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -165,23 +158,6 @@ export async function updateInternalOrderShipment(
     {
       body: input,
       method: "PATCH"
-    }
-  );
-
-  if (!response) {
-    throw new InternalOrdersApiError("Internal orders API returned no response.", null, "");
-  }
-
-  return response.order;
-}
-
-export async function sendInternalOrderShipmentEmail(
-  publicReference: string
-): Promise<InternalOrderDetail> {
-  const response = await fetchInternalOrders<{ order: InternalOrderDetail }>(
-    `/internal/orders/${encodeURIComponent(publicReference)}/shipment-email`,
-    {
-      method: "POST"
     }
   );
 

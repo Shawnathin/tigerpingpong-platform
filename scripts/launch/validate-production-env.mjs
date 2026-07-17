@@ -130,12 +130,6 @@ const API_VARIABLES = [
     validator: "present"
   },
   {
-    name: "SHIPMENT_EMAIL_WEBHOOK_URL",
-    surface: "api",
-    required: false,
-    validator: "url"
-  },
-  {
     name: "CLOUDINARY_API_KEY",
     surface: "api",
     required: false,
@@ -169,11 +163,12 @@ function printHelp() {
   const text = `TigerPingPong production environment validator (read-only)
 
 Usage:
-  node scripts/launch/validate-production-env.mjs [--surface web|api|all] [--expected-mode test|live] [--help]
+  node scripts/launch/validate-production-env.mjs [--surface web|api|all] [--expected-mode test|live] [--expected-origin https://example.com] [--help]
 
 Options:
   --surface web|api|all     Scope validation to one surface (default: all)
   --expected-mode test|live Validate STRIPE_EXPECTED_LIVEMODE against intended checkout mode
+  --expected-origin URL     Require the HTTPS origin in site, CORS, and checkout return URLs
   --help                    Show this help output
 
 Validation mode:
@@ -191,6 +186,7 @@ function parseArgs(argv) {
   const options = {
     surface: "all",
     expectedMode: null,
+    expectedOrigin: null,
     showHelp: false
   };
 
@@ -222,6 +218,16 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (arg === "--expected-origin") {
+      const value = argv[index + 1];
+      if (!value) {
+        throw new Error("--expected-origin requires an HTTPS origin");
+      }
+      options.expectedOrigin = normalizeExpectedOrigin(value);
+      index += 1;
+      continue;
+    }
+
     throw new Error(`Unknown argument: ${arg}`);
   }
 
@@ -242,17 +248,34 @@ function makeResult(name, surface, required, status, reason) {
   };
 }
 
-function isHttpUrl(value) {
+function isHttpsUrl(value) {
   try {
-    const parsed = new URL(value);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
+    return new URL(value).protocol === "https:";
   } catch {
     return false;
   }
 }
 
+function normalizeExpectedOrigin(value) {
+  if (!isHttpsUrl(value)) {
+    throw new Error("--expected-origin must be a valid HTTPS origin");
+  }
+
+  const parsed = new URL(value);
+  if (parsed.pathname !== "/" || parsed.search || parsed.hash) {
+    throw new Error("--expected-origin must not include a path, query, or fragment");
+  }
+
+  return parsed.origin;
+}
+
 function isPostgresUrl(value) {
-  return /^postgres(?:ql)?:\/\//i.test(value.trim());
+  try {
+    const parsed = new URL(value.trim());
+    return ["postgres:", "postgresql:"].includes(parsed.protocol) && Boolean(parsed.hostname);
+  } catch {
+    return false;
+  }
 }
 
 function isBooleanValue(value) {
@@ -271,9 +294,7 @@ function parseBooleanMode(value) {
 }
 
 function isAllowedAppEnv(value) {
-  return ["local", "staging", "production", "test", "live"].includes(
-    value.trim().toLowerCase()
-  );
+  return ["local", "staging", "production", "test", "live"].includes(value.trim().toLowerCase());
 }
 
 function validatePresenceOnly(name, surface, required) {
@@ -287,16 +308,10 @@ function validatePresenceOnly(name, surface, required) {
       required ? "required variable is missing" : "optional variable not set"
     );
   }
-  return makeResult(
-    name,
-    surface,
-    required,
-    "present",
-    "present (non-empty)"
-  );
+  return makeResult(name, surface, required, "present", "present (non-empty)");
 }
 
-function validateUrl(name, surface, required, value) {
+function validateUrl(name, surface, required, value, expectedOrigin = null) {
   if (!hasValue(value)) {
     return makeResult(
       name,
@@ -307,14 +322,42 @@ function validateUrl(name, surface, required, value) {
     );
   }
 
-  if (!isHttpUrl(value)) {
-    return makeResult(name, surface, required, "invalid", "must be a valid http(s) URL");
+  if (!isHttpsUrl(value)) {
+    return makeResult(name, surface, required, "invalid", "must be a valid HTTPS URL");
   }
 
-  return makeResult(name, surface, required, "present", "valid URL");
+  if (expectedOrigin && new URL(value).origin !== expectedOrigin) {
+    return makeResult(
+      name,
+      surface,
+      required,
+      "invalid",
+      "origin does not match --expected-origin"
+    );
+  }
+
+  return makeResult(name, surface, required, "present", "valid HTTPS URL");
 }
 
-function validateCorsOrigin(name, surface, required, value) {
+function validatePostgresUrl(name, surface, required, value) {
+  if (!hasValue(value)) {
+    return makeResult(
+      name,
+      surface,
+      required,
+      required ? "missing" : "needs review",
+      required ? "required variable is missing" : "optional variable not set"
+    );
+  }
+
+  if (!isPostgresUrl(value)) {
+    return makeResult(name, surface, required, "invalid", "must be a valid PostgreSQL URL");
+  }
+
+  return makeResult(name, surface, required, "present", "valid PostgreSQL URL shape");
+}
+
+function validateCorsOrigin(name, surface, required, value, expectedOrigin) {
   if (!hasValue(value)) {
     return makeResult(
       name,
@@ -340,18 +383,23 @@ function validateCorsOrigin(name, surface, required, value) {
   }
 
   for (const origin of origins) {
-    if (!isHttpUrl(origin)) {
-      return makeResult(name, surface, required, "invalid", "one or more origins are not valid URLs");
+    if (!isHttpsUrl(origin)) {
+      return makeResult(
+        name,
+        surface,
+        required,
+        "invalid",
+        "one or more origins are not HTTPS URLs"
+      );
     }
   }
 
-  return makeResult(
-    name,
-    surface,
-    required,
-    "present",
-    `${origins.length} origin(s) configured`
-  );
+  const normalizedOrigins = origins.map((origin) => new URL(origin).origin);
+  if (expectedOrigin && !normalizedOrigins.includes(expectedOrigin)) {
+    return makeResult(name, surface, required, "invalid", "does not include --expected-origin");
+  }
+
+  return makeResult(name, surface, required, "present", `${origins.length} origin(s) configured`);
 }
 
 function validateBoolean(name, surface, required, value, reasonIfMissing) {
@@ -366,13 +414,7 @@ function validateBoolean(name, surface, required, value, reasonIfMissing) {
   }
 
   if (!isBooleanValue(value)) {
-    return makeResult(
-      name,
-      surface,
-      required,
-      "invalid",
-      "allowed values: true, false, 1, 0"
-    );
+    return makeResult(name, surface, required, "invalid", "allowed values: true, false, 1, 0");
   }
 
   return makeResult(name, surface, required, "present", "valid boolean shape");
@@ -416,12 +458,13 @@ function validatePort(name, surface, required, value) {
 }
 
 function validateStripeExpectedMode(name, surface, required, value, expectedMode) {
+  const modeRequired = required || Boolean(expectedMode);
   if (!hasValue(value)) {
     return makeResult(
       name,
       surface,
-      required,
-      "needs review",
+      modeRequired,
+      modeRequired ? "missing" : "needs review",
       expectedMode
         ? `--expected-mode ${expectedMode} was requested but variable is not set`
         : "optional variable not set"
@@ -430,30 +473,24 @@ function validateStripeExpectedMode(name, surface, required, value, expectedMode
 
   const resolvedMode = parseBooleanMode(value);
   if (!resolvedMode) {
-    return makeResult(
-      name,
-      surface,
-      required,
-      "invalid",
-      "allowed values: true, false, 1, 0"
-    );
+    return makeResult(name, surface, modeRequired, "invalid", "allowed values: true, false, 1, 0");
   }
 
   if (expectedMode && expectedMode !== resolvedMode) {
     return makeResult(
       name,
       surface,
-      required,
+      modeRequired,
       "invalid",
       `resolved to ${resolvedMode} but --expected-mode is ${expectedMode}`
     );
   }
 
-  return makeResult(name, surface, required, "present", "value is present and mode-checks");
+  return makeResult(name, surface, modeRequired, "present", "value is present and mode-checks");
 }
 
-function validateCheckoutSuccessUrl(name, surface, required, value) {
-  const baseResult = validateUrl(name, surface, required, value);
+function validateCheckoutSuccessUrl(name, surface, required, value, expectedOrigin) {
+  const baseResult = validateUrl(name, surface, required, value, expectedOrigin);
   if (baseResult.status !== "present") {
     return baseResult;
   }
@@ -536,50 +573,55 @@ function validateSecret(name, surface, required, value, expectedPrefix) {
   return makeResult(name, surface, required, "present", "present and non-empty");
 }
 
-function validateDefinition(definition, expectedMode) {
+function validateStripeSecret(name, surface, required, value, expectedMode) {
+  const expectedPrefix =
+    expectedMode === "test" ? "sk_test_" : expectedMode === "live" ? "sk_live_" : "sk_";
+  return validateSecret(name, surface, required, value, expectedPrefix);
+}
+
+function validateDefinition(definition, expectedMode, expectedOrigin) {
   const value = process.env[definition.name];
 
   switch (definition.validator) {
     case "present":
-      return validatePresenceOnly(
-        definition.name,
-        definition.surface,
-        definition.required
-      );
+      return validatePresenceOnly(definition.name, definition.surface, definition.required);
     case "public-url":
-    case "url":
-      return validateUrl(definition.name, definition.surface, definition.required, value);
-    case "postgres-url":
-      return validatePresenceOnly(
-        definition.name,
-        definition.surface,
-        definition.required
-      );
-    case "url-postgres":
       return validateUrl(
         definition.name,
         definition.surface,
         definition.required,
-        value
+        value,
+        definition.name === "NEXT_PUBLIC_SITE_URL" ? expectedOrigin : null
       );
+    case "url":
+      return validateUrl(
+        definition.name,
+        definition.surface,
+        definition.required,
+        value,
+        definition.name === "CHECKOUT_CANCEL_URL" ? expectedOrigin : null
+      );
+    case "postgres-url":
+      return validatePostgresUrl(definition.name, definition.surface, definition.required, value);
     case "cors-origin":
       return validateCorsOrigin(
         definition.name,
         definition.surface,
         definition.required,
-        value
+        value,
+        expectedOrigin
       );
     case "port":
       return validatePort(definition.name, definition.surface, definition.required, value);
     case "app-env":
       return validateAppEnv(definition.name, definition.surface, definition.required, value);
     case "stripe-secret":
-      return validateSecret(
+      return validateStripeSecret(
         definition.name,
         definition.surface,
         definition.required,
         value,
-        "sk_"
+        expectedMode
       );
     case "stripe-webhook-secret":
       return validateSecret(
@@ -598,18 +640,14 @@ function validateDefinition(definition, expectedMode) {
         expectedMode
       );
     case "boolean":
-      return validateBoolean(
-        definition.name,
-        definition.surface,
-        definition.required,
-        value
-      );
+      return validateBoolean(definition.name, definition.surface, definition.required, value);
     case "checkout-success-url":
       return validateCheckoutSuccessUrl(
         definition.name,
         definition.surface,
         definition.required,
-        value
+        value,
+        expectedOrigin
       );
     case "cloudinary-cloud-name":
       return validateCloudinaryCloudName(
@@ -636,12 +674,10 @@ function validateDefinition(definition, expectedMode) {
   }
 }
 
-function buildRows(surface, expectedMode) {
+function buildRows(surface, expectedMode, expectedOrigin) {
   const all = [...WEB_VARIABLES, ...API_VARIABLES];
-  const selected = all.filter((entry) =>
-    surface === "all" ? true : entry.surface === surface
-  );
-  return selected.map((definition) => validateDefinition(definition, expectedMode));
+  const selected = all.filter((entry) => (surface === "all" ? true : entry.surface === surface));
+  return selected.map((definition) => validateDefinition(definition, expectedMode, expectedOrigin));
 }
 
 function printRow(value, width) {
@@ -649,11 +685,12 @@ function printRow(value, width) {
   return valueAsString.padEnd(width, " ");
 }
 
-function printReport(results, targetSurface, expectedMode) {
+function printReport(results, targetSurface, expectedMode, expectedOrigin) {
   console.log("");
   console.log("TigerPingPong production environment validator");
   console.log(`Execution surface: ${targetSurface}`);
   console.log(`Expected Stripe mode check: ${expectedMode || "not set"}`);
+  console.log(`Expected public origin check: ${expectedOrigin || "not set"}`);
   console.log("No secret values are printed. This command is read-only.");
   console.log("");
 
@@ -674,26 +711,11 @@ function printReport(results, targetSurface, expectedMode) {
   }));
 
   const widths = {
-    name: Math.max(
-      headers.name.length,
-      ...rows.map((row) => row.name.length)
-    ),
-    surface: Math.max(
-      headers.surface.length,
-      ...rows.map((row) => row.surface.length)
-    ),
-    required: Math.max(
-      headers.required.length,
-      ...rows.map((row) => row.required.length)
-    ),
-    status: Math.max(
-      headers.status.length,
-      ...rows.map((row) => row.status.length)
-    ),
-    reason: Math.max(
-      headers.reason.length,
-      ...rows.map((row) => row.reason.length)
-    )
+    name: Math.max(headers.name.length, ...rows.map((row) => row.name.length)),
+    surface: Math.max(headers.surface.length, ...rows.map((row) => row.surface.length)),
+    required: Math.max(headers.required.length, ...rows.map((row) => row.required.length)),
+    status: Math.max(headers.status.length, ...rows.map((row) => row.status.length)),
+    reason: Math.max(headers.reason.length, ...rows.map((row) => row.reason.length))
   };
 
   const headerLine = `${printRow(headers.name, widths.name)} | ${printRow(
@@ -718,10 +740,13 @@ function printReport(results, targetSurface, expectedMode) {
   }
 
   const requiredFailures = results.filter(
-    (result) => result.required === "required" && (result.status === "missing" || result.status === "invalid")
+    (result) =>
+      result.required === "required" && (result.status === "missing" || result.status === "invalid")
   ).length;
   const optionalWarnings = results.filter(
-    (result) => result.required === "optional" && (result.status === "invalid" || result.status === "needs review")
+    (result) =>
+      result.required === "optional" &&
+      (result.status === "invalid" || result.status === "needs review")
   ).length;
 
   console.log("");
@@ -740,8 +765,13 @@ function main() {
       return;
     }
 
-    const results = buildRows(options.surface, options.expectedMode);
-    const exitCode = printReport(results, options.surface, options.expectedMode);
+    const results = buildRows(options.surface, options.expectedMode, options.expectedOrigin);
+    const exitCode = printReport(
+      results,
+      options.surface,
+      options.expectedMode,
+      options.expectedOrigin
+    );
     process.exit(exitCode);
   } catch (error) {
     if (error && error instanceof Error) {

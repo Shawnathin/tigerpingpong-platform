@@ -8,9 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = getPathMetadata({
   pathname: "/tables",
-  title: "Ping Pong Tables | Tiger Ping Pong",
-  description:
-    "Shop Tiger Ping Pong indoor and outdoor ping pong tables for home, school, club, and outdoor play with Canada-wide shipping terms."
+  title: "Ping Pong Tables | Tiger Ping Pong"
 });
 
 export default function TablesPage() {

@@ -6,8 +6,7 @@ import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { CartPageClient } from "./CartPageClient";
 
 export const metadata: Metadata = {
-  title: "Cart | Tiger Ping Pong",
-  description: "Review your Tiger Ping Pong cart before Stripe Checkout."
+  title: "Cart | Tiger Ping Pong"
 };
 
 export default function CartPage() {

@@ -43,7 +43,7 @@ export function getPathMetadata({
   title,
   type = "website"
 }: {
-  description: string;
+  description?: string;
   pathname: string;
   title: string;
   type?: "website" | "article";

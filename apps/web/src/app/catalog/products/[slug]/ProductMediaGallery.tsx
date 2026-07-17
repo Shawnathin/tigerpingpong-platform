@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import styles from "./page.module.css";
 
@@ -13,6 +13,7 @@ export interface ProductMediaGalleryItem {
   sortOrder: number;
   src: string | null;
   title: string | null;
+  variantKey?: string | null;
 }
 
 interface ProductMediaGalleryProps {
@@ -20,6 +21,7 @@ interface ProductMediaGalleryProps {
   mediaItems: ProductMediaGalleryItem[];
   productName: string;
   productSlug: string;
+  selectedVariantKey?: string | null;
 }
 
 function getMediaLabel(media: ProductMediaGalleryItem, fallback: string): string {
@@ -31,7 +33,8 @@ export function ProductMediaGallery({
   categoryName,
   mediaItems,
   productName,
-  productSlug
+  productSlug,
+  selectedVariantKey
 }: ProductMediaGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [failedMediaKeys, setFailedMediaKeys] = useState<Set<string>>(() => new Set());
@@ -41,6 +44,20 @@ export function ProductMediaGallery({
   const selectedSrc = failedMediaKeys.has(selectedMedia.mediaKey) ? null : selectedMedia.src;
   const hasMultipleImages = mediaItems.length > 1;
   const thumbnailItems = useMemo(() => mediaItems, [mediaItems]);
+
+  useEffect(() => {
+    if (!selectedVariantKey) {
+      return;
+    }
+
+    const variantMediaIndex = mediaItems.findIndex(
+      (media) => media.variantKey === selectedVariantKey
+    );
+
+    if (variantMediaIndex >= 0) {
+      setSelectedIndex(variantMediaIndex);
+    }
+  }, [mediaItems, selectedVariantKey]);
 
   function markImageFailed(mediaKey: string): void {
     setFailedMediaKeys((currentFailedKeys) => {
@@ -55,6 +72,7 @@ export function ProductMediaGallery({
       <figure className={styles.mainMedia}>
         {selectedSrc ? (
           <img
+            data-testid="product-main-image"
             src={selectedSrc}
             alt={selectedMedia.altText ?? productName}
             onError={() => markImageFailed(selectedMedia.mediaKey)}

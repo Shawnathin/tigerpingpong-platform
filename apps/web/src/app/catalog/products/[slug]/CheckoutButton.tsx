@@ -9,6 +9,7 @@ import {
   type CartItemOption,
   type CartProductInput
 } from "../../../../lib/cart";
+import { getV1ShippingMessage } from "../../../../lib/shipping";
 import { useCart } from "../../../../lib/use-cart";
 
 import styles from "./page.module.css";
@@ -29,9 +30,14 @@ export interface ProductOptionValue {
 }
 
 interface CheckoutButtonProps {
+  availabilityMessage: string;
+  basePriceLabel: string;
   isCheckoutEligible: boolean;
+  onVariantChange?: (variantKey: string | null) => void;
+  priceSummary: string | null;
   product: CartProductInput;
   productOptions: ProductOptionGroup[];
+  shippingLines: string[];
 }
 
 function ProductThumb({ product }: { product: CartProductInput }) {
@@ -176,9 +182,14 @@ function AddToCartModal({ onClose, product }: { onClose: () => void; product: Ca
 }
 
 export function CheckoutButton({
+  availabilityMessage,
+  basePriceLabel,
   isCheckoutEligible,
+  onVariantChange,
+  priceSummary,
   product,
-  productOptions
+  productOptions,
+  shippingLines
 }: CheckoutButtonProps) {
   const { addItem } = useCart();
   const addToCartButtonRef = useRef<HTMLButtonElement>(null);
@@ -197,6 +208,16 @@ export function CheckoutButton({
   const isSelectionComplete = productOptions.every(
     (optionGroup) => !optionGroup.required || Boolean(selectedOptionValues[optionGroup.name])
   );
+  const displayedPrice = selectedOptionPrice
+    ? formatCartMoney(selectedOptionPrice.priceCents, selectedOptionPrice.currency)
+    : basePriceLabel;
+  const displayedShippingLines = selectedOptionPrice
+    ? [getV1ShippingMessage(selectedOptionPrice.priceCents)]
+    : shippingLines;
+
+  useEffect(() => {
+    onVariantChange?.(selectedOptionPrice?.variantKey ?? null);
+  }, [onVariantChange, selectedOptionPrice]);
 
   function handleAddToCart(): void {
     if (!isSelectionComplete) {
@@ -247,84 +268,107 @@ export function CheckoutButton({
     };
   }, [isModalOpen]);
 
-  if (!isCheckoutEligible) {
-    return (
-      <p className={styles.checkoutUnavailable}>
-        This product is not available for online checkout yet.
-      </p>
-    );
-  }
-
   return (
-    <div className={styles.checkoutBox}>
-      {productOptions.length > 0 ? (
-        <div className={styles.optionSelectors}>
-          {productOptions.map((optionGroup) => (
-            <fieldset className={styles.optionSelector} key={optionGroup.name}>
-              <legend>{getOptionLegend(optionGroup)}</legend>
-              <div className={styles.optionChoices}>
-                {optionGroup.values.map((optionValue) => {
-                  const inputId = `${product.productSlug}-${optionGroup.name}-${optionValue.value}`
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, "-");
-                  const isSelected = selectedOptionValues[optionGroup.name] === optionValue.value;
+    <>
+      <div className={styles.priceRow}>
+        <strong aria-live="polite" data-testid="product-price">
+          {displayedPrice}
+        </strong>
+        {priceSummary ? <span>{priceSummary}</span> : null}
+      </div>
 
-                  return (
-                    <label
-                      className={styles.optionChoice}
-                      htmlFor={inputId}
-                      key={optionValue.value}
-                    >
-                      <input
-                        checked={isSelected}
-                        className={styles.optionChoiceInput}
-                        id={inputId}
-                        name={`${product.productSlug}-${optionGroup.name}`}
-                        onChange={() => handleOptionChange(optionGroup.name, optionValue.value)}
-                        type="radio"
-                        value={optionValue.value}
-                      />
-                      <span className={getOptionSwatchClassName(optionValue)} aria-hidden="true" />
-                      <span className={styles.optionChoiceText}>
-                        <strong>{optionValue.label}</strong>
-                        {optionValue.priceCents ? (
-                          <small>
-                            {formatCartMoney(
-                              optionValue.priceCents,
-                              optionValue.currency ?? product.currency
-                            )}
-                          </small>
-                        ) : null}
-                      </span>
-                    </label>
-                  );
-                })}
+      <div className={styles.shippingNote}>
+        <strong>{availabilityMessage}</strong>
+        {displayedShippingLines.map((line) => (
+          <span key={line}>{line}</span>
+        ))}
+      </div>
+
+      <div className={styles.checkoutPanel}>
+        {isCheckoutEligible ? (
+          <div className={styles.checkoutBox}>
+            {productOptions.length > 0 ? (
+              <div className={styles.optionSelectors}>
+                {productOptions.map((optionGroup) => (
+                  <fieldset className={styles.optionSelector} key={optionGroup.name}>
+                    <legend>{getOptionLegend(optionGroup)}</legend>
+                    <div className={styles.optionChoices}>
+                      {optionGroup.values.map((optionValue) => {
+                        const inputId =
+                          `${product.productSlug}-${optionGroup.name}-${optionValue.value}`
+                            .toLowerCase()
+                            .replace(/[^a-z0-9]+/g, "-");
+                        const isSelected =
+                          selectedOptionValues[optionGroup.name] === optionValue.value;
+
+                        return (
+                          <label
+                            className={styles.optionChoice}
+                            htmlFor={inputId}
+                            key={optionValue.value}
+                          >
+                            <input
+                              checked={isSelected}
+                              className={styles.optionChoiceInput}
+                              id={inputId}
+                              name={`${product.productSlug}-${optionGroup.name}`}
+                              onChange={() =>
+                                handleOptionChange(optionGroup.name, optionValue.value)
+                              }
+                              type="radio"
+                              value={optionValue.value}
+                            />
+                            <span
+                              className={getOptionSwatchClassName(optionValue)}
+                              aria-hidden="true"
+                            />
+                            <span className={styles.optionChoiceText}>
+                              <strong>{optionValue.label}</strong>
+                              {optionValue.priceCents ? (
+                                <small>
+                                  {formatCartMoney(
+                                    optionValue.priceCents,
+                                    optionValue.currency ?? product.currency
+                                  )}
+                                </small>
+                              ) : null}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
+                ))}
               </div>
-            </fieldset>
-          ))}
-        </div>
-      ) : null}
+            ) : null}
 
-      <button
-        className={styles.checkoutButton}
-        data-selection-required={!isSelectionComplete ? "true" : undefined}
-        onClick={handleAddToCart}
-        ref={addToCartButtonRef}
-        type="button"
-      >
-        Add to cart
-      </button>
+            <button
+              className={styles.checkoutButton}
+              data-selection-required={!isSelectionComplete ? "true" : undefined}
+              onClick={handleAddToCart}
+              ref={addToCartButtonRef}
+              type="button"
+            >
+              Add to cart
+            </button>
 
-      {selectionError ? (
-        <p className={styles.checkoutError} role="status">
-          {selectionError}
-        </p>
-      ) : null}
+            {selectionError ? (
+              <p className={styles.checkoutError} role="status">
+                {selectionError}
+              </p>
+            ) : null}
+          </div>
+        ) : (
+          <p className={styles.checkoutUnavailable}>
+            This product is not available for online checkout yet.
+          </p>
+        )}
+      </div>
 
       {isModalOpen ? (
         <AddToCartModal onClose={handleCloseModal} product={addedProduct ?? product} />
       ) : null}
-    </div>
+    </>
   );
 }
 

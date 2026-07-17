@@ -23,8 +23,70 @@ const product = {
   primaryMedia: null,
   shortDescription: "Six orange table tennis balls for practice and play.",
   description: "A locally mocked product used only by browser release tests.",
-  media: [],
-  variants: []
+  media: [
+    {
+      mediaKey: "local-single-pack-image",
+      role: "primary",
+      cloudinarySecureUrl: "/storefront/prototype/aqua-paddle/red-paddle-single-cutout.png",
+      cloudinaryPublicId: null,
+      altText: "Local single-pack fixture",
+      title: "Single pack",
+      caption: null,
+      sortOrder: 1,
+      isPrimary: true,
+      variantKey: "single-pack"
+    },
+    {
+      mediaKey: "local-family-pack-image",
+      role: "alternate",
+      cloudinarySecureUrl: "/storefront/prototype/aqua-paddle/aqua-4count-box-angle.jpg",
+      cloudinaryPublicId: null,
+      altText: "Local family-pack fixture",
+      title: "Family pack",
+      caption: null,
+      sortOrder: 2,
+      isPrimary: false,
+      variantKey: "family-pack"
+    }
+  ],
+  variants: [
+    {
+      key: "single-pack",
+      name: "Single pack",
+      priceCents: 800,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package",
+          displayName: "Package",
+          value: "single-pack",
+          label: "Single pack",
+          sortOrder: 1,
+          optionSortOrder: 1
+        }
+      ]
+    },
+    {
+      key: "family-pack",
+      name: "Family pack",
+      priceCents: 12000,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package",
+          displayName: "Package",
+          value: "family-pack",
+          label: "Family pack",
+          sortOrder: 2,
+          optionSortOrder: 1
+        }
+      ]
+    }
+  ]
 };
 const internalOrder = {
   publicReference: "TPP-TEST-001",

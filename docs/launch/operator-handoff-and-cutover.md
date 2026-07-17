@@ -53,6 +53,7 @@ Record each decision, named owner, date, expiration/review date, and evidence re
 - [ ] Production project/connection targets confirmed without copying values.
 - [ ] Prisma migrations verified; timestamped backup and restore evidence recorded.
 - [ ] After backup and migration-state verification, database owner approves a forward cleanup migration for the three dormant shipment-notification columns; no applied migration is edited.
+- [ ] Review Aqua media against all four package SKUs, then assign each approved option image to the exact `ProductVariant` through `ProductMedia.variantId`. Current Aqua import media rows have blank `variant_key` values, so the storefront deliberately keeps the current gallery image when no explicit mapping exists.
 - [ ] RLS, counts, paid-order visibility, connection health, and DB rollback owner confirmed.
 - [ ] Stripe tax treatment and test cases approved; mode, URLs, webhook, duplicate/manual-review, and paid-order proof complete.
 - [ ] Render variables validated in actual web/API shells using `--expected-mode` and `--expected-origin`.

@@ -20,7 +20,6 @@ import type {
   CatalogSummary
 } from "../../../../types/catalog";
 
-import { CheckoutButton } from "./CheckoutButton";
 import {
   EverydayDetailsSection,
   FeatureHighlightsSection,
@@ -31,7 +30,8 @@ import {
   TABLE_COMPARISON_PRODUCT_SLUGS,
   TableComparisonSection
 } from "./ProductDetailSections";
-import { ProductMediaGallery, type ProductMediaGalleryItem } from "./ProductMediaGallery";
+import { ProductHeroPurchase } from "./ProductHeroPurchase";
+import type { ProductMediaGalleryItem } from "./ProductMediaGallery";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -262,7 +262,8 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
       role: media.role,
       sortOrder: media.sortOrder,
       src,
-      title: media.title
+      title: media.title,
+      variantKey: media.variantKey
     });
   }
 
@@ -791,41 +792,22 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       <main className={styles.page}>
         <ProductFamilySwitcher product={product} products={publicProducts} />
 
-        <section className={heroClassName} aria-labelledby="product-title">
-          <ProductMediaGallery
-            categoryName={product.category.name}
-            mediaItems={mediaItems}
-            productName={isTable ? product.name : heroDisplayTitle}
-            productSlug={product.slug}
-          />
-
-          <aside className={styles.purchasePanel} aria-label={`${product.name} purchase panel`}>
-            <p className={styles.eyebrow}>{heroEyebrow}</p>
-            <h1 className={styles.title} id="product-title">
-              {heroDisplayTitle}
-            </h1>
-
-            <div className={styles.priceRow}>
-              <strong>{formatPrice(product.priceCents, product.currency)}</strong>
-              {heroPriceSummary ? <span>{heroPriceSummary}</span> : null}
-            </div>
-
-            <div className={styles.shippingNote}>
-              <strong>Contact support to confirm current availability.</strong>
-              {getPurchaseShippingLines(product).map((line) => (
-                <span key={line}>{line}</span>
-              ))}
-            </div>
-
-            <div className={styles.checkoutPanel}>
-              <CheckoutButton
-                isCheckoutEligible={isCheckoutEligible}
-                product={toCartProductInput(product)}
-                productOptions={checkoutOptionGroups}
-              />
-            </div>
-          </aside>
-        </section>
+        <ProductHeroPurchase
+          availabilityMessage="Contact support to confirm current availability."
+          basePriceLabel={formatPrice(product.priceCents, product.currency)}
+          categoryName={product.category.name}
+          heroClassName={heroClassName}
+          heroEyebrow={heroEyebrow}
+          heroTitle={heroDisplayTitle}
+          isCheckoutEligible={isCheckoutEligible}
+          mediaItems={mediaItems}
+          priceSummary={heroPriceSummary}
+          product={toCartProductInput(product)}
+          productName={product.name}
+          productOptions={checkoutOptionGroups}
+          productSlug={product.slug}
+          shippingLines={getPurchaseShippingLines(product)}
+        />
 
         <QuickFactsSection normalizedContent={normalizedContent} product={product} />
         <ProductStorySection normalizedContent={normalizedContent} product={product} />

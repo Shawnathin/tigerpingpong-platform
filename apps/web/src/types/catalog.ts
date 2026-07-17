@@ -53,6 +53,7 @@ export interface ProductMediaSummary {
   caption: string | null;
   sortOrder: number;
   isPrimary: boolean;
+  variantKey?: string | null;
 }
 
 export interface CatalogProductVariantOption {

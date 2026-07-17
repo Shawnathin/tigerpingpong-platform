@@ -76,6 +76,7 @@ test("Nest 11 runtime preserves health, CORS, headers, auth, safe errors, and ra
 
 test("add-to-cart dialog traps focus, closes on Escape, and restores focus", async ({ page }) => {
   await page.goto("/catalog/products/tiger-premium-balls-6-orange");
+  await page.locator('label[for="tiger-premium-balls-6-orange-package-single-pack"]').click();
   const addButton = page.getByRole("button", { name: "Add to cart" });
   await addButton.click();
 
@@ -92,6 +93,19 @@ test("add-to-cart dialog traps focus, closes on Escape, and restores focus", asy
 
   await expect(dialog).toBeHidden();
   await expect(addButton).toBeFocused();
+});
+
+test("priced product options update the displayed price and shipping message", async ({ page }) => {
+  await page.goto("/catalog/products/tiger-premium-balls-6-orange");
+  const displayedPrice = page.getByTestId("product-price");
+  const mainImage = page.getByTestId("product-main-image");
+
+  await expect(displayedPrice).toHaveText("$8.00");
+  await expect(mainImage).toHaveAttribute("src", /red-paddle-single-cutout/);
+  await page.locator('label[for="tiger-premium-balls-6-orange-package-family-pack"]').click();
+  await expect(displayedPrice).toHaveText("$120.00");
+  await expect(mainImage).toHaveAttribute("src", /aqua-4count-box-angle/);
+  await expect(page.getByText("Orders over $100 CAD ship free across Canada.")).toBeVisible();
 });
 
 test("primary discovery and shipping routes retain factual storefront behavior", async ({
@@ -202,6 +216,7 @@ test("capture local PR evidence", async ({ page }) => {
   });
 
   await page.goto("/catalog/products/tiger-premium-balls-6-orange");
+  await page.locator('label[for="tiger-premium-balls-6-orange-package-single-pack"]').click();
   await page.getByRole("button", { name: "Add to cart" }).click();
   await expect(page.getByRole("dialog", { name: /is in your cart/i })).toBeVisible();
   await page.screenshot({

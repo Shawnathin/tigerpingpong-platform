@@ -118,7 +118,9 @@ test("priced product options update the displayed price and shipping message", a
   await page.locator('label[for="tiger-premium-balls-6-orange-package-family-pack"]').click();
   await expect(displayedPrice).toHaveText("$120.00");
   await expect(mainImage).toHaveAttribute("src", /aqua-4count-box-angle/);
+  await expect(page.getByText("In stock — ships within 24 business hours.")).toBeVisible();
   await expect(page.getByText("Orders over $100 CAD ship free across Canada.")).toBeVisible();
+  await expect(page.getByText(/contact support to confirm current availability/i)).toHaveCount(0);
 });
 
 test("staff can safely edit an existing product and stale carts require review", async ({ page }) => {

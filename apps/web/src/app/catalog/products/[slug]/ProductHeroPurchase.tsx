@@ -23,6 +23,7 @@ interface ProductHeroPurchaseProps {
   productOptions: ProductOptionGroup[];
   productSlug: string;
   shippingLines: string[];
+  shippingLinesAreFixed: boolean;
 }
 
 export function ProductHeroPurchase({
@@ -39,7 +40,8 @@ export function ProductHeroPurchase({
   productName,
   productOptions,
   productSlug,
-  shippingLines
+  shippingLines,
+  shippingLinesAreFixed
 }: ProductHeroPurchaseProps) {
   const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(null);
 
@@ -68,6 +70,7 @@ export function ProductHeroPurchase({
           product={product}
           productOptions={productOptions}
           shippingLines={shippingLines}
+          shippingLinesAreFixed={shippingLinesAreFixed}
         />
       </aside>
     </section>

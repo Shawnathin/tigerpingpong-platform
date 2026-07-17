@@ -909,8 +909,9 @@
 }
 
 .productCategoryJump {
-  position: relative;
-  z-index: 3;
+  position: sticky;
+  top: 112px;
+  z-index: 19;
   width: min(980px, 100%);
   margin: 0 auto -12px;
   border: 1px solid rgb(255 255 255 / 72%);
@@ -1943,6 +1944,12 @@
 }
 
 @media (max-width: 1080px) {
+  .productCategoryJump {
+    position: relative;
+    top: auto;
+    z-index: 3;
+  }
+
   .productHero {
     grid-template-columns: 1fr;
   }

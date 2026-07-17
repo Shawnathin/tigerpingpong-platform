@@ -7,7 +7,8 @@ import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/
 import type { CartProductInput } from "../../../../lib/cart";
 import { normalizeMediaSrc, resolveProductMediaUrl } from "../../../../lib/product-media";
 import { getProductMediaFallbacks } from "../../../../lib/public-storefront-demo";
-import { getV1ShippingMessage } from "../../../../lib/shipping";
+import { getV1ShippingMessage, V1_IN_STOCK_HANDLING_COPY } from "../../../../lib/shipping";
+import { TABLE_SHIPPING_MESSAGE } from "../../../../lib/product-browsing";
 import {
   getProductContentBySlug,
   type NormalizedProductContent
@@ -547,7 +548,9 @@ function toCartProductInput(product: CatalogProductDetail): CartProductInput {
 }
 
 function getPurchaseShippingLines(product: CatalogProductDetail): string[] {
-  return [getV1ShippingMessage(product.priceCents)];
+  return [
+    isTableProduct(product) ? TABLE_SHIPPING_MESSAGE : getV1ShippingMessage(product.priceCents)
+  ];
 }
 
 async function loadCatalogProductSummaries(): Promise<CatalogProductSummary[]> {
@@ -793,7 +796,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <ProductFamilySwitcher product={product} products={publicProducts} />
 
         <ProductHeroPurchase
-          availabilityMessage="Contact support to confirm current availability."
+          availabilityMessage={V1_IN_STOCK_HANDLING_COPY}
           basePriceLabel={formatPrice(product.priceCents, product.currency)}
           categoryName={product.category.name}
           heroClassName={heroClassName}
@@ -807,6 +810,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           productOptions={checkoutOptionGroups}
           productSlug={product.slug}
           shippingLines={getPurchaseShippingLines(product)}
+          shippingLinesAreFixed={isTable}
         />
 
         <QuickFactsSection normalizedContent={normalizedContent} product={product} />

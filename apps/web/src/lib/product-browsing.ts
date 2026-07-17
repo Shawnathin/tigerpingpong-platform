@@ -78,7 +78,7 @@ const ACCESSORY_CTA_LABELS: Record<string, string> = {
   "tiger-vice-paddle": "View paddle"
 };
 
-export const TABLE_SHIPPING_MESSAGE = "Free Canada-wide shipping on all tables!";
+export const TABLE_SHIPPING_MESSAGE = "All Tables Ship Free — Canada-Wide!";
 export const ACCESSORY_SHIPPING_MESSAGE = "Free Canada-wide shipping over $100.";
 
 export function getProductAnchorId(product: CatalogProductSummary): string {

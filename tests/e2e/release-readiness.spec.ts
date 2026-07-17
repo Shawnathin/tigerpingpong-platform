@@ -21,6 +21,22 @@ test("public and policy routes render with baseline security headers", async ({ 
   await expect(page.getByRole("link", { name: "Returns Policy" }).first()).toBeVisible();
 });
 
+test("homepage promotions balance desktop headlines and keep one complete panel in view", async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+
+  const aquaPanel = page.locator('article[data-tone="aqua"]');
+  await expect(aquaPanel.getByRole("heading", { level: 1 })).toHaveText("Make a splash.");
+  await expect(page.locator('article[data-tone="portland"] h2')).toHaveText("Take it outside.");
+  await expect(page.locator('article[data-tone="cover"] h2')).toHaveText("Ultra durable.");
+
+  const aquaBounds = await aquaPanel.boundingBox();
+  expect(aquaBounds).not.toBeNull();
+  expect((aquaBounds?.y ?? 0) + (aquaBounds?.height ?? 0)).toBeLessThanOrEqual(720);
+});
+
 test("staff routes fail closed when credentials are absent", async ({ request }) => {
   for (const path of ["/admin", "/internal/orders"]) {
     const response = await request.get(path);
@@ -114,6 +130,7 @@ test("priced product options update the displayed price and shipping message", a
   const mainImage = page.getByTestId("product-main-image");
 
   await expect(displayedPrice).toHaveText("$8.00");
+  await expect(page.getByText("In stock — ships within 24 business hours.")).toBeVisible();
   await expect(mainImage).toHaveAttribute("src", /red-paddle-single-cutout/);
   await page.locator('label[for="tiger-premium-balls-6-orange-package-family-pack"]').click();
   await expect(displayedPrice).toHaveText("$120.00");
@@ -121,11 +138,16 @@ test("priced product options update the displayed price and shipping message", a
   await expect(page.getByText("Orders over $100 CAD ship free across Canada.")).toBeVisible();
 });
 
-test("staff can safely edit an existing product and stale carts require review", async ({ page }) => {
+test("staff can safely edit an existing product and stale carts require review", async ({
+  page
+}) => {
   await page.goto("/catalog/products/tiger-premium-balls-6-orange");
   await page.locator('label[for="tiger-premium-balls-6-orange-package-family-pack"]').click();
   await page.getByRole("button", { name: "Add to cart" }).click();
-  await page.getByRole("dialog", { name: /is in your cart/i }).getByRole("link", { name: "View cart" }).click();
+  await page
+    .getByRole("dialog", { name: /is in your cart/i })
+    .getByRole("link", { name: "View cart" })
+    .click();
   await expect(page.getByText("$120.00 each")).toBeVisible();
 
   await page.setExtraHTTPHeaders({
@@ -141,9 +163,9 @@ test("staff can safely edit an existing product and stale carts require review",
   await page.getByRole("button", { name: "Save product" }).click();
   await expect(page.getByText(/changed elsewhere/i)).toBeVisible();
 
-  await page.getByLabel("Product name").fill(
-    "Tiger PingPong Premium 3-Star Ping Pong Balls 6 Pack Orange Updated"
-  );
+  await page
+    .getByLabel("Product name")
+    .fill("Tiger PingPong Premium 3-Star Ping Pong Balls 6 Pack Orange Updated");
   await page.locator('input[name="variantPrice:variant-family-pack"]').fill("99.99");
   await page.getByRole("button", { name: "Save product" }).click();
   await expect(page.getByText("Product changes were saved.")).toBeVisible();

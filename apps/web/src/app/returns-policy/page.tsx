@@ -6,7 +6,7 @@ import styles from "../shipping/page.module.css";
 
 export const metadata: Metadata = {
   title: "Returns Policy | Tiger Ping Pong",
-  description: "How to request return, damage, or order support from Tiger Ping Pong."
+  description: "Tiger Ping Pong return, delivery-damage, and product-support requirements."
 };
 
 export default function ReturnsPolicyPage() {
@@ -15,63 +15,65 @@ export default function ReturnsPolicyPage() {
       <PublicStorefrontNav activeItem="support" />
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="returns-title">
-          <p className={styles.eyebrow}>Returns policy — owner review draft</p>
+          <p className={styles.eyebrow}>Returns policy</p>
           <h1 className={styles.title} id="returns-title">
-            Contact us before sending an item back.
+            Inspect your order and contact us before returning it.
           </h1>
           <p className={styles.intro}>
-            Tiger Ping Pong must review the product, order, condition, and reason for the request
-            before confirming return instructions.
+            Contact Tiger Ping Pong if you receive an incorrect or damaged product. Call
+            1-888-552-5259 Monday to Friday, 9 a.m. to 5 p.m. Pacific, or email
+            info@tigerpingpong.com.
           </p>
         </section>
 
         <section className={styles.ruleGrid} aria-label="Returns policy details">
           <article>
-            <span>Start a request</span>
-            <strong>Contact support with the order reference and product details.</strong>
+            <span>Contact us</span>
+            <strong>Provide your purchase information and details about the product.</strong>
             <p>
-              Explain the issue and include clear photos when an item arrived damaged, incomplete,
-              or different from what was ordered.
+              Include the order reference, product name, a description of the issue, and clear
+              photos of any damage or incorrect product.
             </p>
           </article>
           <article>
-            <span>Wait for instructions</span>
-            <strong>Do not ship a product back until support confirms the next step.</strong>
+            <span>Inspect on delivery</span>
+            <strong>Check the product before accepting the delivery.</strong>
             <p>
-              A return address, carrier method, packaging requirement, or other instruction may be
-              needed for the specific product.
+              Products ship in new condition. Note visible damage or defects on the carrier’s
+              delivery documentation when the product arrives.
             </p>
           </article>
           <article>
-            <span>Eligibility</span>
-            <strong>Eligibility depends on the order and product circumstances.</strong>
+            <span>Damage deadline</span>
+            <strong>Notify Tiger Ping Pong within five days of receiving the product.</strong>
             <p>
-              This draft does not promise a return window, automatic approval, or a particular
-              refund outcome. The business owner must approve final eligibility rules before launch.
+              Shipping damage should be reported immediately. A carrier damage claim may be affected
+              or rejected when visible damage was not recorded at the time of delivery.
             </p>
           </article>
           <article>
-            <span>Damage or delivery issue</span>
-            <strong>Report visible damage promptly and preserve packaging.</strong>
+            <span>Return instructions</span>
+            <strong>Wait for Tiger Ping Pong to confirm the return process.</strong>
             <p>
-              Support may request photos, carrier information, packaging, serial details, or other
-              evidence needed to assess the issue.
+              Do not send a product back before support confirms the return address, carrier method,
+              packaging requirements, and any other instructions for the product.
             </p>
           </article>
           <article>
-            <span>Shipping responsibility</span>
-            <strong>Return-shipping responsibility must be confirmed by support.</strong>
+            <span>Product condition</span>
+            <strong>Returned goods must arrive properly packaged and in good condition.</strong>
             <p>
-              Do not assume that return freight, pickup, disassembly, or repackaging is included
-              unless Tiger Ping Pong confirms it for the request.
+              The customer is responsible for packaging a return. Tiger Ping Pong cannot be held
+              responsible for goods returned in poor condition because of inadequate packaging.
             </p>
           </article>
           <article>
-            <span>Refund method</span>
-            <strong>Any approved refund is confirmed after review.</strong>
+            <span>Table returns</span>
+            <strong>Return shipping charges may apply to returned tables.</strong>
             <p>
-              Timing and method depend on the approved resolution and payment processing. No refund
-              is confirmed solely because a request or shipment was submitted.
+              Table freight, pickup, disassembly, or repackaging is not included unless Tiger Ping
+              Pong confirms it for the return. Support will explain the next step before anything is
+              shipped back.
             </p>
           </article>
         </section>
@@ -79,8 +81,8 @@ export default function ReturnsPolicyPage() {
         <section className={styles.supportBand} aria-labelledby="returns-contact-title">
           <div>
             <p className={styles.eyebrow}>Return or damage support</p>
-            <h2 id="returns-contact-title">Have your order reference ready.</h2>
-            <p>This draft must be approved by the business owner before launch.</p>
+            <h2 id="returns-contact-title">Have your order details and photos ready.</h2>
+            <p>Call 1-888-552-5259 or email info@tigerpingpong.com.</p>
           </div>
           <a className={styles.primaryAction} href="/contact">
             Contact support

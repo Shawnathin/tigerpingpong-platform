@@ -6,7 +6,7 @@ import styles from "../shipping/page.module.css";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Tiger Ping Pong",
-  description: "How Tiger Ping Pong handles storefront, order, and support information."
+  description: "How Tiger Ping Pong collects, uses, and protects customer information."
 };
 
 export default function PrivacyPolicyPage() {
@@ -15,65 +15,88 @@ export default function PrivacyPolicyPage() {
       <PublicStorefrontNav activeItem="support" />
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="privacy-title">
-          <p className={styles.eyebrow}>Privacy policy — owner review draft</p>
+          <p className={styles.eyebrow}>Privacy policy</p>
           <h1 className={styles.title} id="privacy-title">
-            How storefront and order information is handled.
+            How Tiger Ping Pong handles your information.
           </h1>
           <p className={styles.intro}>
-            Tiger Ping Pong uses customer information to operate the Canadian storefront, process
-            orders, provide support, prevent misuse, and meet applicable business obligations.
+            Tiger Ping Pong is committed to protecting your privacy. This policy explains the
+            information we collect, how we use it, and the choices available to you when you use our
+            website or contact us.
           </p>
         </section>
 
         <section className={styles.ruleGrid} aria-label="Privacy policy details">
           <article>
-            <span>Information used</span>
-            <strong>Cart, checkout, order, shipping, and support details.</strong>
+            <span>Information we collect</span>
+            <strong>Personal and technical information may be collected.</strong>
             <p>
-              Cart items are stored in your browser. Checkout and order records may include contact,
-              shipping, product, payment-status, and support information.
+              Personal information may include your name, email address, phone number, shipping
+              address, order details, and information you provide to support. Technical information
+              may include your IP address, browser type, and pages requested.
             </p>
           </article>
           <article>
-            <span>Payment handling</span>
-            <strong>Payment details are entered on hosted Stripe Checkout.</strong>
+            <span>How we use information</span>
+            <strong>
+              Information supports orders, service, communication, and site operation.
+            </strong>
             <p>
-              Tiger Ping Pong receives payment and order status information needed to confirm and
-              support the order, but does not build or host a custom card-entry form.
+              We use information to provide products and services, process and fulfill orders,
+              answer questions, communicate about purchases, prevent misuse, and maintain and
+              improve the storefront.
+            </p>
+          </article>
+          <article>
+            <span>Cart and payment handling</span>
+            <strong>Cart items stay in your browser; payments use hosted Stripe Checkout.</strong>
+            <p>
+              Tiger Ping Pong receives the payment and order status needed to confirm and support an
+              order, but does not build or host a custom card-entry form and does not receive your
+              full card number from Stripe Checkout.
             </p>
           </article>
           <article>
             <span>Service providers</span>
-            <strong>Specialized providers support hosting, payments, data, and media.</strong>
+            <strong>Trusted providers support hosting, payments, data, and product media.</strong>
             <p>
-              Information may be processed by providers used for storefront hosting, Stripe
-              payments, order data storage, and product-media delivery, subject to their roles and
-              safeguards.
+              Information may be processed by providers that help operate the storefront, payments,
+              order records, and media delivery. We do not sell personal information or share it
+              with third parties for their own marketing purposes.
             </p>
           </article>
           <article>
             <span>Retention</span>
-            <strong>Records are kept only as reasonably needed.</strong>
+            <strong>Records are retained only as reasonably needed.</strong>
             <p>
-              Order and support records may be retained for fulfillment, customer service, security,
+              Order and support records may be kept for fulfillment, customer service, security,
               accounting, legal, and dispute-resolution needs.
             </p>
           </article>
           <article>
             <span>Security</span>
-            <strong>Administrative and order surfaces are restricted.</strong>
+            <strong>We use appropriate safeguards and restricted staff systems.</strong>
             <p>
-              No online service can guarantee absolute security. Tiger Ping Pong uses access
-              controls and service safeguards appropriate to the storefront.
+              We take reasonable measures to protect information from unauthorized access,
+              alteration, or disclosure. No method of internet transmission or electronic storage
+              can be guaranteed to be completely secure.
             </p>
           </article>
           <article>
-            <span>Your request</span>
-            <strong>Contact us about your information.</strong>
+            <span>Your choices</span>
+            <strong>Contact us about access, correction, or deletion.</strong>
             <p>
-              Email info@tigerpingpong.com to ask about access, correction, or deletion. Some
-              records may need to be retained where required for legitimate business or legal
+              Email info@tigerpingpong.com with a privacy request. Some records may need to be
+              retained where required for legitimate business, accounting, security, or legal
               purposes.
+            </p>
+          </article>
+          <article>
+            <span>Policy changes</span>
+            <strong>This policy may be updated as the storefront changes.</strong>
+            <p>
+              Updates become effective when posted on this page. Continued use of the website after
+              an update means the revised policy applies to that use.
             </p>
           </article>
         </section>
@@ -82,7 +105,7 @@ export default function PrivacyPolicyPage() {
           <div>
             <p className={styles.eyebrow}>Privacy contact</p>
             <h2 id="privacy-contact-title">Questions or requests?</h2>
-            <p>This draft must be approved by the business owner before launch.</p>
+            <p>Contact Tiger Ping Pong at info@tigerpingpong.com.</p>
           </div>
           <a className={styles.primaryAction} href="mailto:info@tigerpingpong.com">
             Email Tiger Ping Pong

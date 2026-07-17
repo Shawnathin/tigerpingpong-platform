@@ -6,15 +6,8 @@ import { PublicStorefrontNav, type PublicStorefrontNavItem } from "../../../Publ
 import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
 import type { CartProductInput } from "../../../../lib/cart";
 import { normalizeMediaSrc, resolveProductMediaUrl } from "../../../../lib/product-media";
-import {
-  getProductMediaFallbacks,
-  getPrimaryProductMediaFallback
-} from "../../../../lib/public-storefront-demo";
-import {
-  getV1ShippingMessage,
-  V1_FLAT_RATE_SHIPPING_COPY,
-  V1_IN_STOCK_HANDLING_COPY
-} from "../../../../lib/shipping";
+import { getProductMediaFallbacks } from "../../../../lib/public-storefront-demo";
+import { getV1ShippingMessage } from "../../../../lib/shipping";
 import {
   getProductContentBySlug,
   type NormalizedProductContent
@@ -44,9 +37,9 @@ import styles from "./page.module.css";
 export const dynamic = "force-dynamic";
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 interface ProductResource {
@@ -73,34 +66,6 @@ type ProductJsonLd = {
 };
 
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
-const TABLE_RECOMMENDATION_SLUGS = [
-  "tiger-vice-paddle",
-  "tiger-premium-balls-6-white",
-  "tiger-premium-balls-6-orange",
-  "tiger-premium-balls-140",
-  "tiger-table-cover-black-polyester",
-  "tiger-net-post-set"
-];
-const PADDLE_RECOMMENDATION_SLUGS = [
-  "tiger-premium-balls-6-white",
-  "tiger-premium-balls-6-orange",
-  "tiger-premium-balls-140"
-];
-const BALL_RECOMMENDATION_SLUGS = [
-  "tiger-vice-paddle",
-  "tiger-net-post-set",
-  "tiger-table-cover-black-polyester"
-];
-const COVER_RECOMMENDATION_SLUGS = [
-  "tiger-portland-outdoor-table",
-  "tiger-expo-outdoor-table",
-  "tiger-portland-indoor-table"
-];
-const NET_RECOMMENDATION_SLUGS = [
-  "tiger-vice-paddle",
-  "tiger-premium-balls-6-white",
-  "tiger-premium-balls-6-orange"
-];
 const PRODUCT_HERO_DISPLAY_TITLES: Record<string, string> = {
   "tiger-expo-outdoor-table": "Expo Outdoor",
   "tiger-net-post-set": "Net & Post Set",
@@ -143,7 +108,8 @@ async function loadProduct(slug: string): Promise<ProductResource> {
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await loadProductForMetadata(params.slug);
+  const { slug } = await params;
+  const product = await loadProductForMetadata(slug);
 
   if (!product) {
     return {
@@ -221,17 +187,6 @@ function isProductCheckoutEligible(
     product.v1CheckoutScope &&
     CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
     hasCheckoutPrice &&
-    product.currency.trim().toLowerCase() === "cad"
-  );
-}
-
-function isSummaryCheckoutEligible(product: CatalogProductSummary): boolean {
-  return (
-    product.v1PublicNavigation &&
-    product.v1CheckoutScope &&
-    CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
-    product.priceCents !== null &&
-    product.priceCents > 0 &&
     product.currency.trim().toLowerCase() === "cad"
   );
 }
@@ -578,75 +533,20 @@ function getCartImage(product: CatalogProductDetail): string | null {
   return getMediaItems(product)[0]?.src ?? null;
 }
 
-function getSummaryCartImage(product: CatalogProductSummary): string | null {
-  if (product.primaryMedia) {
-    const mediaUrl = resolveProductMediaUrl(product.primaryMedia, product.slug);
-
-    if (mediaUrl) {
-      return mediaUrl;
-    }
-  }
-
-  return getPrimaryProductMediaFallback(product.slug)?.src ?? null;
-}
-
-function toCartProductInput(
-  product: CatalogProductDetail | CatalogProductSummary
-): CartProductInput {
+function toCartProductInput(product: CatalogProductDetail): CartProductInput {
   return {
     categoryName: product.category.name,
     currency: product.currency,
-    imageUrl: "media" in product ? getCartImage(product) : getSummaryCartImage(product),
+    imageUrl: getCartImage(product),
     name: product.name,
     productKind: product.productKind,
     productSlug: product.slug,
-    unitPriceCents:
-      "variants" in product ? getCartProductPriceCents(product) : (product.priceCents ?? 0)
+    unitPriceCents: getCartProductPriceCents(product)
   };
 }
 
-function getRecommendationSlugs(product: CatalogProductDetail): string[] {
-  const productKind = normalizeOptionKey(product.productKind);
-
-  if (productKind === "table") {
-    return TABLE_RECOMMENDATION_SLUGS;
-  }
-
-  if (productKind === "paddle") {
-    return PADDLE_RECOMMENDATION_SLUGS;
-  }
-
-  if (productKind === "ball") {
-    return BALL_RECOMMENDATION_SLUGS;
-  }
-
-  if (productKind === "cover") {
-    return COVER_RECOMMENDATION_SLUGS;
-  }
-
-  if (productKind === "net") {
-    return NET_RECOMMENDATION_SLUGS;
-  }
-
-  return PADDLE_RECOMMENDATION_SLUGS;
-}
-
 function getPurchaseShippingLines(product: CatalogProductDetail): string[] {
-  const qualifiesForFreeShipping = product.priceCents !== null && product.priceCents > 10000;
-  const isTable = normalizeOptionKey(product.productKind) === "table";
-
-  if (!isTable) {
-    return [V1_IN_STOCK_HANDLING_COPY, "Free Canada-wide shipping over $100. $15 flat-rate below."];
-  }
-
-  if (qualifiesForFreeShipping) {
-    return [
-      "Tables typically leave the warehouse in about 24 business hours.",
-      "Free Canada-wide shipping included."
-    ];
-  }
-
-  return [V1_IN_STOCK_HANDLING_COPY, V1_FLAT_RATE_SHIPPING_COPY];
+  return [getV1ShippingMessage(product.priceCents)];
 }
 
 async function loadCatalogProductSummaries(): Promise<CatalogProductSummary[]> {
@@ -655,24 +555,6 @@ async function loadCatalogProductSummaries(): Promise<CatalogProductSummary[]> {
   } catch {
     return [];
   }
-}
-
-function getRecommendedAddOns(
-  product: CatalogProductDetail,
-  products: CatalogProductSummary[]
-): CartProductInput[] {
-  const productsBySlug = new Map(
-    products.map((catalogProduct) => [catalogProduct.slug, catalogProduct])
-  );
-
-  return getRecommendationSlugs(product)
-    .filter((slug) => slug !== product.slug)
-    .map((slug) => productsBySlug.get(slug))
-    .filter((catalogProduct): catalogProduct is CatalogProductSummary =>
-      Boolean(catalogProduct && isSummaryCheckoutEligible(catalogProduct))
-    )
-    .map(toCartProductInput)
-    .slice(0, 4);
 }
 
 async function loadTableComparisonProducts(
@@ -874,7 +756,8 @@ function ErrorState({ error }: { error: string }) {
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
-  const { product, error } = await loadProduct(params.slug);
+  const { slug } = await params;
+  const { product, error } = await loadProduct(slug);
 
   if (error || !product) {
     return <ErrorState error={error ?? "Product details are temporarily unavailable."} />;
@@ -886,7 +769,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const normalizedContent = getProductContentBySlug(product.slug);
   const catalogProducts = await loadCatalogProductSummaries();
   const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
-  const recommendedProducts = getRecommendedAddOns(product, publicProducts);
   const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
   const heroDisplayTitle = getHeroDisplayTitle(product);
   const heroEyebrow = getHeroEyebrow();
@@ -929,7 +811,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             <div className={styles.shippingNote}>
-              <strong>In stock and ready to ship.</strong>
+              <strong>Contact support to confirm current availability.</strong>
               {getPurchaseShippingLines(product).map((line) => (
                 <span key={line}>{line}</span>
               ))}
@@ -940,7 +822,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 isCheckoutEligible={isCheckoutEligible}
                 product={toCartProductInput(product)}
                 productOptions={checkoutOptionGroups}
-                recommendedProducts={recommendedProducts}
               />
             </div>
           </aside>

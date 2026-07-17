@@ -96,7 +96,6 @@ Status: **Needs manual cutover proof execution before release.**
 - `CHECKOUT_SUCCESS_URL`
 - `CHECKOUT_CANCEL_URL`
 - `INTERNAL_ORDERS_API_TOKEN`
-- optional: `SHIPMENT_EMAIL_WEBHOOK_URL`
 
 ### Database/Prisma
 

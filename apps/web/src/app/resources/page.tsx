@@ -50,17 +50,7 @@ export default function ResourcesPage() {
             <h1 className={styles.title} id="resources-title">
               Ping Pong Resources
             </h1>
-            <p className={styles.intro}>
-              Helpful guides for choosing the right ping pong table, planning your room, learning
-              the rules, and deciding whether an indoor or outdoor table is best for your space.
-            </p>
           </div>
-
-          <aside className={styles.heroPanel} aria-label="Resource topics">
-            <p className={styles.eyebrow}>Start here</p>
-            <strong>Buying, room planning, indoor vs outdoor choice, and rules basics.</strong>
-            <p>Short, practical guides for the questions customers ask before the next rally.</p>
-          </aside>
         </section>
 
         <section className={styles.featuredGuide} aria-labelledby="featured-resource-title">
@@ -86,8 +76,7 @@ export default function ResourcesPage() {
 
         <section className={styles.section} aria-labelledby="resource-guides-title">
           <div className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Guides</p>
-            <h2 id="resource-guides-title">Choose, plan, compare, and play.</h2>
+            <h2 id="resource-guides-title">Guides</h2>
           </div>
           <div className={styles.cardGrid}>
             {RESOURCE_ARTICLES.map((article) => {
@@ -107,25 +96,6 @@ export default function ResourcesPage() {
                 </article>
               );
             })}
-          </div>
-        </section>
-
-        <section className={styles.footerCta} aria-labelledby="resources-help-title">
-          <div>
-            <p className={styles.eyebrow}>Need help choosing a table?</p>
-            <h2 id="resources-help-title">Start with the table lineup or ask Tiger PingPong.</h2>
-            <p>
-              Use the guides to narrow the decision, then compare current tables or contact us for
-              help matching a table to your space.
-            </p>
-          </div>
-          <div className={styles.footerActions}>
-            <a className={styles.primaryAction} href="/tables/">
-              Shop tables
-            </a>
-            <a className={styles.secondaryAction} href="/contact">
-              Contact
-            </a>
           </div>
         </section>
       </main>

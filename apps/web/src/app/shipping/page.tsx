@@ -15,9 +15,8 @@ export default function ShippingPage() {
       <PublicStorefrontNav activeItem="support" />
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="shipping-title">
-          <p className={styles.eyebrow}>Shipping</p>
           <h1 className={styles.title} id="shipping-title">
-            Simple Canada-wide shipping for online orders.
+            Shipping
           </h1>
           <p className={styles.intro}>
             Tiger Ping Pong ships storefront orders within Canada. Orders over $100 CAD ship free
@@ -34,7 +33,7 @@ export default function ShippingPage() {
           <article>
             <span>Canada only</span>
             <strong>Online orders ship across Canada.</strong>
-            <p>Shipping outside Canada is not supported in this storefront pass.</p>
+            <p>Shipping outside Canada is not supported.</p>
           </article>
 
           <article>
@@ -50,29 +49,7 @@ export default function ShippingPage() {
           </article>
         </section>
 
-        <section className={styles.copyBand} aria-labelledby="shipping-copy-title">
-          <div>
-            <p className={styles.eyebrow}>Customer copy</p>
-            <h2 id="shipping-copy-title">What shoppers see on product pages.</h2>
-          </div>
-          <ul>
-            <li>Orders over $100 CAD ship free across Canada.</li>
-            <li>Orders $100 CAD or under use $15 CAD flat-rate shipping.</li>
-            <li>In-stock products typically leave the warehouse in about 24 business hours.</li>
-            <li>Checkout calculates the final shipping total before payment.</li>
-          </ul>
-        </section>
-
-        <section className={styles.supportBand} aria-labelledby="shipping-support-title">
-          <div>
-            <p className={styles.eyebrow}>Shipping questions</p>
-            <h2 id="shipping-support-title">Need help before or after checkout?</h2>
-            <p>
-              Contact Tiger Ping Pong for shipping questions, order/payment help, product details,
-              or setup support from Vancouver, BC across Canada. For order questions, include your
-              order reference if available, checkout email, and product name if relevant.
-            </p>
-          </div>
+        <section className={styles.supportBand} aria-label="Shipping support">
           <a className={styles.primaryAction} href="/contact">
             Contact support
           </a>

@@ -80,7 +80,6 @@ API service (`tigerpingpong-api`):
 - `INTERNAL_ORDERS_API_TOKEN`
 - `STRIPE_TAX_ENABLED`
 - `STRIPE_EXPECTED_LIVEMODE`
-- optional: `SHIPMENT_EMAIL_WEBHOOK_URL` (only if shipment handoff is enabled)
 
 Web service (`tigerpingpong-web`):
 

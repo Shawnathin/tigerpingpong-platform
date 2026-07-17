@@ -15,9 +15,8 @@ export default function ShippingReturnsPage() {
       <PublicStorefrontNav activeItem="support" />
       <main className={styles.page}>
         <section className={styles.hero} aria-labelledby="shipping-title">
-          <p className={styles.eyebrow}>Shipping & Returns</p>
           <h1 className={styles.title} id="shipping-title">
-            Simple Canada-wide shipping and clear support for returns questions.
+            Shipping & Returns
           </h1>
           <p className={styles.intro}>
             Tiger Ping Pong ships storefront orders within Canada. Orders over $100 CAD ship free
@@ -34,7 +33,7 @@ export default function ShippingReturnsPage() {
           <article>
             <span>Canada only</span>
             <strong>Online orders ship across Canada.</strong>
-            <p>Shipping outside Canada is not supported in this storefront pass.</p>
+            <p>Shipping outside Canada is not supported.</p>
           </article>
 
           <article>
@@ -56,6 +55,7 @@ export default function ShippingReturnsPage() {
             <h2 id="returns-copy-title">Contact support for returns or order questions.</h2>
           </div>
           <ul>
+            <li>Review the dedicated returns policy before sending any product back.</li>
             <li>Include your order reference if available.</li>
             <li>Include your checkout email.</li>
             <li>Include the product name and a short description of the issue.</li>
@@ -63,17 +63,12 @@ export default function ShippingReturnsPage() {
           </ul>
         </section>
 
-        <section className={styles.supportBand} aria-labelledby="shipping-support-title">
-          <div>
-            <p className={styles.eyebrow}>Shipping or returns questions</p>
-            <h2 id="shipping-support-title">Need help before or after checkout?</h2>
-            <p>
-              Contact Tiger Ping Pong for shipping questions, order/payment help, product details,
-              setup support, or returns questions from Vancouver, BC across Canada.
-            </p>
-          </div>
+        <section className={styles.supportBand} aria-label="Shipping and returns support">
           <a className={styles.primaryAction} href="/contact">
             Contact support
+          </a>
+          <a className={styles.primaryAction} href="/returns-policy">
+            Read returns policy
           </a>
         </section>
       </main>

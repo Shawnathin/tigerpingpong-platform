@@ -51,10 +51,6 @@ export default function ContactPage() {
             <h1 className={styles.title} id="contact-title">
               Help for orders, shipping, products, and setup.
             </h1>
-            <p className={styles.intro}>
-              Tiger Ping Pong supports customers from Vancouver, BC with Canada-wide product and
-              storefront help.
-            </p>
             <div className={styles.heroActions}>
               <a className={styles.primaryAction} href="tel:+18885525259">
                 Call {SUPPORT_PHONE}
@@ -89,7 +85,6 @@ export default function ContactPage() {
           <article>
             <span>Location</span>
             <strong>Vancouver, BC</strong>
-            <p>Serving homes, clubs, schools, and parks across Canada.</p>
           </article>
         </section>
 

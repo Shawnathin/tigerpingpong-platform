@@ -13,9 +13,7 @@ interface StaffOrderDetailPageProps {
   eyebrow: string;
   publicReference: string;
   saveShipmentRecord: (formData: FormData) => Promise<void>;
-  sendShipmentEmail?: (formData: FormData) => Promise<void>;
   searchParams?: {
-    shipmentEmail?: string | string[];
     shipmentError?: string | string[];
     shipmentSaved?: string | string[];
   };
@@ -112,63 +110,6 @@ function getSearchParam(value: string | string[] | undefined): string | null {
   return value ?? null;
 }
 
-function getShipmentEmailReadiness(order: InternalOrderDetail): string[] {
-  const missing: string[] = [];
-
-  if (!order.customerEmail?.trim()) {
-    missing.push("customer email");
-  }
-
-  if (!order.shipment.carrier?.trim()) {
-    missing.push("carrier");
-  }
-
-  if (!order.shipment.trackingNumber?.trim() && !order.shipment.trackingUrl?.trim()) {
-    missing.push("tracking number or tracking URL");
-  }
-
-  if (order.shipmentNotification.sentAt) {
-    missing.push("shipment email has already been sent");
-  }
-
-  return missing;
-}
-
-function getShipmentEmailStatusMessage(value: string | null): {
-  kind: "success" | "error";
-  text: string;
-} | null {
-  if (value === "sent") {
-    return {
-      kind: "success",
-      text: "Shipment email handed off to Make."
-    };
-  }
-
-  if (value === "blocked") {
-    return {
-      kind: "error",
-      text: "Shipment email was not sent because required order or tracking details are missing, or a notification was already sent."
-    };
-  }
-
-  if (value === "config") {
-    return {
-      kind: "error",
-      text: "Shipment email webhook is not configured. Add SHIPMENT_EMAIL_WEBHOOK_URL on the API server before sending."
-    };
-  }
-
-  if (value === "failed") {
-    return {
-      kind: "error",
-      text: "Shipment email webhook failed. Review Make and try again after the issue is fixed."
-    };
-  }
-
-  return null;
-}
-
 function renderFallback(
   publicReference: string,
   error: boolean,
@@ -206,16 +147,12 @@ export default async function StaffOrderDetailPage({
   eyebrow,
   publicReference,
   saveShipmentRecord,
-  sendShipmentEmail,
   searchParams
 }: StaffOrderDetailPageProps) {
   const resource = await loadOrder(publicReference);
   const order = resource.order;
   const shipmentSaved = getSearchParam(searchParams?.shipmentSaved) === "1";
   const shipmentError = getSearchParam(searchParams?.shipmentError) === "1";
-  const shipmentEmailStatus = getShipmentEmailStatusMessage(
-    getSearchParam(searchParams?.shipmentEmail)
-  );
 
   if (!order) {
     return renderFallback(publicReference, resource.error, eyebrow, backHref);
@@ -337,66 +274,6 @@ export default async function StaffOrderDetailPage({
           </div>
         </form>
       </section>
-
-      {sendShipmentEmail ? (
-        <section className={styles.panel} aria-labelledby="staff-order-notification-title">
-          <div className={styles.panelHeader}>
-            <div>
-              <h2 id="staff-order-notification-title">Customer notification</h2>
-              <p>Manual Make handoff for the customer shipment email.</p>
-            </div>
-            <span className={styles.badge}>Protected</span>
-          </div>
-
-          {shipmentEmailStatus ? (
-            <p
-              className={
-                shipmentEmailStatus.kind === "success" ? styles.successText : styles.errorText
-              }
-            >
-              {shipmentEmailStatus.text}
-            </p>
-          ) : null}
-
-          <dl className={styles.definitionList}>
-            <div>
-              <dt>Notification status</dt>
-              <dd>{formatNullable(order.shipmentNotification.status)}</dd>
-            </div>
-            <div>
-              <dt>Sent</dt>
-              <dd>{formatDateTime(order.shipmentNotification.sentAt)}</dd>
-            </div>
-            {order.shipmentNotification.lastError ? (
-              <div>
-                <dt>Last error</dt>
-                <dd>{order.shipmentNotification.lastError}</dd>
-              </div>
-            ) : null}
-          </dl>
-
-          {(() => {
-            const missing = getShipmentEmailReadiness(order);
-            const canSend = missing.length === 0;
-
-            return (
-              <>
-                {!canSend ? (
-                  <p className={styles.errorText}>
-                    Shipment email cannot be sent until this is resolved: {missing.join(", ")}.
-                  </p>
-                ) : null}
-                <form action={sendShipmentEmail}>
-                  <input type="hidden" name="publicReference" value={order.publicReference} />
-                  <button className={styles.button} type="submit" disabled={!canSend}>
-                    Send shipping email
-                  </button>
-                </form>
-              </>
-            );
-          })()}
-        </section>
-      ) : null}
 
       <section className={styles.panel} aria-labelledby="staff-order-contact-title">
         <div className={styles.section}>

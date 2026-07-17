@@ -5,8 +5,7 @@ import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = {
-  title: "Checkout Canceled | Tiger Ping Pong",
-  description: "Tiger Ping Pong checkout cancellation page."
+  title: "Checkout Canceled | Tiger Ping Pong"
 };
 
 export default function CheckoutCancelPage() {
@@ -23,29 +22,10 @@ export default function CheckoutCancelPage() {
           <h1 className={styles.title} id="checkout-cancel-title">
             Checkout was canceled
           </h1>
-          <p className={styles.intro}>
-            Checkout was canceled. No payment was completed through this page. You can return to the
-            storefront and try again when ready.
-          </p>
         </section>
 
         <section className={styles.panel} aria-labelledby="checkout-cancel-status-title">
-          <h2 id="checkout-cancel-status-title">No checkout confirmation</h2>
-          <p>
-            This page only handles a canceled or incomplete checkout. It does not mark an order as
-            failed, paid, or fulfilled.
-          </p>
-
-          <dl className={styles.statusList}>
-            <div>
-              <dt>Redirect result</dt>
-              <dd>Checkout was canceled or not completed.</dd>
-            </div>
-            <div>
-              <dt>Payment status</dt>
-              <dd>No payment confirmation happens on this page.</dd>
-            </div>
-          </dl>
+          <h2 id="checkout-cancel-status-title">Checkout was not completed.</h2>
 
           <p className={styles.supportNote}>
             If you canceled because checkout was unclear, a product detail is unclear, or you have

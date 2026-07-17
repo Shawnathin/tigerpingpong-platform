@@ -14,21 +14,19 @@ import styles from "../page.module.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Checkout Status | Tiger Ping Pong",
-  description: "Tiger Ping Pong checkout redirect status page."
+  title: "Checkout Status | Tiger Ping Pong"
 };
 
 interface CheckoutSuccessPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     session_id?: string | string[];
-  };
+  }>;
 }
 
 interface StatusContent {
   badge: string;
   heading: string;
-  intro: string;
-  paymentTruth: string;
+  intro?: string;
   tone: "paidTone" | "pendingTone" | "problemTone";
 }
 
@@ -37,7 +35,9 @@ interface StatusResource {
   status: CheckoutSessionStatus | null;
 }
 
-function getSessionId(searchParams: CheckoutSuccessPageProps["searchParams"]): string | null {
+type CheckoutSuccessSearchParams = Awaited<CheckoutSuccessPageProps["searchParams"]>;
+
+function getSessionId(searchParams: CheckoutSuccessSearchParams): string | null {
   const sessionId = searchParams?.session_id;
   const value = Array.isArray(sessionId) ? (sessionId[0] ?? null) : (sessionId ?? null);
   const normalized = value?.trim();
@@ -107,9 +107,7 @@ function getStatusContent(
     return {
       badge: "Session reference missing",
       heading: "Checkout status needs a session reference",
-      intro:
-        "No Stripe session reference was included in this link, so this page cannot look up an order status.",
-      paymentTruth: "No payment confirmation happens from this page.",
+      intro: "This page cannot look up an order status.",
       tone: "problemTone"
     };
   }
@@ -118,9 +116,7 @@ function getStatusContent(
     return {
       badge: "Status unavailable",
       heading: "Order status is temporarily unavailable",
-      intro:
-        "The backend status check could not be completed. Your Stripe redirect was received, but this page cannot confirm payment right now.",
-      paymentTruth: "Payment is not treated as confirmed by this page.",
+      intro: "This page cannot confirm payment right now.",
       tone: "problemTone"
     };
   }
@@ -129,9 +125,7 @@ function getStatusContent(
     return {
       badge: "Not found",
       heading: "Order status was not found",
-      intro:
-        "The backend did not find an order for this Stripe session reference. Please keep your Stripe receipt or reference details.",
-      paymentTruth: "Payment is not treated as confirmed without a matching backend order.",
+      intro: "Please keep your receipt or reference details.",
       tone: "problemTone"
     };
   }
@@ -141,58 +135,46 @@ function getStatusContent(
       return {
         badge: "Paid",
         heading: "Payment confirmed",
-        intro: "The backend order status is paid. Keep the order reference below for your records.",
-        paymentTruth: "Confirmed from backend order state.",
+        intro: "Keep the order reference below for your records.",
         tone: "paidTone"
       };
     case "checkout_pending":
       return {
         badge: "Pending",
         heading: "Payment confirmation is pending",
-        intro:
-          "Stripe returned you to Tiger Ping Pong, but the backend order is not marked paid yet. This can happen while webhook confirmation is still arriving.",
-        paymentTruth: "Not confirmed as paid yet.",
         tone: "pendingTone"
       };
     case "checkout_failed":
       return {
         badge: "Failed",
         heading: "Checkout did not complete",
-        intro:
-          "The backend order status shows this checkout did not start or complete successfully.",
-        paymentTruth: "Not confirmed as paid.",
         tone: "problemTone"
       };
     case "canceled":
       return {
         badge: "Canceled",
         heading: "Checkout was canceled",
-        intro: "The backend order status shows this checkout was canceled.",
-        paymentTruth: "Not confirmed as paid.",
         tone: "problemTone"
       };
     case "expired":
       return {
         badge: "Expired",
         heading: "Checkout session expired",
-        intro: "The backend order status shows this checkout session expired.",
-        paymentTruth: "Not confirmed as paid.",
         tone: "problemTone"
       };
     case "manual_review":
       return {
         badge: "Review needed",
         heading: "Order status needs review",
-        intro:
-          "The backend returned an order status that should be reviewed before showing payment confirmation.",
-        paymentTruth: "Not confirmed as paid by this page.",
+        intro: "This order status should be reviewed before showing payment confirmation.",
         tone: "problemTone"
       };
   }
 }
 
 export default async function CheckoutSuccessPage({ searchParams }: CheckoutSuccessPageProps) {
-  const sessionId = getSessionId(searchParams);
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const sessionId = getSessionId(resolvedSearchParams);
   const statusResource = sessionId
     ? await loadCheckoutStatus(sessionId)
     : {
@@ -221,33 +203,16 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
           <h1 className={styles.title} id="checkout-success-title">
             {content.heading}
           </h1>
-          <p className={styles.intro}>{content.intro}</p>
+          {content.intro ? <p className={styles.intro}>{content.intro}</p> : null}
         </section>
 
         <section className={styles.panel} aria-labelledby="checkout-success-status-title">
           <span className={badgeClassName}>{content.badge}</span>
           <h2 id="checkout-success-status-title">Checkout status</h2>
-          <p>
-            This page reads the current Tiger Ping Pong order status. A Stripe success redirect is
-            only a redirect; it does not update payment state.
-          </p>
-
           <dl className={styles.statusList}>
-            <div>
-              <dt>Redirect result</dt>
-              <dd>
-                {sessionId
-                  ? "Stripe checkout returned a session reference."
-                  : "No session reference was included."}
-              </dd>
-            </div>
             <div>
               <dt>Order status</dt>
               <dd>{status ? formatStatusLabel(status.status) : content.badge}</dd>
-            </div>
-            <div>
-              <dt>Payment truth</dt>
-              <dd>{content.paymentTruth}</dd>
             </div>
             {status?.message ? (
               <div>

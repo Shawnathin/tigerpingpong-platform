@@ -10,19 +10,19 @@ export const metadata: Metadata = {
 };
 
 interface AdminOrdersPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     limit?: string | string[];
     status?: string | string[];
-  };
+  }>;
 }
 
-export default function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
+export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
   return (
     <StaffOrdersListPage
       detailBasePath="/admin/orders"
       eyebrow="Tiger Ping Pong admin"
       intro="Protected staff view for reviewing backend-confirmed Stripe orders and shipment records."
-      searchParams={searchParams}
+      searchParams={await searchParams}
       title="Paid order review"
     />
   );

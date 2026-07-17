@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import StaffOrderDetailPage from "../../../../components/staff-orders/StaffOrderDetailPage";
 
-import { saveShipmentRecord, sendShipmentEmail } from "./actions";
+import { saveShipmentRecord } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -12,28 +12,29 @@ export const metadata: Metadata = {
 };
 
 interface AdminOrderDetailPageProps {
-  params: {
+  params: Promise<{
     publicReference: string;
-  };
-  searchParams?: {
+  }>;
+  searchParams?: Promise<{
     shipmentError?: string | string[];
     shipmentSaved?: string | string[];
-    shipmentEmail?: string | string[];
-  };
+  }>;
 }
 
-export default function AdminOrderDetailPage({
+export default async function AdminOrderDetailPage({
   params,
   searchParams
 }: AdminOrderDetailPageProps) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+
   return (
     <StaffOrderDetailPage
       backHref="/admin/orders"
       eyebrow="Tiger Ping Pong admin"
-      publicReference={params.publicReference}
+      publicReference={resolvedParams.publicReference}
       saveShipmentRecord={saveShipmentRecord}
-      sendShipmentEmail={sendShipmentEmail}
-      searchParams={searchParams}
+      searchParams={resolvedSearchParams}
     />
   );
 }

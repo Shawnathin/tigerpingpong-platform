@@ -53,11 +53,6 @@ const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
 const MAX_SHIPMENT_TEXT_LENGTH = 500;
 const MAX_SHIPMENT_NOTE_LENGTH = 2000;
-const MAX_NOTIFICATION_ERROR_LENGTH = 2000;
-const SHIPMENT_NOTIFICATION_FAILED = "failed";
-const SHIPMENT_NOTIFICATION_SENT = "sent";
-const SHIPMENT_NOTIFICATION_SENDING = "sending";
-const SUPPORT_EMAIL = "info@tigerpingpong.com";
 const INTERNAL_ORDER_STATUSES: readonly InternalOrderStatus[] = [
   "checkout_pending",
   "checkout_failed",
@@ -120,9 +115,6 @@ const internalOrderDetailSelect = {
   shipmentTrackingUrl: true,
   shipmentShippedAt: true,
   shipmentInternalNote: true,
-  shipmentNotificationSentAt: true,
-  shipmentNotificationStatus: true,
-  shipmentNotificationLastError: true,
   paidAt: true,
   createdAt: true,
   updatedAt: true,
@@ -279,120 +271,6 @@ export class InternalOrdersService implements OnModuleDestroy {
     };
   }
 
-  async sendShipmentEmail(
-    requestToken: string | string[] | undefined,
-    publicReferenceParam: string
-  ): Promise<unknown> {
-    this.assertAuthorized(requestToken);
-    const publicReference = this.parsePublicReference(publicReferenceParam);
-    const config = getInternalOrdersApiConfig();
-
-    if (!config.shipmentEmailWebhookUrl) {
-      throw new ServiceUnavailableException({
-        message: "Shipment email webhook is not configured."
-      });
-    }
-
-    let order: InternalOrderDetailRecord | null;
-
-    try {
-      order = await this.getPrisma().order.findUnique({
-        where: {
-          publicReference
-        },
-        select: internalOrderDetailSelect
-      });
-    } catch {
-      throw new ServiceUnavailableException({
-        message: "Internal order is unavailable."
-      });
-    }
-
-    if (!order) {
-      throw new NotFoundException({
-        message: "Internal order was not found."
-      });
-    }
-
-    this.assertShipmentNotificationReady(order);
-
-    try {
-      const reserved = await this.getPrisma().order.updateMany({
-        where: {
-          publicReference,
-          shipmentNotificationSentAt: null,
-          OR: [
-            {
-              shipmentNotificationStatus: null
-            },
-            {
-              shipmentNotificationStatus: {
-                not: SHIPMENT_NOTIFICATION_SENDING
-              }
-            }
-          ]
-        },
-        data: {
-          shipmentNotificationStatus: SHIPMENT_NOTIFICATION_SENDING,
-          shipmentNotificationLastError: null
-        }
-      });
-
-      if (reserved.count !== 1) {
-        throw new BadRequestException({
-          message: "Shipment email is already being sent or was already sent."
-        });
-      }
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-
-      throw new ServiceUnavailableException({
-        message: "Shipment email send could not be prepared."
-      });
-    }
-
-    const sentAt = new Date();
-    const payload = this.createShipmentEmailPayload(order, sentAt);
-
-    try {
-      await this.postShipmentEmailWebhook(config.shipmentEmailWebhookUrl, payload);
-    } catch (error) {
-      const message = this.sanitizeWebhookError(error);
-
-      await this.recordShipmentNotificationFailure(publicReference, message);
-
-      throw new ServiceUnavailableException({
-        message: "Shipment email webhook failed. Make was not able to accept the handoff."
-      });
-    }
-
-    let updatedOrder: InternalOrderDetailRecord | null;
-
-    try {
-      updatedOrder = await this.getPrisma().order.update({
-        where: {
-          publicReference
-        },
-        data: {
-          shipmentNotificationSentAt: sentAt,
-          shipmentNotificationStatus: SHIPMENT_NOTIFICATION_SENT,
-          shipmentNotificationLastError: null
-        },
-        select: internalOrderDetailSelect
-      });
-    } catch {
-      throw new ServiceUnavailableException({
-        message: "Shipment email was handed off, but notification tracking could not be saved."
-      });
-    }
-
-    return {
-      order: this.serializeDetailOrder(updatedOrder)
-    };
-  }
-
   private assertAuthorized(requestTokenValue: string | string[] | undefined): void {
     const requestToken = this.normalizeHeaderValue(requestTokenValue);
 
@@ -462,11 +340,7 @@ export class InternalOrdersService implements OnModuleDestroy {
 
     return {
       carrier: this.readRequiredShipmentString(input, "carrier", "carrier"),
-      trackingNumber: this.readRequiredShipmentString(
-        input,
-        "trackingNumber",
-        "tracking number"
-      ),
+      trackingNumber: this.readRequiredShipmentString(input, "trackingNumber", "tracking number"),
       trackingUrl: this.normalizeShipmentTrackingUrl(input.trackingUrl),
       shippedAt: this.normalizeShipmentDate(input.shippedDate),
       internalNote: this.readRequiredShipmentString(input, "internalNote", "internal note", {
@@ -552,110 +426,6 @@ export class InternalOrdersService implements OnModuleDestroy {
     return date;
   }
 
-  private assertShipmentNotificationReady(order: InternalOrderDetailRecord): void {
-    if (order.shipmentNotificationSentAt) {
-      throw new BadRequestException({
-        message: "Shipment email was already sent for this order."
-      });
-    }
-
-    if (order.shipmentNotificationStatus === SHIPMENT_NOTIFICATION_SENDING) {
-      throw new BadRequestException({
-        message: "Shipment email is already being sent for this order."
-      });
-    }
-
-    if (!this.normalizeOptionalString(order.customerEmail)) {
-      throw new BadRequestException({
-        message: "Customer email is required before sending a shipment email."
-      });
-    }
-
-    if (!this.normalizeOptionalString(order.shipmentCarrier)) {
-      throw new BadRequestException({
-        message: "Carrier is required before sending a shipment email."
-      });
-    }
-
-    if (
-      !this.normalizeOptionalString(order.shipmentTrackingNumber) &&
-      !this.normalizeOptionalString(order.shipmentTrackingUrl)
-    ) {
-      throw new BadRequestException({
-        message: "Tracking number or tracking URL is required before sending a shipment email."
-      });
-    }
-  }
-
-  private createShipmentEmailPayload(order: InternalOrderDetailRecord, sentAt: Date) {
-    return {
-      event: "shipment_ready",
-      orderReference: order.publicReference,
-      customerName: order.customerName ?? order.shippingName ?? "",
-      customerEmail: order.customerEmail ?? "",
-      carrier: order.shipmentCarrier ?? "",
-      trackingNumber: order.shipmentTrackingNumber ?? "",
-      trackingUrl: order.shipmentTrackingUrl ?? "",
-      shippedDate: this.serializeDate(order.shipmentShippedAt),
-      items: order.items.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        selectedOption: item.variantKey ?? ""
-      })),
-      supportEmail: SUPPORT_EMAIL,
-      sentAt: sentAt.toISOString()
-    };
-  }
-
-  private async postShipmentEmailWebhook(
-    webhookUrl: string,
-    payload: ReturnType<InternalOrdersService["createShipmentEmailPayload"]>
-  ): Promise<void> {
-    const response = await fetch(webhookUrl, {
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json"
-      },
-      method: "POST",
-      signal: AbortSignal.timeout(15000)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Make webhook returned HTTP ${response.status}.`);
-    }
-  }
-
-  private async recordShipmentNotificationFailure(
-    publicReference: string,
-    message: string
-  ): Promise<void> {
-    try {
-      await this.getPrisma().order.update({
-        where: {
-          publicReference
-        },
-        data: {
-          shipmentNotificationStatus: SHIPMENT_NOTIFICATION_FAILED,
-          shipmentNotificationLastError: message.slice(0, MAX_NOTIFICATION_ERROR_LENGTH)
-        }
-      });
-    } catch {
-      // Keep the outward response focused on the webhook failure.
-    }
-  }
-
-  private sanitizeWebhookError(error: unknown): string {
-    if (error instanceof Error && error.name === "TimeoutError") {
-      return "Shipment email webhook timed out.";
-    }
-
-    if (error instanceof Error && /^Make webhook returned HTTP \d+\.$/.test(error.message)) {
-      return error.message;
-    }
-
-    return "Shipment email webhook request failed.";
-  }
-
   private serializeListOrder(order: InternalOrderListRecord) {
     return {
       publicReference: order.publicReference,
@@ -709,11 +479,6 @@ export class InternalOrdersService implements OnModuleDestroy {
         trackingUrl: order.shipmentTrackingUrl,
         shippedAt: this.serializeDate(order.shipmentShippedAt),
         internalNote: order.shipmentInternalNote
-      },
-      shipmentNotification: {
-        sentAt: this.serializeDate(order.shipmentNotificationSentAt),
-        status: order.shipmentNotificationStatus,
-        lastError: order.shipmentNotificationLastError
       },
       paidAt: this.serializeDate(order.paidAt),
       createdAt: this.serializeDate(order.createdAt),

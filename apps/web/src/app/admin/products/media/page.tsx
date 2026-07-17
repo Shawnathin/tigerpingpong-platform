@@ -19,9 +19,9 @@ export const metadata: Metadata = {
 };
 
 interface AdminProductMediaPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     productId?: string;
-  };
+  }>;
 }
 
 interface ProductMediaResource {
@@ -76,12 +76,11 @@ function getAdminMediaErrorMessage(error: unknown): string {
   return "Product media could not be loaded.";
 }
 
-export default async function AdminProductMediaPage({
-  searchParams
-}: AdminProductMediaPageProps) {
+export default async function AdminProductMediaPage({ searchParams }: AdminProductMediaPageProps) {
+  const resolvedSearchParams = await searchParams;
   const productsResource = await loadProducts();
   const products = productsResource?.items ?? [];
-  const requestedProductId = searchParams?.productId ?? products[0]?.id ?? null;
+  const requestedProductId = resolvedSearchParams?.productId ?? products[0]?.id ?? null;
   const productMediaResource = await loadProductMedia(requestedProductId);
 
   return (

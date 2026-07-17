@@ -9,7 +9,6 @@ import {
   formatCartMoney,
   type CartItem
 } from "../../lib/cart";
-import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "../../lib/shipping";
 import { useCart } from "../../lib/use-cart";
 
 import styles from "./page.module.css";
@@ -73,10 +72,6 @@ export function CartPageClient() {
         <section className={styles.emptyState} aria-labelledby="cart-empty-title">
           <p className={styles.eyebrow}>TigerPingPong.ca cart</p>
           <h1 id="cart-empty-title">Your cart is empty.</h1>
-          <p>
-            Add a table, paddle, balls, or accessory from the storefront, then return here before
-            Stripe Checkout.
-          </p>
           <a className={styles.primaryAction} href="/tables/">
             Continue shopping
           </a>
@@ -91,10 +86,6 @@ export function CartPageClient() {
         <div>
           <p className={styles.eyebrow}>TigerPingPong.ca cart</p>
           <h1 id="cart-title">Review your cart.</h1>
-          <p>
-            Canada only. Stripe Checkout handles payment after the backend re-checks products,
-            totals, and shipping.
-          </p>
         </div>
         <a className={styles.secondaryAction} href="/tables/">
           Continue shopping
@@ -175,9 +166,6 @@ export function CartPageClient() {
 
           <div className={styles.shippingNotice}>
             <strong>{shippingCopy}</strong>
-            <span>
-              {V1_FREE_SHIPPING_COPY} {V1_FLAT_RATE_SHIPPING_COPY}
-            </span>
           </div>
 
           <button
@@ -195,10 +183,6 @@ export function CartPageClient() {
               {error}
             </p>
           ) : null}
-
-          <p className={styles.paymentTruth}>
-            Payment is confirmed only after the backend receives Stripe webhook confirmation.
-          </p>
         </aside>
       </section>
     </main>

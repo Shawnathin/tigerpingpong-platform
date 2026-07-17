@@ -89,9 +89,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       activeItem: "tables",
       activeNavHref: "/tables/",
       eyebrow: "Shop tables",
-      title: "Ping pong tables for home, school, club, and outdoor play.",
-      intro:
-        "Browse Tiger Ping Pong tables with secure checkout, product details, and Canada-wide shipping terms.",
+      title: "Ping pong tables",
       heroImageSlug: "tiger-portland-outdoor-table",
       mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,
@@ -105,9 +103,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       activeItem: "tables",
       activeNavHref: "/tables/indoor-tables/",
       eyebrow: "Indoor tables",
-      title: "Indoor ping pong tables for practice, family play, and game rooms.",
-      intro:
-        "Explore indoor Tiger Ping Pong table options, including Portland and Whistler indoor table products where available.",
+      title: "Indoor tables",
       heroImageSlug: "tiger-portland-indoor-table",
       mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,
@@ -125,9 +121,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       activeItem: "tables",
       activeNavHref: "/tables/outdoor-tables/",
       eyebrow: "Outdoor tables",
-      title: "Outdoor ping pong tables built for patios, parks, and fresh-air rallies.",
-      intro:
-        "Explore outdoor Tiger Ping Pong table options with storefront checkout and Canada-wide shipping terms.",
+      title: "Outdoor tables",
       heroImageSlug: "tiger-portland-outdoor-table",
       mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,
@@ -140,9 +134,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     accessories: categoryConfig({
       activeItem: "accessories",
       eyebrow: "Shop accessories",
-      title: "Paddles, balls, covers, nets, and table tennis accessories.",
-      intro:
-        "Round out the table setup with Tiger Ping Pong accessories for play, protection, and replacement setup needs.",
+      title: "Accessories",
       heroImageSlug: "tiger-vice-paddle",
       navLinks: accessoryNavLinks,
       productOrder: getAccessoryParentProductOrder(),
@@ -151,8 +143,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     paddles: categoryConfig({
       activeItem: "paddles",
       eyebrow: "Shop paddles",
-      title: "Ping pong paddles for quick matches and everyday rallies.",
-      intro: "Browse Tiger Ping Pong paddle products for home play and friendly table tennis.",
+      title: "Paddles",
       heroImageSlug: "tiger-vice-paddle",
       navLinks: accessoryNavLinks,
       productFilter: (product) => !isReplacementPart(product) && isProductKind(product, "paddle")
@@ -160,9 +151,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     balls: categoryConfig({
       activeItem: "balls",
       eyebrow: "Shop balls",
-      title: "Ping pong balls for practice, games, and restocks.",
-      intro:
-        "Browse Tiger Ping Pong ball packs for home play, practice, and table tennis restocks.",
+      title: "Ping pong balls",
       heroImageSlug: "tiger-premium-balls-140",
       navLinks: accessoryNavLinks,
       productFilter: (product) => !isReplacementPart(product) && isProductKind(product, "ball")
@@ -170,9 +159,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     covers: categoryConfig({
       activeItem: "accessories",
       eyebrow: "Shop covers",
-      title: "Ping pong table covers for protecting the next match.",
-      intro:
-        "Browse table cover accessories for Tiger Ping Pong setups and keep the table ready between games.",
+      title: "Table covers",
       heroImageSlug: "tiger-table-cover-black-polyester",
       navLinks: accessoryNavLinks,
       productFilter: (product) => !isReplacementPart(product) && isProductKind(product, "cover")
@@ -180,8 +167,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     nets: categoryConfig({
       activeItem: "accessories",
       eyebrow: "Shop nets",
-      title: "Table tennis nets and post sets for everyday setup.",
-      intro: "Browse net and post products for keeping a Tiger Ping Pong table ready to play.",
+      title: "Nets and post sets",
       heroImageSlug: "tiger-net-post-set",
       navLinks: accessoryNavLinks,
       productFilter: (product) => !isReplacementPart(product) && isProductKind(product, "net")
@@ -189,9 +175,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
     "replacement-parts": categoryConfig({
       activeItem: "accessories",
       eyebrow: "Replacement parts",
-      title: "Replacement parts support for Tiger Ping Pong products.",
-      intro:
-        "Find replacement-parts support for Tiger Ping Pong tables and accessories. Contact support when a specific part needs confirmation.",
+      title: "Replacement parts",
       navLinks: accessoryNavLinks,
       emptyTitle: "Replacement parts are handled with support confirmation.",
       emptyBody:

@@ -22,7 +22,7 @@ export interface CategoryLandingPageConfig {
   activeNavHref?: string;
   eyebrow: string;
   title: string;
-  intro: string;
+  intro?: string;
   heroImageSlug?: string;
   navLinks?: Array<{
     href: string;
@@ -351,7 +351,7 @@ export async function CategoryLandingPage({ config }: { config: CategoryLandingP
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{config.eyebrow}</p>
             <h1 id="category-title">{config.title}</h1>
-            <p>{config.intro}</p>
+            {config.intro ? <p>{config.intro}</p> : null}
           </div>
           <CategoryHeroImage products={products} slug={config.heroImageSlug} />
         </section>

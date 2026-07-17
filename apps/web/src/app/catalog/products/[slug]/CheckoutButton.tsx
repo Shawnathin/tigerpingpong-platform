@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import {
@@ -32,7 +32,6 @@ interface CheckoutButtonProps {
   isCheckoutEligible: boolean;
   product: CartProductInput;
   productOptions: ProductOptionGroup[];
-  recommendedProducts: CartProductInput[];
 }
 
 function ProductThumb({ product }: { product: CartProductInput }) {
@@ -78,19 +77,48 @@ function getOptionLegend(optionGroup: ProductOptionGroup): string {
   return `Select ${optionGroup.displayName.toLowerCase()}`;
 }
 
-function AddToCartModal({
-  cartSlugs,
-  onAddOn,
-  onClose,
-  product,
-  recommendedProducts
-}: {
-  cartSlugs: Set<string>;
-  onAddOn: (addOn: CartProductInput) => void;
-  onClose: () => void;
-  product: CartProductInput;
-  recommendedProducts: CartProductInput[];
-}) {
+function AddToCartModal({ onClose, product }: { onClose: () => void; product: CartProductInput }) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+  }, []);
+
+  function handleDialogKeyDown(event: React.KeyboardEvent<HTMLElement>): void {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose();
+      return;
+    }
+
+    if (event.key !== "Tab") {
+      return;
+    }
+
+    const focusableElements = Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ) ?? []
+    );
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+
   const modal = (
     <div className={styles.cartModalOverlay} onClick={onClose} role="presentation">
       <section
@@ -98,12 +126,15 @@ function AddToCartModal({
         aria-modal="true"
         className={styles.cartModal}
         onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleDialogKeyDown}
+        ref={dialogRef}
         role="dialog"
       >
         <button
           aria-label="Close added to cart dialog"
           className={styles.cartModalClose}
           onClick={onClose}
+          ref={closeButtonRef}
           type="button"
         >
           &times;
@@ -129,51 +160,12 @@ function AddToCartModal({
           <p>{formatCartMoney(product.unitPriceCents, product.currency)}</p>
         </div>
 
-        {recommendedProducts.length > 0 ? (
-          <div className={styles.recommendations} aria-labelledby="recommended-addons-title">
-            <div className={styles.recommendationsHeader}>
-              <p className={styles.cartModalLabel}>Recommended add-ons</p>
-              <h3 id="recommended-addons-title">Complete the setup.</h3>
-            </div>
-
-            <div className={styles.addOnGrid}>
-              {recommendedProducts.map((addOn) => {
-                const isAlreadyAdded = cartSlugs.has(addOn.productSlug);
-
-                return (
-                  <article className={styles.addOnCard} key={addOn.productSlug}>
-                    <div className={styles.addOnImage}>
-                      <ProductThumb product={addOn} />
-                    </div>
-                    <div className={styles.addOnBody}>
-                      <span>{addOn.categoryName ?? "Tiger Ping Pong"}</span>
-                      <strong>{addOn.name}</strong>
-                      <p>{formatCartMoney(addOn.unitPriceCents, addOn.currency)}</p>
-                    </div>
-                    <button
-                      className={styles.addOnButton}
-                      disabled={isAlreadyAdded}
-                      onClick={() => onAddOn(addOn)}
-                      type="button"
-                    >
-                      {isAlreadyAdded ? "Added" : "Add"}
-                    </button>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        ) : null}
-
         <div className={styles.cartModalActions}>
           <button className={styles.keepShoppingButton} onClick={onClose} type="button">
             Keep shopping
           </button>
           <a className={styles.viewCartButton} href="/cart">
             View cart
-          </a>
-          <a className={styles.modalCheckoutButton} href="/cart">
-            Review cart
           </a>
         </div>
       </section>
@@ -186,15 +178,14 @@ function AddToCartModal({
 export function CheckoutButton({
   isCheckoutEligible,
   product,
-  productOptions,
-  recommendedProducts
+  productOptions
 }: CheckoutButtonProps) {
-  const { addItem, items } = useCart();
+  const { addItem } = useCart();
+  const addToCartButtonRef = useRef<HTMLButtonElement>(null);
   const [addedProduct, setAddedProduct] = useState<CartProductInput | null>(null);
   const [selectedOptionValues, setSelectedOptionValues] = useState<Record<string, string>>({});
   const [selectionError, setSelectionError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const cartSlugs = useMemo(() => new Set(items.map((item) => item.productSlug)), [items]);
   const selectedOptions = useMemo(
     () => getSelectedOptions(productOptions, selectedOptionValues),
     [productOptions, selectedOptionValues]
@@ -229,8 +220,9 @@ export function CheckoutButton({
     setIsModalOpen(true);
   }
 
-  function handleAddOn(addOn: CartProductInput): void {
-    addItem(addOn);
+  function handleCloseModal(): void {
+    setIsModalOpen(false);
+    window.requestAnimationFrame(() => addToCartButtonRef.current?.focus());
   }
 
   function handleOptionChange(optionName: string, optionValue: string): void {
@@ -248,18 +240,10 @@ export function CheckoutButton({
 
     const originalOverflow = document.body.style.overflow;
 
-    function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        setIsModalOpen(false);
-      }
-    }
-
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.body.style.overflow = originalOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isModalOpen]);
 
@@ -325,6 +309,7 @@ export function CheckoutButton({
         className={styles.checkoutButton}
         data-selection-required={!isSelectionComplete ? "true" : undefined}
         onClick={handleAddToCart}
+        ref={addToCartButtonRef}
         type="button"
       >
         Add to cart
@@ -337,13 +322,7 @@ export function CheckoutButton({
       ) : null}
 
       {isModalOpen ? (
-        <AddToCartModal
-          cartSlugs={cartSlugs}
-          onAddOn={handleAddOn}
-          onClose={() => setIsModalOpen(false)}
-          product={addedProduct ?? product}
-          recommendedProducts={recommendedProducts}
-        />
+        <AddToCartModal onClose={handleCloseModal} product={addedProduct ?? product} />
       ) : null}
     </div>
   );

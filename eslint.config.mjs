@@ -14,6 +14,7 @@ export default [
       "**/build/**",
       "coverage/**",
       "**/coverage/**",
+      "**/next-env.d.ts",
       ".pnpm-store/**",
       "**/.pnpm-store/**",
       "packages/db/generated/**"

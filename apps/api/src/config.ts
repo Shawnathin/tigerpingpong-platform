@@ -19,7 +19,6 @@ export interface StripeWebhookConfig {
 
 export interface InternalOrdersApiConfig {
   apiToken: string;
-  shipmentEmailWebhookUrl?: string;
 }
 
 function readCsv(value: string | undefined, fallback: string[]): string[] {
@@ -102,7 +101,6 @@ export function getInternalOrdersApiConfig(
   env: NodeJS.ProcessEnv = process.env
 ): InternalOrdersApiConfig {
   return {
-    apiToken: readRequiredString(env.INTERNAL_ORDERS_API_TOKEN, "INTERNAL_ORDERS_API_TOKEN"),
-    shipmentEmailWebhookUrl: env.SHIPMENT_EMAIL_WEBHOOK_URL?.trim() || undefined
+    apiToken: readRequiredString(env.INTERNAL_ORDERS_API_TOKEN, "INTERNAL_ORDERS_API_TOKEN")
   };
 }

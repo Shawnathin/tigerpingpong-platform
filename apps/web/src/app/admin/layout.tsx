@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Admin | Tiger Ping Pong",
-  description: "Protected read-only Tiger Ping Pong admin shell."
+  description: "Protected Tiger Ping Pong staff admin."
 };
 
 const ADMIN_NAV_ITEMS = [
@@ -60,7 +60,7 @@ export default function AdminLayout({ children }: Readonly<{ children: ReactNode
               <span>Staff admin</span>
             </span>
           </Link>
-          <span className={styles.readOnlyPill}>Read-only V1</span>
+          <span className={styles.readOnlyPill}>Protected V1</span>
         </div>
 
         <nav className={styles.nav} aria-label="Admin navigation">

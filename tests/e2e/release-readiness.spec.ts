@@ -58,6 +58,19 @@ test("Nest 11 runtime preserves health, CORS, headers, auth, safe errors, and ra
     expect(await protectedResponse.text()).not.toContain("stack");
   }
 
+  for (const token of [undefined, "wrong-token", "local-test-token"]) {
+    const productWrite = await request.patch(
+      "http://127.0.0.1:3102/api/admin/products/product-local-1",
+      {
+        data: {},
+        headers: token ? { "x-internal-orders-token": token } : undefined
+      }
+    );
+    expect(productWrite.status(), `product write token ${token ?? "missing"}`).toBe(
+      token === "local-test-token" ? 400 : 401
+    );
+  }
+
   const webhook = await request.post("http://127.0.0.1:3102/webhooks/stripe", {
     data: { type: "checkout.session.completed" },
     headers: { "stripe-signature": "invalid-local-signature" }
@@ -106,6 +119,42 @@ test("priced product options update the displayed price and shipping message", a
   await expect(displayedPrice).toHaveText("$120.00");
   await expect(mainImage).toHaveAttribute("src", /aqua-4count-box-angle/);
   await expect(page.getByText("Orders over $100 CAD ship free across Canada.")).toBeVisible();
+});
+
+test("staff can safely edit an existing product and stale carts require review", async ({ page }) => {
+  await page.goto("/catalog/products/tiger-premium-balls-6-orange");
+  await page.locator('label[for="tiger-premium-balls-6-orange-package-family-pack"]').click();
+  await page.getByRole("button", { name: "Add to cart" }).click();
+  await page.getByRole("dialog", { name: /is in your cart/i }).getByRole("link", { name: "View cart" }).click();
+  await expect(page.getByText("$120.00 each")).toBeVisible();
+
+  await page.setExtraHTTPHeaders({
+    Authorization: `Basic ${Buffer.from("local-admin:local-password").toString("base64")}`
+  });
+  await page.goto("/admin/products");
+  await page.getByRole("link", { name: "Edit" }).click();
+  await expect(page.getByRole("heading", { name: /Edit Tiger PingPong/i })).toBeVisible();
+
+  await page.locator('input[name="expectedUpdatedAt"]').evaluate((element) => {
+    (element as HTMLInputElement).value = "2026-07-16T11:00:00.000Z";
+  });
+  await page.getByRole("button", { name: "Save product" }).click();
+  await expect(page.getByText(/changed elsewhere/i)).toBeVisible();
+
+  await page.getByLabel("Product name").fill(
+    "Tiger PingPong Premium 3-Star Ping Pong Balls 6 Pack Orange Updated"
+  );
+  await page.locator('input[name="variantPrice:variant-family-pack"]').fill("99.99");
+  await page.getByRole("button", { name: "Save product" }).click();
+  await expect(page.getByText("Product changes were saved.")).toBeVisible();
+
+  await page.setExtraHTTPHeaders({});
+  await page.goto("/cart");
+  await page.getByRole("button", { name: "Checkout" }).click();
+  await expect(page.getByText(/Your cart changed/i)).toBeVisible();
+  await expect(page.getByText("$99.99 each")).toBeVisible();
+  await expect(page.getByText("$15.00", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Checkout" })).toBeEnabled();
 });
 
 test("primary discovery and shipping routes retain factual storefront behavior", async ({

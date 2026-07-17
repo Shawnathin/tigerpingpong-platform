@@ -77,6 +77,49 @@ export interface AdminProductsResponse {
   items: AdminProductListItem[];
 }
 
+export interface AdminProductVariant {
+  id: string;
+  key: string;
+  sku: string | null;
+  name: string | null;
+  priceCents: number | null;
+  currency: string;
+  purchaseModeOverride: string | null;
+  isActive: boolean;
+  options: Array<{
+    optionName: string;
+    optionDisplayName: string | null;
+    value: string;
+    label: string | null;
+  }>;
+}
+
+export interface AdminProductDetail extends AdminProductListItem {
+  updatedAt: string;
+  brand: { key: string; name: string; slug: string };
+  family: {
+    id: string;
+    key: string;
+    slug: string;
+    name: string;
+    isPublic: boolean;
+    isActive: boolean;
+  };
+  variants: AdminProductVariant[];
+}
+
+export interface AdminProductResponse {
+  product: AdminProductDetail;
+}
+
+export interface AdminProductUpdateInput {
+  availableForSale: boolean;
+  expectedUpdatedAt: string;
+  name: string;
+  priceCents: number | null;
+  variants: Array<{ id: string; isActive: boolean; priceCents: number | null }>;
+}
+
 export interface AdminProductMediaProduct {
   id: string;
   key: string;
@@ -272,6 +315,20 @@ export function getAdminProducts(options: AdminListOptions = {}): Promise<AdminP
   searchParams.set("limit", String(options.limit ?? 100));
 
   return fetchAdmin<AdminProductsResponse>(`/api/admin/products?${searchParams}`);
+}
+
+export function getAdminProduct(productId: string): Promise<AdminProductResponse> {
+  return fetchAdmin<AdminProductResponse>(`/api/admin/products/${encodeURIComponent(productId)}`);
+}
+
+export function updateAdminProduct(
+  productId: string,
+  input: AdminProductUpdateInput
+): Promise<AdminProductResponse> {
+  return fetchAdmin<AdminProductResponse>(`/api/admin/products/${encodeURIComponent(productId)}`, {
+    body: input,
+    method: "PATCH"
+  });
 }
 
 export function getAdminProductMedia(productId: string): Promise<AdminProductMediaResponse> {

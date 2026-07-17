@@ -48,6 +48,15 @@ Record each decision, named owner, date, expiration/review date, and evidence re
 
 ## Cutover checklist
 
+### Product editor rollout
+
+- [ ] Deploy the API before the web service; the comparison-only checkout price field is optional for compatibility.
+- [ ] Confirm missing/incorrect admin tokens receive `401` and authorized product reads succeed without exposing the token.
+- [ ] Confirm `/admin/products` and one product editor load; do not save against production until the go/no-go owner authorizes a designated non-public product.
+- [ ] If authorized, make one reversible edit on that non-public product, verify the stale-edit guard and safe log event, then restore the original value.
+- [ ] Confirm a stale local cart is refreshed with `409 cart_changed` before any order or Stripe session is created.
+- [ ] Roll back the application release if product writes, catalog reads, cart reconciliation, or checkout health fails; no schema rollback is required.
+
 - [ ] CI and local release evidence green for the exact approved commit.
 - [ ] Policy/promise matrix approved; all residual risks signed.
 - [ ] Production project/connection targets confirmed without copying values.

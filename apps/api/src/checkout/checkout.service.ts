@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   OnModuleDestroy,
@@ -28,6 +29,7 @@ interface CheckoutRequestSelectedOption {
 }
 
 interface CheckoutRequestItem {
+  expectedUnitPriceCents: number | null;
   productSlug: string;
   quantity: number;
   selectedVariantKey: string | null;
@@ -418,6 +420,10 @@ export class CheckoutService implements OnModuleDestroy {
       }
 
       return {
+        expectedUnitPriceCents: this.validateExpectedUnitPriceCents(
+          item.expectedUnitPriceCents,
+          index
+        ),
         productSlug,
         quantity,
         selectedVariantKey: this.validateSelectedVariantKey(item.selectedVariantKey, index),
@@ -429,6 +435,23 @@ export class CheckoutService implements OnModuleDestroy {
       customerEmail: this.validateCustomerEmail(body.customerEmail),
       items
     };
+  }
+
+  private validateExpectedUnitPriceCents(value: unknown, itemIndex: number): number | null {
+    if (value === undefined || value === null) {
+      return null;
+    }
+    if (
+      typeof value !== "number" ||
+      !Number.isSafeInteger(value) ||
+      value < 1 ||
+      value > 99_999_999
+    ) {
+      throw new BadRequestException({
+        message: `items[${itemIndex}].expectedUnitPriceCents must be a positive integer.`
+      });
+    }
+    return value;
   }
 
   private validateSelectedOptions(
@@ -679,16 +702,39 @@ export class CheckoutService implements OnModuleDestroy {
     requestItems: CheckoutRequestItem[],
     productsBySlug: Map<string, CheckoutProductRecord>
   ): SnapshotLineItem[] {
-    return requestItems.map((item) => {
+    const snapshotItems: SnapshotLineItem[] = [];
+    const cartChanges: Array<{
+      cartLineId: string;
+      currency?: string;
+      name?: string;
+      status: "price_changed" | "unavailable";
+      unitPriceCents?: number;
+    }> = [];
+
+    for (const item of requestItems) {
       const product = productsBySlug.get(item.productSlug);
+      const cartLineId = this.getRequestLineKey(item.productSlug, item.selectedOptions);
 
       if (!product || !this.isProductCheckoutable(product)) {
+        if (item.expectedUnitPriceCents !== null) {
+          cartChanges.push({ cartLineId, status: "unavailable" });
+          continue;
+        }
         throw new BadRequestException({
           message: "One or more requested items are unavailable for checkout."
         });
       }
 
-      const optionValidation = this.validateLineItemOptions(item, product);
+      let optionValidation: ValidatedLineItemOptions;
+      try {
+        optionValidation = this.validateLineItemOptions(item, product);
+      } catch (error) {
+        if (item.expectedUnitPriceCents !== null && error instanceof BadRequestException) {
+          cartChanges.push({ cartLineId, status: "unavailable" });
+          continue;
+        }
+        throw error;
+      }
       const unitPriceCents = this.resolveUnitPriceCents(product, optionValidation.variant);
 
       if (
@@ -696,6 +742,10 @@ export class CheckoutService implements OnModuleDestroy {
         !Number.isInteger(unitPriceCents) ||
         unitPriceCents <= 0
       ) {
+        if (item.expectedUnitPriceCents !== null) {
+          cartChanges.push({ cartLineId, status: "unavailable" });
+          continue;
+        }
         throw new BadRequestException({
           message: "One or more requested items are unavailable for checkout."
         });
@@ -705,7 +755,20 @@ export class CheckoutService implements OnModuleDestroy {
       const optionSummary = this.formatSelectedOptions(optionValidation.selectedOptions);
       const displayName = optionSummary ? `${product.name} (${optionSummary})` : product.name;
 
-      return {
+      if (
+        item.expectedUnitPriceCents !== null &&
+        item.expectedUnitPriceCents !== unitPriceCents
+      ) {
+        cartChanges.push({
+          cartLineId,
+          currency: "CAD",
+          name: product.name,
+          status: "price_changed",
+          unitPriceCents
+        });
+      }
+
+      snapshotItems.push({
         productId: product.id,
         variantId: optionValidation.variant?.id ?? null,
         productKey: product.key,
@@ -718,8 +781,18 @@ export class CheckoutService implements OnModuleDestroy {
         quantity: item.quantity,
         lineTotalCents,
         currency: "CAD"
-      };
-    });
+      });
+    }
+
+    if (cartChanges.length > 0) {
+      throw new ConflictException({
+        code: "cart_changed",
+        message: "Your cart changed. Review the updated items before checking out.",
+        items: cartChanges
+      });
+    }
+
+    return snapshotItems;
   }
 
   private validateLineItemOptions(

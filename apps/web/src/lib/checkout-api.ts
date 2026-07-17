@@ -1,10 +1,19 @@
 const DEFAULT_API_BASE_URL = "http://localhost:3001";
 
 export interface CheckoutSessionItemInput {
+  expectedUnitPriceCents?: number;
   productSlug: string;
   quantity: number;
   selectedVariantKey?: string;
   selectedOptions?: CheckoutSessionItemOptionInput[];
+}
+
+export interface CheckoutCartChange {
+  cartLineId: string;
+  currency?: string;
+  name?: string;
+  status: "price_changed" | "unavailable";
+  unitPriceCents?: number;
 }
 
 export interface CheckoutSessionItemOptionInput {
@@ -59,7 +68,8 @@ export class CheckoutApiError extends Error {
   constructor(
     message: string,
     readonly status: number | null,
-    readonly url: string
+    readonly url: string,
+    readonly cartChanges: CheckoutCartChange[] = []
   ) {
     super(message);
     this.name = "CheckoutApiError";
@@ -92,10 +102,13 @@ export async function createCheckoutSession(
   }
 
   if (!response.ok) {
+    const errorPayload = await readJsonBody(response);
+    const cartChanges = parseCartChanges(errorPayload);
     throw new CheckoutApiError(
       `Checkout API returned HTTP ${response.status}.`,
       response.status,
-      url
+      url,
+      cartChanges
     );
   }
 
@@ -108,6 +121,44 @@ export async function createCheckoutSession(
   }
 
   return parseCheckoutSessionSummary(body, url);
+}
+
+async function readJsonBody(response: Response): Promise<unknown> {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+function parseCartChanges(value: unknown): CheckoutCartChange[] {
+  if (!isRecord(value) || value.code !== "cart_changed" || !Array.isArray(value.items)) {
+    return [];
+  }
+
+  const changes: CheckoutCartChange[] = [];
+  for (const item of value.items) {
+    if (!isRecord(item) || typeof item.cartLineId !== "string") continue;
+    if (item.status === "unavailable") {
+      changes.push({ cartLineId: item.cartLineId, status: "unavailable" });
+      continue;
+    }
+    if (
+      item.status === "price_changed" &&
+      typeof item.unitPriceCents === "number" &&
+      Number.isInteger(item.unitPriceCents) &&
+      item.unitPriceCents > 0
+    ) {
+      changes.push({
+        cartLineId: item.cartLineId,
+        currency: typeof item.currency === "string" ? item.currency : undefined,
+        name: typeof item.name === "string" ? item.name : undefined,
+        status: "price_changed",
+        unitPriceCents: item.unitPriceCents
+      });
+    }
+  }
+  return changes;
 }
 
 export function getCheckoutSessionStatus(sessionId: string): Promise<CheckoutSessionStatus> {

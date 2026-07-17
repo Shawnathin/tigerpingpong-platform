@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { createCheckoutSession } from "../../lib/checkout-api";
+import { CheckoutApiError, createCheckoutSession } from "../../lib/checkout-api";
 import {
   MAX_CART_QUANTITY_PER_LINE,
   formatCartItemOptions,
@@ -28,6 +28,7 @@ export function CartPageClient() {
     itemCount,
     items,
     removeItem,
+    reconcileItems,
     shippingCents,
     shippingCopy,
     subtotalCents,
@@ -51,6 +52,7 @@ export function CartPageClient() {
         items: items.map((item) => ({
           productSlug: item.productSlug,
           quantity: item.quantity,
+          expectedUnitPriceCents: item.unitPriceCents,
           selectedVariantKey: item.selectedVariantKey,
           selectedOptions: item.selectedOptions.map((option) => ({
             name: option.name,
@@ -60,8 +62,17 @@ export function CartPageClient() {
       });
 
       window.location.href = session.checkoutUrl;
-    } catch {
-      setError(CHECKOUT_ERROR_MESSAGE);
+    } catch (checkoutError) {
+      if (
+        checkoutError instanceof CheckoutApiError &&
+        checkoutError.status === 409 &&
+        checkoutError.cartChanges.length > 0
+      ) {
+        reconcileItems(checkoutError.cartChanges);
+        setError("Your cart changed. Review the updated items before checking out again.");
+      } else {
+        setError(CHECKOUT_ERROR_MESSAGE);
+      }
       setIsCheckingOut(false);
     }
   }
@@ -72,6 +83,7 @@ export function CartPageClient() {
         <section className={styles.emptyState} aria-labelledby="cart-empty-title">
           <p className={styles.eyebrow}>TigerPingPong.ca cart</p>
           <h1 id="cart-empty-title">Your cart is empty.</h1>
+          {error ? <p role="status">{error}</p> : null}
           <a className={styles.primaryAction} href="/tables/">
             Continue shopping
           </a>

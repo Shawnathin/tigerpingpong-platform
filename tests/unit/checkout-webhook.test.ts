@@ -1,11 +1,33 @@
 import Stripe from "stripe";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { CheckoutService } from "../../apps/api/src/checkout/checkout.service";
 import { StripeWebhookService } from "../../apps/api/src/webhooks/stripe-webhook.service";
 
 describe("server-authoritative checkout", () => {
-  it("drops client-provided price fields and enforces quantity limits", () => {
+  const checkoutProduct = {
+    id: "product-1",
+    key: "product-one",
+    slug: "product-one",
+    name: "Product One",
+    sku: "SKU-1",
+    productKind: "ball",
+    status: "active",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    purchaseMode: "online_checkout",
+    priceCents: 800,
+    currency: "CAD",
+    family: { isActive: true, isPublic: true },
+    primaryCategory: {
+      isActive: true,
+      v1PublicNavigation: true,
+      v1CheckoutScope: true
+    },
+    media: [],
+    variants: []
+  };
+  it("uses expected prices for comparison only and enforces quantity limits", () => {
     const service = new CheckoutService() as unknown as {
       validateRequest(body: unknown): { items: Array<Record<string, unknown>> };
     };
@@ -15,12 +37,14 @@ describe("server-authoritative checkout", () => {
           productSlug: "tiger-test-product",
           quantity: 1,
           selectedOptions: [],
-          unitPriceCents: 1
+          unitPriceCents: 1,
+          expectedUnitPriceCents: 800
         }
       ]
     });
 
     expect(result.items[0]).not.toHaveProperty("unitPriceCents");
+    expect(result.items[0]).toHaveProperty("expectedUnitPriceCents", 800);
     expect(() =>
       service.validateRequest({
         items: [{ productSlug: "tiger-test-product", quantity: 11, selectedOptions: [] }]
@@ -44,6 +68,32 @@ describe("server-authoritative checkout", () => {
       shippingCents: 0,
       totalCents: 10_001
     });
+  });
+
+  it("returns authoritative cart changes before creating an order or Stripe session", async () => {
+    const service = new CheckoutService() as unknown as {
+      createCheckoutSession(body: unknown): Promise<unknown>;
+      readCheckoutConfig: () => unknown;
+      getPrisma: () => unknown;
+      loadCheckoutProducts: () => Promise<Map<string, unknown>>;
+      createPendingOrder: ReturnType<typeof vi.fn>;
+    };
+    service.readCheckoutConfig = () => ({});
+    service.getPrisma = () => ({});
+    service.loadCheckoutProducts = async () => new Map([["product-one", checkoutProduct]]);
+    service.createPendingOrder = vi.fn();
+
+    await expect(
+      service.createCheckoutSession({
+        items: [{
+          productSlug: "product-one",
+          quantity: 1,
+          selectedOptions: [],
+          expectedUnitPriceCents: 700
+        }]
+      })
+    ).rejects.toMatchObject({ status: 409 });
+    expect(service.createPendingOrder).not.toHaveBeenCalled();
   });
 
   it("rejects missing and invalid required product options against catalog variants", () => {

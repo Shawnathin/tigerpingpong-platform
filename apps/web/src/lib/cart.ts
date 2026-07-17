@@ -39,6 +39,14 @@ export interface CartItemOption {
   value: string;
 }
 
+export interface CartReconciliationItem {
+  cartLineId: string;
+  currency?: string;
+  name?: string;
+  status: "price_changed" | "unavailable";
+  unitPriceCents?: number;
+}
+
 interface StoredCart {
   items?: unknown;
   version?: unknown;
@@ -154,6 +162,23 @@ export function updateCartItemQuantity(cartLineId: string, quantity: number): Ca
 export function removeCartItem(cartLineId: string): CartItem[] {
   const normalizedCartLineId = normalizeCartLineId(cartLineId);
   return writeCartItems(readCartItems().filter((item) => item.cartLineId !== normalizedCartLineId));
+}
+
+export function reconcileCartItems(changes: CartReconciliationItem[]): CartItem[] {
+  const changesByLine = new Map(changes.map((change) => [change.cartLineId, change]));
+  const nextItems = readCartItems().flatMap((item) => {
+    const change = changesByLine.get(item.cartLineId);
+    if (!change) return [item];
+    if (change.status === "unavailable") return [];
+    if (!change.unitPriceCents || !Number.isInteger(change.unitPriceCents)) return [item];
+    return [{
+      ...item,
+      currency: normalizeCurrency(change.currency ?? item.currency),
+      name: change.name?.trim() || item.name,
+      unitPriceCents: change.unitPriceCents
+    }];
+  });
+  return writeCartItems(nextItems);
 }
 
 export function clearCart(): CartItem[] {

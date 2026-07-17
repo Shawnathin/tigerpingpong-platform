@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import {
   getAdminProducts,
@@ -75,6 +76,7 @@ function renderProductsTable(products: AdminProductListItem[]) {
             <th>Visibility / status</th>
             <th>Checkout eligibility</th>
             <th>Image warning</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -96,6 +98,11 @@ function renderProductsTable(products: AdminProductListItem[]) {
               </td>
               <td>{getCheckoutEligibility(product)}</td>
               <td>{getImageWarning(product)}</td>
+              <td>
+                <Link className={styles.secondaryButton} href={`/admin/products/${product.id}`}>
+                  Edit
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -116,8 +123,7 @@ export default async function AdminProductsPage() {
           Products
         </h1>
         <p className={styles.intro}>
-          Read-only catalog visibility for V1 launch operations. Product editing is intentionally
-          not included.
+          Review existing products and safely update names, prices, and availability.
         </p>
       </section>
 
@@ -127,7 +133,7 @@ export default async function AdminProductsPage() {
             <h2 id="admin-products-list-title">Product list</h2>
             <p>Catalog status, checkout scope, and image readiness from the protected admin API.</p>
           </div>
-          <span className={styles.badge}>Read-only</span>
+          <span className={styles.badge}>Protected editing</span>
         </div>
 
         {resource.data ? (

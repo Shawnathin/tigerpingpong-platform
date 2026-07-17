@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { getAdminInventory, type AdminInventoryResponse } from "../../../lib/admin-api";
 import { formatStatus } from "../admin-format";
@@ -39,7 +40,7 @@ export default async function AdminInventoryPage() {
           Inventory
         </h1>
         <p className={styles.intro}>
-          Read-only inventory readiness state. Inventory editing is intentionally not included.
+          Stock quantities are not tracked. Product and variant availability can be managed safely.
         </p>
       </section>
 
@@ -61,6 +62,9 @@ export default async function AdminInventoryPage() {
                 ? "Inventory editing is not configured yet."
                 : inventory.message}
             </p>
+            <Link className={styles.primaryButton} href="/admin/products">
+              Manage product availability
+            </Link>
           </div>
         ) : (
           <div className={styles.alert}>

@@ -51,6 +51,7 @@ const product = {
   ],
   variants: [
     {
+      id: "variant-single-pack",
       key: "single-pack",
       name: "Single pack",
       priceCents: 800,
@@ -69,6 +70,7 @@ const product = {
       ]
     },
     {
+      id: "variant-family-pack",
       key: "family-pack",
       name: "Family pack",
       priceCents: 12000,
@@ -88,6 +90,50 @@ const product = {
     }
   ]
 };
+let adminProductUpdatedAt = "2026-07-16T12:00:00.000Z";
+
+function getAdminProduct() {
+  return {
+    id: "product-local-1",
+    key: product.key,
+    slug: product.slug,
+    name: product.name,
+    sku: "LOCAL-TEST-SKU",
+    category: { id: "category-local-1", ...product.category },
+    type: product.productKind,
+    priceCents: product.priceCents,
+    currency: product.currency,
+    status: product.v1CheckoutScope ? "active" : "archived",
+    visible: product.v1PublicNavigation,
+    v1CheckoutScope: product.v1CheckoutScope,
+    purchaseMode: product.purchaseMode,
+    checkoutEligible: product.v1CheckoutScope,
+    checkoutEligibilityReasons: [],
+    imageStatus: { primaryImageUrl: product.media[0].cloudinarySecureUrl, status: "public_image_available" },
+    primaryImageUrl: product.media[0].cloudinarySecureUrl,
+    variantCount: product.variants.length,
+    mediaCount: product.media.length,
+    updatedAt: adminProductUpdatedAt,
+    brand: { key: "tiger", name: "Tiger Ping Pong", slug: "tiger" },
+    family: { id: "family-local-1", ...product.family, isPublic: true, isActive: true },
+    variants: product.variants.map((variant) => ({
+      id: variant.id,
+      key: variant.key,
+      sku: null,
+      name: variant.name,
+      priceCents: variant.priceCents,
+      currency: variant.currency,
+      purchaseModeOverride: variant.purchaseModeOverride,
+      isActive: variant.isActive,
+      options: variant.options.map((option) => ({
+        optionName: option.name,
+        optionDisplayName: option.displayName,
+        value: option.value,
+        label: option.label
+      }))
+    }))
+  };
+}
 const internalOrder = {
   publicReference: "TPP-TEST-001",
   status: "paid",
@@ -143,8 +189,17 @@ const internalOrder = {
   ]
 };
 
-const server = createServer((request, response) => {
+const server = createServer(async (request, response) => {
   response.setHeader("Content-Type", "application/json; charset=utf-8");
+  response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3100");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  response.setHeader("Access-Control-Allow-Methods", "GET, PATCH, POST, OPTIONS");
+
+  if (request.method === "OPTIONS") {
+    response.statusCode = 204;
+    response.end();
+    return;
+  }
 
   if (request.url === "/catalog/health") {
     response.end(
@@ -179,9 +234,106 @@ const server = createServer((request, response) => {
     return;
   }
 
+  if (request.url?.startsWith("/api/admin/products?") && request.method === "GET") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    response.end(JSON.stringify({ count: 1, items: [getAdminProduct()] }));
+    return;
+  }
+
+  if (request.url === "/api/admin/products/product-local-1" && request.method === "GET") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    response.end(JSON.stringify({ product: getAdminProduct() }));
+    return;
+  }
+
+  if (request.url === "/api/admin/products/product-local-1" && request.method === "PATCH") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    const body = await readJsonBody(request);
+    if (body.expectedUpdatedAt !== adminProductUpdatedAt) {
+      response.statusCode = 409;
+      response.end(JSON.stringify({ message: "This product changed after the editor was opened." }));
+      return;
+    }
+    product.name = body.name;
+    product.priceCents = body.priceCents;
+    product.v1PublicNavigation = body.availableForSale;
+    product.v1CheckoutScope = body.availableForSale;
+    for (const update of body.variants ?? []) {
+      const variant = product.variants.find((item) => item.id === update.id);
+      if (variant) {
+        variant.priceCents = update.priceCents;
+        variant.isActive = update.isActive;
+      }
+    }
+    adminProductUpdatedAt = new Date(Date.parse(adminProductUpdatedAt) + 1000).toISOString();
+    response.end(JSON.stringify({ product: getAdminProduct() }));
+    return;
+  }
+
+  if (request.url === "/checkout/sessions" && request.method === "POST") {
+    const body = await readJsonBody(request);
+    const changes = [];
+    for (const item of body.items ?? []) {
+      const variant = product.variants.find((candidate) => candidate.key === item.selectedVariantKey);
+      const currentPrice = variant?.priceCents ?? product.priceCents;
+      const cartLineId = getMockCartLineId(item);
+      if (!product.v1CheckoutScope || (variant && !variant.isActive)) {
+        changes.push({ cartLineId, status: "unavailable" });
+      } else if (item.expectedUnitPriceCents !== currentPrice) {
+        changes.push({
+          cartLineId,
+          currency: "CAD",
+          name: product.name,
+          status: "price_changed",
+          unitPriceCents: currentPrice
+        });
+      }
+    }
+    if (changes.length > 0) {
+      response.statusCode = 409;
+      response.end(JSON.stringify({ code: "cart_changed", message: "Your cart changed.", items: changes }));
+      return;
+    }
+    response.end(JSON.stringify({
+      checkoutSessionId: "cs_test_local",
+      checkoutUrl: "https://checkout.stripe.com/c/pay/cs_test_local",
+      currency: "CAD",
+      orderId: "order-local",
+      publicReference: "TPP-LOCAL",
+      shippingCents: 1500,
+      shippingLabel: "Flat-rate shipping",
+      subtotalCents: 800,
+      totalCents: 2300
+    }));
+    return;
+  }
+
   response.statusCode = 404;
   response.end(JSON.stringify({ message: "Not found in local mock catalog." }));
 });
+
+function isAdminAuthorized(request) {
+  return request.headers["x-internal-orders-token"] === "local-test-token";
+}
+
+function unauthorized(response) {
+  response.statusCode = 401;
+  response.end(JSON.stringify({ message: "Unauthorized" }));
+}
+
+async function readJsonBody(request) {
+  const chunks = [];
+  for await (const chunk of request) chunks.push(chunk);
+  return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
+}
+
+function getMockCartLineId(item) {
+  const options = [...(item.selectedOptions ?? [])]
+    .sort((left, right) => left.name.localeCompare(right.name))
+    .map((option) => `${option.name.trim().toLowerCase()}=${option.value.trim().toLowerCase()}`)
+    .join("&");
+  return options ? `${item.productSlug}::${options}` : item.productSlug;
+}
 
 server.listen(port, "127.0.0.1", () => {
   console.log(`Local mock catalog listening on http://127.0.0.1:${port}`);

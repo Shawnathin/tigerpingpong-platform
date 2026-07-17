@@ -23,6 +23,14 @@ interface AdminProductMediaBody {
   title?: unknown;
 }
 
+interface AdminProductUpdateBody {
+  availableForSale?: unknown;
+  expectedUpdatedAt?: unknown;
+  name?: unknown;
+  priceCents?: unknown;
+  variants?: unknown;
+}
+
 const ADMIN_RESPONSE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
   Expires: "0",
@@ -64,6 +72,18 @@ export class AdminController {
     this.assertAuthorized(response, requestToken);
 
     return this.adminService.getProduct(id);
+  }
+
+  @Patch("products/:id")
+  updateProduct(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Param("id") id: string,
+    @Body() body: AdminProductUpdateBody
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.updateProduct(id, body);
   }
 
   @Get("products/:id/media")

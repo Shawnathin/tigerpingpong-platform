@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
   OnModuleDestroy,
   ServiceUnavailableException
@@ -45,6 +47,28 @@ interface NormalizedProductMediaInput {
   role: AdminMediaRole;
   sortOrder: number;
   title: string | null;
+}
+
+interface AdminProductUpdateInput {
+  availableForSale?: unknown;
+  expectedUpdatedAt?: unknown;
+  name?: unknown;
+  priceCents?: unknown;
+  variants?: unknown;
+}
+
+interface NormalizedProductVariantUpdate {
+  id: string;
+  isActive: boolean;
+  priceCents: number | null;
+}
+
+interface NormalizedProductUpdate {
+  availableForSale: boolean;
+  expectedUpdatedAt: Date;
+  name: string;
+  priceCents: number | null;
+  variants: NormalizedProductVariantUpdate[];
 }
 
 interface CustomerSummary {
@@ -103,6 +127,8 @@ const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 const MAX_LIMIT = 100;
 const MAX_MEDIA_SORT_ORDER = 999;
 const MIN_MEDIA_SORT_ORDER = 0;
+const MAX_PRODUCT_PRICE_CENTS = 99_999_999;
+const MAX_PRODUCT_NAME_LENGTH = 160;
 const SUPPORT_EMAIL = "info@tigerpingpong.com";
 const SUPPORT_PHONE = "1-888-552-5259";
 
@@ -197,6 +223,22 @@ const adminProductDetailSelect = {
   notes: true,
   createdAt: true,
   updatedAt: true,
+  media: {
+    orderBy: [
+      { isPrimary: "desc" },
+      { sortOrder: "asc" }
+    ],
+    select: {
+      mediaKey: true,
+      role: true,
+      cloudinarySecureUrl: true,
+      sourceUrl: true,
+      isPrimary: true,
+      isPublic: true,
+      isActive: true,
+      reviewStatus: true
+    }
+  },
   variants: {
     orderBy: {
       createdAt: "asc"
@@ -395,6 +437,7 @@ type AdminProductMediaRecord = Prisma.ProductMediaGetPayload<{
 
 @Injectable()
 export class AdminService implements OnModuleDestroy {
+  private readonly logger = new Logger(AdminService.name);
   private prisma: PrismaClient | null = null;
 
   async onModuleDestroy(): Promise<void> {
@@ -714,6 +757,88 @@ export class AdminService implements OnModuleDestroy {
     return {
       product: this.serializeProductDetail(product)
     };
+  }
+
+  async updateProduct(idParam: string, input: AdminProductUpdateInput): Promise<unknown> {
+    const productId = this.parseRouteIdentifier(idParam, "Product");
+    const update = this.normalizeProductUpdateInput(input);
+    const prisma = this.getPrisma();
+    let changedFields: string[] = [];
+
+    try {
+      await prisma.$transaction(async (transaction) => {
+        const product = await transaction.product.findUnique({
+          where: { id: productId },
+          select: adminProductDetailSelect
+        });
+
+        if (!product) {
+          throw new NotFoundException({ message: "Admin product was not found." });
+        }
+
+        if (product.updatedAt.getTime() !== update.expectedUpdatedAt.getTime()) {
+          throw new ConflictException({
+            message: "This product changed after the editor was opened. Reload and try again."
+          });
+        }
+
+        this.assertCompleteVariantUpdate(product, update.variants);
+        this.assertProposedProductIsSafe(product, update);
+
+        const isCurrentlyAvailable = this.isProductAvailableForSale(product);
+        const productData: Prisma.ProductUpdateManyMutationInput = {
+          name: update.name,
+          priceCents: update.priceCents,
+          updatedAt: new Date()
+        };
+
+        if (update.availableForSale) {
+          productData.status = "active";
+          productData.v1PublicNavigation = true;
+          productData.v1CheckoutScope = true;
+        } else if (isCurrentlyAvailable) {
+          productData.status = "archived";
+          productData.v1PublicNavigation = false;
+          productData.v1CheckoutScope = false;
+        }
+
+        const productUpdate = await transaction.product.updateMany({
+          where: { id: productId, updatedAt: update.expectedUpdatedAt },
+          data: productData
+        });
+
+        if (productUpdate.count !== 1) {
+          throw new ConflictException({
+            message: "This product changed while it was being saved. Reload and try again."
+          });
+        }
+
+        for (const variant of update.variants) {
+          await transaction.productVariant.update({
+            where: { id: variant.id },
+            data: { isActive: variant.isActive, priceCents: variant.priceCents }
+          });
+        }
+
+        changedFields = this.getProductChangedFields(product, update);
+      });
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ConflictException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+
+      throw new ServiceUnavailableException({ message: "Admin product could not be saved." });
+    }
+
+    this.logger.log(
+      JSON.stringify({ event: "admin_product_updated", productId, changedFields })
+    );
+
+    return this.getProduct(productId);
   }
 
   async getProductMedia(idParam: string): Promise<unknown> {
@@ -1255,6 +1380,209 @@ export class AdminService implements OnModuleDestroy {
       sortOrder: this.normalizeSortOrder(input.sortOrder),
       title: this.normalizeOptionalString(input.title)
     };
+  }
+
+  private normalizeProductUpdateInput(input: AdminProductUpdateInput): NormalizedProductUpdate {
+    if (!this.isRecord(input)) {
+      throw new BadRequestException({ message: "Product update input is required." });
+    }
+
+    this.assertAllowedKeys(input, [
+      "availableForSale",
+      "expectedUpdatedAt",
+      "name",
+      "priceCents",
+      "variants"
+    ]);
+
+    if (typeof input.name !== "string") {
+      throw new BadRequestException({ message: "name must be a string." });
+    }
+
+    const name = input.name.trim();
+    if (!name || name.length > MAX_PRODUCT_NAME_LENGTH) {
+      throw new BadRequestException({
+        message: `name must be between 1 and ${MAX_PRODUCT_NAME_LENGTH} characters.`
+      });
+    }
+
+    if (typeof input.availableForSale !== "boolean") {
+      throw new BadRequestException({ message: "availableForSale must be a boolean." });
+    }
+
+    if (typeof input.expectedUpdatedAt !== "string") {
+      throw new BadRequestException({ message: "expectedUpdatedAt must be an ISO timestamp." });
+    }
+
+    const expectedUpdatedAt = new Date(input.expectedUpdatedAt);
+    if (
+      !Number.isFinite(expectedUpdatedAt.getTime()) ||
+      expectedUpdatedAt.toISOString() !== input.expectedUpdatedAt
+    ) {
+      throw new BadRequestException({ message: "expectedUpdatedAt must be an ISO timestamp." });
+    }
+
+    if (!Array.isArray(input.variants) || input.variants.length > 100) {
+      throw new BadRequestException({ message: "variants must be an array of at most 100 items." });
+    }
+
+    const seenVariantIds = new Set<string>();
+    const variants = input.variants.map((value, index) => {
+      if (!this.isRecord(value)) {
+        throw new BadRequestException({ message: `variants[${index}] must be an object.` });
+      }
+
+      this.assertAllowedKeys(value, ["id", "isActive", "priceCents"]);
+      const id = typeof value.id === "string" ? value.id.trim() : "";
+      if (!id || id.length > 200) {
+        throw new BadRequestException({ message: `variants[${index}].id is invalid.` });
+      }
+      if (seenVariantIds.has(id)) {
+        throw new BadRequestException({ message: "variants contains a duplicate ID." });
+      }
+      if (typeof value.isActive !== "boolean") {
+        throw new BadRequestException({
+          message: `variants[${index}].isActive must be a boolean.`
+        });
+      }
+
+      seenVariantIds.add(id);
+      return {
+        id,
+        isActive: value.isActive,
+        priceCents: this.normalizeProductPrice(value.priceCents, `variants[${index}].priceCents`)
+      };
+    });
+
+    return {
+      availableForSale: input.availableForSale,
+      expectedUpdatedAt,
+      name,
+      priceCents: this.normalizeProductPrice(input.priceCents, "priceCents"),
+      variants
+    };
+  }
+
+  private normalizeProductPrice(value: unknown, path: string): number | null {
+    if (value === null) {
+      return null;
+    }
+
+    if (
+      typeof value !== "number" ||
+      !Number.isInteger(value) ||
+      value < 1 ||
+      value > MAX_PRODUCT_PRICE_CENTS
+    ) {
+      throw new BadRequestException({
+        message: `${path} must be null or an integer between 1 and ${MAX_PRODUCT_PRICE_CENTS}.`
+      });
+    }
+
+    return value;
+  }
+
+  private assertAllowedKeys(value: Record<string, unknown>, allowedKeys: string[]): void {
+    const allowed = new Set(allowedKeys);
+    const unknownKey = Object.keys(value).find((key) => !allowed.has(key));
+    if (unknownKey) {
+      throw new BadRequestException({ message: `${unknownKey} is not supported.` });
+    }
+  }
+
+  private assertCompleteVariantUpdate(
+    product: AdminProductDetailRecord,
+    variants: NormalizedProductVariantUpdate[]
+  ): void {
+    const existingIds = new Set(product.variants.map((variant) => variant.id));
+    if (variants.length !== existingIds.size || variants.some((variant) => !existingIds.has(variant.id))) {
+      throw new BadRequestException({
+        message: "variants must contain each existing product variant exactly once."
+      });
+    }
+  }
+
+  private assertProposedProductIsSafe(
+    product: AdminProductDetailRecord,
+    update: NormalizedProductUpdate
+  ): void {
+    if (!update.availableForSale) {
+      return;
+    }
+
+    const proposedProduct = {
+      ...product,
+      name: update.name,
+      priceCents: update.priceCents,
+      status: "active" as const,
+      v1PublicNavigation: true,
+      v1CheckoutScope: true
+    };
+    const checkoutEligibility = this.getCheckoutEligibility(proposedProduct);
+    const reasons = [...checkoutEligibility.reasons];
+
+    if (this.getImageStatus(proposedProduct).status !== "public_image_available") {
+      reasons.push("public_image_required");
+    }
+
+    if (product.variants.length > 0) {
+      const existingById = new Map(product.variants.map((variant) => [variant.id, variant]));
+      const activeCheckoutVariants = update.variants.filter((variant) => {
+        const existing = existingById.get(variant.id);
+        if (!variant.isActive || !existing) {
+          return false;
+        }
+        if (existing.purchaseModeOverride && !CHECKOUT_PURCHASE_MODES.has(existing.purchaseModeOverride)) {
+          return false;
+        }
+        return true;
+      });
+
+      if (activeCheckoutVariants.length === 0) {
+        reasons.push("active_checkout_variant_required");
+      }
+      if (
+        activeCheckoutVariants.some(
+          (variant) =>
+            variant.priceCents === null &&
+            !(product.productKind === "table" && update.priceCents !== null)
+        )
+      ) {
+        reasons.push("active_variant_price_required");
+      }
+    }
+
+    if (reasons.length > 0) {
+      throw new BadRequestException({
+        message: `Product cannot be made available: ${reasons.join(", ")}.`
+      });
+    }
+  }
+
+  private isProductAvailableForSale(product: AdminProductListRecord): boolean {
+    return product.status === "active" && product.v1PublicNavigation && product.v1CheckoutScope;
+  }
+
+  private getProductChangedFields(
+    product: AdminProductDetailRecord,
+    update: NormalizedProductUpdate
+  ): string[] {
+    const changedFields: string[] = [];
+    if (product.name !== update.name) changedFields.push("name");
+    if (product.priceCents !== update.priceCents) changedFields.push("priceCents");
+    if (this.isProductAvailableForSale(product) !== update.availableForSale) {
+      changedFields.push("availableForSale");
+    }
+    const variantsById = new Map(product.variants.map((variant) => [variant.id, variant]));
+    if (
+      update.variants.some((variant) => {
+        const existing = variantsById.get(variant.id);
+        return existing?.priceCents !== variant.priceCents || existing?.isActive !== variant.isActive;
+      })
+    ) {
+      changedFields.push("variants");
+    }
+    return changedFields;
   }
 
   private async clearPrimaryProductMedia(

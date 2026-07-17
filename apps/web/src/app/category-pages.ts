@@ -89,8 +89,12 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       activeItem: "tables",
       activeNavHref: "/tables/",
       eyebrow: "Shop tables",
-      title: "Ping pong tables",
-      heroImageSlug: "tiger-portland-outdoor-table",
+      title: "PingPong Tables",
+      heroImage: {
+        alt: "Tiger Expo Outdoor ping pong table overlooking the Okanagan landscape",
+        fit: "cover",
+        src: "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1200/v1784301152/tigerpingpong/storefront/category-heroes/ping-pong-tables.jpg"
+      },
       mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,
       productLayout: "editorial",

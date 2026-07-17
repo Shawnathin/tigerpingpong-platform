@@ -118,6 +118,18 @@ related production settings are sensitive.
 - [ ] Retest checkout subtotals, shipping, tax, and total due.
 - [ ] Confirm webhook/payment-truth behavior still works with tax-inclusive
       Stripe totals before production launch.
+- [ ] In the intended Stripe mode, confirm **Settings → Business → Customer
+      emails → Successful payments** is enabled.
+- [ ] Review Stripe receipt branding and public support details for Tiger Ping
+      Pong; do not publish unconfirmed business details.
+- [ ] Send a test receipt to an owner-controlled address and verify delivery,
+      branding, line items, shipping, tax, totals, and support information.
+- [ ] Capture redacted receipt evidence without exposing a full email address,
+      payment identifier, customer information, or card details.
+- [ ] Confirm the application sends no duplicate order-confirmation email and
+      that shipment emails remain manual for V1.
+- [ ] Keep paid-invoice creation off unless the business separately approves
+      that customer/accounting workflow.
 - [ ] Document the result, tested provinces, Stripe mode, and any remaining tax
       caveats in launch notes.
 
@@ -219,6 +231,9 @@ API/platform service:
 - [ ] Tax is verified after office Stripe Tax setup.
 - [ ] Webhook confirms payment truth.
 - [ ] Success page uses backend status and does not trust redirect alone.
+- [ ] Stripe successful-payment receipt arrives at the owner-controlled test
+      address with the approved Tiger Ping Pong identity and correct totals.
+- [ ] No duplicate application order-confirmation email is sent.
 - [ ] Cancel path leaves order/payment state unconfirmed.
 - [ ] Do not use a real paid order unless Shawn intentionally approves it.
 

@@ -89,21 +89,25 @@ Scope: Replace the `/tables` category hero product cutout with the owner-selecte
 - Final implementation screenshots:
   - `docs/audit/homepage-promotion-qa/final-hierarchy-logo-desktop-1280x820.png`
   - `docs/audit/homepage-promotion-qa/final-hierarchy-logo-mobile-390x844.png`
-- Viewports: desktop browser at 1280px effective width and mobile at 390 × 844.
+- Latest split-headline implementation screenshots:
+  - `docs/audit/homepage-promotion-qa/balanced-desktop-1280x720.png`
+  - `docs/audit/homepage-promotion-qa/balanced-mobile-390x844.png`
+- Latest source visual truth: `/var/folders/t0/jhxslg8n76qb4vntjw805zz80000gn/T/codex-clipboard-0c17c978-fc5e-4537-8693-149ad2b77009.png`
+- Viewports: desktop at 1280 × 720 and mobile at 390 × 844.
 - State: three static stacked panels in the final order Aqua, Portland, Table Cover.
 
 ## Findings
 
 - No actionable P0, P1, or P2 differences remain.
 - Fonts and typography: existing Tiger Ping Pong type and weight hierarchy are preserved; the short approved copy remains legible and balanced at both breakpoints.
-- Spacing and layout rhythm: each panel keeps its artwork centered like the old homepage. On desktop, the bold headline has a generous separate gutter beside the image while the product name and CTA share a centered row below it. Mobile uses the sequence image, headline, product name, CTA. The panels are stacked with a consistent 28px desktop and 18px mobile gap.
+- Spacing and layout rhythm: each panel keeps its artwork centered like the old homepage. On desktop, each short bold headline is split evenly across the left and right gutters while the product name and CTA share a centered row below the image. The tightened 589px desktop panel fits in the tested 720px-high viewport, including its CTA. Mobile uses the sequence image, complete headline, product name, CTA. The panels are stacked with a consistent 28px desktop and 18px mobile gap.
 - Colors and visual tokens: existing ink, orange, pale blue, white, radius, and elevation language are retained. Aqua receives a restrained blue CTA accent.
 - Image quality and asset fidelity: all three supplied transparent PNGs are used without recolouring, destructive cropping, distortion, or CSS reconstruction. Explicit intrinsic dimensions prevent layout shift.
-- Copy and content: Aqua appears first, followed by Portland and the Table Cover. Approved labels, headlines, and CTAs are installed exactly. The replacement Table Cover artwork removes the previous embedded “Just Released” wording.
+- Copy and content: Aqua appears first, followed by Portland and the Table Cover. The split desktop headlines read “Make a / splash.”, “Take it / outside.”, and “Ultra / durable.”; assistive text preserves each phrase with normal word spacing. Approved product labels and CTAs remain below the image. The replacement Table Cover artwork removes the previous embedded “Just Released” wording.
 - Accessibility and interaction: the three offers are permanently visible in document order, use one page-level `h1` followed by `h2` headings, and expose real product links with visible focus states. No carousel, hidden slide, auto-rotation, or selector control remains.
-- Responsive behavior: the 390px viewport has no horizontal overflow and all three images preserve their proportions.
+- Responsive behavior: the 390 × 844 viewport has no horizontal overflow, recombines each split phrase into one centered headline, and preserves all three image proportions.
 - Brand fidelity: the supplied official Tiger Ping Pong logo replaces the former CSS approximation in both the public header and footer. Its original proportions and transparent background are preserved at desktop and mobile sizes.
-- Browser console: zero errors during the final stacked desktop and mobile checks.
+- Browser console: zero errors or warnings during the latest mobile check.
 
 ## Focused Region Comparison
 
@@ -116,6 +120,7 @@ The Aqua-first mobile capture and the separate desktop Portland and Cover captur
 - Pass 2: the carousel, selector controls, and rotation were removed. Final desktop/mobile captures confirmed the requested fixed order, centered composition, and zero mobile overflow with no remaining P0/P1/P2 mismatch.
 - Pass 3: the Table Cover artwork was replaced with the new orange-glass version. Its asset filename was versioned to prevent the image optimizer from serving the prior cover graphic at cached responsive sizes; desktop and 390px captures confirmed the replacement.
 - Pass 4: the product name and CTA moved below the centered image, the bold headline became the only side copy with a wider gutter, and the supplied official logo replaced the temporary header/footer mark. Desktop and 390px captures confirmed the final hierarchy and logo fit.
+- Pass 5: the user requested bold text on both sides of every image and one complete panel per screen. Each headline was split across balanced desktop gutters, the panel/image height rules were tightened, and the mobile breakpoint recombines the phrase below the image. The 1280 × 720 capture includes the complete Aqua panel and CTA; the 390 × 844 capture has zero horizontal overflow. Direct comparison with the annotated source found no remaining P0/P1/P2 mismatch.
 
 ## Implementation Checklist
 
@@ -129,5 +134,7 @@ The Aqua-first mobile capture and the separate desktop Portland and Cover captur
 - [x] Keep only the bold headline beside the artwork on desktop.
 - [x] Move the product name and CTA below the artwork.
 - [x] Install the supplied official logo in the public header and footer.
+- [x] Split the bold headline across both sides of all three centered desktop images.
+- [x] Fit a complete promotional panel and CTA within a 1280 × 720 viewport.
 
 final result: passed

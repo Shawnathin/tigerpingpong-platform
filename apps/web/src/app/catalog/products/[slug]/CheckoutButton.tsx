@@ -38,6 +38,7 @@ interface CheckoutButtonProps {
   product: CartProductInput;
   productOptions: ProductOptionGroup[];
   shippingLines: string[];
+  shippingLinesAreFixed: boolean;
 }
 
 function ProductThumb({ product }: { product: CartProductInput }) {
@@ -189,7 +190,8 @@ export function CheckoutButton({
   priceSummary,
   product,
   productOptions,
-  shippingLines
+  shippingLines,
+  shippingLinesAreFixed
 }: CheckoutButtonProps) {
   const { addItem } = useCart();
   const addToCartButtonRef = useRef<HTMLButtonElement>(null);
@@ -211,9 +213,10 @@ export function CheckoutButton({
   const displayedPrice = selectedOptionPrice
     ? formatCartMoney(selectedOptionPrice.priceCents, selectedOptionPrice.currency)
     : basePriceLabel;
-  const displayedShippingLines = selectedOptionPrice
-    ? [getV1ShippingMessage(selectedOptionPrice.priceCents)]
-    : shippingLines;
+  const displayedShippingLines =
+    selectedOptionPrice && !shippingLinesAreFixed
+      ? [getV1ShippingMessage(selectedOptionPrice.priceCents)]
+      : shippingLines;
 
   useEffect(() => {
     onVariantChange?.(selectedOptionPrice?.variantKey ?? null);

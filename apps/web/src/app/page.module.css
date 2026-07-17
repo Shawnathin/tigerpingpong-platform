@@ -25,11 +25,11 @@
   align-items: center;
   column-gap: 72px;
   row-gap: 4px;
-  min-height: min(760px, calc(100vh - 150px));
+  min-height: clamp(540px, calc(100svh - 155px), 680px);
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 88%);
   border-radius: 38px;
-  padding: 42px 48px 28px;
+  padding: 30px 48px 20px;
   background:
     linear-gradient(135deg, rgb(255 255 255 / 94%), rgb(255 255 255 / 62%)),
     linear-gradient(120deg, var(--promotion-wash), rgb(116 200 242 / 14%));
@@ -63,18 +63,20 @@
   content: "";
 }
 
-.promotionHeadlineSide,
+.promotionHeadline,
 .promotionMeta {
   position: relative;
   z-index: 2;
 }
 
-.promotionHeadlineSide {
+.promotionHeadline {
   display: grid;
-  grid-column: 3;
+  grid-column: 1 / -1;
   grid-row: 1;
-  justify-items: start;
-  padding-left: 22px;
+  grid-template-columns: minmax(220px, 1fr) minmax(500px, 720px) minmax(220px, 1fr);
+  align-items: center;
+  column-gap: 72px;
+  pointer-events: none;
 }
 
 .promotionMeta {
@@ -102,28 +104,40 @@
   text-transform: uppercase;
 }
 
-.promotionHeadline {
+.promotionHeadlineLeft,
+.promotionHeadlineRight {
   max-width: 260px;
   color: var(--tiger-ink);
-  font-size: clamp(2.15rem, 3.5vw, 4.25rem);
+  font-size: clamp(2rem, 3.15vw, 3.8rem);
   font-weight: 950;
   letter-spacing: -0.04em;
   line-height: 0.92;
+  text-align: center;
   text-wrap: balance;
+}
+
+.promotionHeadlineLeft {
+  grid-column: 1;
+  justify-self: center;
+}
+
+.promotionHeadlineRight {
+  grid-column: 3;
+  justify-self: center;
 }
 
 .promotionVisual {
   display: grid;
   grid-column: 2;
   grid-row: 1;
-  min-height: 580px;
+  min-height: clamp(430px, calc(100svh - 280px), 500px);
   place-items: center;
 }
 
 .promotionImage {
   width: min(100%, 720px);
   height: auto;
-  max-height: 650px;
+  max-height: clamp(430px, calc(100svh - 250px), 540px);
   object-fit: contain;
   filter: drop-shadow(0 30px 34px rgb(27 36 65 / 15%));
 }
@@ -234,6 +248,11 @@
     padding: 36px 32px 26px;
   }
 
+  .promotionHeadline {
+    grid-template-columns: minmax(110px, 0.7fr) minmax(390px, 600px) minmax(170px, 0.8fr);
+    column-gap: 36px;
+  }
+
   .promotionPanel::before {
     inset: 16% 12% 18%;
   }
@@ -282,11 +301,13 @@
     max-height: 520px;
   }
 
-  .promotionHeadlineSide {
+  .promotionHeadline {
+    display: flex;
     grid-column: 1;
     grid-row: 2;
-    justify-items: center;
-    padding-left: 0;
+    justify-content: center;
+    gap: 0.28em;
+    pointer-events: auto;
   }
 
   .promotionMeta {
@@ -297,7 +318,8 @@
     padding-bottom: 8px;
   }
 
-  .promotionHeadline {
+  .promotionHeadlineLeft,
+  .promotionHeadlineRight {
     max-width: 520px;
   }
 
@@ -331,7 +353,8 @@
     max-height: 390px;
   }
 
-  .promotionHeadline {
+  .promotionHeadlineLeft,
+  .promotionHeadlineRight {
     font-size: 2.5rem;
   }
 

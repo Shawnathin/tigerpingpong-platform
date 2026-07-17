@@ -19,29 +19,11 @@ const NAV_ITEMS: Array<{
   href: string;
   id: PublicStorefrontNavItem;
   label: string;
-  dropdown?: Array<{
-    href: string;
-    label: string;
-  }>;
 }> = [
   {
     href: "/tables/",
     id: "tables",
-    label: "Tables",
-    dropdown: [
-      {
-        href: "/tables/",
-        label: "All Tables"
-      },
-      {
-        href: "/tables/indoor-tables/",
-        label: "Indoor Tables"
-      },
-      {
-        href: "/tables/outdoor-tables/",
-        label: "Outdoor Tables"
-      }
-    ]
+    label: "Tables"
   },
   {
     href: "/accessories/paddles/",
@@ -56,25 +38,7 @@ const NAV_ITEMS: Array<{
   {
     href: "/accessories/",
     id: "accessories",
-    label: "Accessories",
-    dropdown: [
-      {
-        href: "/accessories/",
-        label: "All Accessories"
-      },
-      {
-        href: "/accessories/covers/",
-        label: "Covers"
-      },
-      {
-        href: "/accessories/nets/",
-        label: "Nets"
-      },
-      {
-        href: "/replacement-parts/",
-        label: "Replacement Parts"
-      }
-    ]
+    label: "Accessories"
   },
   {
     href: "/resources/",
@@ -183,7 +147,6 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
             <div
               className="publicNavItem"
               data-active={activeItem === item.id ? "true" : undefined}
-              data-has-dropdown={item.dropdown ? "true" : undefined}
               key={item.id}
             >
               <a
@@ -193,15 +156,6 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
               >
                 {item.label}
               </a>
-              {item.dropdown ? (
-                <div className="publicDropdown" aria-label={`${item.label} links`}>
-                  {item.dropdown.map((dropdownItem) => (
-                    <a href={dropdownItem.href} key={dropdownItem.href}>
-                      {dropdownItem.label}
-                    </a>
-                  ))}
-                </div>
-              ) : null}
             </div>
           ))}
         </div>

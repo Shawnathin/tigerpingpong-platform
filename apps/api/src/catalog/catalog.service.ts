@@ -199,7 +199,12 @@ const mediaSelect = {
   sortOrder: true,
   isPrimary: true,
   isPublic: true,
-  reviewStatus: true
+  reviewStatus: true,
+  variant: {
+    select: {
+      key: true
+    }
+  }
 } satisfies Prisma.ProductMediaSelect;
 
 const productSummarySelect = {
@@ -886,6 +891,7 @@ export class CatalogService implements OnModuleDestroy {
       caption: media.caption,
       sortOrder: media.sortOrder,
       isPrimary: media.isPrimary,
+      variantKey: media.variant?.key ?? null,
       ...(includeInternal
         ? {
             sourceUrl: media.sourceUrl,

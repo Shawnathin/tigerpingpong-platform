@@ -20,8 +20,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
-      - run: pnpm typecheck
       - run: pnpm db:generate
+      - run: pnpm typecheck
       - run: pnpm db:validate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tigerpingpong_validation

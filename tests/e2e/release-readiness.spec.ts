@@ -112,6 +112,9 @@ test("primary discovery and shipping routes retain factual storefront behavior",
   page
 }) => {
   await page.goto("/");
+  const publicNavigation = page.getByRole("navigation", { name: "Public navigation" });
+  await expect(publicNavigation.getByRole("link", { name: "All Tables" })).toHaveCount(0);
+  await expect(publicNavigation.getByRole("link", { name: "All Accessories" })).toHaveCount(0);
   await page.getByRole("link", { name: "Balls" }).first().click();
   await expect(page).toHaveURL(/\/accessories\/ping-pong-balls\/?$/);
   await expect(

@@ -141,6 +141,57 @@ final result: passed
 
 ---
 
+# Indoor & Outdoor Table Chapters QA
+
+Date: 2026-07-18
+
+Scope: Translate the approved `/tables` glass system into dedicated Indoor and Outdoor category chapters while preserving the live catalog, compact product-stage treatment, and mobile shipping reassurance.
+
+## Evidence
+
+- Source visual truth: `exports/table-subcategories-qa/browser/source-tables-desktop-1440.png`
+- Indoor browser capture: `exports/table-subcategories-qa/browser/indoor-desktop-1440.png`
+- Indoor implementation: `exports/table-subcategories-qa/playwright/indoor-desktop-1440-viewport.png`
+- Outdoor implementation: `exports/table-subcategories-qa/playwright/outdoor-desktop-1440-viewport.png`
+- Desktop side-by-side comparisons: `exports/table-subcategories-qa/indoor-desktop-comparison.png` and `exports/table-subcategories-qa/outdoor-desktop-comparison.png`
+- Mobile viewport comparison: `exports/table-subcategories-qa/mobile-viewport-comparison.png`
+- Responsive viewport/full-page captures: `exports/table-subcategories-qa/playwright/`
+- Viewports: 1440 × 1000, 768 × 1024, and 390 × 844.
+- State: default category landing state with reduced motion for deterministic evidence.
+
+The proof files remain under ignored `exports/` and are not committed as production media.
+
+## Findings
+
+- No actionable P0, P1, or P2 difference remains after viewing the source and each desktop implementation together and checking both full mobile page flows.
+- Fonts and typography: the same Tiger display face, weights, eyebrow treatment, live price scale, and compact product-stage hierarchy from `/tables` carry through both category pages. Hero wrapping remains intentional at desktop and 390 pixels.
+- Spacing and layout rhythm: the category switch and sticky shipping tab read as one glass assembly, remain clear of the floating navigation, and keep both shipping lines visible. At 390 pixels, each product image, story, live price, and CTA fits within one 844-pixel viewport.
+- Colors and visual tokens: mist-white, pool-blue, navy, and restrained Tiger orange remain mapped to the approved table-page system. The indoor interlude uses orange once as an editorial pause; the outdoor education scene keeps the approved Pacific-navy treatment.
+- Image quality and asset fidelity: Indoor uses the real Whistler lobby photograph without upscaling beyond its source. At the owner's direction, Outdoor deliberately reuses the stronger shaded Portland patio hero from `/tables` so direct search visitors receive the best first impression. Product cutouts and the real Tiger-branded ball image remain exact tracked Cloudinary media.
+- Copy and content: category copy, table ordering, Tiger product stories, live catalog prices, and destinations match the approved content map. **PingPong** is one word throughout new customer-facing copy.
+- Accessibility and responsiveness: both routes have one H1, logical H2 order, descriptive alternatives, visible keyboard focus, lazy-loaded below-fold media, a static reduced-motion mode, and no horizontal overflow at 390, 768, 1280, or 1440 pixels.
+- Primary interaction: the All / Indoor / Outdoor switch was exercised from Indoor to Outdoor and updated the route and active state correctly.
+- Browser console: zero application console errors or uncaught page errors during the final route-switch test.
+
+## Focused Region Comparison
+
+No separate product-stage crop was required. The product-stage component is now literally shared with the already approved `/tables` implementation, and the full mobile captures render every stage large enough to review its typography, image scale, story length, price, and CTA. The focused QA effort therefore stayed on the new category heroes, switch, shipping tab, and editorial interludes.
+
+## Comparison History
+
+- Pass 1: the inherited mobile image alignment collapsed the Indoor hero figure and the shipping tab sat too close to the compact header. The figure was allowed to stretch at the mobile breakpoint and the sticky offset was corrected.
+- Pass 2: the category caption and floating switch competed at the bottom of the mobile hero. The caption received dedicated bottom clearance, while the shipping tab was tightened into the switch as a softer glass extension.
+- Pass 3: the initial Outdoor-specific sunny patio image was visually sound, but the owner preferred the stronger `/tables` hero for search traffic. Outdoor now uses the same shaded Portland patio image, and the final desktop and mobile comparison shows the table remains dominant with readable copy.
+- Post-fix evidence: the final desktop, tablet, and mobile captures show no navigation masking, caption collision, clipped copy, collapsed media, or horizontal overflow.
+
+## Follow-up Polish
+
+- P3: an equally strong future Outdoor-specific lifestyle photograph could restore hero variety without sacrificing the current product-first quality. The deliberate repetition is the approved launch choice.
+
+final result: passed
+
+---
+
 # Find Your Table Page QA
 
 Date: 2026-07-18

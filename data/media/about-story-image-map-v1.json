@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "about-story-image-map-v1",
+  "generatedAt": "2026-07-18T05:56:04.648Z",
+  "sourceRootHint": "Downloads",
+  "rightsPolicy": "Owner confirmed every selected archive photograph is cleared for public Tiger PingPong use. Historical watermarks and attribution must remain visible.",
+  "deliveryPolicy": "Raw archive files remain local. Cloudinary originals are delivered through f_auto,q_auto transformations; no source is upscaled beyond its recorded dimensions.",
+  "entries": [
+    {
+      "assetId": "MAY-011",
+      "sourceRelativePath": "May 29th media/View/IMG_0539.HEIC",
+      "sourceSha256": "a7c060b6b74f255e813f288e1622585675b8e46eca48f6d54aeb28c0938908b5",
+      "sourceDimensions": {
+        "width": 4032,
+        "height": 3024
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/category-heroes/ping-pong-tables",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_2400/v1784301152/tigerpingpong/storefront/category-heroes/ping-pong-tables.jpg",
+      "role": "hero",
+      "caption": "Home court, Vancouver.",
+      "altText": "Blue Tiger Expo Outdoor table on a Vancouver terrace overlooking the water and North Shore mountains.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "reuse-existing",
+      "status": "implemented"
+    },
+    {
+      "assetId": "Y13-003",
+      "sourceRelativePath": "2013/01.jpg",
+      "sourceSha256": "f5ba9c4f70cf97c551791ef1bf3b27ac13427e3a3ea7cdfc341294ca3c3909c4",
+      "sourceDimensions": {
+        "width": 1920,
+        "height": 1080
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/01-first-table",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1920/v1784354157/tigerpingpong/storefront/about/01-first-table.jpg",
+      "role": "origin-primary",
+      "caption": "Big dreams. Tiny legs.",
+      "altText": "People playing on Tiger's first imported PingPong table at an outdoor Vancouver event.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "EXT-001",
+      "sourceRelativePath": "Extra Photos/08e4329275c2c72be5097b2797b77e59.jpg",
+      "sourceSha256": "287888e66df948644a4914777226231f1d2c1a3184b412c4c72706a15e96a7b4",
+      "sourceDimensions": {
+        "width": 640,
+        "height": 424
+      },
+      "displayMaxWidth": 640,
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/02-vancouver-rain",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_640/v1784354157/tigerpingpong/storefront/about/02-vancouver-rain.jpg",
+      "role": "origin-secondary",
+      "caption": "Vancouver supplied the weather testing.",
+      "altText": "People playing on an early Tiger table in the rain beneath a white event tent.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "FCF-002",
+      "sourceRelativePath": "Food Cart Fest/tppc-fcf-02.jpg",
+      "sourceSha256": "48d296850328e2c092f7f3646b31202dc838aa908f553d65f5e97294b3b4b9f8",
+      "sourceDimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/03-food-cart-fest",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1600/v1784354158/tigerpingpong/storefront/about/03-food-cart-fest.jpg",
+      "role": "vancouver-food-cart-fest",
+      "caption": "Food Cart Fest.",
+      "altText": "People rallying on Tiger tables outdoors at Vancouver's Food Cart Fest.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "NIT-034",
+      "sourceRelativePath": "Nightlife events/fc58cf4dc1480da1cddb7fd256f1ce1b.jpg",
+      "sourceSha256": "497f4b7831786dd1eee0245bfc1e505ec8987e07bae9d225301e17328e989bc6",
+      "sourceDimensions": {
+        "width": 750,
+        "height": 500
+      },
+      "displayMaxWidth": 750,
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/04-game-night-connection",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_750/v1784354159/tigerpingpong/storefront/about/04-game-night-connection.jpg",
+      "role": "vancouver-connection",
+      "caption": "The point was always connection.",
+      "altText": "Two players smiling and tapping paddles after a game in a crowded Vancouver venue.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "UBC-001",
+      "sourceRelativePath": "IMG_0945.JPG",
+      "sourceSha256": "50193c07bfa0282b0ff45c3a969df0041bb3a99ba9eb3c267d7624e9d8c09963",
+      "sourceDimensions": {
+        "width": 3264,
+        "height": 2448
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/05-ubc",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1800/v1784354160/tigerpingpong/storefront/about/05-ubc.jpg",
+      "role": "vancouver-ubc",
+      "caption": "UBC.",
+      "altText": "Five folded Tiger tables lined up inside UBC's baseball training facility.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "GOF-253",
+      "sourceRelativePath": "GoFest 2016 Media/Shawn_s Photos/IMG_0642.HEIC",
+      "sourceSha256": "8104ec5dbbb2d5f9ff14988c094dfceaef0fcabe8da9e7b187b27e6637465e94",
+      "sourceDimensions": {
+        "width": 4032,
+        "height": 3024
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/06-whistler",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1800/v1784354160/tigerpingpong/storefront/about/06-whistler.heic",
+      "role": "vancouver-whistler",
+      "caption": "Whistler.",
+      "altText": "People playing on several Tiger tables at an open-air Whistler pavilion, including a player using a wheelchair.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "EXT-037",
+      "sourceRelativePath": "Extra Photos/Instagram/57103d9b55892ac4fcdf0276fc9a470a.jpg",
+      "sourceSha256": "c628b4b1abe385f6d57eae0f3ef4858b984f731aadca38538da586a5da42a02d",
+      "sourceDimensions": {
+        "width": 1080,
+        "height": 1080
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/07-paddle-prototypes",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1080/v1784354161/tigerpingpong/storefront/about/07-paddle-prototypes.jpg",
+      "role": "manufacturing-prototypes",
+      "caption": "Before custom moulds, there were cardboard templates and a lot of notes.",
+      "altText": "Early Tiger paddle prototypes beside hand-drawn dimensions and design notes.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "FAC-034",
+      "sourceRelativePath": "tpp-factory images/tpp-table-factory-17.bmp",
+      "sourceSha256": "421e581ba9aec679b37a73ab326944389c4e84395ffabf127e7a1720668fb7be",
+      "sourceDimensions": {
+        "width": 1280,
+        "height": 720
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/08-german-table-production",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1280/v1784354162/tigerpingpong/storefront/about/08-german-table-production.bmp",
+      "role": "manufacturing-factory",
+      "caption": "Then the details got serious.",
+      "altText": "A robotic welder throwing sparks while producing a Tiger table component in Germany.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "EXT-098",
+      "sourceRelativePath": "Extra Photos/TPP/4bed52db0a81cd5d621e54221908a1ba.jpg",
+      "sourceSha256": "48c7e421e44daf7b382053228ffecc99a3723aa5c45a5d35c7db8944f9c2acfa",
+      "sourceDimensions": {
+        "width": 1080,
+        "height": 1080
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/09-roadshow-pacific",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1080/v1784354163/tigerpingpong/storefront/about/09-roadshow-pacific.jpg",
+      "role": "roadshow-pacific",
+      "caption": "Born by the Pacific.",
+      "altText": "Tiger's wrapped truck and trailer parked beside the Pacific Ocean.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "EXT-101",
+      "sourceRelativePath": "Extra Photos/TPP/5a7f9ba6dc4ff73e778427068b510fbd.jpg",
+      "sourceSha256": "ad0cd4f890b6f886262d2a43ac69c92f740564058fdb64095cb844f1e207fc3e",
+      "sourceDimensions": {
+        "width": 1080,
+        "height": 851
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/10-stampede-park",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1080/v1784354163/tigerpingpong/storefront/about/10-stampede-park.jpg",
+      "role": "roadshow-stampede",
+      "caption": "Stampede Park.",
+      "altText": "Tiger's wrapped truck and trailer at the entrance to Stampede Park in Calgary.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    },
+    {
+      "assetId": "EXT-102",
+      "sourceRelativePath": "Extra Photos/TPP/60b9c979e5b55fafcb0b800be0daeaef.jpg",
+      "sourceSha256": "017642678269ab6250ccad3b71411d2bb3af14cdc70ef8fd2f2db923185506e9",
+      "sourceDimensions": {
+        "width": 1080,
+        "height": 810
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/about/11-ontario",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1080/v1784354164/tigerpingpong/storefront/about/11-ontario.jpg",
+      "role": "roadshow-ontario",
+      "caption": "Pointed east.",
+      "altText": "Tiger's wrapped truck and trailer beside the Welcome to Ontario sign.",
+      "rightsStatus": "owner-cleared",
+      "uploadAction": "upload",
+      "status": "implemented"
+    }
+  ]
+}

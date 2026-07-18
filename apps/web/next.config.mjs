@@ -20,6 +20,15 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/djfcisldm/image/upload/**"
+      }
+    ]
+  },
   poweredByHeader: false,
   transpilePackages: ["@tigerpingpong/shared"],
   async headers() {

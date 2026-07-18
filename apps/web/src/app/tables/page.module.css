@@ -752,12 +752,13 @@
 
   .chooserMeta {
     display: grid;
-    justify-content: start;
+    justify-content: center;
     padding: 4px 8px 36px;
+    text-align: center;
   }
 
   .shippingRibbon {
-    top: 62px;
+    top: 74px;
     width: min(330px, calc(100% - 54px));
     margin-top: -49px;
     padding-inline: 14px;
@@ -838,7 +839,36 @@
   }
 
   .productMedia {
-    padding: 24px;
+    min-height: 260px;
+    padding: 20px;
+  }
+
+  .productMedia img {
+    max-height: 250px;
+  }
+
+  .productCopy {
+    gap: 8px;
+    padding: 2px 22px 24px;
+  }
+
+  .productCopy h2 {
+    font-size: clamp(2.8rem, 12vw, 3.4rem);
+  }
+
+  .productDescriptor {
+    margin-block: 2px 0;
+    font-size: 1.05rem;
+  }
+
+  .productStory {
+    margin-bottom: 1px;
+    font-size: 0.9rem;
+    line-height: 1.38;
+  }
+
+  .productAction {
+    min-height: 40px;
   }
 }
 

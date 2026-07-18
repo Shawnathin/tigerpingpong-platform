@@ -61,7 +61,7 @@ export function getPathMetadata({
       description,
       type,
       url,
-      siteName: "Tiger Ping Pong"
+      siteName: "Tiger PingPong"
     }
   };
 }

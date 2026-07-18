@@ -2,32 +2,32 @@
 
 ## Active task
 
-Tiger About page — “West Coast Rally.”
+Tiger Contact page — “Real Help, Right Here.”
 
 ## Selected task card
 
-Replace the empty `/about` route with a two-minute, image-led Tiger story. Open on the current Expo Outdoor table against Vancouver and the North Shore mountains, keep the questionable first table below the first viewport, then move through Vancouver events, outdoor-minded product thinking, better manufacturing, product-name origins, and Tiger’s road across Canada.
+Replace the stock `/contact` route with a short, human, conversion-focused experience. Open with a real Vancouver game-night photograph and immediate phone/email actions, then move through common reasons to call, useful order details, and Tiger’s no-runaround support promise.
 
 ## Boundaries
 
-- Change `/about` only; homepage, footer, category, and product-page excerpts remain follow-up work.
-- Preserve public navigation, footer, catalog behavior, checkout, APIs, database, payment truth, and protected routes.
-- Keep all story wording and media references in a typed canonical content module for later reuse.
-- Keep raw archive photography local and outside Git.
-- Upload only owner-cleared selections under deterministic Cloudinary IDs; verify source hashes and refuse collisions.
-- Preserve historical watermarks and never upscale the small archive sources.
-- Use **PingPong** as one word in all customer-facing language.
+- Change `/contact` only, apart from the canonical Tiger story content, shared Open Graph brand spelling, focused browser proof, and workflow documentation.
+- Preserve the existing phone number, email address, homepage `#order-help-title` link, navigation, footer, catalog, cart, checkout, APIs, database, payment truth, and protected routes.
+- Add no contact form, submission handler, support hours, response-time promise, street address, analytics, or new infrastructure.
+- Reuse the owner-cleared `NIT-034` image already recorded in the About media map; upload no new media and never upscale the 750-pixel source.
+- Use **PingPong** as one word in all new customer-facing language and shared Open Graph site naming.
 
 ## Required proof
 
-- The present-day Expo hero and H1 occupy the initial desktop and mobile viewport; the first table remains below the fold.
-- Stable anchors, chapter order, product links, final CTAs, heading hierarchy, and image alternatives are covered by Playwright.
+- The Contact H1, phone action, and email action are visible in the initial desktop and mobile viewport.
+- Native `tel:` and `mailto:` destinations, section order, heading hierarchy, image alternative, order-help anchor, and final CTAs are covered by Playwright.
+- There is no form or nonfunctional contact control.
 - No horizontal overflow at 390, 768, 1280, or 1440 pixels.
-- Reduced motion is fully static; mobile removes desktop sticky behavior.
-- Desktop, tablet, and mobile viewport and full-page screenshots are captured under ignored `exports/about-story-qa/`.
-- Every final Cloudinary URL returns `200` with its expected delivered dimensions.
+- Reduced motion is fully static.
+- Desktop and mobile viewport and full-page screenshots are captured under ignored `exports/contact-real-help-qa/`.
 - Lint, typecheck, unit tests, relevant Playwright tests, production build, secret scan, and launch preflight pass.
 
 ## Status
 
-Complete on `codex/about-west-coast-rally`. The typed story, responsive page, tracked image map, collision-safe uploader, eleven new Cloudinary archive assets, focused browser coverage, and desktop/tablet/mobile visual captures are in place. All 12 final delivery URLs return `200` at their expected dimensions. `pnpm launch:preflight` passes with 26 unit tests, 12 browser tests, two intentionally skipped screenshot-only jobs, zero tracked-secret findings, and no high or critical production dependency advisories. No catalog, checkout, API, database, payment, navigation, or footer behavior changed.
+Complete on `codex/contact-real-help-right-here`, rebased onto `main` after the About page merged. The human-first hero, editorial support routes, order-help section, closing promise, canonical typed copy, metadata, responsive behavior, and focused browser coverage are in place. The reused `NIT-034` delivery returns `750 × 500`, and desktop/mobile before-and-after viewport plus full-page captures are stored under ignored `exports/contact-real-help-qa/`.
+
+`pnpm launch:preflight` passes with 26 unit tests, 20 browser tests, four intentionally skipped screenshot-only jobs, zero tracked-secret findings, and no high or critical production dependency advisories. The production audit reports two moderate advisories. No form, backend, API, database, payment, navigation, footer, or deployment behavior changed.

@@ -2,29 +2,32 @@
 
 ## Active task
 
-Product imagery audit and exact-match technical-detail refresh.
+Tiger About page — “West Coast Rally.”
 
 ## Selected task card
 
-Audit the full local product-image library against the public catalog, preserve the current design and product behavior, and connect only exact, uncontested product-detail photos to existing feature cards. Add the owner-selected lifestyle image to the PingPong Tables category hero. Record all mappings, unresolved products, unused sources, Cloudinary results, and visual proof.
+Replace the empty `/about` route with a two-minute, image-led Tiger story. Open on the current Expo Outdoor table against Vancouver and the North Shore mountains, keep the questionable first table below the first viewport, then move through Vancouver events, outdoor-minded product thinking, better manufacturing, product-name origins, and Tiger’s road across Canada.
 
 ## Boundaries
 
-- Do not change product names, descriptions, prices, inventory, variants, category assignments, routes, menus, checkout, payment truth, webhook authority, Prisma schema, or migrations.
-- Do not redesign cards, galleries, or carousels.
-- Do not apply ambiguous colour, model-revision, primary, or gallery mappings.
-- Keep raw source media local and outside Git.
-- Cloudinary uploads must use deterministic IDs, refuse collisions, and never expose credentials.
-- Do not mutate production catalog records or product-media rows.
+- Change `/about` only; homepage, footer, category, and product-page excerpts remain follow-up work.
+- Preserve public navigation, footer, catalog behavior, checkout, APIs, database, payment truth, and protected routes.
+- Keep all story wording and media references in a typed canonical content module for later reuse.
+- Keep raw archive photography local and outside Git.
+- Upload only owner-cleared selections under deterministic Cloudinary IDs; verify source hashes and refuse collisions.
+- Preserve historical watermarks and never upscale the small archive sources.
+- Use **PingPong** as one word in all customer-facing language.
 
 ## Required proof
 
-- Machine-readable exact-match manifest and unused-source inventory are committed.
-- Every implemented delivery URL returns `200`.
-- Desktop and mobile screenshots show no crop, stretch, layout shift, or carousel regression.
-- Lint, typecheck, tests, production build, secret scan, and production dependency audit pass.
-- Ambiguous products and variant-colour decisions remain unchanged and documented.
+- The present-day Expo hero and H1 occupy the initial desktop and mobile viewport; the first table remains below the fold.
+- Stable anchors, chapter order, product links, final CTAs, heading hierarchy, and image alternatives are covered by Playwright.
+- No horizontal overflow at 390, 768, 1280, or 1440 pixels.
+- Reduced motion is fully static; mobile removes desktop sticky behavior.
+- Desktop, tablet, and mobile viewport and full-page screenshots are captured under ignored `exports/about-story-qa/`.
+- Every final Cloudinary URL returns `200` with its expected delivered dimensions.
+- Lint, typecheck, unit tests, relevant Playwright tests, production build, secret scan, and launch preflight pass.
 
 ## Status
 
-Audit and exact-match implementation are complete on `codex/product-imagery-audit-refresh`. Twenty-five presentation-only detail assets were uploaded under new deterministic Cloudinary IDs and wired into four table PDP feature sections. The owner-selected Expo Outdoor lifestyle photo is now the responsive `PingPong Tables` category hero. All 26 delivery URLs return `200`; desktop/mobile visual QA passes; `pnpm launch:preflight` passes with 25 unit tests, 8 browser workflow tests, a clean tracked-secret scan, and zero high/critical production advisories. No catalog or database records changed.
+Complete on `codex/about-west-coast-rally`. The typed story, responsive page, tracked image map, collision-safe uploader, eleven new Cloudinary archive assets, focused browser coverage, and desktop/tablet/mobile visual captures are in place. All 12 final delivery URLs return `200` at their expected dimensions. `pnpm launch:preflight` passes with 26 unit tests, 12 browser tests, two intentionally skipped screenshot-only jobs, zero tracked-secret findings, and no high or critical production dependency advisories. No catalog, checkout, API, database, payment, navigation, or footer behavior changed.

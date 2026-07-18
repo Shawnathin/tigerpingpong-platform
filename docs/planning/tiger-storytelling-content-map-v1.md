@@ -1,7 +1,7 @@
 # Tiger PingPong Storytelling Content Map V1
 
 Date: 2026-07-18
-Status: About, Contact, and Summer in Canada homepage implemented; category, product, cart, and footer excerpts remain planning only
+Status: About, Contact, Summer in Canada homepage, and all three table category experiences implemented; product, cart, and footer excerpts remain planning only
 
 ## Purpose
 
@@ -190,21 +190,40 @@ No separate brand band or closing pitch is used. The shopping task remains prima
 
 ### Outdoor tables
 
+Status: implemented on `codex/table-subcategories-tiger-vibe`.
+
 Eyebrow:
 
 > Outdoor tables
 
 Heading:
 
-> Take the game outside.
+> Take it outside.
 
 Hero introduction:
 
-> Built for backyards and patios. Smart for garages, basements, schools, rentals, and busy game rooms too.
+> Built for backyards and patios. Smart for garages, basements, schools, community centres, and busy game rooms too.
+
+Hero media: the owner-selected shaded Portland Outdoor garden-patio photograph used on `/tables`. The deliberate repetition gives customers landing directly from search the strongest product-first introduction.
+
+Hero link: **Why outdoor works indoors too.** → `#outdoor-indoors`
+
+The All / Indoor / Outdoor category switch remains in normal flow, with Outdoor active. The sticky shipping tab reads:
+
+- **Every table ships free across Canada.**
+- **Yes, even to cottage country.**
+
+#### Product stages
+
+1. **Expo Outdoor** — “Easygoing outdoor.”
+2. **Portland Outdoor** — “Tough outside. Smart inside.”
+3. **Plaza Outdoor** — “Made for shared spaces.”
+
+Each stage uses the canonical two-sentence Tiger story defined under All tables, plus its live catalog price, availability, media, and product destination.
 
 #### Education band
 
-Placement: after the product/shipping rail and before the first product card.
+Placement: after Portland Outdoor and before Plaza Outdoor.
 
 Eyebrow:
 
@@ -224,13 +243,13 @@ CTA:
 
 Destination:
 
-> `/resources/how-to-choose-a-ping-pong-table`
+> `/resources/indoor-vs-outdoor-ping-pong-tables`
 
-Mobile body:
-
-> Outdoor tables are also a smart choice for garages, basements, kids, parties, and high-use spaces.
+The section uses the real Tiger-branded ball image already approved for `/tables`. The page then proceeds directly through Plaza and into the existing footer.
 
 ### Indoor tables
+
+Status: implemented on `codex/table-subcategories-tiger-vibe`.
 
 Eyebrow:
 
@@ -242,11 +261,28 @@ Heading:
 
 Hero introduction:
 
-> Built for dry, climate-controlled spaces where bounce and indoor playing feel come first.
+> Basements, rec rooms, schools, community centres—if the room stays dry, indoor tables put playing feel first.
 
 Helpful comparison link:
 
-> Not sure? Compare Indoor and Outdoor
+> Not sure? Compare indoor and outdoor.
+
+Hero media: real Whistler Indoor table beneath geometric lights in a modern shared lobby.
+
+Caption: **Whistler Indoor. Inside, naturally.**
+
+The All / Indoor / Outdoor category switch remains in normal flow, with Indoor active. The sticky shipping tab uses the same Canada-wide claim and cottage-country byline as `/tables`.
+
+#### Product stages
+
+1. **Portland Indoor** — “Home-court feel.”
+2. **Whistler Indoor** — “For the serious rallies.”
+
+Between the two models, the soft Tiger-orange playing-feel interlude reads:
+
+- Eyebrow: **Why indoor?**
+- Heading: **Keep it dry. Let it rip.**
+- Body: “Indoor tables put playing feel first when the room stays dry. Portland is the easy home-court choice; Whistler is for players who notice the bounce—even when nobody is keeping score.”
 
 Do not frame indoor tables as fragile or inferior. The choice is playing feel versus added environmental resilience.
 

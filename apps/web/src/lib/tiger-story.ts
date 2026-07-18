@@ -82,6 +82,30 @@ export interface TigerTablesProductStory {
   mode: "Indoor" | "Outdoor";
 }
 
+export type TigerTableCategoryKind = "indoor" | "outdoor";
+
+export interface TigerTableCategoryStory {
+  hero: {
+    body: string;
+    caption: string;
+    eyebrow: string;
+    heading: string;
+    image: TigerStoryImage;
+    layout: "cinematic" | "split";
+    link: {
+      href: string;
+      label: string;
+    };
+  };
+  guide?: {
+    anchor: string;
+    body: string;
+    eyebrow: string;
+    heading: string;
+  };
+  kind: TigerTableCategoryKind;
+}
+
 const aboutStoryImageMap = aboutStoryImageMapData as TigerStoryImageMap;
 const homepagePromotionImageMap = homepagePromotionImageMapData as TigerHomepagePromotionImageMap;
 const homepageSummerImageMap = homepageSummerImageMapData as TigerHomepageSummerImageMap;
@@ -244,6 +268,45 @@ export const tigerTablesProductStories = {
     image: requireTablesCategoryImage("TAB-CAT-006")
   }
 } satisfies Record<string, TigerTablesProductStory>;
+
+export const tigerTableCategoryStories = {
+  indoor: {
+    kind: "indoor",
+    hero: {
+      eyebrow: "Indoor tables",
+      heading: "Bring the rally home.",
+      body: "Basements, rec rooms, schools, community centres—if the room stays dry, indoor tables put playing feel first.",
+      caption: "Whistler Indoor. Inside, naturally.",
+      layout: "split",
+      link: {
+        href: "/resources/indoor-vs-outdoor-ping-pong-tables",
+        label: "Not sure? Compare indoor and outdoor."
+      },
+      image: requireTablesCategoryImage("TAB-CAT-007")
+    },
+    guide: {
+      anchor: "indoor-guide",
+      eyebrow: "Why indoor?",
+      heading: "Keep it dry. Let it rip.",
+      body: "Indoor tables put playing feel first when the room stays dry. Portland is the easy home-court choice; Whistler is for players who notice the bounce—even when nobody is keeping score."
+    }
+  },
+  outdoor: {
+    kind: "outdoor",
+    hero: {
+      eyebrow: "Outdoor tables",
+      heading: "Take it outside.",
+      body: "Built for backyards and patios. Smart for garages, basements, schools, community centres, and busy game rooms too.",
+      caption: "Portland Outdoor. Weather welcome.",
+      layout: "cinematic",
+      link: {
+        href: "#outdoor-indoors",
+        label: "Why outdoor works indoors too."
+      },
+      image: requireTablesCategoryImage("TAB-CAT-001")
+    }
+  }
+} satisfies Record<TigerTableCategoryKind, TigerTableCategoryStory>;
 
 export const tigerStory = {
   homepage: {

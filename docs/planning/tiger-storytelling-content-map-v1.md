@@ -662,6 +662,27 @@ House style: **PingPong is always one word**, including common-noun use. Existin
 
 ---
 
+## Contact page — implemented canonical support story
+
+The Contact page should feel like reaching Tiger, not entering a support directory. Its canonical source is `tigerStory.contact`.
+
+Implemented sequence:
+
+1. Human-first hero — “Need a hand? We’ve got you.” with the `NIT-034` game-night connection photograph and immediate call/email actions.
+2. Reasons to call — four direct routes covering product choice, existing orders, repairs/setup, and Canadian delivery questions.
+3. Order help — the order reference, checkout email, product name, and an optional photograph under the stable `#order-help-title` anchor.
+4. Closing promise — “Good gear. Real help. No runaround.” with the same working phone and email destinations.
+
+The approved contact identity remains:
+
+- `1-888-552-5259`
+- `info@tigerpingpong.com`
+- Vancouver, BC · Helping across Canada
+
+Do not add a form, support hours, response-time guarantee, street address, or time-zone joke until those operational details are explicitly approved.
+
+---
+
 ## Repetition rules
 
 - “Vancouver born. Outdoor minded.” belongs on the homepage only.

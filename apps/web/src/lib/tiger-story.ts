@@ -138,6 +138,60 @@ export const tigerStory = {
       requireStoryImage("EXT-102")
     ]
   },
+  contact: {
+    phone: {
+      display: "1-888-552-5259",
+      href: "tel:+18885525259"
+    },
+    email: {
+      display: "info@tigerpingpong.com",
+      href: "mailto:info@tigerpingpong.com"
+    },
+    hero: {
+      eyebrow: "Real help from Vancouver",
+      heading: "Need a hand? We’ve got you.",
+      body: "Choosing a table? Tracking down a part? Wondering what works on the patio? Call or email us. You’ll get a real person in Vancouver who knows the gear and will help you sort it out.",
+      primaryAction: "Call 1-888-552-5259",
+      secondaryAction: "Email a real person",
+      image: requireStoryImage("NIT-034")
+    },
+    topics: {
+      eyebrow: "What’s up?",
+      heading: "Start wherever you are.",
+      items: [
+        {
+          heading: "Help me choose.",
+          body: "Basement, patio, school, community centre—we’ll help you find the right setup."
+        },
+        {
+          heading: "Where’s my order?",
+          body: "Have your order reference and checkout email handy. We’ll help figure out what’s happening."
+        },
+        {
+          heading: "Something needs fixing.",
+          body: "Replacement parts, setup questions, or something behaving strangely? Tell us what’s up."
+        },
+        {
+          heading: "Canada is large.",
+          body: "Questions about delivery, timing, or getting a table to your part of it? Ask away."
+        }
+      ]
+    },
+    orderHelp: {
+      eyebrow: "Already ordered?",
+      heading: "Give us the clues.",
+      body: "Your order reference, checkout email, and product name help us find the right answer faster. If something arrived looking weird, a photo helps too.",
+      details: ["Order reference", "Checkout email", "Product name", "A photo, if it helps"],
+      action: "Email the details"
+    },
+    closing: {
+      heading: "Good gear. Real help. No runaround.",
+      body: "Call us. Email us. Tell us what’s going on. We’ll take it from there. Because it’s PingPong. This part should be easy too.",
+      signature: "Vancouver, BC · Helping across Canada",
+      primaryAction: "Call Tiger",
+      secondaryAction: "Email Tiger"
+    }
+  },
   closing: {
     heading: "Good gear. Real help. No runaround.",
     body: "Need help choosing a table for a basement, patio, school, or brewery? Call us. You’ll get a real person in Vancouver, and we’ll get it sorted. Because it’s PingPong. It should be fun—even the part where you buy it.",

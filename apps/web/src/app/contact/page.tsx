@@ -1,122 +1,127 @@
-import type { Metadata } from "next";
+import Image from "next/image";
 
+import { getPathMetadata } from "../../lib/seo";
+import { tigerStory } from "../../lib/tiger-story";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import styles from "./page.module.css";
 
-export const metadata: Metadata = {
-  title: "Contact | Tiger Ping Pong",
+export const metadata = getPathMetadata({
+  pathname: "/contact",
+  title: "Contact Tiger PingPong | Real Help from Vancouver",
   description:
-    "Contact Tiger Ping Pong for product, shipping, order, checkout, and setup questions."
-};
-
-const SUPPORT_PHONE = "1-888-552-5259";
-const SUPPORT_EMAIL = "info@tigerpingpong.com";
-const PORTLAND_IMAGE =
-  "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1";
-
-const SUPPORT_TOPICS = [
-  {
-    body: "Ask about tables, paddles, balls, accessories, product fit, or availability.",
-    label: "Product questions"
-  },
-  {
-    body: "Confirm Canada-wide shipping rules, delivery details, or table shipping expectations.",
-    label: "Shipping questions"
-  },
-  {
-    body: "Get help with checkout questions, payment status, or an existing order reference.",
-    label: "Order/payment questions"
-  },
-  {
-    body: "Talk through school or club needs, replacement parts, or setup help.",
-    label: "Setup help"
-  }
-];
-
-const ORDER_GUIDANCE = [
-  "Include your order reference if available.",
-  "Include your checkout email.",
-  "Include the product name if relevant."
-];
+    "Questions about products, orders, shipping, setup, or replacement parts? Call or email a real person at Tiger PingPong in Vancouver."
+});
 
 export default function ContactPage() {
+  const { contact } = tigerStory;
+
   return (
     <>
       <PublicStorefrontNav activeItem="contact" />
       <main className={styles.page}>
-        <section className={styles.hero} aria-labelledby="contact-title">
+        <section className={styles.hero} aria-labelledby="contact-title" data-testid="contact-hero">
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>Contact Tiger Ping Pong</p>
-            <h1 className={styles.title} id="contact-title">
-              Help for orders, shipping, products, and setup.
-            </h1>
-            <div className={styles.heroActions}>
-              <a className={styles.primaryAction} href="tel:+18885525259">
-                Call {SUPPORT_PHONE}
+            <p className={styles.heroEyebrow}>{contact.hero.eyebrow}</p>
+            <h1 id="contact-title">{contact.hero.heading}</h1>
+            <p className={styles.heroBody}>{contact.hero.body}</p>
+            <div className={styles.heroActions} aria-label="Contact Tiger PingPong">
+              <a
+                className={styles.primaryAction}
+                data-testid="contact-hero-call"
+                href={contact.phone.href}
+              >
+                {contact.hero.primaryAction}
               </a>
-              <a className={styles.secondaryAction} href={`mailto:${SUPPORT_EMAIL}`}>
-                Email us
+              <a
+                className={styles.secondaryAction}
+                data-testid="contact-hero-email"
+                href={contact.email.href}
+              >
+                {contact.hero.secondaryAction}
               </a>
             </div>
           </div>
 
-          <div className={styles.heroVisual} aria-label="Tiger Ping Pong table support">
-            <span className={styles.visualBadge}>
-              <small>Vancouver, BC</small>
-              <strong>Canada-wide support</strong>
-              <em>Product, shipping, order, and setup help</em>
-            </span>
-            <img src={PORTLAND_IMAGE} alt="Portland Outdoor table in grey" />
-          </div>
+          <figure className={styles.heroFigure}>
+            <div className={styles.heroImageFrame}>
+              <Image
+                alt={contact.hero.image.altText}
+                className={styles.heroImage}
+                fill
+                priority
+                sizes="(max-width: 899px) calc(100vw - 40px), 620px"
+                src={contact.hero.image.finalUrl}
+                unoptimized
+              />
+            </div>
+            <figcaption>
+              <span>{contact.hero.image.caption}</span>
+              <strong>Vancouver, BC</strong>
+            </figcaption>
+          </figure>
         </section>
 
-        <section className={styles.contactGrid} aria-label="Contact options">
-          <article>
-            <span>Call</span>
-            <a href="tel:+18885525259">{SUPPORT_PHONE}</a>
-            <p>Product help, availability, order questions, and setup help.</p>
-          </article>
-          <article>
-            <span>Email</span>
-            <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
-            <p>Send order references, product names, checkout questions, or shipping details.</p>
-          </article>
-          <article>
-            <span>Location</span>
-            <strong>Vancouver, BC</strong>
-          </article>
-        </section>
-
-        <section className={styles.section} aria-labelledby="support-topics-title">
-          <div className={styles.sectionHeader}>
-            <p className={styles.eyebrow}>Support topics</p>
-            <h2 id="support-topics-title">What we can help with.</h2>
-          </div>
-          <div className={styles.topicGrid}>
-            {SUPPORT_TOPICS.map((topic) => (
-              <article key={topic.label}>
-                <span>{topic.label}</span>
+        <section
+          className={styles.topics}
+          aria-labelledby="contact-topics-title"
+          data-testid="contact-topics"
+        >
+          <header className={styles.topicsHeader}>
+            <p className={styles.orangeEyebrow}>{contact.topics.eyebrow}</p>
+            <h2 id="contact-topics-title">{contact.topics.heading}</h2>
+          </header>
+          <div className={styles.topicRows}>
+            {contact.topics.items.map((topic, index) => (
+              <article key={topic.heading}>
+                <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                <h3>{topic.heading}</h3>
                 <p>{topic.body}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section className={styles.guidanceBand} aria-labelledby="order-help-title">
-          <div>
-            <p className={styles.eyebrow}>Order questions</p>
-            <h2 id="order-help-title">A few details help us find the right order faster.</h2>
-            <p>
-              For checkout, payment, shipping, or order questions, include the details below when
-              you call or email.
-            </p>
+        <section
+          className={styles.orderHelp}
+          aria-labelledby="order-help-title"
+          data-testid="contact-order-help"
+        >
+          <div className={styles.orderCopy}>
+            <p className={styles.darkEyebrow}>{contact.orderHelp.eyebrow}</p>
+            <h2 id="order-help-title">{contact.orderHelp.heading}</h2>
+            <p>{contact.orderHelp.body}</p>
+            <a className={styles.orderAction} href={contact.email.href}>
+              {contact.orderHelp.action}
+            </a>
           </div>
-          <ul>
-            {ORDER_GUIDANCE.map((item) => (
-              <li key={item}>{item}</li>
+          <ol className={styles.orderDetails}>
+            {contact.orderHelp.details.map((detail) => (
+              <li key={detail}>
+                <span>{detail}</span>
+              </li>
             ))}
-          </ul>
+          </ol>
+        </section>
+
+        <section
+          className={styles.closing}
+          aria-labelledby="contact-closing-title"
+          data-testid="contact-closing"
+        >
+          <div className={styles.closingCopy}>
+            <p className={styles.closingSignature}>{contact.closing.signature}</p>
+            <h2 id="contact-closing-title">{contact.closing.heading}</h2>
+            <p>{contact.closing.body}</p>
+          </div>
+          <div className={styles.closingActions} aria-label="Contact Tiger">
+            <a className={styles.primaryAction} href={contact.phone.href}>
+              {contact.closing.primaryAction}
+            </a>
+            <a className={styles.closingSecondaryAction} href={contact.email.href}>
+              {contact.closing.secondaryAction}
+            </a>
+          </div>
         </section>
       </main>
       <PublicStorefrontFooter />

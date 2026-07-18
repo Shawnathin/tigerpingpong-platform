@@ -282,6 +282,150 @@ test("capture About West Coast Rally evidence", async ({ page }) => {
   }
 });
 
+test("contact page makes real Vancouver help immediate and useful", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/contact");
+
+  await expect(page).toHaveTitle("Contact Tiger PingPong | Real Help from Vancouver");
+  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
+    "content",
+    "Tiger PingPong"
+  );
+
+  const hero = page.getByTestId("contact-hero");
+  const heroCall = page.getByTestId("contact-hero-call");
+  const heroEmail = page.getByTestId("contact-hero-email");
+  await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Need a hand? We’ve got you.");
+  await expect(heroCall).toHaveAttribute("href", "tel:+18885525259");
+  await expect(heroEmail).toHaveAttribute("href", "mailto:info@tigerpingpong.com");
+  const heroImage = hero.getByRole("img");
+  await expect(heroImage).toHaveAttribute(
+    "alt",
+    "Two players smiling and tapping paddles after a game in a crowded Vancouver venue."
+  );
+  const imageBounds = await heroImage.boundingBox();
+  expect(imageBounds).not.toBeNull();
+  expect(imageBounds?.width ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(750);
+
+  for (const action of [heroCall, heroEmail]) {
+    const bounds = await action.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect((bounds?.y ?? 0) + (bounds?.height ?? 0)).toBeLessThanOrEqual(900);
+  }
+
+  await heroCall.focus();
+  await expect(heroCall).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(heroEmail).toBeFocused();
+
+  const topics = page.getByTestId("contact-topics");
+  const orderHelp = page.getByTestId("contact-order-help");
+  const closing = page.getByTestId("contact-closing");
+  await expect(topics.getByRole("heading", { level: 2 })).toHaveText("Start wherever you are.");
+  await expect(topics.getByRole("heading", { level: 3 })).toHaveText([
+    "Help me choose.",
+    "Where’s my order?",
+    "Something needs fixing.",
+    "Canada is large."
+  ]);
+  await expect(
+    topics.getByText(
+      "Basement, patio, school, community centre—we’ll help you find the right setup."
+    )
+  ).toBeVisible();
+  await expect(topics.getByText(/brewery/i)).toHaveCount(0);
+  await expect(orderHelp.getByRole("heading", { level: 2 })).toHaveAttribute(
+    "id",
+    "order-help-title"
+  );
+  await expect(orderHelp.getByRole("link", { name: "Email the details" })).toHaveAttribute(
+    "href",
+    "mailto:info@tigerpingpong.com"
+  );
+  await expect(closing.getByRole("link", { name: "Call Tiger" })).toHaveAttribute(
+    "href",
+    "tel:+18885525259"
+  );
+  await expect(closing.getByRole("link", { name: "Email Tiger" })).toHaveAttribute(
+    "href",
+    "mailto:info@tigerpingpong.com"
+  );
+  await expect(page.locator("main form")).toHaveCount(0);
+  await expect(page.locator("main h1")).toHaveCount(1);
+  await expect(page.locator("main h2")).toHaveCount(3);
+  await expect(page.locator("main h3")).toHaveCount(4);
+
+  const sectionTops = await page
+    .locator(
+      '[data-testid="contact-hero"], [data-testid="contact-topics"], [data-testid="contact-order-help"], [data-testid="contact-closing"]'
+    )
+    .evaluateAll((sections) => sections.map((section) => section.getBoundingClientRect().top));
+  expect(sectionTops).toEqual([...sectionTops].sort((left, right) => left - right));
+});
+
+test("contact page stays deliberate and overflow-free from mobile through desktop", async ({
+  page
+}) => {
+  for (const width of [390, 768, 1280, 1440]) {
+    await page.setViewportSize({ width, height: width < 900 ? 844 : 900 });
+    await page.goto("/contact");
+
+    const dimensions = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth
+    }));
+    expect(dimensions.scrollWidth, `${width}px contact page`).toBe(dimensions.clientWidth);
+
+    if (width === 390) {
+      for (const testId of ["contact-hero-call", "contact-hero-email"]) {
+        const bounds = await page.getByTestId(testId).boundingBox();
+        expect(bounds).not.toBeNull();
+        expect((bounds?.y ?? 0) + (bounds?.height ?? 0)).toBeLessThanOrEqual(844);
+      }
+    }
+  }
+});
+
+test("contact page honors reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/contact");
+
+  for (const testId of [
+    "contact-hero",
+    "contact-topics",
+    "contact-order-help",
+    "contact-closing"
+  ]) {
+    const animationName = await page
+      .getByTestId(testId)
+      .evaluate((element) => getComputedStyle(element).animationName);
+    expect(animationName, testId).toBe("none");
+  }
+});
+
+test("capture Contact Real Help evidence", async ({ page }) => {
+  test.skip(process.env.CAPTURE_CONTACT_SCREENSHOTS !== "1", "Local evidence capture only.");
+  const outputDirectory = path.resolve("exports/contact-real-help-qa");
+  await mkdir(outputDirectory, { recursive: true });
+
+  for (const viewport of [
+    { height: 900, name: "desktop-1440", width: 1440 },
+    { height: 844, name: "mobile-390", width: 390 }
+  ]) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/contact");
+    await page.getByTestId("contact-hero").getByRole("img").waitFor();
+    await page.screenshot({
+      fullPage: false,
+      path: path.join(outputDirectory, `${viewport.name}-viewport.png`)
+    });
+    await page.screenshot({
+      fullPage: true,
+      path: path.join(outputDirectory, `${viewport.name}-full-page.png`)
+    });
+  }
+});
+
 test("tablet product pages use compact navigation and a proportioned purchase panel", async ({
   page
 }) => {

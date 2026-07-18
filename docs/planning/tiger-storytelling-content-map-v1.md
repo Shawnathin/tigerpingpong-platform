@@ -1,7 +1,7 @@
 # Tiger PingPong Storytelling Content Map V1
 
-Date: 2026-07-17
-Status: About story implemented; homepage, category, product, cart, and footer excerpts remain planning only
+Date: 2026-07-18
+Status: About, Contact, and Summer in Canada homepage implemented; category, product, cart, and footer excerpts remain planning only
 
 ## Purpose
 
@@ -26,16 +26,16 @@ Customer promise:
 
 ## Story dosage
 
-| Surface                         | Story allowance | Purpose                                     |
-| ------------------------------- | --------------: | ------------------------------------------- |
-| Homepage promotion support line |      8–12 words | Give each visual a human reason             |
-| Homepage Why Tiger band         |     35–45 words | Explain the company in under 10 seconds     |
-| Homepage lifestyle proof        |     25–35 words | Prove Vancouver roots with real photography |
-| Category hero introduction      |     18–28 words | Set the shopping context                    |
-| Category education band         |     35–55 words | Help customers make a better choice         |
-| Product Why We Made It band     |     55–75 words | Explain the product's reason to exist       |
-| Product secondary story         |     35–55 words | Introduce a useful, less-obvious use case   |
-| Footer signature                |     12–18 words | Leave every visitor with the Tiger identity |
+| Surface                       | Story allowance | Purpose                                      |
+| ----------------------------- | --------------: | -------------------------------------------- |
+| Homepage hero                 |     25–35 words | Establish Vancouver roots and national reach |
+| Homepage product support line |      5–20 words | Give each product a human reason             |
+| Homepage community proof      |     30–45 words | Prove Vancouver roots with real photography  |
+| Category hero introduction    |     18–28 words | Set the shopping context                     |
+| Category education band       |     35–55 words | Help customers make a better choice          |
+| Product Why We Made It band   |     55–75 words | Explain the product's reason to exist        |
+| Product secondary story       |     35–55 words | Introduce a useful, less-obvious use case    |
+| Footer signature              |     12–18 words | Leave every visitor with the Tiger identity  |
 
 One strong personality moment per viewport is enough. Do not place a joke in every block.
 
@@ -43,174 +43,73 @@ One strong personality moment per viewport is enough. Do not place a joke in eve
 
 ## Homepage
 
-### Recommended order
+### Implemented order
 
 1. Existing navigation
-2. Aqua promotion
-3. Portland promotion
-4. Compact Why Tiger band
-5. Table Cover promotion
-6. Vancouver lifestyle proof strip
-7. Human support band
-8. Footer
+2. Real Vancouver hero
+3. Glass “Shop Your Summer” shelf
+4. Aqua “Summer in Canada” campaign
+5. Portland Outdoor
+6. Vancouver community proof
+7. Tiger Table Cover
+8. Existing footer
 
-The Why Tiger band breaks up the large product panels and explains why Aqua and Portland are so outdoor-minded. The lifestyle strip then proves the story without repeating it.
+The final order is deliberately product-first. Aqua and Portland establish the summer shopping story; the Vancouver chapter then proves why Tiger builds practical outdoor-minded gear. The rejected support/reach cards do not appear.
 
-### Aqua promotion
+### Hero
 
-Keep the existing main headline:
+- Eyebrow: **Our home court**
+- Heading: **Raised on the West Coast.**
+- Body: “Vancouver is our home court. For more than 15 years, we’ve been helping people play—and shipping Tiger gear across Canada.”
+- Actions: **Find Your Table** and **Call 1-888-552-5259**
+- Media: exact owner-cleared `MAY-011` Expo photograph
 
-> Make a Splash.
+The hero has no About or “Our Story” action. Tiger offers help without pushing the visitor into a brand narrative.
 
-Eyebrow:
+### Shop Your Summer shelf
 
-> Aqua Outdoor Paddles
+- **Tables** — “Find the right table”
+- **Aqua Paddles** — “Made for summer”
+- **Outdoor Gear** — “Ready for real life”
 
-Support line:
+This is a low-profile frosted shelf, not a second hero.
 
-> Made for rain, rec rooms, and whoever forgot it outside.
+### Aqua seasonal campaign
 
-CTA:
+- Eyebrow: **Summer in Canada**
+- Heading: **Make a Splash.**
+- Body: “Poolside rallies, backyard BBQs, and the paddle someone forgot outside. Aqua was made for summer in Canada.”
+- CTA: **Meet Aqua**
 
-> Meet Aqua
+The `summer-canada` wording is selected manually from the typed campaign map. The retained `evergreen` variant reads: “Made for rain, rec rooms, and forgotten paddles.”
 
-Mobile support line:
+### Portland Outdoor
 
-> Made for rain, rec rooms, and forgotten paddles.
+- Eyebrow: **Portland Outdoor**
+- Heading: **Take it Outside.**
+- Body: “Made for patios, garages, and real life.”
+- CTA: **Meet Portland**
 
-### Portland promotion
+The exact Portland table remains sharp and dominant over a softly defocused Canadian summer patio. The lifestyle setting adds reality without competing with the product.
 
-Keep the existing main headline:
+### Vancouver community proof
 
-> Take it Outside.
+- Eyebrow: **Vancouver born**
+- Heading: **The city was our product test.**
+- Body: “Food Cart Fest. Science World. The Shipyards. Schools, universities, and community centres. Real rallies have shaped the gear we make.”
+- Pull line: **We build gear that works where people actually play.**
+- CTA: **See where we’ve played** → `/about#vancouver`
 
-Eyebrow:
+Real event photography does the proof. Do not add event logos, dates, or a long résumé.
 
-> Portland Outdoor
+### Tiger Table Cover
 
-Support line:
+- Eyebrow: **Tiger Table Cover**
+- Heading: **Ultra Protection.**
+- Body: “Ready for whatever just blew in.”
+- CTA: **Cover It Up**
 
-> A proper table for patios, garages, and real life.
-
-CTA:
-
-> Meet Portland
-
-Mobile support line:
-
-> Made for patios, garages, and real life.
-
-### Table Cover promotion
-
-Keep the existing main headline:
-
-> Ultra Protection.
-
-Eyebrow:
-
-> Tiger Table Cover
-
-Support line:
-
-> Because the weather has no respect for your plans.
-
-CTA:
-
-> Cover It Up
-
-Mobile support line:
-
-> Ready for whatever just blew in.
-
-### Why Tiger band
-
-Placement: between Portland and the Table Cover promotion.
-
-Eyebrow:
-
-> Why Tiger?
-
-Heading:
-
-> Vancouver born. Outdoor minded.
-
-Body:
-
-> We make good PingPong gear for real homes, schools, parks, and parties—and we pick up the phone when you need us.
-
-Proof points:
-
-- Canadian company
-- Built for real life
-- Real help when you need it
-
-CTA:
-
-> The Slightly Longer Story
-
-Destination:
-
-> `/about`
-
-Mobile body:
-
-> Good gear for real homes, schools, parks, and parties—with real help when you need it.
-
-Design constraint: this is a compact horizontal band, not a fourth hero. It should take roughly one-third to one-half of a desktop viewport and remain scannable in under 10 seconds.
-
-### Vancouver lifestyle proof strip
-
-Placement: after the Table Cover promotion and before support.
-
-Use three real images:
-
-1. Chinatown or another recognizable Vancouver game night
-2. Whistler festival or outdoor event
-3. A school, university, community, or corporate event
-
-Eyebrow:
-
-> Our home court
-
-Heading:
-
-> From Chinatown to Whistler.
-
-Body:
-
-> We’ve been bringing Vancouver to the table for years. Now we’re shipping the rally across Canada.
-
-CTA:
-
-> See Where We’ve Played
-
-Destination:
-
-> `/about#vancouver`
-
-Mobile version:
-
-> From Chinatown to Whistler. Vancouver is home. Canada gets the next rally.
-
-The photographs should do most of the work. Do not add event logos, dates, or a long résumé to this homepage section.
-
-### Human support band
-
-Heading:
-
-> Need a hand?
-
-Body:
-
-> Call or email us. You’ll get a real person in Vancouver, and we’ll get it sorted.
-
-Actions:
-
-- Call us
-- Email us
-- Order help
-
-Do not put the West Coast time-zone joke here until public support hours are defined.
+The page proceeds directly to the existing footer.
 
 ---
 

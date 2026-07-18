@@ -141,6 +141,42 @@ final result: passed
 
 ---
 
+# Homepage — Summer in Canada QA
+
+Date: 2026-07-18
+
+Branch: `codex/homepage-summer-in-canada`
+
+Scope: Full homepage rebuild from the owner-approved glassier summer mock, followed by desktop and mobile browser annotations.
+
+## Evidence
+
+- Approved reference: `exports/homepage-summer-qa/approved-mock.png`
+- Desktop viewport/full page: `exports/homepage-summer-qa/playwright/desktop-1440-viewport.png` and `desktop-1440-full-page.png`
+- Tablet viewport/full page: `exports/homepage-summer-qa/playwright/tablet-768-viewport.png` and `tablet-768-full-page.png`
+- Mobile viewport/full page: `exports/homepage-summer-qa/playwright/mobile-390-viewport.png` and `mobile-390-full-page.png`
+
+These visual proof files remain under ignored `exports/` and are not committed as production media.
+
+## Findings
+
+- No actionable P0, P1, or P2 visual difference remains after comparing the approved reference and implementation at matching viewports.
+- The exact `MAY-011` Vancouver photo leads the page; the questionable first table remains confined to the About story.
+- The frosted shopping shelf preserves a fast shopping path without becoming a second hero.
+- Aqua is the strongest seasonal moment and says **Summer in Canada** rather than narrowing the campaign to the West Coast.
+- Portland keeps the exact product cutout in sharp focus while a softly defocused summer patio background makes the section feel real and lived-in.
+- The final owner-directed order is Shop → Aqua → Portland → Vancouver → Cover. Moving the community proof below Portland brings both summer products forward and lets the story section explain the product point of view afterward.
+- The Vancouver proof uses real event photography and names community centres instead of breweries.
+- Desktop, tablet, and mobile compositions have no document-level horizontal overflow; mobile uses deliberate vertical layouts rather than compressed desktop collages.
+- Hero actions remain in the initial mobile viewport. Keyboard focus, reduced-motion, semantic headings, image alternatives, and real link destinations are preserved.
+- No rejected bottom support/reach cards, “Our Story” hero action, or “now heading across Canada” language appears.
+- Full launch preflight passes: 26 unit tests and 22 browser tests pass, five screenshot-only jobs are intentionally skipped, tracked-secret scan reports zero findings, and the production audit has no high or critical advisories (two moderate advisories remain).
+- Aqua pool, Portland cutout, and Portland lifestyle deliveries each return `200` at their recorded `1672 × 941`, `1280 × 853`, and `1672 × 941` dimensions.
+
+final result: passed
+
+---
+
 # Tablet Product Header and Purchase Panel QA
 
 Date: 2026-07-17

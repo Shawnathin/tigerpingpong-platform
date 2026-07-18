@@ -1,4 +1,6 @@
 import aboutStoryImageMapData from "../../../../data/media/about-story-image-map-v1.json";
+import homepagePromotionImageMapData from "../../../../data/media/homepage-promotion-image-map-v1.json";
+import homepageSummerImageMapData from "../../../../data/media/homepage-summer-image-map-v1.json";
 
 export interface TigerStoryImage {
   altText: string;
@@ -24,6 +26,41 @@ interface TigerStoryImageMap {
   entries: TigerStoryImageMapEntry[];
 }
 
+interface TigerHomepagePromotionImageMapEntry {
+  cloudinaryPublicId: string;
+  finalUrl: string;
+  sourceDimensions: {
+    height: number;
+    width: number;
+  };
+  status: string;
+  tone: "aqua" | "cover" | "portland";
+}
+
+interface TigerHomepagePromotionImageMap {
+  entries: TigerHomepagePromotionImageMapEntry[];
+}
+
+interface TigerHomepageSummerImageMapEntry extends Omit<TigerStoryImage, "finalUrl"> {
+  finalUrl: string | null;
+  rightsStatus: string;
+  status: string;
+}
+
+interface TigerHomepageSummerImageMap {
+  entries: TigerHomepageSummerImageMapEntry[];
+}
+
+export type TigerHomepageAquaCampaignId = "evergreen" | "summer-canada";
+
+interface TigerHomepageAquaCampaign {
+  body: string;
+  cta: string;
+  eyebrow: string;
+  heading: string;
+  id: TigerHomepageAquaCampaignId;
+}
+
 export interface TigerProductNameStory {
   body: string;
   cta: string;
@@ -33,8 +70,16 @@ export interface TigerProductNameStory {
 }
 
 const aboutStoryImageMap = aboutStoryImageMapData as TigerStoryImageMap;
+const homepagePromotionImageMap = homepagePromotionImageMapData as TigerHomepagePromotionImageMap;
+const homepageSummerImageMap = homepageSummerImageMapData as TigerHomepageSummerImageMap;
 const imageByAssetId = new Map(
   aboutStoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
+);
+const homepagePromotionImageByTone = new Map(
+  homepagePromotionImageMap.entries.map((entry) => [entry.tone, entry] as const)
+);
+const homepageSummerImageByAssetId = new Map(
+  homepageSummerImageMap.entries.map((entry) => [entry.assetId, entry] as const)
 );
 
 function requireStoryImage(assetId: string): TigerStoryImage {
@@ -56,7 +101,158 @@ function requireStoryImage(assetId: string): TigerStoryImage {
   };
 }
 
+function requireHomepagePromotionImage(
+  tone: TigerHomepagePromotionImageMapEntry["tone"],
+  altText: string,
+  caption: string
+): TigerStoryImage {
+  const image = homepagePromotionImageByTone.get(tone);
+
+  if (!image?.finalUrl || image.status !== "implemented") {
+    throw new Error(`Tiger homepage promotion image is not implementation-ready: ${tone}`);
+  }
+
+  return {
+    altText,
+    assetId: `HOM-PROM-${tone.toUpperCase()}`,
+    caption,
+    cloudinaryPublicId: image.cloudinaryPublicId,
+    finalUrl: image.finalUrl,
+    role: `homepage-${tone}-product`,
+    sourceDimensions: image.sourceDimensions
+  };
+}
+
+function requireHomepageSummerImage(assetId: string): TigerStoryImage {
+  const image = homepageSummerImageByAssetId.get(assetId);
+
+  if (!image?.finalUrl || image.status !== "implemented") {
+    throw new Error(`Tiger homepage summer image is not implementation-ready: ${assetId}`);
+  }
+
+  return {
+    altText: image.altText,
+    assetId: image.assetId,
+    caption: image.caption,
+    cloudinaryPublicId: image.cloudinaryPublicId,
+    finalUrl: image.finalUrl,
+    role: image.role,
+    sourceDimensions: image.sourceDimensions
+  };
+}
+
+const aquaProductImage = requireHomepagePromotionImage(
+  "aqua",
+  "Red and blue Tiger Aqua outdoor PingPong paddles.",
+  "Aqua outdoor paddles."
+);
+const coverProductImage = requireHomepagePromotionImage(
+  "cover",
+  "Black Tiger PingPong table cover with a white logo.",
+  "Tiger table cover."
+);
+const portlandProductImage = requireHomepageSummerImage("HOM-SUM-002");
+
+export const tigerHomepageAquaCampaigns = {
+  "summer-canada": {
+    id: "summer-canada",
+    eyebrow: "Summer in Canada",
+    heading: "Make a Splash.",
+    body: "Poolside rallies, backyard BBQs, and the paddle someone forgot outside. Aqua was made for summer in Canada.",
+    cta: "Meet Aqua"
+  },
+  evergreen: {
+    id: "evergreen",
+    eyebrow: "Aqua Outdoor Paddles",
+    heading: "Make a Splash.",
+    body: "Made for rain, rec rooms, and forgotten paddles.",
+    cta: "Meet Aqua"
+  }
+} satisfies Record<TigerHomepageAquaCampaignId, TigerHomepageAquaCampaign>;
+
+export const activeTigerHomepageAquaCampaignId: TigerHomepageAquaCampaignId = "summer-canada";
+
 export const tigerStory = {
+  homepage: {
+    hero: {
+      anchor: "home",
+      eyebrow: "Our home court",
+      heading: "Raised on the West Coast.",
+      body: "Vancouver is our home court. For more than 15 years, we’ve been helping people play—and shipping Tiger gear across Canada.",
+      image: requireStoryImage("MAY-011"),
+      actions: [
+        { href: "/tables/", label: "Find Your Table" },
+        { href: "tel:+18885525259", label: "Call 1-888-552-5259" }
+      ]
+    },
+    shop: {
+      anchor: "shop",
+      eyebrow: "Shop your summer",
+      heading: "Shop Your Summer",
+      items: [
+        {
+          heading: "Tables",
+          body: "Find the right table",
+          href: "/tables/",
+          image: portlandProductImage
+        },
+        {
+          heading: "Aqua Paddles",
+          body: "Made for summer",
+          href: "/catalog/products/tiger-aqua-outdoor-indoor-paddle",
+          image: aquaProductImage
+        },
+        {
+          heading: "Outdoor Gear",
+          body: "Ready for real life",
+          href: "/accessories/",
+          image: coverProductImage
+        }
+      ]
+    },
+    vancouver: {
+      anchor: "vancouver",
+      eyebrow: "Vancouver born",
+      heading: "The city was our product test.",
+      body: "Food Cart Fest. Science World. The Shipyards. Schools, universities, and community centres. Real rallies have shaped the gear we make.",
+      pullLine: "We build gear that works where people actually play.",
+      action: {
+        href: "/about#vancouver",
+        label: "See where we’ve played"
+      },
+      images: [requireStoryImage("FCF-002"), requireStoryImage("EXT-001")]
+    },
+    aqua: {
+      anchor: "aqua",
+      activeCampaign: tigerHomepageAquaCampaigns[activeTigerHomepageAquaCampaignId],
+      href: "/catalog/products/tiger-aqua-outdoor-indoor-paddle",
+      productImage: aquaProductImage,
+      backgroundImage: requireHomepageSummerImage("HOM-SUM-001")
+    },
+    portland: {
+      anchor: "portland",
+      eyebrow: "Portland Outdoor",
+      heading: "Take it Outside.",
+      body: "Made for patios, garages, and real life.",
+      action: {
+        href: "/catalog/products/tiger-portland-outdoor-table",
+        label: "Meet Portland"
+      },
+      backgroundImage: requireHomepageSummerImage("HOM-SUM-003"),
+      image: portlandProductImage
+    },
+    cover: {
+      anchor: "cover",
+      eyebrow: "Tiger Table Cover",
+      heading: "Ultra Protection.",
+      body: "Ready for whatever just blew in.",
+      action: {
+        href: "/catalog/products/tiger-table-cover-black-polyester",
+        label: "Cover It Up"
+      },
+      image: coverProductImage
+    }
+  },
   hero: {
     anchor: "start",
     eyebrow: "Our story",

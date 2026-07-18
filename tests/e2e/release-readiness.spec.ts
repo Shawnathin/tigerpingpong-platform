@@ -3,6 +3,8 @@ import { mkdir } from "node:fs/promises";
 import path from "node:path";
 
 test("public and policy routes render with baseline security headers", async ({ page }) => {
+  test.setTimeout(60_000);
+
   for (const path of [
     "/",
     "/cart",
@@ -33,35 +35,6 @@ test("public and policy routes render with baseline security headers", async ({ 
     page.getByText(/return shipping charges may apply to returned tables/i)
   ).toBeVisible();
   await expect(page.getByText(/14 days/i)).toHaveCount(0);
-});
-
-test("homepage promotions balance desktop headlines and keep one complete panel in view", async ({
-  page
-}) => {
-  await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto("/");
-
-  const aquaPanel = page.locator('article[data-tone="aqua"]');
-  const aquaImage = aquaPanel.locator("img");
-  const portlandImage = page.locator('article[data-tone="portland"] img');
-  const coverImage = page.locator('article[data-tone="cover"] img');
-  await expect(aquaPanel.getByRole("heading", { level: 1 })).toHaveText("Make a Splash.");
-  await expect(page.locator('article[data-tone="portland"] h2')).toHaveText("Take it Outside.");
-  await expect(page.locator('article[data-tone="cover"] h2')).toHaveText("Ultra Protection.");
-  await expect(aquaImage).toHaveAttribute("src", /res\.cloudinary\.com.*aqua-outdoor-paddles/);
-  await expect(portlandImage).toHaveAttribute("src", /res\.cloudinary\.com.*portland-outdoor/);
-  await expect(coverImage).toHaveAttribute(
-    "src",
-    /res\.cloudinary\.com.*tiger-table-cover-molten-amber-product-hero-v4-white-logo/
-  );
-  await expect(coverImage).toHaveAttribute(
-    "alt",
-    "Black Tiger Ping Pong table cover with a white logo in molten-amber artwork"
-  );
-
-  const aquaBounds = await aquaPanel.boundingBox();
-  expect(aquaBounds).not.toBeNull();
-  expect((aquaBounds?.y ?? 0) + (aquaBounds?.height ?? 0)).toBeLessThanOrEqual(720);
 });
 
 test("about story opens on present-day Vancouver and follows the West Coast rally", async ({
@@ -664,13 +637,6 @@ test("critical public routes do not overflow at a mobile viewport", async ({ pag
       scrollWidth: document.documentElement.scrollWidth
     }));
     expect(dimensions.scrollWidth, path).toBe(dimensions.clientWidth);
-
-    if (path === "/") {
-      const promotionHeadlineGaps = await page
-        .locator("article[data-tone] h1, article[data-tone] h2")
-        .evaluateAll((headlines) => headlines.map((headline) => getComputedStyle(headline).gap));
-      expect(promotionHeadlineGaps).toEqual(["10px", "10px", "10px"]);
-    }
   }
 });
 

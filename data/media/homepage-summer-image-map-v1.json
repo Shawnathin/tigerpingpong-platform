@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "homepage-summer-image-map-v1",
+  "generatedAt": "2026-07-18T00:00:00Z",
+  "policy": "Homepage campaign originals are kept outside Git. New production media is uploaded only after exact source-hash verification and Cloudinary collision preflight.",
+  "entries": [
+    {
+      "assetId": "HOM-SUM-001",
+      "sourceRelativePath": "exports/homepage-summer-media/aqua-summer-canada-pool-v1.png",
+      "sourceSha256": "4507c11a512dae4085e9c00fcdd0d5276095877ba17a4e12685df3e79593d292",
+      "sourceDimensions": {
+        "width": 1672,
+        "height": 941
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/homepage-campaigns/aqua-summer-canada-pool-v1",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784362585/tigerpingpong/storefront/homepage-campaigns/aqua-summer-canada-pool-v1.png",
+      "role": "aqua-summer-background",
+      "caption": "Summer in Canada.",
+      "altText": "Sunlit pale-blue pool water with soft ripples and a splash.",
+      "rightsStatus": "owner-cleared-generated",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "HOM-SUM-002",
+      "sourceRelativePath": "exports/homepage-summer-media/portland-outdoor-clean-v1.png",
+      "sourceSha256": "122c26bec1ed1f1899c01818880ffedad6913d40e40b65b5e80da082da141922",
+      "sourceDimensions": {
+        "width": 1280,
+        "height": 853
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/homepage-campaigns/portland-outdoor-clean-v1",
+      "deliveryTransformation": "e_background_removal/f_png",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png/v1784362586/tigerpingpong/storefront/homepage-campaigns/portland-outdoor-clean-v1.png",
+      "role": "portland-clean-product",
+      "caption": "Portland Outdoor.",
+      "altText": "Tiger Portland Outdoor PingPong table in black and grey.",
+      "rightsStatus": "owner-cleared-existing-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "HOM-SUM-003",
+      "sourceRelativePath": "exports/homepage-summer-media/portland-summer-lifestyle-background-v1.png",
+      "sourceSha256": "5f3bb0790fd739798533563b1f81848e5dfa8b8bc6278e87da3aec0f1ef73a48",
+      "sourceDimensions": {
+        "width": 1672,
+        "height": 941
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/homepage-campaigns/portland-summer-lifestyle-background-v1",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784363995/tigerpingpong/storefront/homepage-campaigns/portland-summer-lifestyle-background-v1.png",
+      "role": "portland-summer-lifestyle-background",
+      "caption": "Summer, outside.",
+      "altText": "Soft-focus summer patio with trees and late-afternoon light.",
+      "rightsStatus": "owner-cleared-generated",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    }
+  ]
+}

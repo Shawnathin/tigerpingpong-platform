@@ -2,48 +2,56 @@
 
 ## Active task
 
-Tiger Homepage — “Summer in Canada.”
+Tiger Tables Page — “Find Your Table.”
 
 ## Selected task card
 
-Rebuild `/` as an established, modern summer storefront using Tiger’s real Vancouver photography, exact product artwork, glass surfaces, and more than 15 years of Canadian history. The page should help people shop quickly, make Aqua the seasonal feature, and give the Tiger story in one concise proof section.
+Rebuild `/tables` as a calm, glassy, product-led shopping page that answers “indoor or outdoor?” quickly, then gives Tiger’s five current tables one large editorial moment each.
 
 ## Final page order
 
 1. Existing navigation
-2. Real Vancouver hero
-3. Glass “Shop Your Summer” shelf
-4. Aqua “Summer in Canada” campaign
-5. Portland Outdoor in a softly defocused summer patio setting
-6. Vancouver community proof
-7. Tiger Table Cover
-8. Existing footer
-
-The product-first order reflects the owner’s final browser annotation: Aqua and Portland move up; the Vancouver proof follows Portland.
+2. Real Portland Outdoor patio hero
+3. Glass “Where will it live?” chooser
+4. Expo Outdoor
+5. Portland Indoor
+6. Portland Outdoor
+7. “Outdoor doesn’t mean outdoors only” education band
+8. Whistler Indoor
+9. Plaza Outdoor
+10. Existing footer
 
 ## Boundaries
 
-- Change `/` only, apart from canonical Tiger story content, homepage media tooling, focused tests, and workflow documentation.
+- Change `/tables` only, apart from canonical Tiger story content, tables media tooling, focused tests, and workflow documentation.
 - Preserve navigation behaviour, footer, catalog, cart, checkout, APIs, database, payment truth, protected routes, and public URLs.
-- Use the exact owner-cleared `MAY-011` hero without AI alteration.
+- Use the exact owner-cleared `IMG_4919-2.jpg` patio hero without AI alteration.
+- Keep `/tables/indoor-tables/` and `/tables/outdoor-tables/` on their existing shared category composition.
+- Keep all product names, prices, availability, and primary media sourced from the live catalog.
 - Use **PingPong** as one word in all new customer-facing copy and alternatives.
-- Keep seasonal campaign switching manual through the typed `summer-canada` / `evergreen` content map.
-- Do not add the rejected support/reach cards, an About CTA in the hero, automatic seasonal logic, analytics, or new infrastructure.
+- Do not add filtering, a sticky product rail, a second closing sales pitch, analytics, or new infrastructure.
 - Do not deploy or merge; deliver a focused draft PR.
 
 ## Required proof
 
-- Hero H1, table CTA, and phone CTA are visible in the initial desktop and mobile viewport.
-- The hero uses the exact real Vancouver media URL and approved crop.
-- The page states more than 15 years, nationwide Canadian shipping, and **Summer in Canada**.
-- Product/category destinations, stable anchors, section order, heading hierarchy, image alternatives, focus states, and reduced motion are covered by Playwright.
+- Hero H1 and phone CTA are visible in the initial desktop and mobile viewport.
+- The hero uses the exact patio media URL while `/` and `/about` keep the approved mountain image.
+- The chooser answers indoor versus outdoor and preserves the approved Canada-wide table-shipping claim.
+- Product order, live prices, CTA destinations, stable anchors, education placement, heading hierarchy, image alternatives, focus states, and reduced motion are covered by Playwright.
 - No horizontal overflow at 390, 768, 1280, or 1440 pixels.
-- Desktop, tablet, and mobile viewport/full-page captures are stored under ignored `exports/homepage-summer-qa/`.
+- Desktop, tablet, and mobile viewport/full-page captures are stored under ignored `exports/tables-category-qa/`.
 - New Cloudinary assets return `200` at their expected dimensions.
 - Lint, typecheck, unit tests, focused Playwright, production build, secret scan, and launch preflight are run.
 
 ## Status
 
-Implementation and responsive visual QA are complete on `codex/homepage-summer-in-canada`. The final owner annotations are incorporated: Portland keeps the exact product sharp over a softly defocused summer patio, and the page now flows Shop → Aqua → Portland → Vancouver → Cover.
+Implementation and QA are complete on `codex/tables-find-your-table`, stacked on `codex/homepage-summer-in-canada`.
 
-`pnpm launch:preflight` passes with 26 unit tests, 22 browser tests, five intentionally skipped screenshot-only jobs, zero tracked-secret findings, and no high or critical production dependency advisories. The production audit reports two moderate advisories. Focused homepage screenshot capture also passes at 1440, 768, and 390 pixels. All three new Cloudinary deliveries return `200` at their recorded dimensions. No backend, API, database, payment, cart, checkout, navigation, footer, deployment, or URL behaviour changed. Delivery is through a focused draft PR; no deploy or merge is part of this task.
+- The owner-selected left-hand concept is implemented with the Portland patio hero, real lifestyle chooser photography, five compact glass product stages, and live catalog prices.
+- Every table has a short Tiger-voice “why it exists” explanation.
+- The free-table-shipping reassurance is a softened sticky extension of the public navigation, with “Yes, even to cottage country.” visible on desktop and mobile.
+- The outdoor-inside education scene uses the owner-provided real ball as its print reference: black Tiger scratches and wordmark, without the `40` or stars.
+- Visual comparison has no remaining P0–P2 differences, focused browser coverage passes, all nine media hashes verify, and the final Cloudinary delivery returns `200` at `1899 × 828`.
+- Lint, typecheck, 26 unit tests, focused Playwright, production build, tracked-secret scan, and the full launch preflight pass. The production dependency audit reports two moderate advisories and no high or critical advisories.
+
+No deployment or merge is part of this task. Delivery is a focused draft PR for review.

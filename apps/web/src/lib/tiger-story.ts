@@ -1,6 +1,7 @@
 import aboutStoryImageMapData from "../../../../data/media/about-story-image-map-v1.json";
 import homepagePromotionImageMapData from "../../../../data/media/homepage-promotion-image-map-v1.json";
 import homepageSummerImageMapData from "../../../../data/media/homepage-summer-image-map-v1.json";
+import tablesCategoryImageMapData from "../../../../data/media/tables-category-image-map-v1.json";
 
 export interface TigerStoryImage {
   altText: string;
@@ -51,6 +52,10 @@ interface TigerHomepageSummerImageMap {
   entries: TigerHomepageSummerImageMapEntry[];
 }
 
+interface TigerTablesCategoryImageMap {
+  entries: TigerHomepageSummerImageMapEntry[];
+}
+
 export type TigerHomepageAquaCampaignId = "evergreen" | "summer-canada";
 
 interface TigerHomepageAquaCampaign {
@@ -69,9 +74,18 @@ export interface TigerProductNameStory {
   name: string;
 }
 
+export interface TigerTablesProductStory {
+  body: string;
+  cta: string;
+  descriptor: string;
+  image?: TigerStoryImage;
+  mode: "Indoor" | "Outdoor";
+}
+
 const aboutStoryImageMap = aboutStoryImageMapData as TigerStoryImageMap;
 const homepagePromotionImageMap = homepagePromotionImageMapData as TigerHomepagePromotionImageMap;
 const homepageSummerImageMap = homepageSummerImageMapData as TigerHomepageSummerImageMap;
+const tablesCategoryImageMap = tablesCategoryImageMapData as TigerTablesCategoryImageMap;
 const imageByAssetId = new Map(
   aboutStoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
 );
@@ -80,6 +94,9 @@ const homepagePromotionImageByTone = new Map(
 );
 const homepageSummerImageByAssetId = new Map(
   homepageSummerImageMap.entries.map((entry) => [entry.assetId, entry] as const)
+);
+const tablesCategoryImageByAssetId = new Map(
+  tablesCategoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
 );
 
 function requireStoryImage(assetId: string): TigerStoryImage {
@@ -141,6 +158,24 @@ function requireHomepageSummerImage(assetId: string): TigerStoryImage {
   };
 }
 
+function requireTablesCategoryImage(assetId: string): TigerStoryImage {
+  const image = tablesCategoryImageByAssetId.get(assetId);
+
+  if (!image?.finalUrl || image.status !== "implemented") {
+    throw new Error(`Tiger tables category image is not implementation-ready: ${assetId}`);
+  }
+
+  return {
+    altText: image.altText,
+    assetId: image.assetId,
+    caption: image.caption,
+    cloudinaryPublicId: image.cloudinaryPublicId,
+    finalUrl: image.finalUrl,
+    role: image.role,
+    sourceDimensions: image.sourceDimensions
+  };
+}
+
 const aquaProductImage = requireHomepagePromotionImage(
   "aqua",
   "Red and blue Tiger Aqua outdoor PingPong paddles.",
@@ -171,6 +206,44 @@ export const tigerHomepageAquaCampaigns = {
 } satisfies Record<TigerHomepageAquaCampaignId, TigerHomepageAquaCampaign>;
 
 export const activeTigerHomepageAquaCampaignId: TigerHomepageAquaCampaignId = "summer-canada";
+
+export const tigerTablesProductStories = {
+  "tiger-expo-outdoor-table": {
+    mode: "Outdoor",
+    descriptor: "Easygoing outdoor.",
+    body: "We made Expo for backyards that want more playing and less overthinking. It’s the easy yes when you want a real outdoor table and a good time.",
+    cta: "Meet Expo",
+    image: requireTablesCategoryImage("TAB-CAT-003")
+  },
+  "tiger-portland-indoor-table": {
+    mode: "Indoor",
+    descriptor: "Home-court feel.",
+    body: "We made Portland Indoor for basements, rec rooms, and community centres that see plenty of rallies and very little rain. Serious table, relaxed room.",
+    cta: "Meet Portland Indoor",
+    image: requireTablesCategoryImage("TAB-CAT-004")
+  },
+  "tiger-portland-outdoor-table": {
+    mode: "Outdoor",
+    descriptor: "Tough outside. Smart inside.",
+    body: "We made Portland Outdoor for patios, garages, and busy game rooms where weather, kids, and spilled drinks all happen. It’s the table you worry about less.",
+    cta: "Meet Portland Outdoor",
+    image: portlandProductImage
+  },
+  "tiger-whistler-indoor-table": {
+    mode: "Indoor",
+    descriptor: "For the serious rallies.",
+    body: "We made Whistler for players who notice the bounce, even if nobody is keeping score. A little more game, zero extra attitude.",
+    cta: "Meet Whistler",
+    image: requireTablesCategoryImage("TAB-CAT-005")
+  },
+  "tiger-plaza-outdoor-table-grey": {
+    mode: "Outdoor",
+    descriptor: "Made for shared spaces.",
+    body: "We made Plaza for parks, campuses, and community centres where the table belongs to everyone. The whole neighbourhood is invited.",
+    cta: "Meet Plaza",
+    image: requireTablesCategoryImage("TAB-CAT-006")
+  }
+} satisfies Record<string, TigerTablesProductStory>;
 
 export const tigerStory = {
   homepage: {
@@ -251,6 +324,59 @@ export const tigerStory = {
         label: "Cover It Up"
       },
       image: coverProductImage
+    }
+  },
+  tables: {
+    hero: {
+      eyebrow: "Shop tables",
+      heading: "Find your table.",
+      body: "Indoors, outdoors, basement, backyard—we’ll help you find the table that fits how you actually play.",
+      action: {
+        href: "tel:+18885525259",
+        label: "Need a hand? Call us."
+      },
+      image: requireTablesCategoryImage("TAB-CAT-001")
+    },
+    chooser: {
+      anchor: "choose",
+      heading: "Where will it live?",
+      options: [
+        {
+          heading: "Indoor",
+          body: "Best playing feel in a dry, controlled room.",
+          href: "/tables/indoor-tables/",
+          productSlug: "tiger-portland-indoor-table",
+          image: requireTablesCategoryImage("TAB-CAT-007")
+        },
+        {
+          heading: "Outdoor",
+          body: "Built for weather, hard use, and indoors when durability wins.",
+          href: "/tables/outdoor-tables/",
+          productSlug: "tiger-portland-outdoor-table",
+          image: requireTablesCategoryImage("TAB-CAT-008")
+        }
+      ],
+      compare: {
+        href: "/resources/indoor-vs-outdoor-ping-pong-tables",
+        label: "Compare indoor and outdoor"
+      },
+      reassurance: "All tables ship free across Canada."
+    },
+    shipping: {
+      heading: "Every table ships free across Canada.",
+      body: "Yes, even to cottage country."
+    },
+    products: tigerTablesProductStories,
+    education: {
+      anchor: "outdoor-indoors",
+      eyebrow: "Good to know",
+      heading: "Outdoor doesn’t mean outdoors only.",
+      body: "Outdoor tops are made for moisture, changing conditions, and hard use. If kids, parties, a damp garage, or spilled drinks are part of the plan, that extra resilience can be worth it.",
+      action: {
+        href: "/resources/indoor-vs-outdoor-ping-pong-tables",
+        label: "Compare indoor and outdoor"
+      },
+      image: requireTablesCategoryImage("TAB-CAT-009")
     }
   },
   hero: {

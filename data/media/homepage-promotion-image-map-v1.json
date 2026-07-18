@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "homepage-promotion-image-map-v1",
+  "generatedAt": "2026-07-17T18:56:18Z",
+  "policy": "Homepage promotion originals are delivered from versioned Cloudinary URLs; local public assets remain available as rollback fallbacks until deployed verification.",
+  "entries": [
+    {
+      "tone": "aqua",
+      "source": "apps/web/public/homepage/promotions/aqua-outdoor-paddles.png",
+      "sourceSha256": "5351ca41c815ee8c64e12e4d3462082aa1693eb7d4d05c4c84a4e535f928304c",
+      "sourceDimensions": {
+        "width": 859,
+        "height": 811
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/homepage-promotions/aqua-outdoor-paddles",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784314548/tigerpingpong/storefront/homepage-promotions/aqua-outdoor-paddles.png",
+      "status": "implemented"
+    },
+    {
+      "tone": "portland",
+      "source": "apps/web/public/homepage/promotions/portland-outdoor.png",
+      "sourceSha256": "cefea8f8f6d200572e3acf90a5ceb2dd2c8836dd730c208fc381e2ab54f06bf8",
+      "sourceDimensions": {
+        "width": 859,
+        "height": 811
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/homepage-promotions/portland-outdoor",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784314549/tigerpingpong/storefront/homepage-promotions/portland-outdoor.png",
+      "status": "implemented"
+    },
+    {
+      "tone": "cover",
+      "source": "output/homepage-graphic-upgrades/tiger-table-cover-molten-amber-product-hero-v4-white-logo-1574x1266.png",
+      "sourceSha256": "ed233af27948d4d778fb24566feb635b2363ae297f666271b437183b341ce4c5",
+      "sourceDimensions": {
+        "width": 1574,
+        "height": 1266
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/homepage-promotions/tiger-table-cover-molten-amber-product-hero-v4-white-logo",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784314550/tigerpingpong/storefront/homepage-promotions/tiger-table-cover-molten-amber-product-hero-v4-white-logo.png",
+      "status": "implemented"
+    }
+  ]
+}

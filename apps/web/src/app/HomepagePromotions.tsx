@@ -9,9 +9,10 @@ const PROMOTIONS = [
     eyebrow: "Aqua Outdoor Paddles",
     height: 811,
     href: "/catalog/products/tiger-aqua-outdoor-indoor-paddle",
-    image: "/homepage/promotions/aqua-outdoor-paddles.png",
+    image:
+      "https://res.cloudinary.com/djfcisldm/image/upload/v1784314548/tigerpingpong/storefront/homepage-promotions/aqua-outdoor-paddles.png",
     leftHeadline: "Make a",
-    rightHeadline: "splash.",
+    rightHeadline: "Splash.",
     tone: "aqua",
     width: 859
   },
@@ -21,21 +22,23 @@ const PROMOTIONS = [
     eyebrow: "Portland Outdoor",
     height: 811,
     href: "/catalog/products/tiger-portland-outdoor-table",
-    image: "/homepage/promotions/portland-outdoor.png",
+    image:
+      "https://res.cloudinary.com/djfcisldm/image/upload/v1784314549/tigerpingpong/storefront/homepage-promotions/portland-outdoor.png",
     leftHeadline: "Take it",
-    rightHeadline: "outside.",
+    rightHeadline: "Outside.",
     tone: "portland",
     width: 859
   },
   {
-    alt: "Tiger Ping Pong table cover promotional artwork",
+    alt: "Black Tiger Ping Pong table cover with a white logo in molten-amber artwork",
     cta: "View the Cover",
     eyebrow: "Tiger Table Cover",
     height: 1266,
     href: "/catalog/products/tiger-table-cover-black-polyester",
-    image: "/homepage/promotions/tiger-table-cover-orange-glass.png",
+    image:
+      "https://res.cloudinary.com/djfcisldm/image/upload/v1784314550/tigerpingpong/storefront/homepage-promotions/tiger-table-cover-molten-amber-product-hero-v4-white-logo.png",
     leftHeadline: "Ultra",
-    rightHeadline: "durable.",
+    rightHeadline: "Protection.",
     tone: "cover",
     width: 1574
   }

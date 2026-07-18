@@ -877,6 +877,19 @@ export function EverydayDetailsSection({
   );
 }
 
+function SpecificationGrid({ fields }: { fields: LabeledValue[] }) {
+  return (
+    <dl className={styles.specGrid}>
+      {fields.map((field) => (
+        <div key={`${field.label}-${field.value}`}>
+          <dt>{field.label}</dt>
+          <dd>{field.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 export function SpecsGridSection({
   normalizedContent,
   product
@@ -886,6 +899,7 @@ export function SpecsGridSection({
 }) {
   const fields = getSpecificationFields(product, normalizedContent);
   const isTable = isTableProduct(product);
+  const title = isTable ? "Specs and dimensions." : "Specs.";
 
   if (fields.length === 0) {
     return null;
@@ -897,20 +911,25 @@ export function SpecsGridSection({
         isTable ? styles.specSection : `${styles.specSection} ${styles.accessorySpecSection}`
       }
       id="specs"
-      aria-labelledby="product-specs-title"
+      aria-label="Specifications"
     >
       <div className={styles.specHeading}>
         <p className={styles.eyebrow}>Specifications</p>
-        <h2 id="product-specs-title">{isTable ? "Specs and dimensions." : "Specs."}</h2>
+        <h2 id="product-specs-title">{title}</h2>
       </div>
-      <dl className={styles.specGrid}>
-        {fields.map((field) => (
-          <div key={`${field.label}-${field.value}`}>
-            <dt>{field.label}</dt>
-            <dd>{field.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <SpecificationGrid fields={fields} />
+      <details className={`${styles.mobileDisclosure} ${styles.mobileSpecsDisclosure}`}>
+        <summary className={styles.mobileDisclosureSummary}>
+          <span className={styles.mobileDisclosureLabel}>
+            <span className={styles.eyebrow}>Specifications</span>
+            <span className={styles.mobileDisclosureTitle}>{title}</span>
+          </span>
+          <span aria-hidden="true" className={styles.mobileDisclosureIcon} />
+        </summary>
+        <div className={styles.mobileDisclosureBody}>
+          <SpecificationGrid fields={fields} />
+        </div>
+      </details>
     </section>
   );
 }
@@ -938,12 +957,13 @@ export function TableComparisonSection({
   const rows = COMPARISON_ROWS.filter((row) =>
     columns.some((column) => Boolean(column.values[row.key]))
   );
+  const comparisonHeading = getComparisonHeading(currentSlug);
 
   return (
-    <section className={styles.tableComparisonSection} aria-labelledby="table-comparison-title">
+    <section className={styles.tableComparisonSection} aria-label="Table comparison">
       <div className={styles.comparisonSectionHeading}>
         <p className={styles.eyebrow}>Compare tables</p>
-        <h2 id="table-comparison-title">{getComparisonHeading(currentSlug)}</h2>
+        <h2 id="table-comparison-title">{comparisonHeading}</h2>
       </div>
       <div className={styles.comparisonTableScroll}>
         <table className={styles.fullComparisonTable}>
@@ -984,6 +1004,54 @@ export function TableComparisonSection({
           </tbody>
         </table>
       </div>
+      <details className={styles.mobileDisclosure} open>
+        <summary className={styles.mobileDisclosureSummary}>
+          <span className={styles.mobileDisclosureLabel}>
+            <span className={styles.eyebrow}>Compare tables</span>
+            <span className={styles.mobileDisclosureTitle}>{comparisonHeading}</span>
+          </span>
+          <span aria-hidden="true" className={styles.mobileDisclosureIcon} />
+        </summary>
+        <div className={styles.mobileDisclosureBody}>
+          <div
+            aria-label="Table comparison cards"
+            className={styles.mobileComparisonTrack}
+            role="region"
+            tabIndex={0}
+          >
+            {columns.map((column) => {
+              const isCurrent = column.product.slug === currentSlug;
+
+              return (
+                <article
+                  className={styles.mobileComparisonCard}
+                  data-current={isCurrent ? "true" : undefined}
+                  key={column.product.slug}
+                >
+                  <div className={styles.mobileComparisonCardHeader}>
+                    {isCurrent ? (
+                      <span className={styles.currentComparisonBadge}>Current table</span>
+                    ) : null}
+                    <h3>
+                      <a href={`/catalog/products/${column.product.slug}`}>
+                        {getProductDisplayLabel(column.product)}
+                      </a>
+                    </h3>
+                  </div>
+                  <dl className={styles.mobileComparisonValues}>
+                    {rows.map((row) => (
+                      <div key={`${column.product.slug}-${row.key}`}>
+                        <dt>{row.label}</dt>
+                        <dd>{column.values[row.key] ?? "—"}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </details>
     </section>
   );
 }

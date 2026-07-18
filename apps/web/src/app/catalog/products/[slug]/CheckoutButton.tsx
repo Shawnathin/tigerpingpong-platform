@@ -49,22 +49,37 @@ function ProductThumb({ product }: { product: CartProductInput }) {
   return <span aria-hidden="true">{product.name.charAt(0)}</span>;
 }
 
-function getOptionSwatchClassName(optionValue: ProductOptionValue): string {
+type OptionTone = "black" | "blue" | "green" | "grey" | "orange" | "white" | null;
+
+function getOptionTone(optionValue: ProductOptionValue): OptionTone {
   const normalizedValue = `${optionValue.label} ${optionValue.value}`.toLowerCase();
-  const swatchClasses = [styles.optionSwatch];
 
   if (normalizedValue.includes("grey") || normalizedValue.includes("gray")) {
-    swatchClasses.push(styles.optionSwatchGrey);
-  } else if (normalizedValue.includes("blue")) {
-    swatchClasses.push(styles.optionSwatchBlue);
-  } else if (normalizedValue.includes("green")) {
-    swatchClasses.push(styles.optionSwatchGreen);
-  } else if (normalizedValue.includes("orange")) {
-    swatchClasses.push(styles.optionSwatchOrange);
-  } else if (normalizedValue.includes("white")) {
-    swatchClasses.push(styles.optionSwatchWhite);
-  } else if (normalizedValue.includes("black")) {
-    swatchClasses.push(styles.optionSwatchBlack);
+    return "grey";
+  }
+
+  for (const tone of ["blue", "green", "orange", "white", "black"] as const) {
+    if (normalizedValue.includes(tone)) {
+      return tone;
+    }
+  }
+
+  return null;
+}
+
+function getOptionSwatchClassName(optionTone: OptionTone): string {
+  const swatchClasses = [styles.optionSwatch];
+  const toneClassNames: Record<Exclude<OptionTone, null>, string> = {
+    black: styles.optionSwatchBlack,
+    blue: styles.optionSwatchBlue,
+    green: styles.optionSwatchGreen,
+    grey: styles.optionSwatchGrey,
+    orange: styles.optionSwatchOrange,
+    white: styles.optionSwatchWhite
+  };
+
+  if (optionTone) {
+    swatchClasses.push(toneClassNames[optionTone]);
   }
 
   return swatchClasses.join(" ");
@@ -303,10 +318,12 @@ export function CheckoutButton({
                             .replace(/[^a-z0-9]+/g, "-");
                         const isSelected =
                           selectedOptionValues[optionGroup.name] === optionValue.value;
+                        const optionTone = getOptionTone(optionValue);
 
                         return (
                           <label
                             className={styles.optionChoice}
+                            data-option-tone={optionTone ?? undefined}
                             htmlFor={inputId}
                             key={optionValue.value}
                           >
@@ -322,7 +339,7 @@ export function CheckoutButton({
                               value={optionValue.value}
                             />
                             <span
-                              className={getOptionSwatchClassName(optionValue)}
+                              className={getOptionSwatchClassName(optionTone)}
                               aria-hidden="true"
                             />
                             <span className={styles.optionChoiceText}>

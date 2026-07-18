@@ -276,26 +276,6 @@ select {
 }
 
 @media (max-width: 1060px) {
-  .glassNav {
-    align-items: stretch;
-    flex-direction: column;
-    border-radius: 28px;
-    padding: 12px;
-  }
-
-  .publicBrand {
-    justify-content: center;
-  }
-
-  .publicNavLinks {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .publicCartButton {
-    width: 100%;
-  }
-
   .publicFooterInner,
   .publicFooterNav {
     grid-template-columns: 1fr;
@@ -306,7 +286,7 @@ select {
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1060px) {
   .publicHeader {
     position: sticky;
     top: 0;
@@ -462,7 +442,9 @@ select {
     color: var(--tiger-orange-deep);
     background: rgb(242 138 46 / 10%);
   }
+}
 
+@media (max-width: 760px) {
   .publicFooter {
     padding-inline: 12px;
   }

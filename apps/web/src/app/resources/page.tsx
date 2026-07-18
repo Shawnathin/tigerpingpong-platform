@@ -67,11 +67,6 @@ export default function ResourcesPage() {
               </a>
             </div>
           </div>
-          <aside className={styles.featuredAside} aria-label="Featured guide details">
-            <p className={styles.tag}>{featuredArticle.category}</p>
-            <strong>{formatResourceDate(featuredArticle.publishedDate)}</strong>
-            <p>{featuredArticle.subtitle}</p>
-          </aside>
         </section>
 
         <section className={styles.section} aria-labelledby="resource-guides-title">

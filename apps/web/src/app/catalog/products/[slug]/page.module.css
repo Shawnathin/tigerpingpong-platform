@@ -1149,12 +1149,142 @@
     0 8px 18px rgb(27 36 65 / 4%);
 }
 
+.optionChoice[data-option-tone] {
+  --option-glass-rgb: 125 136 151;
+  --option-glass-deep-rgb: 68 78 92;
+
+  overflow: hidden;
+  border-color: rgb(var(--option-glass-deep-rgb) / 28%);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 74%) 0%, rgb(255 255 255 / 24%) 48%, transparent 76%),
+    linear-gradient(
+      135deg,
+      rgb(var(--option-glass-rgb) / 34%),
+      rgb(var(--option-glass-deep-rgb) / 18%)
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 92%),
+    inset 0 -1px 0 rgb(var(--option-glass-deep-rgb) / 14%),
+    0 12px 26px rgb(var(--option-glass-deep-rgb) / 13%);
+  backdrop-filter: blur(18px) saturate(1.3);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+}
+
+.optionChoice[data-option-tone="blue"] {
+  --option-glass-rgb: 23 92 186;
+  --option-glass-deep-rgb: 11 55 123;
+}
+
+.optionChoice[data-option-tone="grey"] {
+  --option-glass-rgb: 65 75 90;
+  --option-glass-deep-rgb: 35 43 55;
+}
+
+.optionChoice[data-option-tone="green"] {
+  --option-glass-rgb: 72 174 111;
+  --option-glass-deep-rgb: 30 111 68;
+}
+
+.optionChoice[data-option-tone="orange"] {
+  --option-glass-rgb: 246 152 65;
+  --option-glass-deep-rgb: 190 81 19;
+}
+
+.optionChoice[data-option-tone="white"] {
+  --option-glass-rgb: 232 238 243;
+  --option-glass-deep-rgb: 142 153 166;
+}
+
+.optionChoice[data-option-tone="black"] {
+  --option-glass-rgb: 65 75 91;
+  --option-glass-deep-rgb: 21 28 39;
+}
+
+.optionChoice[data-option-tone="blue"],
+.optionChoice[data-option-tone="grey"] {
+  min-height: 64px;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  border-color: rgb(255 255 255 / 46%);
+  padding: 12px 18px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 18% 0%, rgb(255 255 255 / 48%), transparent 46%),
+    linear-gradient(
+      135deg,
+      rgb(var(--option-glass-rgb) / 70%),
+      rgb(var(--option-glass-deep-rgb) / 58%)
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 82%),
+    inset 0 -1px 0 rgb(var(--option-glass-deep-rgb) / 12%),
+    0 10px 24px rgb(var(--option-glass-deep-rgb) / 12%);
+  backdrop-filter: blur(22px) saturate(1.18);
+  -webkit-backdrop-filter: blur(22px) saturate(1.18);
+}
+
 .optionChoice:has(input:checked) {
   border-color: var(--tiger-orange-deep);
   color: #263049;
   box-shadow:
     0 18px 34px rgb(232 111 24 / 14%),
     inset 0 0 0 1px rgb(255 255 255 / 90%);
+}
+
+.optionChoices:has(.optionChoice[data-option-tone] input:checked)
+  .optionChoice[data-option-tone]:not(:has(input:checked)) {
+  opacity: 0.68;
+  transform: scale(0.975);
+}
+
+.optionChoice[data-option-tone]:hover {
+  border-color: rgb(var(--option-glass-deep-rgb) / 48%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 96%),
+    inset 0 -1px 0 rgb(var(--option-glass-deep-rgb) / 18%),
+    0 16px 32px rgb(var(--option-glass-deep-rgb) / 18%);
+  transform: translateY(-1px);
+}
+
+.optionChoice[data-option-tone]:has(input:focus-visible) {
+  outline: 3px solid rgb(var(--option-glass-rgb) / 48%);
+  outline-offset: 3px;
+}
+
+.optionChoice[data-option-tone]:has(input:checked) {
+  border-color: rgb(var(--option-glass-deep-rgb) / 76%);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 78%) 0%, rgb(255 255 255 / 24%) 44%, transparent 72%),
+    linear-gradient(
+      135deg,
+      rgb(var(--option-glass-rgb) / 48%),
+      rgb(var(--option-glass-deep-rgb) / 26%)
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 96%),
+    inset 0 0 0 1px rgb(var(--option-glass-deep-rgb) / 20%),
+    0 18px 36px rgb(var(--option-glass-deep-rgb) / 22%);
+}
+
+.optionChoice[data-option-tone="blue"]:has(input:checked),
+.optionChoice[data-option-tone="grey"]:has(input:checked) {
+  border-color: rgb(255 255 255 / 78%);
+  background:
+    radial-gradient(circle at 18% 0%, rgb(255 255 255 / 54%), transparent 48%),
+    linear-gradient(
+      135deg,
+      rgb(var(--option-glass-rgb) / 78%),
+      rgb(var(--option-glass-deep-rgb) / 68%)
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 94%),
+    inset 0 0 0 2px rgb(255 255 255 / 28%),
+    0 14px 28px rgb(var(--option-glass-deep-rgb) / 16%);
 }
 
 .optionChoiceInput {
@@ -1167,6 +1297,7 @@
 }
 
 .optionSwatch {
+  position: relative;
   display: block;
   width: 24px;
   height: 24px;
@@ -1176,6 +1307,26 @@
   box-shadow:
     0 0 0 1px rgb(38 48 73 / 14%),
     0 8px 18px rgb(27 36 65 / 12%);
+}
+
+.optionChoice[data-option-tone] .optionSwatch {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 64%),
+    0 0 0 1px rgb(var(--option-glass-deep-rgb) / 24%),
+    0 8px 18px rgb(var(--option-glass-deep-rgb) / 22%);
+}
+
+.optionChoice[data-option-tone="blue"] .optionSwatch,
+.optionChoice[data-option-tone="grey"] .optionSwatch {
+  display: none;
+}
+
+.optionChoice[data-option-tone]:has(input:checked) .optionSwatch {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 72%),
+    0 0 0 3px rgb(255 255 255 / 78%),
+    0 0 0 5px rgb(var(--option-glass-rgb) / 34%),
+    0 10px 22px rgb(var(--option-glass-deep-rgb) / 28%);
 }
 
 .optionSwatchGrey {
@@ -1212,6 +1363,17 @@
   color: #20283f;
   font-size: 0.95rem;
   font-weight: 950;
+}
+
+.optionChoice[data-option-tone="blue"] .optionChoiceText strong,
+.optionChoice[data-option-tone="grey"] .optionChoiceText strong {
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgb(var(--option-glass-deep-rgb) / 56%);
+}
+
+.optionChoice[data-option-tone="blue"] .optionChoiceText,
+.optionChoice[data-option-tone="grey"] .optionChoiceText {
+  justify-items: center;
 }
 
 .optionChoiceText small {
@@ -1610,6 +1772,10 @@
   color: var(--tiger-orange-deep);
 }
 
+.mobileDisclosure {
+  display: none;
+}
+
 .accessoryHero {
   width: min(1240px, calc(100vw - 44px));
   grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
@@ -1950,10 +2116,6 @@
     z-index: 3;
   }
 
-  .productHero {
-    grid-template-columns: 1fr;
-  }
-
   .tableSubnavLinks {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -2008,6 +2170,12 @@
     height: auto;
     max-height: none;
     overflow: visible;
+  }
+}
+
+@media (max-width: 900px) {
+  .productHero {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2106,9 +2274,260 @@
     grid-template-columns: 1fr;
   }
 
+  .optionChoices:has(.optionChoice[data-option-tone]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .optionChoice[data-option-tone="blue"],
+  .optionChoice[data-option-tone="grey"] {
+    min-height: 50px;
+    border-radius: 12px;
+    padding: 8px 10px;
+  }
+
   .detailStrip,
   .specSection {
     border-radius: 26px;
+  }
+
+  .specSection > .specHeading,
+  .specSection > .specGrid,
+  .tableComparisonSection > .comparisonSectionHeading,
+  .tableComparisonSection > .comparisonTableScroll {
+    display: none;
+  }
+
+  .specSection,
+  .tableComparisonSection {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .tableComparisonSection {
+    border: 1px solid rgb(255 255 255 / 76%);
+    border-radius: 26px;
+    padding: 22px;
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 84%), rgb(255 255 255 / 56%)),
+      linear-gradient(120deg, rgb(242 138 46 / 8%), rgb(81 210 191 / 8%));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 88%),
+      0 26px 70px rgb(27 36 65 / 7%);
+  }
+
+  .mobileDisclosure {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .mobileDisclosureSummary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 42px;
+    gap: 14px;
+    align-items: center;
+    min-height: 58px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobileDisclosureSummary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobileDisclosureSummary:focus-visible {
+    border-radius: 12px;
+    outline: 3px solid rgb(32 40 63 / 70%);
+    outline-offset: 6px;
+  }
+
+  .mobileDisclosureLabel {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .mobileDisclosureTitle {
+    color: var(--tiger-ink);
+    font-size: clamp(1.55rem, 7.5vw, 2rem);
+    font-weight: 950;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+
+  .mobileDisclosureIcon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--tiger-ink);
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: rgb(255 255 255 / 76%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 88%);
+  }
+
+  .mobileDisclosureIcon::before {
+    content: "+";
+  }
+
+  .mobileDisclosure[open] .mobileDisclosureIcon::before {
+    content: "−";
+  }
+
+  .mobileDisclosure[open] .mobileDisclosureSummary {
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgb(214 224 231 / 78%);
+  }
+
+  .mobileDisclosureBody {
+    min-width: 0;
+    max-width: 100%;
+    padding-top: 16px;
+  }
+
+  .specSection .mobileSpecsDisclosure .specGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .specSection .mobileSpecsDisclosure .specGrid div {
+    display: grid;
+    grid-template-columns: minmax(112px, 0.9fr) minmax(0, 1.1fr);
+    gap: 14px;
+    min-height: 0;
+    border: 0;
+    border-bottom: 1px solid rgb(214 224 231 / 72%);
+    border-radius: 0;
+    padding: 14px 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .specSection .mobileSpecsDisclosure .specGrid div:last-child {
+    border-bottom: 0;
+  }
+
+  .specSection .mobileSpecsDisclosure .specGrid dt {
+    font-size: 0.7rem;
+    line-height: 1.35;
+  }
+
+  .specSection .mobileSpecsDisclosure .specGrid dd {
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .mobileComparisonTrack {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    grid-auto-columns: minmax(280px, 92%);
+    grid-auto-flow: column;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 2px 2px 14px;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: thin;
+  }
+
+  .mobileComparisonTrack:focus-visible {
+    border-radius: 18px;
+    outline: 3px solid rgb(32 40 63 / 70%);
+    outline-offset: 4px;
+  }
+
+  .mobileComparisonCard {
+    overflow: hidden;
+    border: 1px solid rgb(214 224 231 / 82%);
+    border-radius: 20px;
+    padding: 18px;
+    background: rgb(255 255 255 / 74%);
+    box-shadow: 0 14px 34px rgb(27 36 65 / 6%);
+    scroll-snap-align: start;
+  }
+
+  .mobileComparisonCard[data-current="true"] {
+    border-color: rgb(242 138 46 / 38%);
+    background:
+      linear-gradient(135deg, rgb(255 173 93 / 22%), rgb(255 255 255 / 82%)), rgb(255 244 234 / 88%);
+  }
+
+  .mobileComparisonCardHeader {
+    display: grid;
+    gap: 8px;
+    min-height: 64px;
+    align-content: start;
+    margin-bottom: 10px;
+  }
+
+  .currentComparisonBadge {
+    justify-self: start;
+    border-radius: 999px;
+    padding: 5px 9px;
+    color: #8c4612;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgb(255 173 93 / 30%);
+  }
+
+  .mobileComparisonCard h3 {
+    margin: 0;
+    color: var(--tiger-ink);
+    font-size: 1.35rem;
+    font-weight: 950;
+    line-height: 1.1;
+  }
+
+  .mobileComparisonCard h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mobileComparisonCard h3 a:hover,
+  .mobileComparisonCard h3 a:focus-visible {
+    color: var(--tiger-orange-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .mobileComparisonValues {
+    display: grid;
+    margin: 0;
+  }
+
+  .mobileComparisonValues div {
+    display: grid;
+    grid-template-columns: minmax(96px, 0.8fr) minmax(0, 1.2fr);
+    gap: 12px;
+    padding: 11px 0;
+    border-top: 1px solid rgb(214 224 231 / 68%);
+  }
+
+  .mobileComparisonValues dt {
+    color: #687080;
+    font-size: 0.68rem;
+    font-weight: 950;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .mobileComparisonValues dd {
+    min-width: 0;
+    margin: 0;
+    color: #263049;
+    font-size: 0.86rem;
+    font-weight: 820;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
   }
 
   .detailStripHeading h2,

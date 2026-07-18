@@ -306,7 +306,7 @@
     grid-column: 1;
     grid-row: 2;
     justify-content: center;
-    gap: 0.28em;
+    gap: 0.625rem;
     pointer-events: auto;
   }
 

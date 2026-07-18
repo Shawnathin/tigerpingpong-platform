@@ -102,10 +102,10 @@ Scope: Replace the `/tables` category hero product cutout with the owner-selecte
 - Fonts and typography: existing Tiger Ping Pong type and weight hierarchy are preserved; the short approved copy remains legible and balanced at both breakpoints.
 - Spacing and layout rhythm: each panel keeps its artwork centered like the old homepage. On desktop, each short bold headline is split evenly across the left and right gutters while the product name and CTA share a centered row below the image. The tightened 589px desktop panel fits in the tested 720px-high viewport, including its CTA. Mobile uses the sequence image, complete headline, product name, CTA. The panels are stacked with a consistent 28px desktop and 18px mobile gap.
 - Colors and visual tokens: existing ink, orange, pale blue, white, radius, and elevation language are retained. Aqua receives a restrained blue CTA accent.
-- Image quality and asset fidelity: all three supplied transparent PNGs are used without recolouring, destructive cropping, distortion, or CSS reconstruction. Explicit intrinsic dimensions prevent layout shift.
-- Copy and content: Aqua appears first, followed by Portland and the Table Cover. The split desktop headlines read “Make a / splash.”, “Take it / outside.”, and “Ultra / durable.”; assistive text preserves each phrase with normal word spacing. Approved product labels and CTAs remain below the image. The replacement Table Cover artwork removes the previous embedded “Just Released” wording.
+- Image quality and asset fidelity: all three transparent PNGs are delivered from versioned Cloudinary URLs without recolouring, destructive cropping, distortion, or CSS reconstruction. Explicit intrinsic dimensions prevent layout shift, and the prior local assets remain available as rollback fallbacks until deployed verification.
+- Copy and content: Aqua appears first, followed by Portland and the Table Cover. The split desktop headlines read “Make a / Splash.”, “Take it / Outside.”, and “Ultra / Protection.”; assistive text preserves each phrase with normal word spacing. Approved product labels and CTAs remain below the image. The V4 white-logo Table Cover artwork replaces the prior title-card version and keeps the “Just Released” wording removed.
 - Accessibility and interaction: the three offers are permanently visible in document order, use one page-level `h1` followed by `h2` headings, and expose real product links with visible focus states. No carousel, hidden slide, auto-rotation, or selector control remains.
-- Responsive behavior: the 390 × 844 viewport has no horizontal overflow, recombines each split phrase into one centered headline, and preserves all three image proportions.
+- Responsive behavior: the 390 × 844 viewport has no horizontal overflow, recombines each split phrase into one centered headline with a consistent 10px word gap across the `h1` and both `h2` panels, and preserves all three image proportions.
 - Brand fidelity: the supplied official Tiger Ping Pong logo replaces the former CSS approximation in both the public header and footer. Its original proportions and transparent background are preserved at desktop and mobile sizes.
 - Browser console: zero errors or warnings during the latest mobile check.
 
@@ -136,5 +136,68 @@ The Aqua-first mobile capture and the separate desktop Portland and Cover captur
 - [x] Install the supplied official logo in the public header and footer.
 - [x] Split the bold headline across both sides of all three centered desktop images.
 - [x] Fit a complete promotional panel and CTA within a 1280 × 720 viewport.
+
+final result: passed
+
+---
+
+# Tablet Product Header and Purchase Panel QA
+
+Date: 2026-07-17
+
+Scope: The annotated public-header cart action and Expo Outdoor purchase panel at the 1020 × 801 mid-size viewport.
+
+## Findings
+
+- At 1020 × 801, the public header now uses the existing compact hamburger, centered logo, and compact Cart control instead of the former three-row navigation with a full-width cart button.
+- The menu opens and closes through the existing real button, keeps its accessible name and expanded state in sync, and retains all public destinations.
+- The product hero remains a two-column layout at 1020px: the gallery uses the available left column and the purchase panel remains a 400px side panel.
+- The Add to cart action is 353px wide inside that panel instead of stretching across the page.
+- Recognized tabletop-colour options now use light, translucent frosted-glass surfaces tinted to the option itself: cool blue for Blue and graphite for Grey.
+- Blue and Grey use one centered white label rather than a separate colour swatch and text treatment. The controls are 64px high at tablet and desktop sizes, then tighten to a side-by-side 50px pair on mobile.
+- When a tabletop colour is selected, the remaining colour option gently fades and scales back so the active choice reads more clearly without changing the option layout.
+- Hover, keyboard focus, and selected states retain the same option tint instead of switching to the unrelated orange selection border; the underlying native radio inputs and labels remain intact.
+- The single-column product stack now begins at 900px, before either column becomes cramped.
+- At 390 × 844, the compact header and single-column product layout are preserved while the Blue and Grey controls remain side by side at 156px each, with zero horizontal overflow.
+- At 1280 × 720, the full desktop navigation and 400px purchase-panel layout are unchanged.
+- Browser console checks at 1020 × 801, 390 × 844, and 1280 × 720 found zero application errors; only the expected development Fast Refresh warning appeared while editing styles.
+- No product copy, price, availability, shipping language, option behavior, destinations, or checkout behavior changed.
+
+final result: passed
+
+---
+
+# Cart Summary Copy QA
+
+Date: 2026-07-17
+
+Scope: The annotated cart header and order-summary copy at the 390 × 844 mobile viewport.
+
+## Findings
+
+- The redundant `TigerPingPong.ca cart` eyebrow is removed from both populated and empty-cart headers.
+- The cart summary now places a subdued `Taxes — Calculated at checkout` row directly below Shipping without changing the displayed subtotal, shipping amount, or total.
+- The repeated free-shipping sentence is replaced with the owner-selected, centered checkout encouragement directly above Checkout: “You’re so close to the next rally!” followed by “One more step and we’ll take it from there.”
+- Shipping calculation, Canada-only shipping rules, totals, checkout flow, and payment authority remain unchanged.
+
+final result: passed
+
+---
+
+# Mobile Product Specifications and Comparison QA
+
+Date: 2026-07-17
+
+Scope: Mobile-only disclosure treatment for product specifications and table comparisons, with desktop presentation preserved.
+
+## Findings
+
+- At 390 × 844 and 420 × 801, Specifications is closed by default and opens through a native keyboard-accessible disclosure.
+- Open mobile specifications use compact label/value rows while preserving every sourced specification and its original order.
+- Mobile table Comparison is open by default, remains collapsible, and presents each table as a complete snap-aligned card instead of clipping the 1,040px desktop table.
+- The current table is identified visually, every comparison product link remains accessible, and the horizontal card region can receive keyboard focus.
+- The shared mobile treatment has zero document-level horizontal overflow and no browser console errors.
+- At 1280 × 720, the original specifications grid and full comparison table retain their previous dimensions and styling; mobile disclosure markup is hidden.
+- No product facts, specifications, comparison values, prices, availability, shipping promises, or destinations changed.
 
 final result: passed

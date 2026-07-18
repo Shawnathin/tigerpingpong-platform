@@ -30,7 +30,6 @@ export function CartPageClient() {
     removeItem,
     reconcileItems,
     shippingCents,
-    shippingCopy,
     subtotalCents,
     totalCents,
     updateQuantity
@@ -81,7 +80,6 @@ export function CartPageClient() {
     return (
       <main className={styles.page}>
         <section className={styles.emptyState} aria-labelledby="cart-empty-title">
-          <p className={styles.eyebrow}>TigerPingPong.ca cart</p>
           <h1 id="cart-empty-title">Your cart is empty.</h1>
           {error ? <p role="status">{error}</p> : null}
           <a className={styles.primaryAction} href="/tables/">
@@ -96,7 +94,6 @@ export function CartPageClient() {
     <main className={styles.page}>
       <section className={styles.header} aria-labelledby="cart-title">
         <div>
-          <p className={styles.eyebrow}>TigerPingPong.ca cart</p>
           <h1 id="cart-title">Review your cart.</h1>
         </div>
         <a className={styles.secondaryAction} href="/tables/">
@@ -170,6 +167,10 @@ export function CartPageClient() {
               <dt>Shipping</dt>
               <dd>{shippingCents === 0 ? "Free" : formatCartMoney(shippingCents, currency)}</dd>
             </div>
+            <div className={styles.taxRow}>
+              <dt>Taxes</dt>
+              <dd>Calculated at checkout</dd>
+            </div>
             <div>
               <dt>Total</dt>
               <dd>{formatCartMoney(totalCents, currency)}</dd>
@@ -177,7 +178,8 @@ export function CartPageClient() {
           </dl>
 
           <div className={styles.shippingNotice}>
-            <strong>{shippingCopy}</strong>
+            <strong>You’re so close to the next rally!</strong>
+            <span>One more step and we’ll take it from there.</span>
           </div>
 
           <button

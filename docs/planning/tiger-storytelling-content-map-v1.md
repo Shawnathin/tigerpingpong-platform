@@ -299,7 +299,7 @@ The six retained legacy routes now use one shorter, shared Tiger shopping system
 - `/accessories/nets/`
 - `/replacement-parts/`
 
-The shared normal-flow switch links **All gear**, **Paddles**, **Balls**, **Covers**, **Nets**, and **Need a part?** On mobile it becomes a centred two-row layout rather than a horizontal scroller.
+The shared normal-flow switch links **All gear**, **Paddles**, **Balls**, **Covers**, **Nets**, and **Need a part?** On mobile it becomes one compact two-row segmented control with three equal choices per row. The final choice shortens visually to **Parts** while retaining its full accessible label; there is no horizontal scroller or oversized support banner.
 
 The factual, non-sticky shipping band reads:
 
@@ -323,6 +323,8 @@ The page makes the retained SEO duplication useful by leading with the categorie
 2. Nets — **Meet in the middle.**
 3. Replacement Parts — **Find the odd little bit.**
 
+This editorial chooser remains on desktop. It is removed below 900 pixels because the compact gear switch already exposes the same three routes and the actual Cover, Net, and Parts sections follow immediately.
+
 The live Cover and Net products and a support-oriented parts panel appear before the second chapter:
 
 - Eyebrow: **Also here for the rally**
@@ -342,6 +344,8 @@ The decision shelf asks **Where will it play?**
 - **Everywhere** — Aqua for patios, schools, rec rooms, shared spaces, and forgotten paddles.
 - **Smaller hands** — Vice for kids and newer players who want approachable control.
 
+The decision shelf is desktop-only. On mobile the compact category switch is followed directly by the Aqua and Vice product stages.
+
 Product stories:
 
 - **Aqua** — “Built for the paddle someone forgot outside.”
@@ -357,6 +361,8 @@ Product stories:
 - Body: “Under the couch. Behind the freezer. Somewhere in the yard. Start with six or stop counting at 140.”
 
 The decision shelf asks **How many rematches?** Six is for topping up the drawer; 140 is for schools, community centres, and homes where six disappears by Tuesday. The colour note reads **White or orange? Pick your favourite.**
+
+The decision shelf is desktop-only. On mobile the compact category switch is followed directly by the paired six-packs and the 140-pack.
 
 The Orange and White six-packs share one visual stage but retain separate live prices, anchors, product destinations, and actions. The 140-pack receives its own moment:
 

@@ -169,12 +169,16 @@ function GearSwitch({ kind }: { kind: TigerGearCategoryKind }) {
         })}
       </div>
       <a
+        aria-label={tigerGearStory.partsLink.label}
         aria-current={kind === "parts" ? "page" : undefined}
         className={styles.partsLink}
         data-active={kind === "parts" ? "true" : undefined}
         href={tigerGearStory.partsLink.href}
       >
-        {tigerGearStory.partsLink.label}
+        <span className={styles.partsLabelLong}>{tigerGearStory.partsLink.label}</span>
+        <span aria-hidden="true" className={styles.partsLabelShort}>
+          Parts
+        </span>
       </a>
     </nav>
   );

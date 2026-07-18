@@ -174,6 +174,9 @@ test.describe("Tiger gear categories", () => {
     );
     expect(sectionOrder).toEqual([...sectionOrder].sort((left, right) => left - right));
     await expect(page.locator("#product-tiger-aqua-outdoor-indoor-paddle")).toBeVisible();
+
+    await page.setViewportSize({ width: 560, height: 801 });
+    await expect(page.locator("#choose")).toBeHidden();
   });
 
   test("Paddles explains the two useful choices without a tournament speech", async ({ page }) => {
@@ -203,6 +206,9 @@ test.describe("Tiger gear categories", () => {
     await expect(vice.getByText("$50.00", { exact: true })).toBeVisible();
     await expect(vice.getByText("Small hands. Big rallies.")).toBeVisible();
     await expect(vice.getByText(/slimmer handle that is easier to hold/)).toBeVisible();
+
+    await page.setViewportSize({ width: 560, height: 801 });
+    await expect(page.locator("#choose")).toBeHidden();
   });
 
   test("Balls keeps both six-packs distinct and gives 140 its own moment", async ({ page }) => {
@@ -232,6 +238,9 @@ test.describe("Tiger gear categories", () => {
     await expect(largePack.getByText("$96.00", { exact: true })).toBeVisible();
     await expect(largePack.getByText("Commit to the bit.", { exact: true })).toBeVisible();
     await expect(largePack.getByText(/Fewer emergency searches under the sofa/)).toBeVisible();
+
+    await page.setViewportSize({ width: 560, height: 801 });
+    await expect(page.locator("#choose")).toBeHidden();
   });
 
   test("Cover and net pages give useful fit help", async ({ page }) => {
@@ -322,6 +331,22 @@ test.describe("Tiger gear categories", () => {
           scroll: document.documentElement.scrollWidth
         }));
         expect(widths.scroll, `${route.path} at ${viewport.width}px`).toBe(widths.client);
+
+        if (viewport.width <= 768) {
+          const switcher = page.getByRole("navigation", { name: "Gear categories" });
+          const switcherBox = await switcher.boundingBox();
+          expect(switcherBox?.height ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(100);
+
+          const rowCounts = await switcher.getByRole("link").evaluateAll((links) => {
+            const rows = new Map<number, number>();
+            for (const link of links) {
+              const top = Math.round(link.getBoundingClientRect().top);
+              rows.set(top, (rows.get(top) ?? 0) + 1);
+            }
+            return [...rows.values()];
+          });
+          expect(rowCounts).toEqual([3, 3]);
+        }
 
         if (viewport.width <= 417) {
           const stageHeights = await page

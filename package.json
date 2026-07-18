@@ -19,6 +19,8 @@
     "scrape:tiger:test": "node tools/tiger-scraper/src/tiger-scraper.mjs --seed=/tables/ --seed=/accessories/ --limit=12 --max-depth=2 --output=var/scrapes/tigerpingpong/test",
     "validate:tiger-import": "node tools/tiger-import-validator/src/validate-tiger-import.mjs",
     "media:cloudinary:products": "node scripts/upload-product-media-to-cloudinary.mjs",
+    "media:cloudinary:homepage-summer": "node scripts/media/upload-homepage-summer-media.mjs",
+    "media:cloudinary:tables-category": "node scripts/media/upload-tables-category-media.mjs",
     "launch:env:validate": "node scripts/launch/validate-production-env.mjs",
     "launch:smoke:read-only": "node scripts/launch/read-only-smoke.mjs",
     "launch:preflight": "pnpm lint && pnpm db:generate && pnpm typecheck && DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tigerpingpong_validation pnpm db:validate && pnpm test && NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com NEXT_PUBLIC_SITE_URL=https://tigerpingpong.ca pnpm build && pnpm test:e2e && pnpm security:secrets && pnpm security:audit",

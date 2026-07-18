@@ -90,6 +90,83 @@ const product = {
     }
   ]
 };
+const tableProducts = [
+  {
+    key: "tiger-expo-outdoor-table",
+    slug: "tiger-expo-outdoor-table",
+    name: "Tiger Expo Outdoor Table",
+    productKind: "table",
+    purchaseMode: "online_checkout",
+    priceCents: 130000,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "expo", slug: "expo", name: "Expo" },
+    category: { key: "tables", slug: "tables", name: "Tables" },
+    primaryMedia: null
+  },
+  {
+    key: "tiger-portland-indoor-table",
+    slug: "tiger-portland-indoor-table",
+    name: "Tiger Portland Indoor Table",
+    productKind: "table",
+    purchaseMode: "online_checkout",
+    priceCents: 130000,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "portland", slug: "portland", name: "Portland" },
+    category: { key: "tables", slug: "tables", name: "Tables" },
+    primaryMedia: null
+  },
+  {
+    key: "tiger-portland-outdoor-table",
+    slug: "tiger-portland-outdoor-table",
+    name: "Tiger Portland Outdoor Table",
+    productKind: "table",
+    purchaseMode: "online_checkout",
+    priceCents: 150000,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "portland", slug: "portland", name: "Portland" },
+    category: { key: "tables", slug: "tables", name: "Tables" },
+    primaryMedia: null
+  },
+  {
+    key: "tiger-whistler-indoor-table",
+    slug: "tiger-whistler-indoor-table",
+    name: "Tiger Whistler Indoor Table",
+    productKind: "table",
+    purchaseMode: "online_checkout",
+    priceCents: 160000,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "whistler", slug: "whistler", name: "Whistler" },
+    category: { key: "tables", slug: "tables", name: "Tables" },
+    primaryMedia: null
+  },
+  {
+    key: "tiger-plaza-outdoor-table-grey",
+    slug: "tiger-plaza-outdoor-table-grey",
+    name: "Tiger Plaza Outdoor Table Grey",
+    productKind: "table",
+    purchaseMode: "online_checkout",
+    priceCents: 260000,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "plaza", slug: "plaza", name: "Plaza" },
+    category: { key: "tables", slug: "tables", name: "Tables" },
+    primaryMedia: null
+  }
+];
 let adminProductUpdatedAt = "2026-07-16T12:00:00.000Z";
 
 function getAdminProduct() {
@@ -109,7 +186,10 @@ function getAdminProduct() {
     purchaseMode: product.purchaseMode,
     checkoutEligible: product.v1CheckoutScope,
     checkoutEligibilityReasons: [],
-    imageStatus: { primaryImageUrl: product.media[0].cloudinarySecureUrl, status: "public_image_available" },
+    imageStatus: {
+      primaryImageUrl: product.media[0].cloudinarySecureUrl,
+      status: "public_image_available"
+    },
     primaryImageUrl: product.media[0].cloudinarySecureUrl,
     variantCount: product.variants.length,
     mediaCount: product.media.length,
@@ -207,14 +287,14 @@ const server = createServer(async (request, response) => {
         status: "ok",
         service: "local-mock-catalog",
         timestamp: new Date().toISOString(),
-        counts: { brands: 1, categories: 1, productFamilies: 1, products: 1, variants: 0, media: 0 }
+        counts: { brands: 1, categories: 2, productFamilies: 6, products: 6, variants: 0, media: 0 }
       })
     );
     return;
   }
 
   if (request.url === "/catalog/products") {
-    response.end(JSON.stringify({ products: [product] }));
+    response.end(JSON.stringify({ products: [product, ...tableProducts] }));
     return;
   }
 
@@ -251,7 +331,9 @@ const server = createServer(async (request, response) => {
     const body = await readJsonBody(request);
     if (body.expectedUpdatedAt !== adminProductUpdatedAt) {
       response.statusCode = 409;
-      response.end(JSON.stringify({ message: "This product changed after the editor was opened." }));
+      response.end(
+        JSON.stringify({ message: "This product changed after the editor was opened." })
+      );
       return;
     }
     product.name = body.name;
@@ -274,7 +356,9 @@ const server = createServer(async (request, response) => {
     const body = await readJsonBody(request);
     const changes = [];
     for (const item of body.items ?? []) {
-      const variant = product.variants.find((candidate) => candidate.key === item.selectedVariantKey);
+      const variant = product.variants.find(
+        (candidate) => candidate.key === item.selectedVariantKey
+      );
       const currentPrice = variant?.priceCents ?? product.priceCents;
       const cartLineId = getMockCartLineId(item);
       if (!product.v1CheckoutScope || (variant && !variant.isActive)) {
@@ -291,20 +375,24 @@ const server = createServer(async (request, response) => {
     }
     if (changes.length > 0) {
       response.statusCode = 409;
-      response.end(JSON.stringify({ code: "cart_changed", message: "Your cart changed.", items: changes }));
+      response.end(
+        JSON.stringify({ code: "cart_changed", message: "Your cart changed.", items: changes })
+      );
       return;
     }
-    response.end(JSON.stringify({
-      checkoutSessionId: "cs_test_local",
-      checkoutUrl: "https://checkout.stripe.com/c/pay/cs_test_local",
-      currency: "CAD",
-      orderId: "order-local",
-      publicReference: "TPP-LOCAL",
-      shippingCents: 1500,
-      shippingLabel: "Flat-rate shipping",
-      subtotalCents: 800,
-      totalCents: 2300
-    }));
+    response.end(
+      JSON.stringify({
+        checkoutSessionId: "cs_test_local",
+        checkoutUrl: "https://checkout.stripe.com/c/pay/cs_test_local",
+        currency: "CAD",
+        orderId: "order-local",
+        publicReference: "TPP-LOCAL",
+        shippingCents: 1500,
+        shippingLabel: "Flat-rate shipping",
+        subtotalCents: 800,
+        totalCents: 2300
+      })
+    );
     return;
   }
 

@@ -26,6 +26,23 @@ This repo powers the custom TigerPingPong ecommerce launch. It owns the public s
 
 The project is past the basic-feasibility stage. The current work is launch discipline: product-page polish, real product content, checkout trust, minimal staff fulfillment records, URL/SEO planning, category/home/footer polish, final QA, then domain cutover.
 
+## Mandatory Tiger brand contract
+
+Before changing any customer-facing copy, metadata, layout, media, campaign, category, product page, or support experience:
+
+1. Read `docs/brand/README.md`.
+2. Read `docs/brand/TIGER-BRAND-BIBLE.md` and `docs/brand/FACTS-AND-CLAIMS.md`.
+3. Read the task-specific voice, visual, product-story, research, and agent-checklist files routed from the brand README.
+
+These are implementation requirements, not optional inspiration:
+
+- The registered brand and house spelling is **Tiger PingPong**; **PingPong** is one word even as a common noun in new public copy.
+- Reuse the established Tiger story, glassy West Coast visual system, page patterns, and typed `apps/web/src/lib/tiger-story.ts` content before inventing a parallel treatment.
+- Live catalog data owns price and availability. `docs/brand/FACTS-AND-CLAIMS.md` governs public claims and overrides inferred or legacy wording.
+- Never promote provisional copy, an owner anecdote, legacy content, competitor language, or an inference into fact. Only Shawn can lock a new brand fact or product story.
+- If sources conflict on product facts, compatibility, warranty, shipping, origin, history, or operations, stop and mark the item **Pending owner confirmation**.
+- Keep the customer task primary: tell enough Tiger story to create trust and meaning, then let people shop or get help.
+
 ## Current priorities
 
 1. Preserve the working checkout/payment/order foundation.
@@ -150,6 +167,7 @@ Do not invent product-specific shipping promises. Table checkout/free shipping n
 
 ## Product/content rules
 
+- Follow the mandatory brand contract in `docs/brand/` for all customer-facing work.
 - Do not invent product descriptions, dimensions, colours, prices, warranties, availability, or shipping claims.
 - Preserve sourced facts from current TigerPingPong data/content.
 - If product information is missing or unclear, mark it for human review.

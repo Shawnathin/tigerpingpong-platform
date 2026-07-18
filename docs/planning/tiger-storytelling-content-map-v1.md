@@ -7,6 +7,8 @@ Status: About, Contact, Summer in Canada homepage, all three table category expe
 
 Give customers the Tiger story during a normal shopping visit without making them read the About page or sit through a brand manifesto.
 
+Brand governance now lives in `docs/brand/README.md` and the files it routes. This map governs where canonical story appears; the brand folder governs identity, voice, visuals, facts, product-story creation, and change control. If they conflict, use the authority order in `docs/brand/README.md`.
+
 The story should feel ambient:
 
 - Homepage: Why Tiger?

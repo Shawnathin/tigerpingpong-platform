@@ -46,10 +46,10 @@ const routes = {
   parts: {
     activeLabel: "Need a part?",
     description:
-      "Need a Tiger PingPong replacement part? Call or email a real person in Vancouver with your product name, photos, and order reference.",
-    heading: "Something went missing?",
+      "Find Tiger PingPong Part 40, download table manuals, watch setup videos, or send our Vancouver team a photo for replacement-part help.",
+    heading: "Keep the rally going.",
     path: "/replacement-parts/",
-    title: "Replacement Parts | Tiger PingPong"
+    title: "Replacement Parts & Manuals | Tiger PingPong"
   }
 } as const;
 
@@ -76,6 +76,8 @@ async function expectShippingRule(page: Page) {
 
 test.describe("Tiger gear categories", () => {
   for (const [kind, route] of Object.entries(routes)) {
+    if (kind === "parts") continue;
+
     test(`${kind} has its Tiger chapter, metadata, and gear switch`, async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 1000 });
       const response = await page.goto(route.path);
@@ -279,35 +281,38 @@ test.describe("Tiger gear categories", () => {
   });
 
   test("Replacement Parts stays human and support-only", async ({ page }) => {
-    await page.goto(routes.parts.path);
+    const response = await page.goto(routes.parts.path);
 
+    expect(response?.status()).toBe(200);
+    await expect(page).toHaveTitle(routes.parts.title);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      "content",
+      routes.parts.description
+    );
+    await expect(page.getByRole("heading", { level: 1, name: routes.parts.heading })).toBeVisible();
+    await expect(page.locator("main h1")).toHaveCount(1);
     await expect(page.locator("main article[id^='product-']")).toHaveCount(0);
     await expect(page.locator("main form, main input, main select")).toHaveCount(0);
     await expect(
-      page.getByRole("heading", { level: 2, name: "A photo usually solves the mystery." })
+      page.getByRole("heading", { level: 2, name: "Part 40. Small clip. Big save." })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 2, name: "Three things make this faster." })
     ).toBeVisible();
 
-    for (const detail of [
-      "Product name",
-      "Photo of the table",
-      "Photo or description of the missing part",
-      "Order reference, if available"
-    ]) {
-      await expect(page.getByRole("listitem").filter({ hasText: detail })).toBeVisible();
+    for (const detail of ["Your table", "Two quick photos", "Anything you remember"]) {
+      await expect(page.getByRole("heading", { level: 3, name: detail })).toBeVisible();
     }
 
-    await expect(page.getByRole("link", { name: "Call Tiger" }).first()).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "Call 1-888-552-5259" })).toHaveAttribute(
       "href",
       "tel:+18885525259"
     );
-    await expect(page.getByRole("link", { name: "Email the clues" }).first()).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "Email info@tigerpingpong.com" })).toHaveAttribute(
       "href",
       /mailto:info@tigerpingpong\.com/
     );
-    await expect(page.getByRole("link", { name: "See what details help" })).toHaveAttribute(
-      "href",
-      "/contact#order-help-title"
-    );
+    await expect(page.getByRole("button", { name: /add to cart/i })).toHaveCount(0);
   });
 
   test("every route stays accessible and overflow-free at the promised widths", async ({
@@ -332,7 +337,7 @@ test.describe("Tiger gear categories", () => {
         }));
         expect(widths.scroll, `${route.path} at ${viewport.width}px`).toBe(widths.client);
 
-        if (viewport.width <= 768) {
+        if (viewport.width <= 768 && route.path !== routes.parts.path) {
           const switcher = page.getByRole("navigation", { name: "Gear categories" });
           const switcherBox = await switcher.boundingBox();
           expect(switcherBox?.height ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(100);
@@ -395,7 +400,9 @@ test.describe("Tiger gear categories", () => {
     expect(Number.parseFloat(transition)).toBeLessThanOrEqual(0.001);
   });
 
-  test("captures the six gear chapters for visual QA", async ({ page }) => {
+  test("captures the five gear chapters and replacement-parts support page for visual QA", async ({
+    page
+  }) => {
     test.setTimeout(180_000);
     test.skip(
       process.env.CAPTURE_GEAR_SCREENSHOTS !== "1",

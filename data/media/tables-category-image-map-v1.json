@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "tables-category-image-map-v1",
+  "generatedAt": "2026-07-18T00:00:00Z",
+  "policy": "Tables-page originals stay outside Git. Production media is uploaded only after exact source-hash verification and Cloudinary collision preflight.",
+  "entries": [
+    {
+      "assetId": "TAB-CAT-001",
+      "sourceRoot": "downloads",
+      "sourceRelativePath": "IMG_4919-2.jpg",
+      "sourceSha256": "f74234261424f52474becd0f98edf6f7948ef5276c1c2be86eca869e3a471a5d",
+      "sourceDimensions": {
+        "width": 3264,
+        "height": 2448
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/hero-portland-patio",
+      "deliveryTransformation": "f_auto,q_auto,w_2400",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_2400/v1784388274/tigerpingpong/storefront/tables/hero-portland-patio.jpg",
+      "role": "tables-hero",
+      "caption": "Portland Outdoor, at home outside.",
+      "altText": "Tiger Portland Outdoor table on a shaded garden patio.",
+      "rightsStatus": "owner-cleared-existing-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-002",
+      "sourceRoot": "repo",
+      "sourceRelativePath": "exports/tables-category-media/outdoor-inside-net-ball-v1.png",
+      "sourceSha256": "7842c136e4792f6027a5894031ed8d167edd29fcefe07dd9acadc160fcccf9b9",
+      "sourceDimensions": {
+        "width": 1899,
+        "height": 828
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/outdoor-inside-net-ball-v1",
+      "deliveryTransformation": "f_auto,q_auto,w_1899",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1899/v1784388275/tigerpingpong/storefront/tables/outdoor-inside-net-ball-v1.png",
+      "role": "outdoor-inside-education",
+      "caption": "Built for weather. Useful wherever life gets messy.",
+      "altText": "White PingPong ball beside a black net on a deep navy table.",
+      "rightsStatus": "owner-cleared-generated-from-tiger-references",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-003",
+      "sourceRoot": "downloads",
+      "sourceRelativePath": "tiger - photos reorganized/Expo Outdoor/Product Image/expo_outdoor-gray.jpg",
+      "sourceSha256": "0a0a86e303efcbb44cf4dfa943a94f1ad6bef918ee4c999ca2cb65b673f994de",
+      "sourceDimensions": {
+        "width": 5000,
+        "height": 2500
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1",
+      "deliveryTransformation": "e_background_removal/f_png,q_auto,w_1400",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png,q_auto,w_1400/v1784390092/tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1.png",
+      "role": "expo-category-cutout",
+      "caption": "Expo Outdoor in grey.",
+      "altText": "Tiger Expo Outdoor PingPong table in grey.",
+      "rightsStatus": "owner-cleared-existing-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-004",
+      "sourceRoot": "repo",
+      "sourceRelativePath": "exports/tables-category-media/portland-indoor-grey-source-v1.jpg",
+      "sourceSha256": "0a800d9a34ecc294186dafa5c3fb972c2773895145a73300807258d07c6dd18a",
+      "sourceDimensions": {
+        "width": 2400,
+        "height": 1200
+      },
+      "originSourceRoot": "downloads",
+      "originSourceRelativePath": "tiger - photos reorganized/Portland Indoor/Product Image/Portland_Indoor-Gray.bmp",
+      "originSourceSha256": "89d92d34975fb3aebe1893020785e948458040b14467955787194d0c60787a75",
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1",
+      "deliveryTransformation": "e_background_removal/f_png,q_auto,w_1400",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png,q_auto,w_1400/v1784390093/tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1.png",
+      "role": "portland-indoor-category-cutout",
+      "caption": "Portland Indoor in grey.",
+      "altText": "Tiger Portland Indoor PingPong table in grey.",
+      "rightsStatus": "owner-cleared-existing-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-005",
+      "sourceRoot": "repo",
+      "sourceRelativePath": "exports/tables-category-media/whistler-indoor-blue-source-v1.jpg",
+      "sourceSha256": "addfa0b4e77d07c19b9afc11ce37ff074b7aaddff5f4c67ee953a5796d61de3c",
+      "sourceDimensions": {
+        "width": 2400,
+        "height": 1200
+      },
+      "originSourceRoot": "downloads",
+      "originSourceRelativePath": "tiger - photos reorganized/Whistler/Product Image/Whistler_Indoor-Blue.bmp",
+      "originSourceSha256": "50ab25756ecd0e5d2fdc723980e2af77a6971bf876708f9036ce55c9c9ec6587",
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/cutouts/whistler-indoor-blue-v1",
+      "deliveryTransformation": "e_background_removal/f_png,q_auto,w_1400",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png,q_auto,w_1400/v1784390094/tigerpingpong/storefront/tables/cutouts/whistler-indoor-blue-v1.png",
+      "role": "whistler-category-cutout",
+      "caption": "Whistler Indoor in blue.",
+      "altText": "Tiger Whistler Indoor PingPong table in blue.",
+      "rightsStatus": "owner-cleared-existing-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-006",
+      "sourceRoot": "downloads",
+      "sourceRelativePath": "tiger - photos reorganized/Plaza/Product Image/plaza_outdoor.jpg",
+      "sourceSha256": "ba2104ee07facf61b3903bd336bce028b05dc7cb9b46ac8eb3793cdb685a1b8c",
+      "sourceDimensions": {
+        "width": 5000,
+        "height": 2500
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/cutouts/plaza-outdoor-grey-v1",
+      "deliveryTransformation": "e_background_removal/f_png,q_auto,w_1400",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png,q_auto,w_1400/v1784390096/tigerpingpong/storefront/tables/cutouts/plaza-outdoor-grey-v1.png",
+      "role": "plaza-category-cutout",
+      "caption": "Plaza Outdoor in grey.",
+      "altText": "Tiger Plaza Outdoor PingPong table in grey.",
+      "rightsStatus": "owner-cleared-existing-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-007",
+      "sourceRoot": "repo",
+      "sourceRelativePath": "exports/tables-category-media/indoor-whistler-lifestyle-v2.jpg",
+      "sourceSha256": "40e349d17f4f84dc4d0adf9ee3b48089fc8981419c4be3a90265b2924bd55b39",
+      "sourceDimensions": {
+        "width": 960,
+        "height": 1280
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/chooser/indoor-whistler-lifestyle-v2",
+      "deliveryTransformation": "f_auto,q_auto,w_960",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_960/v1784395424/tigerpingpong/storefront/tables/chooser/indoor-whistler-lifestyle-v2.jpg",
+      "role": "indoor-chooser-lifestyle",
+      "caption": "Whistler Indoor in a modern shared lobby.",
+      "altText": "Tiger Whistler Indoor PingPong table beneath geometric lights in a modern shared lobby.",
+      "rightsStatus": "owner-provided-cleared-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-008",
+      "sourceRoot": "downloads",
+      "sourceRelativePath": "tiger - photos reorganized/Portland Outdoor v1/Hero/IMG_4915 (1).JPG",
+      "sourceSha256": "cbadc4dcb202fa49b50b6205eaf7a245a92c41bbae37966436d2ab5567dabf24",
+      "sourceDimensions": {
+        "width": 3264,
+        "height": 2448
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/chooser/outdoor-portland-patio-v1",
+      "deliveryTransformation": "f_auto,q_auto,w_1600",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1600/v1784390314/tigerpingpong/storefront/tables/chooser/outdoor-portland-patio-v1.jpg",
+      "role": "outdoor-chooser-lifestyle",
+      "caption": "Portland Outdoor on a sunny backyard patio.",
+      "altText": "Tiger Portland Outdoor PingPong table on a leafy backyard patio.",
+      "rightsStatus": "owner-cleared-existing-product-media",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    },
+    {
+      "assetId": "TAB-CAT-009",
+      "sourceRoot": "repo",
+      "sourceRelativePath": "exports/tables-category-media/outdoor-inside-net-ball-real-logo-v3.png",
+      "sourceSha256": "3b8ae68ef584498ac4fb1bb3312bc1a07817a3480889e73955ed03c581e38d64",
+      "sourceDimensions": {
+        "width": 1899,
+        "height": 828
+      },
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/outdoor-inside-net-ball-real-logo-v3",
+      "deliveryTransformation": "f_auto,q_auto,w_1899",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1899/v1784392012/tigerpingpong/storefront/tables/outdoor-inside-net-ball-real-logo-v3.png",
+      "role": "outdoor-inside-education-logo",
+      "caption": "Built for weather. Useful wherever life gets messy.",
+      "altText": "White PingPong ball with the black Tiger scratches and wordmark beside a net on a deep navy table.",
+      "rightsStatus": "owner-cleared-generated-from-owner-provided-product-reference",
+      "status": "implemented",
+      "uploadAction": "reuse"
+    }
+  ]
+}

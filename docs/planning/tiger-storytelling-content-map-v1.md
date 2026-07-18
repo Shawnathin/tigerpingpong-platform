@@ -117,6 +117,8 @@ The page proceeds directly to the existing footer.
 
 ### All tables
 
+Status: implemented on `codex/tables-find-your-table`.
+
 Eyebrow:
 
 > Shop tables
@@ -129,7 +131,62 @@ Hero introduction:
 
 > Indoors, outdoors, basement, backyard—we’ll help you find the table that fits how you actually play.
 
-No separate brand band is needed here. The shopping task should remain primary.
+Hero media: owner-cleared Portland Outdoor table on a real shaded garden patio.
+
+Hero action:
+
+> Need a hand? Call us.
+
+Destination: `tel:+18885525259`
+
+#### Where will it live?
+
+- **Indoor** — “Best playing feel in a dry, controlled room.” → `/tables/indoor-tables/`
+- **Outdoor** — “Built for weather, hard use, and indoors when durability wins.” → `/tables/outdoor-tables/`
+- **Compare indoor and outdoor** → `/resources/indoor-vs-outdoor-ping-pong-tables`
+- Use real Whistler Indoor and Portland Outdoor lifestyle photography in the two choices.
+
+The chooser hands off to a small sticky glass tab that visually belongs to the main navigation:
+
+- **Every table ships free across Canada.**
+- Byline on desktop and mobile: **Yes, even to cottage country.**
+
+#### Product stages
+
+1. **Expo Outdoor** — “Easygoing outdoor.”
+   - “We made Expo for backyards that want more playing and less overthinking. It’s the easy yes when you want a real outdoor table and a good time.”
+2. **Portland Indoor** — “Home-court feel.”
+   - “We made Portland Indoor for basements, rec rooms, and community centres that see plenty of rallies and very little rain. Serious table, relaxed room.”
+3. **Portland Outdoor** — “Tough outside. Smart inside.”
+   - “We made Portland Outdoor for patios, garages, and busy game rooms where weather, kids, and spilled drinks all happen. It’s the table you worry about less.”
+4. **Whistler Indoor** — “For the serious rallies.”
+   - “We made Whistler for players who notice the bounce, even if nobody is keeping score. A little more game, zero extra attitude.”
+5. **Plaza Outdoor** — “Made for shared spaces.”
+   - “We made Plaza for parks, campuses, and community centres where the table belongs to everyone. The whole neighbourhood is invited.”
+
+Names, prices, availability, and primary product media continue to come from the live catalog.
+
+#### Outdoor-inside education
+
+Placement: after Portland Outdoor and before Whistler Indoor.
+
+Eyebrow:
+
+> Good to know
+
+Heading:
+
+> Outdoor doesn’t mean outdoors only.
+
+Body:
+
+> Outdoor tops are made for moisture, changing conditions, and hard use. If kids, parties, a damp garage, or spilled drinks are part of the plan, that extra resilience can be worth it.
+
+CTA: **Compare indoor and outdoor** → `/resources/indoor-vs-outdoor-ping-pong-tables`
+
+The production image uses a real Tiger-branded ball beside the net on a Pacific-navy table. The logo is part of the ball rather than a floating graphic.
+
+No separate brand band or closing pitch is used. The shopping task remains primary.
 
 ### Outdoor tables
 

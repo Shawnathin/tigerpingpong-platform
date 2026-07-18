@@ -141,6 +141,41 @@ final result: passed
 
 ---
 
+# Find Your Table Page QA
+
+Date: 2026-07-18
+
+Scope: Owner-selected left-hand concept translated into the production `/tables` page, including subsequent desktop and mobile browser annotations.
+
+## Evidence
+
+- Selected concept: `exports/tables-category-qa/selected-reference.png`
+- Side-by-side comparison: `exports/tables-category-qa/comparison.html`
+- Desktop viewport/full page: `exports/tables-category-qa/playwright/desktop-1440-viewport.png` and `desktop-1440-full-page.png`
+- Tablet viewport/full page: `exports/tables-category-qa/playwright/tablet-768-viewport.png` and `tablet-768-full-page.png`
+- Mobile viewport/full page: `exports/tables-category-qa/playwright/mobile-390-viewport.png` and `mobile-390-full-page.png`
+
+The proof files remain under ignored `exports/` and are not committed as production media.
+
+## Resolved differences
+
+- The first pass felt slower and more card-like than the selected concept. Product stages are now compact alternating glass compositions with clean transparent product cutouts and live catalog prices.
+- Product-only chooser art felt less human than the concept. The Indoor and Outdoor choices now use real Whistler and Portland lifestyle photography. The final Indoor image centres the Whistler table beneath strong geometric lobby lighting, with a crop tuned specifically for the shallow chooser frame.
+- One-line product labels did not answer “why this one?”. Every table now has a maximum two-sentence Tiger-voice explanation of why it exists and who it suits.
+- The free-shipping message initially looked attached after the fact. It is now a softened sticky glass tab that shares the navigation treatment and keeps “Yes, even to cottage country.” visible as its byline on desktop and mobile.
+- The education image originally used an unbranded ball. The final production image uses the owner-provided real ball as its print reference: black Tiger scratches and the black stacked wordmark, curved onto the ball with the `40` and three-star rating intentionally omitted. The net, lighting, table, and composition remain unchanged.
+- The Portland patio hero is unique to `/tables`; the homepage and About retain their approved Vancouver mountain image.
+- The education band remains between Portland Outdoor and Whistler Indoor and proceeds directly back into the product sequence without a second sales pitch.
+
+## Final result
+
+- No actionable P0, P1, or P2 visual difference remains at the reviewed 390, 768, 1280, and 1440-pixel widths.
+- The page has one H1, logical H2/H3 hierarchy, descriptive alternatives, visible focus states, reduced-motion fallback, lazy loading below the fold, and no document-level horizontal overflow.
+
+final result: passed
+
+---
+
 # Homepage — Summer in Canada QA
 
 Date: 2026-07-18

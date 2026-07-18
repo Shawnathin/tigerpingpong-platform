@@ -2,68 +2,63 @@
 
 ## Active task
 
-Tiger Indoor & Outdoor Table Pages.
+Tiger Gear Categories — “Everything for the Rally.”
 
 ## Selected task card
 
-Rebuild `/tables/indoor-tables/` and `/tables/outdoor-tables/` as focused chapters of the approved “Find Your Table” experience, carrying over its glass, typography, compact product stages, sticky shipping reminder, live catalog data, and Tiger product stories.
+Rebuild the retained Accessories, Paddles, Balls, Covers, Nets, and Replacement Parts routes as shorter, lighter siblings of the Tiger Tables experience. Make the broad Accessories duplication feel deliberate by leading with essentials before the Paddles and Balls already exposed in the main navigation.
 
-## Final page experiences
+## Final route experiences
 
-### Indoor — “Bring the Rally Home”
-
-1. Existing navigation
-2. Whistler Indoor lobby hero
-3. All / Indoor / Outdoor category switch
-4. Sticky Canada-wide table-shipping reassurance
-5. Portland Indoor
-6. “Keep it dry. Let it rip.” editorial interlude
-7. Whistler Indoor
-8. Existing footer
-
-### Outdoor — “Take It Outside”
-
-1. Existing navigation
-2. Portland Outdoor shaded-patio hero shared with `/tables`
-3. All / Indoor / Outdoor category switch
-4. Sticky Canada-wide table-shipping reassurance
-5. Expo Outdoor
-6. Portland Outdoor
-7. “Outdoor doesn’t mean outdoors only” education scene
-8. Plaza Outdoor
-9. Existing footer
+- `/accessories/` — Covers, Nets, and Replacement Parts first; Aqua, Vice, and all ball packs second.
+- `/accessories/paddles/` — Aqua versus Vice decision help and two live product stages.
+- `/accessories/ping-pong-balls/` — Six versus 140 guidance, paired colour packs, and a larger 140-pack moment.
+- `/accessories/covers/` — Cover story plus explicit Plaza compatibility warning.
+- `/accessories/nets/` — Upgrade-oriented Net & Post Set story with an explicit Tiger replacement-net distinction.
+- `/replacement-parts/` — Human support path with no invented catalog or inventory promise.
 
 ## Boundaries
 
-- Change the two table subcategory routes only, apart from shared table-stage extraction, canonical Tiger story content, focused tests, and workflow documentation.
-- Keep `/tables` visually and functionally unchanged.
-- Preserve navigation behaviour, footer, live catalog filtering and prices, cart, checkout, APIs, database, payment truth, protected routes, and public URLs.
-- Reuse cleared media already tracked in the Tiger story source; upload no new assets.
-- Use **PingPong** as one word in all new customer-facing copy and alternatives.
-- Do not add filtering, a product rail, backend work, analytics, or new infrastructure.
+- Preserve all six public URLs, the existing main navigation, footer, product routes, cart, checkout, APIs, database, payment truth, protected routes, and live catalog ownership of prices and availability.
+- Preserve the exact V1 shipping rule: over $100 ships free; $100 or under is $15 across Canada.
+- Reuse cleared current product, Aqua, Cover, and product-detail media. Upload no new assets.
+- Keep provisional product stories internally marked and invisible to customers.
+- Use **PingPong** as one word in all new copy, metadata, and alternatives.
+- Do not add redirects, canonicals, sitemap, robots, backend work, a form, part search, analytics, or new infrastructure.
 - Do not deploy or merge; deliver one focused draft PR.
 
 ## Required proof
 
-- Correct metadata, hero copy/media, category links and active state for both routes.
-- Correct product filtering, order, live prices, stories, images, and destinations.
-- Indoor interlude and outdoor education placement.
-- Sticky shipping copy clears the compact navigation and remains legible on mobile.
-- Every product stage fits inside one 390–417 pixel mobile viewport.
-- No horizontal overflow at 390, 768, 1280, or 1440 pixels.
-- Keyboard focus, descriptive alternatives, lazy loading, and reduced motion remain accessible.
-- Desktop, tablet, and mobile viewport/full-page captures are stored under ignored `exports/table-subcategories-qa/`.
-- Lint, typecheck, unit tests, focused Playwright, production build, secret scan, and launch preflight are run.
+- Metadata, hero copy/media, gear links, and active state on all six routes.
+- Correct filtering, ordering, live prices, images, and product destinations.
+- Aqua appears on both Paddles and All Accessories.
+- Essentials precede repeated Paddles/Balls on All Accessories.
+- Orange and White six-packs retain distinct destinations.
+- Cover compatibility warning and Net fit-help destination are correct.
+- Replacement Parts remains support-only.
+- Exact current shipping threshold wording appears and is not sticky.
+- No horizontal overflow at 390, 417, 768, 1280, or 1440 pixels.
+- Every individual product stage fits within one 844-pixel mobile viewport.
+- Keyboard focus, alternatives, lazy loading, and reduced motion remain accessible.
+- Desktop, tablet, and mobile viewport/full-page evidence for all six routes is stored under ignored `exports/gear-categories-qa/`.
+- Existing Tables suites remain green.
+- Lint, typecheck, unit tests, focused Playwright, production build, secret scan, audit, and launch preflight are run.
 
 ## Status
 
-Implementation and QA are complete on `codex/table-subcategories-tiger-vibe`.
+Implementation and validation are complete on `codex/gear-categories-west-coast-rally`.
 
-- Both routes use one typed, server-rendered category experience and the same shared live product-stage renderer as `/tables`.
-- Indoor keeps its distinct Whistler lobby photography and orange playing-feel interlude.
-- Per owner direction, Outdoor intentionally reuses the stronger shaded Portland patio hero from `/tables` so direct search visitors receive the best first impression.
-- The owner-approved shipping tab and cottage-country byline remain visible on desktop and mobile.
-- Design QA passes with matching desktop comparisons plus desktop, tablet, and mobile viewport/full-page evidence.
-- Lint, typecheck, 26 unit tests, focused category and `/tables` regression tests, production build, and tracked-secret scan pass. The production audit reports two moderate advisories and no high or critical advisories.
-- The exact launch-preflight command reached the full parallel browser phase, where four existing homepage/About/policy checks timed out under suite contention. All four passed immediately when rerun serially; the new category suite and `/tables` regression remained green throughout.
-- No deployment or merge is part of this task. Delivery is one focused draft PR for review.
+- All six routes now use one typed server-rendered `GearCategoryExperience` and one live `GearProductStage`.
+- Accessories uses the approved Essentials-first hierarchy and restores Aqua to the broad product order.
+- Aqua is labelled **Starting at $25.00**, redundant availability labels have been removed, and the Vice hero crop now fills its supporting frame.
+- The Net & Post Set is correctly positioned as a way to upgrade other tables or turn a suitable tabletop into a play space. It is explicitly not described as a Tiger replacement net, and its square product image retains a square hero frame at narrow widths.
+- Mobile gear navigation is a compact, stable six-option segmented control with three equal choices per row; the oversized Parts treatment has been removed at narrow widths.
+- The desktop-only **Keep the rally ready** chooser is hidden below 900 pixels to avoid repeating the same actions immediately before their product sections.
+- The Paddle and Ball decision shelves are also desktop-only; mobile shoppers move directly from category navigation into the products.
+- The shipping threshold, product links, live prices, fallback media, product roles, and support destinations are covered by a focused route matrix.
+- Desktop, tablet, and mobile visual evidence has been captured and reviewed for every route.
+- No media was uploaded and no storefront behavior outside these route compositions was changed.
+- Focused gear suite: 13 passed, 1 evidence-only test skipped in the normal run. Final visual capture: 1 passed.
+- Full launch preflight passed: lint, Prisma generation and validation, typecheck, 26 unit tests, production build, 47 Playwright tests with 8 opt-in evidence tests skipped, zero tracked-secret findings, and a production audit with two moderate findings and no high-severity failure.
+- Post-review mobile navigation and flow refinements were revalidated with lint, typecheck, and the focused 13-test gear suite; the opt-in capture test remained skipped.
+- All changed files pass Prettier. The repo-wide format check remains non-zero because 64 existing files outside this focused change are not currently Prettier-clean.

@@ -160,7 +160,7 @@ The proof files remain under ignored `exports/` and are not committed as product
 ## Resolved differences
 
 - The first pass felt slower and more card-like than the selected concept. Product stages are now compact alternating glass compositions with clean transparent product cutouts and live catalog prices.
-- Product-only chooser art felt less human than the concept. The Indoor and Outdoor choices now use real Whistler and Portland lifestyle photography.
+- Product-only chooser art felt less human than the concept. The Indoor and Outdoor choices now use real Whistler and Portland lifestyle photography. The final Indoor image centres the Whistler table beneath strong geometric lobby lighting, with a crop tuned specifically for the shallow chooser frame.
 - One-line product labels did not answer “why this one?”. Every table now has a maximum two-sentence Tiger-voice explanation of why it exists and who it suits.
 - The free-shipping message initially looked attached after the fact. It is now a softened sticky glass tab that shares the navigation treatment and keeps “Yes, even to cottage country.” visible as its byline on desktop and mobile.
 - The education image originally used an unbranded ball. The final production image uses the owner-provided real ball as its print reference: black Tiger scratches and the black stacked wordmark, curved onto the ball with the `40` and three-star rating intentionally omitted. The net, lighting, table, and composition remain unchanged.

@@ -108,7 +108,7 @@ test("tables page quickly answers where the table will live", async ({ page }) =
 
   const chooserImages = chooser.locator("img");
   await expect(chooserImages).toHaveCount(2);
-  await expect(chooserImages.nth(0)).toHaveAttribute("src", /indoor-whistler-lifestyle-v1/);
+  await expect(chooserImages.nth(0)).toHaveAttribute("src", /indoor-whistler-lifestyle-v2/);
   await expect(chooserImages.nth(1)).toHaveAttribute("src", /outdoor-portland-patio-v1/);
 
   const shipping = page.getByRole("complementary", { name: "Table shipping" });

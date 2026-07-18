@@ -268,6 +268,10 @@
   transition: transform 260ms ease;
 }
 
+.decisionOption[data-kind="indoor"] .decisionMedia img {
+  object-position: 50% 53%;
+}
+
 .decisionOption[data-kind="outdoor"] .decisionMedia img {
   object-position: 55% 58%;
 }

@@ -125,20 +125,20 @@
     },
     {
       "assetId": "TAB-CAT-007",
-      "sourceRoot": "downloads",
-      "sourceRelativePath": "tiger - photos reorganized/Whistler/Hero/Photo from Shawn C (2).jpg",
-      "sourceSha256": "122b44bc14fea4e61a693c2e561fb8a1be0a53a45599e6e6cc9f5a91248031c0",
+      "sourceRoot": "repo",
+      "sourceRelativePath": "exports/tables-category-media/indoor-whistler-lifestyle-v2.jpg",
+      "sourceSha256": "40e349d17f4f84dc4d0adf9ee3b48089fc8981419c4be3a90265b2924bd55b39",
       "sourceDimensions": {
-        "width": 1200,
-        "height": 1600
+        "width": 960,
+        "height": 1280
       },
-      "cloudinaryPublicId": "tigerpingpong/storefront/tables/chooser/indoor-whistler-lifestyle-v1",
-      "deliveryTransformation": "f_auto,q_auto,w_1200",
-      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1200/v1784390313/tigerpingpong/storefront/tables/chooser/indoor-whistler-lifestyle-v1.jpg",
+      "cloudinaryPublicId": "tigerpingpong/storefront/tables/chooser/indoor-whistler-lifestyle-v2",
+      "deliveryTransformation": "f_auto,q_auto,w_960",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_960/v1784395424/tigerpingpong/storefront/tables/chooser/indoor-whistler-lifestyle-v2.jpg",
       "role": "indoor-chooser-lifestyle",
-      "caption": "A Tiger Whistler table at home indoors.",
-      "altText": "Tiger Whistler Indoor PingPong table in a modern shared game room.",
-      "rightsStatus": "owner-cleared-existing-product-media",
+      "caption": "Whistler Indoor in a modern shared lobby.",
+      "altText": "Tiger Whistler Indoor PingPong table beneath geometric lights in a modern shared lobby.",
+      "rightsStatus": "owner-provided-cleared-product-media",
       "status": "implemented",
       "uploadAction": "reuse"
     },

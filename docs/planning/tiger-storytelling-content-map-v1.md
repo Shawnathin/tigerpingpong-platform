@@ -1,7 +1,7 @@
 # Tiger PingPong Storytelling Content Map V1
 
 Date: 2026-07-18
-Status: About, Contact, Summer in Canada homepage, and all three table category experiences implemented; product, cart, and footer excerpts remain planning only
+Status: About, Contact, Summer in Canada homepage, all three table category experiences, and six gear category experiences implemented; product, cart, and footer excerpts remain planning only
 
 ## Purpose
 
@@ -286,29 +286,126 @@ Between the two models, the soft Tiger-orange playing-feel interlude reads:
 
 Do not frame indoor tables as fragile or inferior. The choice is playing feel versus added environmental resilience.
 
-### Paddles
+### Gear categories
 
-Eyebrow:
+Status: implemented on `codex/gear-categories-west-coast-rally`.
 
-> Shop paddles
+The six retained legacy routes now use one shorter, shared Tiger shopping system:
 
-Heading:
+- `/accessories/`
+- `/accessories/paddles/`
+- `/accessories/ping-pong-balls/`
+- `/accessories/covers/`
+- `/accessories/nets/`
+- `/replacement-parts/`
 
-> Pick your paddle.
+The shared normal-flow switch links **All gear**, **Paddles**, **Balls**, **Covers**, **Nets**, and **Need a part?** On mobile it becomes a centred two-row layout rather than a horizontal scroller.
 
-Hero introduction:
+The factual, non-sticky shipping band reads:
 
-> From first serve to final rematch, find the paddle that fits how, where, and how often you play.
+- **Over $100? Shipping’s on us.**
+- **At $100 or under, it’s $15 across Canada.**
 
-Recommended Aqua card pitch:
+This wording deliberately preserves the exact V1 threshold: an order at exactly $100 still receives the $15 flat rate.
 
-> Weather-resistant, ultra-durable, and ready for patios, schools, rec rooms, and whoever forgot it outside.
+Product stages show the live price without the redundant **Available online** label. Hero media respects the source shape: lifestyle photography keeps the wider crop, while square product photography such as the Net & Post Set stays in a square, contained frame.
 
-Recommended Aqua card CTA:
+#### All Accessories
 
-> Meet Aqua
+- Eyebrow: **All the other good stuff**
+- Heading: **Everything around the table.**
+- Body: “Paddles, balls, covers, nets—and a real person when you need the odd little part.”
+- Hero media: real Table Cover and Net & Post Set imagery
 
-No category-level Why Tiger band is needed. The Aqua product card provides the personality moment.
+The page makes the retained SEO duplication useful by leading with the categories not already exposed in the main navigation:
+
+1. Covers — **Keep it covered.**
+2. Nets — **Meet in the middle.**
+3. Replacement Parts — **Find the odd little bit.**
+
+The live Cover and Net products and a support-oriented parts panel appear before the second chapter:
+
+- Eyebrow: **Also here for the rally**
+- Heading: **Paddles and balls, obviously.**
+- Body: “Because an Accessories page without paddles and balls would be a weird little page.”
+
+Aqua, Vice, both six-packs, and the 140-pack all appear here. Aqua is intentionally restored to the broad Accessories order.
+
+#### Paddles
+
+- Eyebrow: **PingPong paddles**
+- Heading: **Pick your paddle.**
+- Body: “One is built for real-life chaos. One is made for young players finding their feel. Neither comes with a tournament speech.”
+
+The decision shelf asks **Where will it play?**
+
+- **Everywhere** — Aqua for patios, schools, rec rooms, shared spaces, and forgotten paddles.
+- **Smaller hands** — Vice for kids and newer players who want approachable control.
+
+Product stories:
+
+- **Aqua** — “Built for the paddle someone forgot outside.”
+  - “Weather-resistant, ultra-durable, and ready for patios, schools, rec rooms, and whoever forgot it outside.”
+  - Category price label: **Starting at $25.00**, reflecting Aqua’s package choices.
+- **Vice** — “Small hands. Big rallies.”
+  - “Vice is an easy first paddle for younger players, with a slimmer handle that is easier to hold. A proper paddle, minus the serious-paddle attitude.”
+
+#### Balls
+
+- Eyebrow: **PingPong balls**
+- Heading: **You’re going to lose a few.**
+- Body: “Under the couch. Behind the freezer. Somewhere in the yard. Start with six or stop counting at 140.”
+
+The decision shelf asks **How many rematches?** Six is for topping up the drawer; 140 is for schools, community centres, and homes where six disappears by Tuesday. The colour note reads **White or orange? Pick your favourite.**
+
+The Orange and White six-packs share one visual stage but retain separate live prices, anchors, product destinations, and actions. The 140-pack receives its own moment:
+
+- Descriptor: **Commit to the bit.**
+- Body: “For busy rooms where rallies happen faster than ball rescues. Fewer emergency searches under the sofa.”
+
+#### Covers
+
+- Eyebrow: **Table covers**
+- Heading: **Weather happens.**
+- Body: “Rain, dust, leaves, and whatever just blew in sideways. Cover the table and get on with your day.”
+- Media: existing amber-orange Table Cover artwork
+
+Product story:
+
+- Descriptor: **Ultra Protection.**
+- Body: “Durable Oxford outdoor fabric, a snug fit, and a corded slide-buckle strap help keep the cover where you left it.”
+
+Fit guidance states that the cover is designed for Tiger tables, fits most standard tables, and is not compatible with Plaza Outdoor. Uncertain customers are sent to Tiger before ordering.
+
+#### Nets
+
+- Eyebrow: **Nets and post sets**
+- Heading: **Meet in the middle.**
+- Body: “A table without a net is just a very specific dining table. Let’s fix that.”
+- Media: real Net & Post Set photography
+
+Product story:
+
+- Descriptor: **Set it. Start the rally.**
+- Body: “Turn a suitable tabletop into rally territory, or give another table a better net. It’s a little taste of Tiger quality without replacing the whole setup.”
+
+The distinction panel makes clear that this set upgrades other tables or turns a suitable tabletop into a play space; it is not a replacement net for Tiger tables. Customers looking for a Tiger replacement net are sent to Replacement Parts without an inventory promise. No unavailable legacy nets are exposed.
+
+#### Replacement Parts
+
+This is a human service page rather than an empty catalog.
+
+- Eyebrow: **Replacement parts**
+- Heading: **Something went missing?**
+- Body: “A wheel, a bracket, that one little bit with no obvious name—we’ll help figure it out.”
+- Actions: **Call Tiger** and **Email the clues**
+- Media: real Tiger net, wheel, and table-detail photography used as examples only
+
+The guidance chapter asks for the product name, a table photo, a photo or description of the missing part, and an order reference when available. It links to `/contact#order-help-title`. There is no part catalog, search field, form, price, or inventory promise.
+
+#### Copy governance
+
+Canonical gear copy is typed with an internal-only status. Aqua and Cover wording is `approved`; Vice, Balls, and Net wording is `provisional` until the deeper product-story pass. The status never appears to customers.
 
 ---
 

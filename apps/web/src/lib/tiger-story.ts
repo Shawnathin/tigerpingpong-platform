@@ -106,6 +106,35 @@ export interface TigerTableCategoryStory {
   kind: TigerTableCategoryKind;
 }
 
+export type TigerGearCategoryKind = "all" | "paddles" | "balls" | "covers" | "nets" | "parts";
+
+export type TigerGearCopyStatus = "approved" | "provisional";
+
+export interface TigerGearProductStory {
+  body: string;
+  copyStatus: TigerGearCopyStatus;
+  cta: string;
+  descriptor: string;
+  eyebrow: string;
+  image?: TigerStoryImage;
+  pricePrefix?: string;
+}
+
+export interface TigerGearCategoryStory {
+  activeItem: "accessories" | "balls" | "paddles";
+  anchor: string;
+  hero: {
+    body: string;
+    eyebrow: string;
+    featuredSlugs: string[];
+    heading: string;
+    image?: TigerStoryImage;
+    tone: "amber" | "ink" | "mist" | "pool";
+  };
+  kind: TigerGearCategoryKind;
+  productSlugs: string[];
+}
+
 const aboutStoryImageMap = aboutStoryImageMapData as TigerStoryImageMap;
 const homepagePromotionImageMap = homepagePromotionImageMapData as TigerHomepagePromotionImageMap;
 const homepageSummerImageMap = homepageSummerImageMapData as TigerHomepageSummerImageMap;
@@ -307,6 +336,259 @@ export const tigerTableCategoryStories = {
     }
   }
 } satisfies Record<TigerTableCategoryKind, TigerTableCategoryStory>;
+
+export const tigerGearProductStories = {
+  "tiger-aqua-outdoor-indoor-paddle": {
+    eyebrow: "Aqua paddles",
+    descriptor: "Built for the paddle someone forgot outside.",
+    body: "Weather-resistant, ultra-durable, and ready for patios, schools, rec rooms, and whoever forgot it outside.",
+    cta: "Meet Aqua",
+    copyStatus: "approved",
+    image: aquaProductImage,
+    pricePrefix: "Starting at"
+  },
+  "tiger-vice-paddle": {
+    eyebrow: "Vice paddle",
+    descriptor: "Small hands. Big rallies.",
+    body: "Vice is an easy first paddle for younger players, with a slimmer handle that is easier to hold. A proper paddle, minus the serious-paddle attitude.",
+    cta: "Meet Vice",
+    copyStatus: "provisional"
+  },
+  "tiger-premium-balls-6-orange": {
+    eyebrow: "Six-pack balls",
+    descriptor: "Six. Bright orange.",
+    body: "For topping up the drawer, the garage, or wherever the last six disappeared to.",
+    cta: "Meet the orange six-pack",
+    copyStatus: "provisional"
+  },
+  "tiger-premium-balls-6-white": {
+    eyebrow: "Six-pack balls",
+    descriptor: "Six. Classic white.",
+    body: "For topping up the drawer, the garage, or wherever the last six disappeared to.",
+    cta: "Meet the white six-pack",
+    copyStatus: "provisional"
+  },
+  "tiger-premium-balls-140": {
+    eyebrow: "140-pack balls",
+    descriptor: "Commit to the bit.",
+    body: "For busy rooms where rallies happen faster than ball rescues. Fewer emergency searches under the sofa.",
+    cta: "Meet the 140-pack",
+    copyStatus: "provisional"
+  },
+  "tiger-table-cover-black-polyester": {
+    eyebrow: "Tiger table cover",
+    descriptor: "Ultra Protection.",
+    body: "Durable Oxford outdoor fabric, a snug fit, and a corded slide-buckle strap help keep the cover where you left it.",
+    cta: "Cover it up",
+    copyStatus: "approved",
+    image: coverProductImage
+  },
+  "tiger-net-post-set": {
+    eyebrow: "Net and post set",
+    descriptor: "Set it. Start the rally.",
+    body: "Turn a suitable tabletop into rally territory, or give another table a better net. It’s a little taste of Tiger quality without replacing the whole setup.",
+    cta: "Meet the net set",
+    copyStatus: "provisional"
+  }
+} satisfies Record<string, TigerGearProductStory>;
+
+export const tigerGearCategoryStories = {
+  all: {
+    kind: "all",
+    activeItem: "accessories",
+    anchor: "gear",
+    hero: {
+      eyebrow: "All the other good stuff",
+      heading: "Everything around the table.",
+      body: "Paddles, balls, covers, nets—and a real person when you need the odd little part.",
+      featuredSlugs: ["tiger-table-cover-black-polyester", "tiger-net-post-set"],
+      tone: "mist"
+    },
+    productSlugs: [
+      "tiger-table-cover-black-polyester",
+      "tiger-net-post-set",
+      "tiger-aqua-outdoor-indoor-paddle",
+      "tiger-vice-paddle",
+      "tiger-premium-balls-6-orange",
+      "tiger-premium-balls-6-white",
+      "tiger-premium-balls-140"
+    ]
+  },
+  paddles: {
+    kind: "paddles",
+    activeItem: "paddles",
+    anchor: "gear",
+    hero: {
+      eyebrow: "PingPong paddles",
+      heading: "Pick your paddle.",
+      body: "One is built for real-life chaos. One is made for young players finding their feel. Neither comes with a tournament speech.",
+      featuredSlugs: ["tiger-vice-paddle"],
+      image: aquaProductImage,
+      tone: "pool"
+    },
+    productSlugs: ["tiger-aqua-outdoor-indoor-paddle", "tiger-vice-paddle"]
+  },
+  balls: {
+    kind: "balls",
+    activeItem: "balls",
+    anchor: "gear",
+    hero: {
+      eyebrow: "PingPong balls",
+      heading: "You’re going to lose a few.",
+      body: "Under the couch. Behind the freezer. Somewhere in the yard. Start with six or stop counting at 140.",
+      featuredSlugs: ["tiger-premium-balls-140"],
+      tone: "mist"
+    },
+    productSlugs: [
+      "tiger-premium-balls-6-orange",
+      "tiger-premium-balls-6-white",
+      "tiger-premium-balls-140"
+    ]
+  },
+  covers: {
+    kind: "covers",
+    activeItem: "accessories",
+    anchor: "gear",
+    hero: {
+      eyebrow: "Table covers",
+      heading: "Weather happens.",
+      body: "Rain, dust, leaves, and whatever just blew in sideways. Cover the table and get on with your day.",
+      featuredSlugs: [],
+      image: coverProductImage,
+      tone: "amber"
+    },
+    productSlugs: ["tiger-table-cover-black-polyester"]
+  },
+  nets: {
+    kind: "nets",
+    activeItem: "accessories",
+    anchor: "gear",
+    hero: {
+      eyebrow: "Nets and post sets",
+      heading: "Meet in the middle.",
+      body: "A table without a net is just a very specific dining table. Let’s fix that.",
+      featuredSlugs: ["tiger-net-post-set"],
+      tone: "ink"
+    },
+    productSlugs: ["tiger-net-post-set"]
+  },
+  parts: {
+    kind: "parts",
+    activeItem: "accessories",
+    anchor: "gear",
+    hero: {
+      eyebrow: "Replacement parts",
+      heading: "Something went missing?",
+      body: "A wheel, a bracket, that one little bit with no obvious name—we’ll help figure it out.",
+      featuredSlugs: [],
+      tone: "ink"
+    },
+    productSlugs: []
+  }
+} satisfies Record<TigerGearCategoryKind, TigerGearCategoryStory>;
+
+export const tigerGearStory = {
+  navigation: [
+    { kind: "all", href: "/accessories/", label: "All gear" },
+    { kind: "paddles", href: "/accessories/paddles/", label: "Paddles" },
+    { kind: "balls", href: "/accessories/ping-pong-balls/", label: "Balls" },
+    { kind: "covers", href: "/accessories/covers/", label: "Covers" },
+    { kind: "nets", href: "/accessories/nets/", label: "Nets" }
+  ],
+  partsLink: {
+    kind: "parts",
+    href: "/replacement-parts/",
+    label: "Need a part?"
+  },
+  shipping: {
+    heading: "Over $100? Shipping’s on us.",
+    body: "At $100 or under, it’s $15 across Canada."
+  },
+  essentials: {
+    anchor: "choose",
+    eyebrow: "Start here",
+    heading: "Keep the rally ready.",
+    items: [
+      { href: "/accessories/covers/", heading: "Covers", body: "Keep it covered." },
+      { href: "/accessories/nets/", heading: "Nets", body: "Meet in the middle." },
+      {
+        href: "/replacement-parts/",
+        heading: "Replacement Parts",
+        body: "Find the odd little bit."
+      }
+    ]
+  },
+  rallyGear: {
+    eyebrow: "Also here for the rally",
+    heading: "Paddles and balls, obviously.",
+    body: "Because an Accessories page without paddles and balls would be a weird little page."
+  },
+  paddleChooser: {
+    anchor: "choose",
+    eyebrow: "Two good answers",
+    heading: "Where will it play?",
+    items: [
+      {
+        href: "#product-tiger-aqua-outdoor-indoor-paddle",
+        heading: "Everywhere",
+        body: "Aqua for patios, schools, rec rooms, shared spaces, and forgotten paddles."
+      },
+      {
+        href: "#product-tiger-vice-paddle",
+        heading: "Smaller hands",
+        body: "Vice for kids and newer players who want approachable control."
+      }
+    ]
+  },
+  ballChooser: {
+    anchor: "choose",
+    eyebrow: "A very technical question",
+    heading: "How many rematches?",
+    items: [
+      { href: "#six-pack", heading: "Six", body: "For topping up the drawer." },
+      {
+        href: "#product-tiger-premium-balls-140",
+        heading: "140",
+        body: "For schools, community centres, and homes where six disappears by Tuesday."
+      }
+    ],
+    note: "White or orange? Pick your favourite."
+  },
+  coverFit: {
+    eyebrow: "One quick heads-up",
+    heading: "Let’s make sure it fits.",
+    body: "Designed for Tiger tables and made to fit most standard tables. It is not compatible with Plaza Outdoor. If you’re unsure, call us before ordering.",
+    action: { href: "tel:+18885525259", label: "Call Tiger" }
+  },
+  netFit: {
+    eyebrow: "One important distinction",
+    heading: "This one upgrades other tables.",
+    body: "Use it to turn a suitable tabletop into a place to play or to give another table a better net. It is not a replacement net for Tiger tables; those belong in Replacement Parts.",
+    action: { href: "/replacement-parts/", label: "Ask about a Tiger replacement net" }
+  },
+  parts: {
+    eyebrow: "Give us the clues",
+    heading: "A photo usually solves the mystery.",
+    body: "Send what you know and we’ll help identify the right part.",
+    details: [
+      "Product name",
+      "Photo of the table",
+      "Photo or description of the missing part",
+      "Order reference, if available"
+    ],
+    actions: [
+      { href: "tel:+18885525259", label: "Call Tiger" },
+      {
+        href: "mailto:info@tigerpingpong.com?subject=Tiger%20replacement%20part%20help",
+        label: "Email the clues"
+      }
+    ],
+    contactAction: {
+      href: "/contact#order-help-title",
+      label: "See what details help"
+    }
+  }
+} as const;
 
 export const tigerStory = {
   homepage: {

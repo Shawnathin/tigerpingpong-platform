@@ -1,15 +1,29 @@
 import type { Metadata } from "next";
 
-import { CategoryLandingPage } from "../CategoryLandingPage";
-import { getCategoryPageConfig } from "../category-pages";
+import { getPathMetadata } from "../../lib/seo";
+import { GearCategoryExperience } from "../_gear/GearCategoryExperience";
+import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
+import { PublicStorefrontNav } from "../PublicStorefrontNav";
+
+import styles from "../_gear/gear-category.module.css";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Replacement Parts | Tiger Ping Pong",
-  description: "Replacement parts support for Tiger Ping Pong products."
-};
+export const metadata: Metadata = getPathMetadata({
+  pathname: "/replacement-parts",
+  title: "Replacement Parts | Tiger PingPong",
+  description:
+    "Need a Tiger PingPong replacement part? Call or email a real person in Vancouver with your product name, photos, and order reference."
+});
 
 export default function ReplacementPartsPage() {
-  return <CategoryLandingPage config={getCategoryPageConfig("replacement-parts")} />;
+  return (
+    <>
+      <PublicStorefrontNav activeItem="accessories" />
+      <main className={styles.page}>
+        <GearCategoryExperience kind="parts" />
+      </main>
+      <PublicStorefrontFooter />
+    </>
+  );
 }

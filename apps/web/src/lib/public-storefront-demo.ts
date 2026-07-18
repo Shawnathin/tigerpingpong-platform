@@ -124,25 +124,11 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
   ],
   "tiger-vice-paddle": [
     {
-      alt: "Aqua paddle set red paddle",
-      caption: "Red paddle",
+      alt: "Tiger PingPong Vice paddle in pink with a white ball.",
+      caption: "Vice paddle",
       role: "primary",
-      src: "/storefront/prototype/aqua-paddle/red-paddle-single-cutout.png",
-      title: "Aqua paddle set"
-    },
-    {
-      alt: "Aqua paddle set blue paddle",
-      caption: "Blue paddle",
-      role: "alternate",
-      src: "/storefront/prototype/aqua-paddle/blue-paddle-single-cutout.png",
-      title: "Blue paddle"
-    },
-    {
-      alt: "Aqua paddle set box",
-      caption: "Paddle set box",
-      role: "packaging",
-      src: "/storefront/prototype/aqua-paddle/aqua-4count-box-angle.jpg",
-      title: "Paddle set box"
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
+      title: "Tiger PingPong Vice paddle"
     }
   ],
   "tiger-aqua-outdoor-indoor-paddle": [

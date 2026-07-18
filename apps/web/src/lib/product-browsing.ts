@@ -8,12 +8,13 @@ const TABLE_PRODUCT_ORDER = [
   "tiger-plaza-outdoor-table-grey"
 ];
 const ACCESSORY_PARENT_ORDER = [
-  "tiger-net-post-set",
   "tiger-table-cover-black-polyester",
-  "tiger-premium-balls-140",
+  "tiger-net-post-set",
+  "tiger-aqua-outdoor-indoor-paddle",
+  "tiger-vice-paddle",
   "tiger-premium-balls-6-orange",
   "tiger-premium-balls-6-white",
-  "tiger-vice-paddle"
+  "tiger-premium-balls-140"
 ];
 
 const TABLE_PRODUCT_META: Record<
@@ -66,6 +67,7 @@ const PRODUCT_DISPLAY_NAMES: Record<string, string> = {
   "tiger-premium-balls-6-orange": "6-Pack Orange Balls",
   "tiger-premium-balls-6-white": "6-Pack White Balls",
   "tiger-table-cover-black-polyester": "Table Cover",
+  "tiger-aqua-outdoor-indoor-paddle": "Aqua Paddle",
   "tiger-vice-paddle": "Vice Paddle"
 };
 
@@ -75,6 +77,7 @@ const ACCESSORY_CTA_LABELS: Record<string, string> = {
   "tiger-premium-balls-6-orange": "View balls",
   "tiger-premium-balls-6-white": "View balls",
   "tiger-table-cover-black-polyester": "View cover",
+  "tiger-aqua-outdoor-indoor-paddle": "View Aqua",
   "tiger-vice-paddle": "View paddle"
 };
 

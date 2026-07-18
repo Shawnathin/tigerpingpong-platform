@@ -90,6 +90,118 @@ const product = {
     }
   ]
 };
+const accessoryProducts = [
+  {
+    key: "tiger-aqua-outdoor-indoor-paddle",
+    slug: "tiger-aqua-outdoor-indoor-paddle",
+    name: "Aqua Outdoor / Indoor Paddle",
+    productKind: "paddle",
+    purchaseMode: "online_checkout",
+    priceCents: 2500,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "aqua-paddles", slug: "aqua-paddles", name: "Aqua Paddles" },
+    category: { key: "paddles", slug: "paddles", name: "Paddles" },
+    primaryMedia: null
+  },
+  {
+    key: "tiger-vice-paddle",
+    slug: "tiger-vice-paddle",
+    name: "Tiger PingPong Vice Ping Pong Paddle",
+    productKind: "paddle",
+    purchaseMode: "online_checkout",
+    priceCents: 5000,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "vice-paddle", slug: "vice-paddle", name: "Vice Paddle" },
+    category: { key: "paddles", slug: "paddles", name: "Paddles" },
+    primaryMedia: {
+      mediaKey: "vice-primary",
+      role: "primary",
+      cloudinarySecureUrl:
+        "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
+      altText: "Tiger PingPong Vice paddle in pink with a white ball.",
+      title: "Tiger PingPong Vice paddle",
+      caption: null,
+      sortOrder: 1,
+      isPrimary: true
+    }
+  },
+  {
+    key: "tiger-premium-balls-6-white",
+    slug: "tiger-premium-balls-6-white",
+    name: "Tiger PingPong Premium 3-Star Ping Pong Balls 6 Pack White",
+    productKind: "ball",
+    purchaseMode: "online_checkout",
+    priceCents: 800,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "premium-balls", slug: "premium-balls", name: "Premium Balls" },
+    category: { key: "ping-pong-balls", slug: "ping-pong-balls", name: "Ping Pong Balls" },
+    primaryMedia: null
+  },
+  {
+    key: "tiger-premium-balls-140",
+    slug: "tiger-premium-balls-140",
+    name: "Tiger PingPong Premium 3-Star Ping Pong Balls 140 Pack",
+    productKind: "ball",
+    purchaseMode: "online_checkout",
+    priceCents: 9600,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "premium-balls", slug: "premium-balls", name: "Premium Balls" },
+    category: { key: "ping-pong-balls", slug: "ping-pong-balls", name: "Ping Pong Balls" },
+    primaryMedia: {
+      mediaKey: "balls-140-primary",
+      role: "primary",
+      cloudinarySecureUrl:
+        "https://res.cloudinary.com/djfcisldm/image/upload/v1781303661/tigerpingpong/products/tiger-premium-balls-140/01-main.jpg",
+      altText: "Open box of 140 Tiger PingPong balls.",
+      title: "Tiger PingPong 140-pack",
+      caption: null,
+      sortOrder: 1,
+      isPrimary: true
+    }
+  },
+  {
+    key: "tiger-table-cover-black-polyester",
+    slug: "tiger-table-cover-black-polyester",
+    name: "Tiger PingPong Protective Ping Pong Table Cover Black Polyester",
+    productKind: "cover",
+    purchaseMode: "online_checkout",
+    priceCents: 5500,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "table-covers", slug: "table-covers", name: "Table Covers" },
+    category: { key: "covers", slug: "covers", name: "Covers" },
+    primaryMedia: null
+  },
+  {
+    key: "tiger-net-post-set",
+    slug: "tiger-net-post-set",
+    name: "Table Tennis Net & Post Set",
+    productKind: "net",
+    purchaseMode: "online_checkout",
+    priceCents: 5900,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: { key: "net-sets", slug: "net-sets", name: "Net Sets" },
+    category: { key: "nets", slug: "nets", name: "Nets" },
+    primaryMedia: null
+  }
+];
 const tableProducts = [
   {
     key: "tiger-expo-outdoor-table",
@@ -287,14 +399,21 @@ const server = createServer(async (request, response) => {
         status: "ok",
         service: "local-mock-catalog",
         timestamp: new Date().toISOString(),
-        counts: { brands: 1, categories: 2, productFamilies: 6, products: 6, variants: 0, media: 0 }
+        counts: {
+          brands: 1,
+          categories: 5,
+          productFamilies: 12,
+          products: 12,
+          variants: 0,
+          media: 0
+        }
       })
     );
     return;
   }
 
   if (request.url === "/catalog/products") {
-    response.end(JSON.stringify({ products: [product, ...tableProducts] }));
+    response.end(JSON.stringify({ products: [product, ...accessoryProducts, ...tableProducts] }));
     return;
   }
 

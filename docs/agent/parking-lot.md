@@ -22,3 +22,10 @@
   confirmed in expected Stripe `test` mode. Public storefront/cart checks passed
   on `https://tigerpingpong-web.onrender.com`; Stripe webhook and paid-order
   admin proof remain pending.
+
+- Post-launch replacement-parts experience:
+  - Link manuals and setup videos from each applicable product page.
+  - Add a general table/part finder plus a dedicated parts page for each table.
+  - Put each table's five most-requested parts first instead of exposing one giant grid.
+  - Explore interactive table diagrams that show where a selected part goes and link to installation guidance.
+  - Add the Canada Post Part 40 story photo after Shawn captures the nearly four-foot opening rod outside a recognizable location; use the caption “This is why we stock the little part.”

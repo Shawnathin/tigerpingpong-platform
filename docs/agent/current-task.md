@@ -2,63 +2,50 @@
 
 ## Active task
 
-Tiger Gear Categories — “Everything for the Rally.”
+Launch-ready Replacement Parts page.
 
 ## Selected task card
 
-Rebuild the retained Accessories, Paddles, Balls, Covers, Nets, and Replacement Parts routes as shorter, lighter siblings of the Tiger Tables experience. Make the broad Accessories duplication feel deliberate by leading with essentials before the Paddles and Balls already exposed in the main navigation.
+Turn `/replacement-parts/` into a focused Tiger support hub with Part 40 first, five downloadable table manuals, four existing setup videos, and direct human help from Vancouver.
 
-## Final route experiences
+## Final page experience
 
-- `/accessories/` — Covers, Nets, and Replacement Parts first; Aqua, Vice, and all ball packs second.
-- `/accessories/paddles/` — Aqua versus Vice decision help and two live product stages.
-- `/accessories/ping-pong-balls/` — Six versus 140 guidance, paired colour packs, and a larger 140-pack moment.
-- `/accessories/covers/` — Cover story plus explicit Plaza compatibility warning.
-- `/accessories/nets/` — Upgrade-oriented Net & Post Set story with an explicit Tiger replacement-net distinction.
-- `/replacement-parts/` — Human support path with no invented catalog or inventory promise.
+1. Existing public navigation
+2. “Keep the rally going” hero with the real Part 40 image
+3. Part 40 story, compatibility qualification, and prefilled fit-check email
+4. Three-item part-identification checklist
+5. Five verified manual downloads and four setup videos
+6. Human phone/email support band
+7. Existing public footer
 
 ## Boundaries
 
-- Preserve all six public URLs, the existing main navigation, footer, product routes, cart, checkout, APIs, database, payment truth, protected routes, and live catalog ownership of prices and availability.
-- Preserve the exact V1 shipping rule: over $100 ships free; $100 or under is $15 across Canada.
-- Reuse cleared current product, Aqua, Cover, and product-detail media. Upload no new assets.
-- Keep provisional product stories internally marked and invisible to customers.
-- Use **PingPong** as one word in all new copy, metadata, and alternatives.
-- Do not add redirects, canonicals, sitemap, robots, backend work, a form, part search, analytics, or new infrastructure.
+- Change only the replacement-parts route, its scoped content/styles, focused tests, approved Cloudinary assets, safe upload tooling, and workflow documentation.
+- Keep Part 40 support-confirmed and manually fulfilled; add no price, inventory promise, cart, or checkout control.
+- Preserve navigation, footer, product pages, catalog/API/database contracts, shipping, payment truth, and protected routes.
+- Use **Part 40** in customer copy; keep the older source identifier internal.
+- Use **PingPong** as one word in new customer-facing copy.
 - Do not deploy or merge; deliver one focused draft PR.
 
 ## Required proof
 
-- Metadata, hero copy/media, gear links, and active state on all six routes.
-- Correct filtering, ordering, live prices, images, and product destinations.
-- Aqua appears on both Paddles and All Accessories.
-- Essentials precede repeated Paddles/Balls on All Accessories.
-- Orange and White six-packs retain distinct destinations.
-- Cover compatibility warning and Net fit-help destination are correct.
-- Replacement Parts remains support-only.
-- Exact current shipping threshold wording appears and is not sticky.
-- No horizontal overflow at 390, 417, 768, 1280, or 1440 pixels.
-- Every individual product stage fits within one 844-pixel mobile viewport.
-- Keyboard focus, alternatives, lazy loading, and reduced motion remain accessible.
-- Desktop, tablet, and mobile viewport/full-page evidence for all six routes is stored under ignored `exports/gear-categories-qa/`.
-- Existing Tables suites remain green.
-- Lint, typecheck, unit tests, focused Playwright, production build, secret scan, audit, and launch preflight are run.
+- Six source assets match their approved hashes and upload without overwrite.
+- All five manuals return PDF content and download as attachments from Cloudinary.
+- Correct Part 40 copy, selected-model qualification, email prompts, phone link, manuals, and videos.
+- No price, cart, checkout, or unverified compatibility promise.
+- One H1, descriptive image alternative, keyboard focus, reduced-motion safety, and no horizontal overflow at 390, 768, and 1440 pixels.
+- Desktop, tablet, and mobile viewport/full-page captures under ignored `exports/replacement-parts-qa/`.
+- Lint, typecheck, unit tests, focused Playwright, production build, and tracked-secret scan pass.
 
 ## Status
 
-Implementation and validation are complete on `codex/gear-categories-west-coast-rally`.
+Implementation and validation are complete on `codex/replacement-parts-launch-ready`.
 
-- All six routes now use one typed server-rendered `GearCategoryExperience` and one live `GearProductStage`.
-- Accessories uses the approved Essentials-first hierarchy and restores Aqua to the broad product order.
-- Aqua is labelled **Starting at $25.00**, redundant availability labels have been removed, and the Vice hero crop now fills its supporting frame.
-- The Net & Post Set is correctly positioned as a way to upgrade other tables or turn a suitable tabletop into a play space. It is explicitly not described as a Tiger replacement net, and its square product image retains a square hero frame at narrow widths.
-- Mobile gear navigation is a compact, stable six-option segmented control with three equal choices per row; the oversized Parts treatment has been removed at narrow widths.
-- The desktop-only **Keep the rally ready** chooser is hidden below 900 pixels to avoid repeating the same actions immediately before their product sections.
-- The Paddle and Ball decision shelves are also desktop-only; mobile shoppers move directly from category navigation into the products.
-- The shipping threshold, product links, live prices, fallback media, product roles, and support destinations are covered by a focused route matrix.
-- Desktop, tablet, and mobile visual evidence has been captured and reviewed for every route.
-- No media was uploaded and no storefront behavior outside these route compositions was changed.
-- Focused gear suite: 13 passed, 1 evidence-only test skipped in the normal run. Final visual capture: 1 passed.
-- Full launch preflight passed: lint, Prisma generation and validation, typecheck, 26 unit tests, production build, 47 Playwright tests with 8 opt-in evidence tests skipped, zero tracked-secret findings, and a production audit with two moderate findings and no high-severity failure.
-- Post-review mobile navigation and flow refinements were revalidated with lint, typecheck, and the focused 13-test gear suite; the opt-in capture test remained skipped.
-- All changed files pass Prettier. The repo-wide format check remains non-zero because 64 existing files outside this focused change are not currently Prettier-clean.
+- `/replacement-parts/` is now a dedicated static support page; its unnecessary live-catalog request and dynamic rendering flag are gone.
+- Part 40 leads the page with the approved packshot, selected-table fit qualification, one dry Tiger story, and a prefilled fit-check email. No price, inventory, cart, or checkout path was added.
+- The five approved manuals and four existing setup videos are available from typed page content. The Plaza installation-and-parts document is used instead of the specification sheet.
+- All six owner-provided sources matched their approved hashes and were uploaded with deterministic Cloudinary public IDs, collision preflight, and `overwrite=false`.
+- Cloudinary PDF delivery was reapplied and live-verified: the Part 40 image and all five PDFs return the expected content types, and every manual download returns an attachment header.
+- Desktop, tablet, and mobile viewport/full-page captures were reviewed under ignored `exports/replacement-parts-qa/`; no horizontal overflow or broken card/image treatment was found.
+- Final validation passed: lint, typecheck, 26 unit tests, 3 focused Playwright tests with 1 opt-in evidence test skipped, production web build, scoped Prettier check, diff check, and tracked-secret scan with zero findings.
+- Navigation, footer, other routes, product pages, catalog/API/database contracts, checkout, payments, shipping, auth, and protected routes were not changed.

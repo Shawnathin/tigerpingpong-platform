@@ -349,17 +349,17 @@
   display: grid;
   width: max-content;
   max-width: calc(100% - 28px);
-  min-height: 48px;
+  min-height: 42px;
   justify-content: center;
   justify-items: center;
   justify-self: center;
-  gap: 2px;
+  gap: 1px;
   margin-top: -57px;
   margin-bottom: -8px;
   border: 1px solid rgb(255 255 255 / 88%);
   border-top-color: rgb(255 255 255 / 24%);
   border-radius: 0 0 24px 24px;
-  padding: 8px 24px 10px;
+  padding: 5px 18px 7px;
   color: #303b51;
   background:
     linear-gradient(135deg, rgb(255 255 255 / 92%), rgb(255 255 255 / 54%)), rgb(255 255 255 / 30%);

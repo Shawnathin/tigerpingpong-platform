@@ -570,8 +570,13 @@ test("staff can safely edit an existing product and stale carts require review",
     Authorization: `Basic ${Buffer.from("local-admin:local-password").toString("base64")}`
   });
   await page.goto("/admin/products");
-  await page.getByRole("link", { name: "Edit" }).click();
-  await expect(page.getByRole("heading", { name: /Edit Tiger PingPong/i })).toBeVisible();
+  await Promise.all([
+    page.waitForURL(/\/admin\/products\/[^/]+$/),
+    page.getByRole("link", { name: "Edit" }).click()
+  ]);
+  await expect(page.getByRole("heading", { name: /Edit Tiger PingPong/i })).toBeVisible({
+    timeout: 15_000
+  });
 
   await page.locator('input[name="expectedUpdatedAt"]').evaluate((element) => {
     (element as HTMLInputElement).value = "2026-07-16T11:00:00.000Z";

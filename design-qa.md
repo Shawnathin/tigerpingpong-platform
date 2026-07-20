@@ -1,5 +1,16 @@
 # Product Imagery Design QA
 
+## Table Selector Media + Balls Hero — Launch-Day Follow-up
+
+Date: 2026-07-20
+Branch: `codex/table-variant-selector-images`
+
+- A production-data preview confirmed that current table media rows do not yet expose variant assignments. The purchase rail now falls back to the first approved gallery-manifest image for the exact existing product slug and variant key; live API media remains authoritative when present.
+- Whistler Blue and Green were visually verified as complete table photographs on contained white selector canvases. The same exact-key contract covers Expo, Portland Indoor, Portland Outdoor, Whistler, and Plaza without changing variant identifiers, prices, cart lines, or checkout payloads.
+- The PingPong Balls hero uses the exact owner-selected Cloudinary photograph (`tpp-category-balls-gallery-01.jpg`). Its 1600 × 1600 source returns HTTP 200 and fills the existing hero frame cleanly at the reviewed mobile viewport.
+- No production catalog write, media upload, backend change, or checkout change was made.
+- Validation passed: lint, production build, tracked-secret scan, high-severity dependency gate, six focused manifest unit tests, and 18 active focused Playwright tests. Two screenshot-only Playwright jobs remain intentionally skipped; the production audit reports two moderate advisories and no high/critical finding.
+
 Date: 2026-07-17
 
 Scope: Exact-match product-detail imagery only

@@ -16,6 +16,7 @@ import {
 import { getCanonicalUrl } from "../../../../lib/seo";
 import {
   getTigerAquaPurchaseOptionStory,
+  getTigerTableVariantSelectorMedia,
   tigerAquaProductStory,
   tigerTablePurchaseStory,
   tigerTablesProductStories
@@ -561,13 +562,18 @@ function getTableCheckoutOptionGroups(
         (mediaItem) =>
           Boolean(optionValue.variantKey) && mediaItem.variantKey === optionValue.variantKey
       );
+      const selectorMedia =
+        variantMedia ??
+        (optionValue.variantKey
+          ? getTigerTableVariantSelectorMedia(product.slug, optionValue.variantKey)
+          : undefined);
 
       return {
         ...optionValue,
         accent: getTableOptionAccent(optionValue.label),
         shopperLabel: optionValue.label,
-        thumbnailAlt: variantMedia?.altText ?? undefined,
-        thumbnailSrc: variantMedia?.src ?? undefined
+        thumbnailAlt: selectorMedia?.altText ?? undefined,
+        thumbnailSrc: selectorMedia?.src ?? undefined
       };
     })
   }));

@@ -4,6 +4,7 @@ import aquaProductStoryImageMapData from "../../../../data/media/aqua-product-st
 import homepagePromotionImageMapData from "../../../../data/media/homepage-promotion-image-map-v1.json";
 import homepageSummerImageMapData from "../../../../data/media/homepage-summer-image-map-v1.json";
 import tablesCategoryImageMapData from "../../../../data/media/tables-category-image-map-v1.json";
+import tableProductGalleryManifestData from "../../../../data/media/table-product-gallery-manifest-v1.json";
 
 export interface TigerStoryImage {
   altText: string;
@@ -64,6 +65,20 @@ interface TigerAquaProductMediaMap {
     cloudinarySecureUrl: string;
     mediaKey: string;
     variantKey: string | null;
+  }>;
+}
+
+interface TigerTableProductGalleryManifest {
+  products: Array<{
+    assets: Array<{
+      altText: string;
+      cloudinary: {
+        secureUrl: string;
+      };
+      sortOrder: number;
+      variantKey: string | null;
+    }>;
+    productSlug: string;
   }>;
 }
 
@@ -164,6 +179,8 @@ const aquaProductStoryImageMap = aquaProductStoryImageMapData as TigerStoryImage
 const homepagePromotionImageMap = homepagePromotionImageMapData as TigerHomepagePromotionImageMap;
 const homepageSummerImageMap = homepageSummerImageMapData as TigerHomepageSummerImageMap;
 const tablesCategoryImageMap = tablesCategoryImageMapData as TigerTablesCategoryImageMap;
+const tableProductGalleryManifest =
+  tableProductGalleryManifestData as TigerTableProductGalleryManifest;
 const imageByAssetId = new Map(
   aboutStoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
 );
@@ -179,6 +196,42 @@ const tablesCategoryImageByAssetId = new Map(
 const aquaProductMediaByKey = new Map(
   aquaProductMediaMap.assets.map((entry) => [entry.mediaKey, entry] as const)
 );
+
+const ballsCategoryHeroImage: TigerStoryImage = {
+  altText: "Tiger PingPong balls ready for the next rally",
+  assetId: "BALL-CAT-001",
+  caption: "",
+  cloudinaryPublicId:
+    "tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01",
+  displayMaxWidth: 1600,
+  finalUrl:
+    "https://res.cloudinary.com/djfcisldm/image/upload/v1781745091/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01.jpg",
+  role: "category-hero",
+  sourceDimensions: {
+    height: 1600,
+    width: 1600
+  }
+};
+
+export function getTigerTableVariantSelectorMedia(
+  productSlug: string,
+  variantKey: string
+): { altText: string; src: string } | undefined {
+  const product = tableProductGalleryManifest.products.find(
+    (candidate) => candidate.productSlug === productSlug
+  );
+  const asset = product?.assets
+    .slice()
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .find((candidate) => candidate.variantKey === variantKey);
+
+  return asset
+    ? {
+        altText: asset.altText,
+        src: asset.cloudinary.secureUrl
+      }
+    : undefined;
+}
 const aquaProductStoryImageByAssetId = new Map(
   aquaProductStoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
 );
@@ -511,7 +564,8 @@ export const tigerGearCategoryStories = {
       eyebrow: "PingPong balls",
       heading: "You’re going to lose a few.",
       body: "Under the couch. Behind the freezer. Somewhere in the yard. Start with six or stop counting at 140.",
-      featuredSlugs: ["tiger-premium-balls-140"],
+      featuredSlugs: [],
+      image: ballsCategoryHeroImage,
       tone: "mist"
     },
     productSlugs: [

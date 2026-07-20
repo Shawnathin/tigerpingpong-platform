@@ -141,6 +141,43 @@ final result: passed
 
 ---
 
+# Aqua Product Page + Purchasing Rail V2 QA
+
+Date: 2026-07-18
+
+Branch: `codex/aqua-product-page-tiger-v2`
+
+Scope: Conversion-first Aqua product story, exact eight-image variant-aware gallery, and the isolated Tiger Purchasing Rail V2 pilot.
+
+## Evidence
+
+- Desktop viewport/full page: `exports/aqua-product-qa/playwright/desktop-1440-viewport.png` and `desktop-1440-full-page.png`
+- Tablet viewport/full page: `exports/aqua-product-qa/playwright/tablet-768-viewport.png` and `tablet-768-full-page.png`
+- Mobile viewport/full page: `exports/aqua-product-qa/playwright/mobile-390-viewport.png` and `mobile-390-full-page.png`
+
+The proof files remain under ignored `exports/` and are not committed as production media.
+
+## Findings
+
+- The opening experience is conversion-first: the exact Aqua gallery and complete purchase rail appear before any long-form story.
+- Owner review replaced the blue scenic purchase imagery with exact Aqua product cutouts on plain white. The main gallery and all four package selectors now share that clean product-photography treatment; the richer campaign imagery remains in the story below.
+- The rail is content-height, calm, and proportioned. It shows `Starting at $25.00`, four real image-backed package choices, exact live prices, concise shipping and availability guidance, and one clear Add to cart action.
+- **Canada Red** is the only public colour name. The existing internal `coral` compatibility key remains intact through cart and checkout.
+- Package selection updates the featured gallery image and sends the exact variant, option value, and live price to cart and mocked checkout.
+- The story is intentionally short: quick product proof, the real problem Aqua solves, a three-step edited development sequence, one Vancouver design signature, and a compact purchase return.
+- The supplied Canada Place photograph is displayed below its native width and paired with the real grip detail. The extracted Aqua wordmark and halftone support the page without overwhelming Tiger’s established storefront system.
+- The page uses no AI-generated product pixels, strengthened weather claims, readable legacy packaging claims, vendor detail, or invented specifications.
+- At 390 and 417 pixels, the four package choices remain a readable two-column grid and the gallery thumbnails scroll within their own region without document overflow.
+- At 768, 1280, and 1440 pixels, the gallery, rail, story sections, and footer retain deliberate spacing with no document-level horizontal overflow.
+- One H1, logical H2 hierarchy, native radio inputs, visible focus, live price announcements, dialog focus management, descriptive alternatives, lazy-loaded story media, and reduced-motion fallback are preserved.
+- Full-page Playwright captures can show the existing sticky navigation midway through the composed screenshot; this is a capture artifact, not an in-page layout break.
+- No actionable P0, P1, or P2 visual difference remains against Tiger’s approved homepage, category, About, and Contact system.
+- Full launch preflight passes with 33 unit tests and 53 active browser tests; nine screenshot-only jobs are intentionally skipped. The tracked-secret scan reports zero findings, and the production audit gate has no high or critical advisories (two moderate advisories remain).
+
+final result: passed
+
+---
+
 # Indoor & Outdoor Table Chapters QA
 
 Date: 2026-07-18

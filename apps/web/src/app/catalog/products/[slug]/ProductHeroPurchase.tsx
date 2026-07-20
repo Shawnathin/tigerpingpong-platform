@@ -4,7 +4,11 @@ import { useState } from "react";
 
 import type { CartProductInput } from "../../../../lib/cart";
 
-import { CheckoutButton, type ProductOptionGroup } from "./CheckoutButton";
+import {
+  CheckoutButton,
+  type ProductOptionGroup,
+  type TigerPurchasePresentation
+} from "./CheckoutButton";
 import { ProductMediaGallery, type ProductMediaGalleryItem } from "./ProductMediaGallery";
 import styles from "./page.module.css";
 
@@ -18,10 +22,12 @@ interface ProductHeroPurchaseProps {
   isCheckoutEligible: boolean;
   mediaItems: ProductMediaGalleryItem[];
   priceSummary: string | null;
+  presentation?: TigerPurchasePresentation;
   product: CartProductInput;
   productName: string;
   productOptions: ProductOptionGroup[];
   productSlug: string;
+  sectionId?: string;
   shippingLines: string[];
   shippingLinesAreFixed: boolean;
 }
@@ -36,17 +42,19 @@ export function ProductHeroPurchase({
   isCheckoutEligible,
   mediaItems,
   priceSummary,
+  presentation,
   product,
   productName,
   productOptions,
   productSlug,
+  sectionId,
   shippingLines,
   shippingLinesAreFixed
 }: ProductHeroPurchaseProps) {
   const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(null);
 
   return (
-    <section className={heroClassName} aria-labelledby="product-title">
+    <section className={heroClassName} aria-labelledby="product-title" id={sectionId}>
       <ProductMediaGallery
         categoryName={categoryName}
         mediaItems={mediaItems}
@@ -60,6 +68,12 @@ export function ProductHeroPurchase({
         <h1 className={styles.title} id="product-title">
           {heroTitle}
         </h1>
+        {presentation?.mode === "tiger-v2" ? (
+          <div className={styles.tigerPurchaseIntro}>
+            <strong>{presentation.descriptor}</strong>
+            <p>{presentation.summary}</p>
+          </div>
+        ) : null}
 
         <CheckoutButton
           availabilityMessage={availabilityMessage}
@@ -67,6 +81,7 @@ export function ProductHeroPurchase({
           isCheckoutEligible={isCheckoutEligible}
           onVariantChange={setSelectedVariantKey}
           priceSummary={priceSummary}
+          presentation={presentation}
           product={product}
           productOptions={productOptions}
           shippingLines={shippingLines}

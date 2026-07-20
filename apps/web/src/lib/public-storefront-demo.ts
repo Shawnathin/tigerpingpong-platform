@@ -3,9 +3,11 @@ import type { CatalogProductDetail, CatalogProductSummary } from "../types/catal
 interface ProductMediaFallback {
   alt: string;
   caption: string | null;
+  mediaKey?: string;
   role: string;
   src: string;
   title: string;
+  variantKey?: string | null;
 }
 
 type StorefrontCopyProduct = Pick<
@@ -133,74 +135,72 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
   ],
   "tiger-aqua-outdoor-indoor-paddle": [
     {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "Ocean Blue single paddle",
+      alt: "Tiger PingPong Aqua paddles in Ocean Blue and Canada Red",
+      caption: "Ocean Blue and Canada Red Aqua paddles",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-primary-01",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/782/Single_Ble_Overhead__45821.1759532868.jpg?c=1",
-      title: "Aqua Outdoor / Indoor Paddle"
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416233/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/01-main.jpg",
+      title: "Aqua paddles"
     },
     {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "Coral Red single paddle",
-      role: "alternate",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/785/SIngle_red_-_overhead__33741.1759532868.jpg?c=1",
-      title: "Aqua Outdoor / Indoor Paddle"
+      alt: "Single Tiger PingPong Aqua paddle in Ocean Blue",
+      caption: "Single · Ocean Blue",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-01",
+      role: "variant",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416234/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/02-single-ocean-blue.jpg",
+      title: "Aqua Ocean Blue single paddle",
+      variantKey: "tiger-aqua-package-single-ocean-blue"
     },
     {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "True Bounce Technology",
+      alt: "Single Tiger PingPong Aqua paddle in Canada Red",
+      caption: "Single · Canada Red",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-02",
+      role: "variant",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416235/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/03-single-coral-red.jpg",
+      title: "Aqua Canada Red single paddle",
+      variantKey: "tiger-aqua-package-single-coral"
+    },
+    {
+      alt: "Two Aqua paddles, one Ocean Blue and one Canada Red, with three balls",
+      caption: "2 paddles + 3 balls",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-03",
+      role: "variant",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416235/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/04-two-pack.jpg",
+      title: "Aqua two-paddle package",
+      variantKey: "tiger-aqua-package-2-pack-3-balls"
+    },
+    {
+      alt: "Four Aqua paddles, two Ocean Blue and two Canada Red, with three balls",
+      caption: "4 paddles + 3 balls",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-04",
+      role: "variant",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416236/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/05-four-pack.jpg",
+      title: "Aqua four-paddle package",
+      variantKey: "tiger-aqua-package-4-pack-3-balls"
+    },
+    {
+      alt: "Close view of the Aqua paddle face texture and moulded Tiger PingPong mark",
+      caption: "Moulded face detail",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-05",
       role: "detail",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/787/Paddle_Technology__03652.1759532868.jpg?c=1",
-      title: "Aqua paddle technology"
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416237/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/06-face-detail.jpg",
+      title: "Aqua face texture and Tiger mark"
     },
     {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "Ultra durable",
+      alt: "Close view of the Aqua paddle grip and three curved openings",
+      caption: "Grip and curved openings",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-06",
       role: "detail",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/788/Ultra_Durable__06886.1759532868.jpg?c=1",
-      title: "Aqua paddle durability"
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416238/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/07-grip-detail.jpg",
+      title: "Aqua grip detail"
     },
     {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "Weather resistant",
-      role: "detail",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/791/Weather_-_Text_Bottom__86208.1759532868.jpg?c=1",
-      title: "Aqua paddle weather resistance"
-    },
-    {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "100% recyclable packaging",
+      alt: "Aqua package lid beside Ocean Blue and Canada Red paddles fitted in the package window",
+      caption: "Package lid and fitted window",
+      mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-07",
       role: "packaging",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/790/00_Recyclable_Packaging_-_Gift__99267.1759532868.jpg?c=1",
-      title: "Aqua paddle packaging"
-    },
-    {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "2-Pack w/ 3 Balls",
-      role: "alternate",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/783/2_pack_paddles_balls_only__62724.1759532868.jpg?c=1",
-      title: "Aqua paddle 2-pack"
-    },
-    {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "4-Pack w/ 3 Balls",
-      role: "alternate",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/789/4_pack_paddles_balls_only__30232.1759532868.jpg?c=1",
-      title: "Aqua paddle 4-pack"
-    },
-    {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "Coral Red paddle",
-      role: "alternate",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/786/Single_Red_Paddle__77243.1759532868.jpg?c=1",
-      title: "Aqua Coral Red paddle"
-    },
-    {
-      alt: "Aqua Outdoor / Indoor Paddle",
-      caption: "Ocean Blue paddle",
-      role: "alternate",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/141/784/Blue_Paddle_Single__26045.1759532868.jpg?c=1",
-      title: "Aqua Ocean Blue paddle"
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784419487/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/08-packaging-window.jpg",
+      title: "Aqua package lid and fitted paddle window"
     }
   ],
   "tiger-whistler-indoor-table": [

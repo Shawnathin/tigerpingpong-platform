@@ -148,6 +148,31 @@ Answer actual purchase questions. Never create a question only to repeat marketi
 
 When a decision remains uncertain, provide the working phone or email. Do not replace missing facts with “contact us”; fix the record where possible.
 
+## Aqua V2 pilot
+
+Aqua is the approved pilot for a shorter, conversion-first product page and Tiger Purchasing Rail V2. It is an intentional exception to the longer default sequence above, not permission to migrate every product automatically.
+
+Canonical Aqua order:
+
+1. Exact eight-image gallery and purchasing rail.
+2. Three-item product-proof strip.
+3. **Why Aqua exists** — the real soggy, split-paddle problem.
+4. **Designed in Vancouver** — first custom mould, persistence, and 100% recyclable packaging.
+5. Compact return to purchase and the existing footer.
+
+The page must stay focused on why the product is worth buying. Prototype and packaging history earns space only when it proves care, persistence, or product quality; correspondence, dates, vendor details, quotes, manufacturing drama, and long timelines do not.
+
+### Tiger Purchasing Rail V2
+
+- Aqua alone opts into `tiger-v2`; legacy presentation remains the default for every other product until separately approved.
+- Use a content-height card beside the gallery. Do not force viewport height or create empty space.
+- Order: eyebrow, name, descriptor, short benefit, live price, required package choices, availability and shipping, Add to Cart, real-help link.
+- Before selection, show **Starting at** the live base price. After selection, show the exact live variant price.
+- Aqua choices are a two-by-two set of real image-backed radio cards. Preserve visible focus, selected state, live price announcement, validation focus, gallery synchronization, cart payload, and checkout mapping.
+- Public copy says **Canada Red**. Internal `coral` identifiers remain unchanged for compatibility and must never leak into shopper-facing labels.
+- The exact gear shipping rule is: **Over $100? Shipping’s on us. $100 or less? Just $15 across Canada.**
+- Personality never obscures the selected package, price, availability, shipping, or action.
+
 ## Separate editorial truth from technical truth
 
 Editorial truth:

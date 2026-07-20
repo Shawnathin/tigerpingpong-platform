@@ -1,4 +1,6 @@
 import aboutStoryImageMapData from "../../../../data/media/about-story-image-map-v1.json";
+import aquaProductMediaData from "../../../../data/import-review/tigerpingpong/v1/aqua_product_media_v1.json";
+import aquaProductStoryImageMapData from "../../../../data/media/aqua-product-story-image-map-v1.json";
 import homepagePromotionImageMapData from "../../../../data/media/homepage-promotion-image-map-v1.json";
 import homepageSummerImageMapData from "../../../../data/media/homepage-summer-image-map-v1.json";
 import tablesCategoryImageMapData from "../../../../data/media/tables-category-image-map-v1.json";
@@ -54,6 +56,15 @@ interface TigerHomepageSummerImageMap {
 
 interface TigerTablesCategoryImageMap {
   entries: TigerHomepageSummerImageMapEntry[];
+}
+
+interface TigerAquaProductMediaMap {
+  assets: Array<{
+    altText: string;
+    cloudinarySecureUrl: string;
+    mediaKey: string;
+    variantKey: string | null;
+  }>;
 }
 
 export type TigerHomepageAquaCampaignId = "evergreen" | "summer-canada";
@@ -135,7 +146,21 @@ export interface TigerGearCategoryStory {
   productSlugs: string[];
 }
 
+export interface TigerAquaProductMedia {
+  altText: string;
+  mediaKey: string;
+  src: string;
+}
+
+export interface TigerAquaPurchaseOptionStory extends TigerAquaProductMedia {
+  accent: "canada-red" | "ocean-blue" | "pack";
+  shopperLabel: string;
+  variantKey: string;
+}
+
 const aboutStoryImageMap = aboutStoryImageMapData as TigerStoryImageMap;
+const aquaProductMediaMap = aquaProductMediaData as TigerAquaProductMediaMap;
+const aquaProductStoryImageMap = aquaProductStoryImageMapData as TigerStoryImageMap;
 const homepagePromotionImageMap = homepagePromotionImageMapData as TigerHomepagePromotionImageMap;
 const homepageSummerImageMap = homepageSummerImageMapData as TigerHomepageSummerImageMap;
 const tablesCategoryImageMap = tablesCategoryImageMapData as TigerTablesCategoryImageMap;
@@ -150,6 +175,12 @@ const homepageSummerImageByAssetId = new Map(
 );
 const tablesCategoryImageByAssetId = new Map(
   tablesCategoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
+);
+const aquaProductMediaByKey = new Map(
+  aquaProductMediaMap.assets.map((entry) => [entry.mediaKey, entry] as const)
+);
+const aquaProductStoryImageByAssetId = new Map(
+  aquaProductStoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
 );
 
 function requireStoryImage(assetId: string): TigerStoryImage {
@@ -226,6 +257,39 @@ function requireTablesCategoryImage(assetId: string): TigerStoryImage {
     finalUrl: image.finalUrl,
     role: image.role,
     sourceDimensions: image.sourceDimensions
+  };
+}
+
+function requireAquaStoryImage(assetId: string): TigerStoryImage {
+  const image = aquaProductStoryImageByAssetId.get(assetId);
+
+  if (!image?.finalUrl || image.status !== "implemented") {
+    throw new Error(`Tiger Aqua story image is not implementation-ready: ${assetId}`);
+  }
+
+  return {
+    altText: image.altText,
+    assetId: image.assetId,
+    caption: image.caption,
+    cloudinaryPublicId: image.cloudinaryPublicId,
+    displayMaxWidth: image.displayMaxWidth,
+    finalUrl: image.finalUrl,
+    role: image.role,
+    sourceDimensions: image.sourceDimensions
+  };
+}
+
+function requireAquaProductMedia(mediaKey: string): TigerAquaProductMedia {
+  const media = aquaProductMediaByKey.get(mediaKey);
+
+  if (!media?.cloudinarySecureUrl) {
+    throw new Error(`Tiger Aqua product media is not implementation-ready: ${mediaKey}`);
+  }
+
+  return {
+    altText: media.altText,
+    mediaKey: media.mediaKey,
+    src: media.cloudinarySecureUrl
   };
 }
 
@@ -589,6 +653,117 @@ export const tigerGearStory = {
     }
   }
 } as const;
+
+export const tigerAquaProductStory = {
+  slug: "tiger-aqua-outdoor-indoor-paddle",
+  metadata: {
+    title: "Aqua Outdoor & Indoor PingPong Paddle | Tiger PingPong",
+    description:
+      "Meet Aqua, Tiger’s weather-resistant, ultra-durable PingPong paddle for patios, schools, community centres, rec rooms, and real life in Canada."
+  },
+  hero: {
+    anchor: "buy-aqua",
+    eyebrow: "Aqua outdoor / indoor paddle",
+    heading: "Aqua Paddle",
+    descriptor: "Built for the paddle someone forgot outside.",
+    body: "Weather-resistant, ultra-durable, and ready for patios, schools, community centres, rec rooms, and real life."
+  },
+  purchase: {
+    pricePrefix: "Starting at",
+    optionLegend: "Choose your Aqua",
+    availability: "In stock. Ready to ship.",
+    shipping: ["Over $100? Shipping’s on us.", "$100 or less? Just $15 across Canada."],
+    help: {
+      href: "tel:+18885525259",
+      label: "Not sure which pack? Call Tiger."
+    },
+    selectionError: "Choose your Aqua first.",
+    options: {
+      "tiger-aqua-package-single-coral": {
+        ...requireAquaProductMedia("aqua-03-single-canada-red"),
+        accent: "canada-red",
+        shopperLabel: "Single · Canada Red",
+        variantKey: "tiger-aqua-package-single-coral"
+      },
+      "tiger-aqua-package-single-ocean-blue": {
+        ...requireAquaProductMedia("aqua-02-single-ocean-blue"),
+        accent: "ocean-blue",
+        shopperLabel: "Single · Ocean Blue",
+        variantKey: "tiger-aqua-package-single-ocean-blue"
+      },
+      "tiger-aqua-package-2-pack-3-balls": {
+        ...requireAquaProductMedia("aqua-04-two-pack"),
+        accent: "pack",
+        shopperLabel: "2 paddles + 3 balls",
+        variantKey: "tiger-aqua-package-2-pack-3-balls"
+      },
+      "tiger-aqua-package-4-pack-3-balls": {
+        ...requireAquaProductMedia("aqua-05-four-pack"),
+        accent: "pack",
+        shopperLabel: "4 paddles + 3 balls",
+        variantKey: "tiger-aqua-package-4-pack-3-balls"
+      }
+    } satisfies Record<string, TigerAquaPurchaseOptionStory>
+  },
+  proof: [
+    {
+      heading: "Weather-resistant",
+      body: "Ready for patios and changing conditions."
+    },
+    {
+      heading: "Made for hard use",
+      body: "Schools, community centres, and shared spaces welcome."
+    },
+    {
+      heading: "Indoor works too",
+      body: "The same resilience makes sense wherever paddles get shared, dropped, and forgotten."
+    }
+  ],
+  why: {
+    anchor: "why-aqua",
+    eyebrow: "Why Aqua exists",
+    heading: "Something had to last longer.",
+    body: "Schools and community centres were burning through soggy, split paddles. Patios and backyards weren’t much kinder. We made Aqua to handle more of real life—so everyone else could get on with the game.",
+    pullLine: "We did the hard work. You just play.",
+    image: requireAquaStoryImage("AQUA-STORY-005")
+  },
+  design: {
+    anchor: "designed-in-vancouver",
+    eyebrow: "Made with intention",
+    heading: "Designed in Vancouver.",
+    body: "Aqua was our first custom injection-moulded paddle. The multi-step process was new territory, and we gave the packaging the same attention—right down to making it 100% recyclable. It took more work than expected. We stuck with it, so you can get on with playing.",
+    caption: "The box works hard too. 100% recyclable packaging.",
+    packagingImage: requireAquaStoryImage("AQUA-STORY-004")
+  },
+  accents: {
+    wordmark: requireAquaStoryImage("AQUA-STORY-002"),
+    halftone: requireAquaStoryImage("AQUA-STORY-003")
+  },
+  closing: {
+    heading: "Ready for real life.",
+    body: "Patio, school, cottage, rec room—pick your colour or pack and get the rally going.",
+    signature: "Designed in Vancouver. Ready across Canada.",
+    actions: [
+      { href: "#buy-aqua", label: "Choose your Aqua" },
+      { href: "tel:+18885525259", label: "Call Tiger" }
+    ]
+  }
+} as const;
+
+export function getTigerAquaPurchaseOptionStory(
+  variantKey: string | null | undefined
+): TigerAquaPurchaseOptionStory | null {
+  if (!variantKey) {
+    return null;
+  }
+
+  const options = tigerAquaProductStory.purchase.options as Record<
+    string,
+    TigerAquaPurchaseOptionStory
+  >;
+
+  return options[variantKey] ?? null;
+}
 
 export const tigerStory = {
   homepage: {

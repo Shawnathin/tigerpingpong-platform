@@ -2,67 +2,57 @@
 
 ## Active task
 
-Tiger PingPong Brand Operating System — “Lock the Brand.”
+Aqua Product Page + Tiger Purchasing Rail V2.
 
 ## Selected task card
 
-Turn the owner discovery, implemented storefront story, visual system, product-story method, and market research into a repository-level contract that every future Tiger customer-facing task must follow.
+Replace the rejected long Aqua page with a shorter, conversion-first product experience and use Aqua as the isolated pilot for Tiger’s future universal purchasing rail.
 
 ## Deliverable
 
-- A mandatory brand entrypoint in root `AGENTS.md`.
-- A versioned `docs/brand/` operating system covering:
-  - Tiger identity, positioning, origin, and story hierarchy.
-  - Voice, copy mechanics, humour, Canadian/West Coast expression, and surface-specific tone.
-  - Glassy visual system, photography, product fidelity, responsive behaviour, motion, and accessibility.
-  - Locked, verified, provisional, time-sensitive, pending, and prohibited claims.
-  - A fact-first individual product-story workflow and approval template.
-  - Internal, public, historical, and official competitor research sources.
-  - A required future-agent checklist and owner-controlled change process.
-- A pointer from the existing storytelling map to the new governance source.
+- Exact eight-image Aqua gallery with package-aware featured media.
+- Aqua-only `tiger-v2` purchasing presentation with four live-priced package choices.
+- Short approved story sequence: product proof, why Aqua exists, first custom-mould and recyclable-packaging proof, and purchase return.
+- Original Aqua packaging photograph plus extracted Aqua packaging wordmark and halftone used as supporting identity.
+- Collision-safe, hash-verified media manifests and upload scripts.
+- Typed canonical copy, claim records, focused tests, screenshots, and local review at port `3120`.
 
 ## Locked decisions
 
-- The registered brand and public house spelling is **Tiger PingPong**; **PingPong** is one word even as a common noun.
-- Internal north star: **Serious about the gear. Easygoing about the game.**
-- Customer promise: **Good gear. Real help. No runaround.**
-- Tiger is Vancouver-born, West Coast in outlook, Canadian in reach, and established across Canada for more than 15 years.
-- The customer task remains primary. Story is ambient on shopping pages and complete on About.
-- Current product, compatibility, origin, shipping, price, availability, warranty, history, event, and operational claims may never be invented.
-- Only Shawn can lock a new brand fact, origin story, or product story.
-- One additional owner story refinement is expected later and must not be guessed.
+- Aqua is the pilot; all non-Aqua products retain the legacy purchase presentation.
+- **Canada Red** is the public label. Existing internal `coral` keys, option values, SKUs, and checkout mappings remain unchanged.
+- Approved claims are **weather-resistant** and **ultra-durable**. Do not strengthen them to weatherproof or permanent outdoor storage.
+- Multi-packs contain three balls. Prices and availability remain live catalog data.
+- Aqua was designed in Vancouver using a Tiger-owned custom mould produced by specialist partners.
+- Aqua was Tiger's first custom injection-moulded paddle; its packaging is 100% recyclable.
+- No AI-generated product pixels, unsupported legacy claims, vendor material, quotes, or manufacturing drama enter the page.
 
 ## Boundaries
 
-- Documentation and governance only.
-- Do not change runtime behaviour, storefront copy, layout, media, APIs, database, cart, checkout, payment truth, auth, redirects, canonicals, sitemap, robots, deployment, or DNS.
-- Preserve the current typed story source as canonical implemented wording.
-- Use official competitor sources only to define category context and differentiation; never copy their language or use them as proof of Tiger claims.
-- Work in a clean focused branch from merged `main` and open a draft PR without deploying or merging.
+- No backend, public API, database schema, payment, checkout, URL, canonical, redirect, sitemap, robots, deployment, or DNS changes.
+- Preserve cart payloads, gallery mapping, focus management, added-to-cart dialog, and hosted Stripe Checkout.
+- Raw photographs, source packaging, emails, and video remain local and uncommitted.
+- Do not migrate another product to Purchasing Rail V2 before owner review.
 
 ## Required proof
 
-- Every brand document is linked from `docs/brand/README.md`.
-- Root `AGENTS.md` makes the reading path mandatory for customer-facing work.
-- The facts register distinguishes owner-approved, verified, live-catalog, provisional, time-sensitive, pending, and prohibited statements.
-- The product-story contract prevents specs or marketing inference from filling unknowns.
-- The research register cites the current and legacy Tiger sites, authoritative Expo/Vancouver sources, and official competitor sources.
-- All internal Markdown links resolve.
-- Brand spelling and prohibited-phrase checks pass.
-- Markdown formatting and `git diff --check` pass.
-- No secrets, runtime code, or unrelated dirty files are included.
+- All four live option prices and exact selected packages reach cart and checkout.
+- Public UI says Canada Red while the internal coral compatibility key survives.
+- Story order, headings, metadata, anchors, images, and alternatives are correct.
+- One table and one non-Aqua accessory retain the legacy rail.
+- No overflow at 390, 417, 768, 1280, or 1440 pixels.
+- Formatting, lint, typecheck, unit tests, focused Playwright, production build, secret scan, and launch preflight are recorded.
+- Desktop, tablet, mobile, and full-page evidence is captured before push.
 
 ## Status
 
-Implementation and validation are complete on `codex/tiger-brand-bible`.
+Implementation and validation are complete on `codex/aqua-product-page-tiger-v2`; the page is waiting for owner review.
 
-- Root `AGENTS.md` now makes the brand reading path mandatory before customer-facing work.
-- `docs/brand/` contains one routed entrypoint and eight supporting contracts for identity, voice, visuals, claims, product storytelling, research, execution, and change control.
-- Owner-approved facts, time-sensitive operations, verified external facts, live-catalog ownership, provisional stories, pending decisions, and prohibited claims are separated explicitly.
-- The expected future owner story refinement is recorded as pending and may not be guessed.
-- Official market research defines Tiger's distinct lane without copying competitors or using them as product evidence.
-- All supporting brand documents are routed from the README and all changed-file relative links resolve.
-- Every cited external URL was reachable through research tooling; direct automated status checks returned `200` for the Tiger, Museum of Vancouver, SFU, Cornilleau, Butterfly, JOOLA, STIGA, and Killerspin sources. City of Vancouver and Ping Pong Depot restricted or failed the secondary automated request after their pages had been retrieved through research tooling.
-- All changed Markdown passes Prettier and `git diff --check`.
-- No runtime code, media, app behaviour, commerce logic, SEO routing, deployment, or infrastructure changed.
-- Lint, typecheck, tests, and production build were not run because this is a documentation-only governance change.
+- Rejected work was checkpointed separately before selective recovery.
+- Exact Aqua gallery and media manifests are in place.
+- Aqua Purchasing Rail V2, Canada Red presentation mapping, story sections, and local mock catalog are implemented.
+- Owner review replaced the blue scenic purchase imagery with exact Aqua cutouts on plain white in both the gallery and package selector.
+- The live local page is available at `http://127.0.0.1:3120/catalog/products/tiger-aqua-outdoor-indoor-paddle`.
+- Desktop, tablet, and mobile visual QA is complete with no open P0–P2 differences.
+- Full launch preflight passes: production build, 33 unit tests, 53 active Playwright tests, tracked-secret scan, and the high-severity production audit gate. Nine screenshot-only Playwright jobs are intentionally skipped; two moderate dependency advisories remain.
+- Nothing has been pushed, deployed, or merged.

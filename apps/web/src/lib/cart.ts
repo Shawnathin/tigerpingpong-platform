@@ -171,12 +171,14 @@ export function reconcileCartItems(changes: CartReconciliationItem[]): CartItem[
     if (!change) return [item];
     if (change.status === "unavailable") return [];
     if (!change.unitPriceCents || !Number.isInteger(change.unitPriceCents)) return [item];
-    return [{
-      ...item,
-      currency: normalizeCurrency(change.currency ?? item.currency),
-      name: change.name?.trim() || item.name,
-      unitPriceCents: change.unitPriceCents
-    }];
+    return [
+      {
+        ...item,
+        currency: normalizeCurrency(change.currency ?? item.currency),
+        name: change.name?.trim() || item.name,
+        unitPriceCents: change.unitPriceCents
+      }
+    ];
   });
   return writeCartItems(nextItems);
 }
@@ -411,7 +413,7 @@ function normalizeOptionText(value: unknown): string | null {
   if (
     !normalized ||
     normalized.length > 80 ||
-    !/^[A-Za-z0-9][A-Za-z0-9 .,_/-]*$/.test(normalized)
+    !/^[A-Za-z0-9][A-Za-z0-9 .,_/·-]*$/.test(normalized)
   ) {
     return null;
   }

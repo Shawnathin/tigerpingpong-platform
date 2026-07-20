@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import {
   CatalogApiError,
   getCatalogApiBaseUrl,
@@ -16,6 +18,14 @@ import type {
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Catalog Preview | Tiger Ping Pong",
+  robots: {
+    index: false,
+    follow: false
+  }
+};
 
 interface PreviewResource<TData> {
   data: TData | null;
@@ -38,9 +48,7 @@ const countLabels: Record<keyof CatalogHealth["counts"], string> = {
   media: "Media"
 };
 
-async function loadResource<TData>(
-  loader: () => Promise<TData>
-): Promise<PreviewResource<TData>> {
+async function loadResource<TData>(loader: () => Promise<TData>): Promise<PreviewResource<TData>> {
   try {
     return {
       data: await loader(),
@@ -79,10 +87,7 @@ function formatError(error: unknown): string {
 }
 
 function flattenCategories(categories: CatalogCategory[]): CatalogCategory[] {
-  return categories.flatMap((category) => [
-    category,
-    ...flattenCategories(category.children)
-  ]);
+  return categories.flatMap((category) => [category, ...flattenCategories(category.children)]);
 }
 
 function formatPrice(priceCents: number | null, currency: string): string {
@@ -108,13 +113,7 @@ function getMediaLabel(product: CatalogProductSummary): string {
   return mediaText || product.primaryMedia.mediaKey;
 }
 
-function ResourceError({
-  label,
-  error
-}: {
-  label: string;
-  error: string | null;
-}) {
+function ResourceError({ label, error }: { label: string; error: string | null }) {
   if (!error) {
     return null;
   }
@@ -138,9 +137,7 @@ function CategoryList({ categories }: { categories: CatalogCategory[] }) {
         <li key={category.key}>
           <span>{category.name}</span>
           <code>{category.slug}</code>
-          {category.children.length > 0 ? (
-            <CategoryList categories={category.children} />
-          ) : null}
+          {category.children.length > 0 ? <CategoryList categories={category.children} /> : null}
         </li>
       ))}
     </ul>
@@ -149,9 +146,7 @@ function CategoryList({ categories }: { categories: CatalogCategory[] }) {
 
 export default async function CatalogPreviewPage() {
   const preview = await loadCatalogPreview();
-  const allCategories = preview.categories.data
-    ? flattenCategories(preview.categories.data)
-    : [];
+  const allCategories = preview.categories.data ? flattenCategories(preview.categories.data) : [];
 
   return (
     <main className={styles.page}>

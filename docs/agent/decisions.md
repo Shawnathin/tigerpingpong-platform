@@ -25,3 +25,11 @@ Decision: The exact Aqua `4-Pack w/ 3 Balls` variant ships free across Canada wh
 Why: Requiring the exact product and variant on every cart line prevents another under-threshold SKU from inheriting the exception. Webhook validation continues to recognize the legacy threshold-only rule for already-pending orders.
 
 Out of scope: No other product exception, price/catalog mutation, schema/migration, payment-truth change, webhook-authority change, international shipping, DNS, deployment, or external-service mutation.
+
+## 2026-07-20 - Approve the .ca SEO cutover contract
+
+Decision: Keep `https://tigerpingpong.ca` canonical. Serve direct permanent redirects from changed legacy paths to their final `.ca` pages before normalizing `.com` and `www` hosts. Preserve the 17 old sitemap paths that remain valid and leave `/shop-all/-1` as a real `404`.
+
+Why: The business is changing hosting and selected paths, not its canonical domain. Direct destinations, complete canonical signals, and a failure-safe sitemap reduce migration ambiguity and preserve relevant old-site equity without sending obsolete products to unrelated pages.
+
+Out of scope: No DNS change before origin preflight, no Change of Address request, no webhook move, no schema/API/payment-truth change, and no client or manual paid-state mutation.

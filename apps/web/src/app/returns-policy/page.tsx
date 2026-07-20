@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
+import { getPathMetadata } from "../../lib/seo";
 import styles from "../shipping/page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = getPathMetadata({
   title: "Returns Policy | Tiger Ping Pong",
-  description: "Tiger Ping Pong return, delivery-damage, and product-support requirements."
-};
+  description: "Tiger Ping Pong return, delivery-damage, and product-support requirements.",
+  pathname: "/returns-policy"
+});
 
 export default function ReturnsPolicyPage() {
   return (

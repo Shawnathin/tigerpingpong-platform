@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
+import { getPathMetadata } from "../../lib/seo";
 import styles from "../shipping/page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = getPathMetadata({
   title: "Privacy Policy | Tiger Ping Pong",
-  description: "How Tiger Ping Pong collects, uses, and protects customer information."
-};
+  description: "How Tiger Ping Pong collects, uses, and protects customer information.",
+  pathname: "/privacy-policy"
+});
 
 export default function PrivacyPolicyPage() {
   return (

@@ -1,5 +1,113 @@
 # Launch Readiness Audit — TigerPingPong.ca Readiness (as of 2026-06-24)
 
+## 2026-07-20 final SEO cutover addendum
+
+Status: **Pre-DNS hold.** The code-level SEO contract is implemented on the clean
+`codex/final-seo-cutover-readiness` branch. DNS must remain unchanged until the
+Render-origin crawl, mobile checks, protected-route checks, image checks, full
+Stripe test-mode checkout, webhook-confirmed paid state, success page, and staff
+order visibility all pass.
+
+### Canonical and redirect decision
+
+- Canonical origin: `https://tigerpingpong.ca`.
+- Redirect-only hosts: `www.tigerpingpong.ca`, `tigerpingpong.com`, and
+  `www.tigerpingpong.com`.
+- The approved map contains 28 exact legacy-path rules. Path rules run before
+  host catch-all rules and return an absolute one-hop `301` to the final `.ca`
+  URL.
+- Seventeen legacy page/category/article paths stay valid. Next.js may perform
+  only its normal trailing-slash normalization.
+- `/shop-all/-1` intentionally remains `404`.
+- Redirects must remain for at least 12 months, preferably indefinitely. This
+  follows [Google's site-move guidance](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes).
+
+### Live baseline captured before cutover
+
+- `https://tigerpingpong.ca` still serves the old BigCommerce storefront.
+- The old XML sitemap inventory is 38 URLs: 5 pages, 19 products, 8 categories,
+  2 brands, and 4 articles.
+- `https://tigerpingpong.com/` redirects to `.ca`, but tested legacy `.com`
+  product URLs return `404` instead of reaching their replacement pages.
+- `https://www.tigerpingpong.ca/` did not complete a TLS handshake during the
+  baseline check.
+- The Render-origin sitemap has 26 URLs and emits request-time `lastmod` values;
+  its robots file disallows checkout and catalog preview, preventing crawlers
+  from reading page-level `noindex` directives.
+- The runtime web source contains 16 distinct BigCommerce CDN image URLs across
+  three source files. This corrects the earlier estimate of 10. They are allowed
+  only as temporary fallback debt while BigCommerce remains active; migrate and
+  verify all 16 within seven days and do not cancel the old service until no
+  production references remain.
+
+### Implemented SEO contract
+
+- The sitemap contains 34 canonical `.ca` URLs with the current 12 public
+  products. It emits only `<loc>` and returns `503` plus `Retry-After` if the
+  catalog cannot be loaded, consistent with
+  [Google's sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap).
+- Self-canonicals cover catalog, shipping/returns, returns policy, privacy, and
+  terms pages.
+- Cart is `noindex, follow`; checkout success/cancel and catalog preview are
+  `noindex, nofollow`. Robots disallows only admin, internal, and API paths so
+  crawlers can read those directives.
+- The three shortened resource articles retain their URLs, titles, layouts, and
+  publication dates while restoring the approved topic coverage. Rules facts
+  were checked against the
+  [2026 ITTF Statutes](https://documents.ittf.sport/sites/default/files/public/2026-02/2026_Statutes_v1_consolidated_clean.pdf).
+- The stale redirect draft was replaced by the approved launch CSV and import
+  documentation/tooling now references that file.
+
+### Local release proof
+
+- `pnpm launch:preflight` passed on the frozen clean worktree: lint, Prisma
+  generation/validation, typecheck, 59 unit tests, production build, 69 active
+  Chromium tests, tracked-secret scanning, and the high-severity production
+  dependency audit gate.
+- Eleven evidence-capture browser tests were intentionally skipped by their
+  existing opt-in contract. The production dependency audit reports two
+  moderate advisories and no high/critical gate failure.
+- The approved import map validates with 0 errors. Its 57 warnings are existing
+  catalog/media review items rather than redirect-map failures.
+- `git diff --check` passes.
+- GitHub's slower runner exposed an unrelated 5-second table-category URL
+  assertion timeout after all SEO tests passed. The application was not
+  changed; the test now asserts its exact destination `href` and allows 15
+  seconds for the dev-server navigation. Twenty consecutive focused
+  repetitions pass, and the complete gate is rerun after this test-only change.
+
+### Production contract and sequence
+
+- Web: `NEXT_PUBLIC_SITE_URL=https://tigerpingpong.ca` and
+  `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com`.
+- API CORS must include `.ca` apex, `.ca` www, and the Render web origin.
+- Checkout success:
+  `https://tigerpingpong.ca/checkout/success?session_id={CHECKOUT_SESSION_ID}`.
+- Checkout cancel: `https://tigerpingpong.ca/checkout/cancel`.
+- Use matching live Stripe credentials/webhook secret and
+  `STRIPE_EXPECTED_LIVEMODE=true` only for production. The webhook remains
+  `https://tigerpingpong-platform.onrender.com/webhooks/stripe`.
+- Save the current DNS records and previous successful Render deploy IDs before
+  changing DNS. Use the exact Render-provided records, remove only conflicting
+  web-host `AAAA` records, and preserve MX/TXT/SPF/DKIM/Search Console records.
+  See [Render custom domains](https://render.com/docs/custom-domains).
+- Shawn completes the controlled live order after TLS, redirects, CORS, API,
+  checkout, webhook, and staff authentication pass. Do not announce launch
+  before that order is webhook-confirmed paid and visible to staff.
+- No Change of Address request is needed because `.ca` remains canonical. Export
+  the current Search Console baseline before DNS, then submit `/sitemap.xml` and
+  inspect key pages after the controlled order passes.
+
+### Freeze and rollback
+
+- The final preflight freeze is active. Unrelated local work may continue on a
+  separate current-main branch, but no unrelated merges or Render deployments
+  are allowed until cutover validation finishes.
+- If TLS, redirects, CORS, checkout, webhook payment confirmation, or staff order
+  visibility fails, restore the saved DNS records and previous Render
+  configuration. Never mark an order paid from the client or manually alter
+  payment truth.
+
 ## 1) Executive summary
 
 TigerPingPong can process checkout and record paid orders from Stripe in principle, and public storefront/admin/internal protection is in place. The store can sell on the current Render URLs, but `tigerpingpong.ca` is not yet production-live ready because the domain/env/deployment alignment and final human confirmation steps are still outstanding.

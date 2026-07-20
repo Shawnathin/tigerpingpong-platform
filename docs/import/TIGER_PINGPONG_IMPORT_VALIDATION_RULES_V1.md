@@ -33,7 +33,7 @@ The validator expects all of these files:
 - `products_import_v1.csv`
 - `product_variants_import_v1.csv`
 - `product_media_import_v1.csv`
-- `redirects_draft_v1.csv`
+- `redirects_launch_v1.csv`
 - `import_review_flags_v1.csv`
 
 Missing files are errors.
@@ -207,17 +207,17 @@ were previously under review.
 
 Confirmed Aqua prices:
 
-| Product key | SKU | price_cents |
-| --- | --- | ---: |
-| `tiger-aqua-outdoor-paddle-pack-4` | `15888` | 8000 |
-| `tiger-aqua-outdoor-paddle-pack-2` | `15889` | 4500 |
-| `tiger-aqua-single-coral` | `15891` | 2500 |
-| `tiger-aqua-single-ocean-blue` | `15890` | 2500 |
+| Product key                        | SKU     | price_cents |
+| ---------------------------------- | ------- | ----------: |
+| `tiger-aqua-outdoor-paddle-pack-4` | `15888` |        8000 |
+| `tiger-aqua-outdoor-paddle-pack-2` | `15889` |        4500 |
+| `tiger-aqua-single-coral`          | `15891` |        2500 |
+| `tiger-aqua-single-ocean-blue`     | `15890` |        2500 |
 
 Confirmed Net & Post status:
 
-| Product key | SKU | Expected state |
-| --- | --- | --- |
+| Product key          | SKU      | Expected state               |
+| -------------------- | -------- | ---------------------------- |
 | `tiger-net-post-set` | `6989-B` | Active v1 checkout candidate |
 
 Mismatched confirmed SKUs or prices are errors. A still-open Net & Post flag

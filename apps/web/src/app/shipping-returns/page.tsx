@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
+import { getPathMetadata } from "../../lib/seo";
 import styles from "../shipping/page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = getPathMetadata({
   title: "Shipping & Returns | Tiger Ping Pong",
-  description: "Tiger Ping Pong Canada-wide shipping and returns support."
-};
+  description: "Tiger Ping Pong Canada-wide shipping and returns support.",
+  pathname: "/shipping-returns"
+});
 
 export default function ShippingReturnsPage() {
   return (

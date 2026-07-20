@@ -16,6 +16,7 @@ import {
   getPrimaryProductMediaFallback,
   getProductCardPitch
 } from "../../lib/public-storefront-demo";
+import { getPathMetadata } from "../../lib/seo";
 import type {
   CatalogCategory,
   CatalogFamily,
@@ -27,10 +28,11 @@ import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = getPathMetadata({
   title: "Catalog | Tiger Ping Pong",
-  description: "Shop Tiger Ping Pong tables, paddles, balls, and accessories."
-};
+  description: "Shop Tiger Ping Pong tables, paddles, balls, and accessories.",
+  pathname: "/catalog"
+});
 
 const PORTLAND_IMAGE =
   "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1";

@@ -7,17 +7,11 @@ import { fileURLToPath } from "node:url";
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "../../..");
 const INPUT_DIR = path.join(REPO_ROOT, "data/import-review/tigerpingpong/v1");
-const OUTPUT_DIR = path.join(
-  REPO_ROOT,
-  "var/import-validation/tigerpingpong/latest"
-);
+const OUTPUT_DIR = path.join(REPO_ROOT, "var/import-validation/tigerpingpong/latest");
 const SCHEMA_PATH = path.join(REPO_ROOT, "packages/db/prisma/schema.prisma");
 const TIGER_BRAND_KEY = "tiger-pingpong";
 const CLOUDINARY_DELIVERY_HOST = "res.cloudinary.com";
-const ACCEPTED_CLOUDINARY_FOLDER_PREFIXES = [
-  "tigerpingpong/products/",
-  "tiger-pingpong/products/"
-];
+const ACCEPTED_CLOUDINARY_FOLDER_PREFIXES = ["tigerpingpong/products/", "tiger-pingpong/products/"];
 
 const EXPECTED_FILES = [
   {
@@ -25,14 +19,7 @@ const EXPECTED_FILES = [
     file: "brands_import_v1.csv",
     entityType: "brand",
     keyColumn: "brand_key",
-    requiredColumns: [
-      "brand_key",
-      "name",
-      "slug",
-      "source_evidence",
-      "is_active",
-      "notes"
-    ],
+    requiredColumns: ["brand_key", "name", "slug", "source_evidence", "is_active", "notes"],
     requiredValueColumns: ["brand_key", "name", "slug", "is_active"],
     booleanColumns: ["is_active"],
     uniqueColumns: ["brand_key", "slug"]
@@ -81,13 +68,7 @@ const EXPECTED_FILES = [
       "source_evidence",
       "notes"
     ],
-    requiredValueColumns: [
-      "family_key",
-      "brand_key",
-      "primary_category_key",
-      "name",
-      "slug"
-    ],
+    requiredValueColumns: ["family_key", "brand_key", "primary_category_key", "name", "slug"],
     uniqueColumns: ["family_key", "slug"]
   },
   {
@@ -136,11 +117,7 @@ const EXPECTED_FILES = [
       "shipping_review_required",
       "source_review_status"
     ],
-    booleanColumns: [
-      "v1_public_navigation",
-      "v1_checkout_scope",
-      "shipping_review_required"
-    ],
+    booleanColumns: ["v1_public_navigation", "v1_checkout_scope", "shipping_review_required"],
     integerColumns: ["price_cents"],
     uniqueColumns: ["product_key", "slug"]
   },
@@ -165,13 +142,7 @@ const EXPECTED_FILES = [
       "source_url",
       "notes"
     ],
-    requiredValueColumns: [
-      "variant_key",
-      "product_key",
-      "currency",
-      "is_active",
-      "source_url"
-    ],
+    requiredValueColumns: ["variant_key", "product_key", "currency", "is_active", "source_url"],
     booleanColumns: ["is_active"],
     integerColumns: ["price_cents"],
     uniqueColumns: ["variant_key"]
@@ -215,7 +186,7 @@ const EXPECTED_FILES = [
   },
   {
     id: "redirects",
-    file: "redirects_draft_v1.csv",
+    file: "redirects_launch_v1.csv",
     entityType: "redirect",
     keyColumn: "legacy_path",
     requiredColumns: [
@@ -226,12 +197,7 @@ const EXPECTED_FILES = [
       "redirect_status",
       "notes"
     ],
-    requiredValueColumns: [
-      "legacy_path",
-      "new_path_candidate",
-      "entity_type",
-      "redirect_status"
-    ],
+    requiredValueColumns: ["legacy_path", "new_path_candidate", "entity_type", "redirect_status"],
     uniqueColumns: ["legacy_path"]
   },
   {
@@ -249,13 +215,7 @@ const EXPECTED_FILES = [
       "resolution_status",
       "notes"
     ],
-    requiredValueColumns: [
-      "entity_type",
-      "entity_key",
-      "flag",
-      "severity",
-      "resolution_status"
-    ],
+    requiredValueColumns: ["entity_type", "entity_key", "flag", "severity", "resolution_status"],
     uniqueColumns: []
   }
 ];
@@ -505,9 +465,7 @@ function pushParsedRow(rows, row) {
 function validateHeaderShape(fileInfo) {
   const { config, headers } = fileInfo;
   const headerSet = new Set(headers);
-  const duplicateHeaders = headers.filter(
-    (header, index) => headers.indexOf(header) !== index
-  );
+  const duplicateHeaders = headers.filter((header, index) => headers.indexOf(header) !== index);
 
   for (const duplicateHeader of new Set(duplicateHeaders)) {
     addIssue({
@@ -519,9 +477,7 @@ function validateHeaderShape(fileInfo) {
     });
   }
 
-  fileInfo.missingColumns = config.requiredColumns.filter(
-    (column) => !headerSet.has(column)
-  );
+  fileInfo.missingColumns = config.requiredColumns.filter((column) => !headerSet.has(column));
 
   for (const column of fileInfo.missingColumns) {
     addIssue({
@@ -702,9 +658,7 @@ function validateUniqueColumns(fileInfo) {
           entityType: config.entityType,
           entityKey: getEntityKey(config, row),
           message: `Column ${column} must not contain duplicates.`,
-          details: `Value ${columnValue} first seen on row ${
-            seen.get(columnValue).__rowNumber
-          }.`
+          details: `Value ${columnValue} first seen on row ${seen.get(columnValue).__rowNumber}.`
         });
         continue;
       }
@@ -718,11 +672,7 @@ function validateSchemaEnums(schemaEnums) {
   validateEnumColumn("products", "product_kind", schemaEnums.ProductKind);
   validateEnumColumn("products", "status", schemaEnums.ProductStatus);
   validateEnumColumn("products", "purchase_mode", schemaEnums.PurchaseMode);
-  validateEnumColumn(
-    "products",
-    "source_review_status",
-    schemaEnums.SourceReviewStatus
-  );
+  validateEnumColumn("products", "source_review_status", schemaEnums.SourceReviewStatus);
   validateEnumColumn("variants", "purchase_mode_override", schemaEnums.PurchaseMode, {
     optional: true
   });
@@ -910,14 +860,7 @@ function validateForeignKeys() {
   });
 }
 
-function validateReference({
-  sourceFile,
-  row,
-  column,
-  targetIndex,
-  targetName,
-  optional = false
-}) {
+function validateReference({ sourceFile, row, column, targetIndex, targetName, optional = false }) {
   if (!sourceFile.headers.includes(column)) {
     return;
   }
@@ -1083,8 +1026,7 @@ function validateReplacementPartRules() {
         row: row.__rowNumber,
         entityType: "product",
         entityKey: value(row, "product_key"),
-        message:
-          "Product assigned to replacement-parts should use product_kind replacement_part."
+        message: "Product assigned to replacement-parts should use product_kind replacement_part."
       });
     }
 
@@ -1239,8 +1181,7 @@ function validateTableRules() {
       file: csvFiles.get("flags")?.relativePath,
       entityType: "review_flag",
       entityKey: "all-v1-checkout-candidates",
-      message:
-        "Expected an open checkout_policy_required review flag for v1 checkout candidates."
+      message: "Expected an open checkout_policy_required review flag for v1 checkout candidates."
     });
   }
 }
@@ -1393,10 +1334,7 @@ function validateConfirmedBusinessUpdates() {
         entityType: "product",
         entityKey: productKey,
         message: "Product price_cents does not match the confirmed business update.",
-        details: `Expected ${expected.priceCents}; found ${value(
-          product,
-          "price_cents"
-        )}.`
+        details: `Expected ${expected.priceCents}; found ${value(product, "price_cents")}.`
       });
     }
 
@@ -1485,11 +1423,7 @@ function validateConfirmedCheckoutReadyProduct(productFile, product, productKey)
     });
   }
 
-  if (
-    !["online_checkout_candidate", "online_checkout"].includes(
-      value(product, "purchase_mode")
-    )
-  ) {
+  if (!["online_checkout_candidate", "online_checkout"].includes(value(product, "purchase_mode"))) {
     addIssue({
       level: "error",
       code: "checkout_ready_purchase_mode",
@@ -1497,8 +1431,7 @@ function validateConfirmedCheckoutReadyProduct(productFile, product, productKey)
       row: product.__rowNumber,
       entityType: "product",
       entityKey: productKey,
-      message:
-        "Confirmed checkout-ready product should use an online checkout purchase mode.",
+      message: "Confirmed checkout-ready product should use an online checkout purchase mode.",
       details: value(product, "purchase_mode")
     });
   }
@@ -1529,19 +1462,6 @@ function validateRedirectRules() {
         entityType: "redirect",
         entityKey: value(row, "legacy_path"),
         message: "Redirect new_path_candidate should be a path beginning with /."
-      });
-    }
-
-    if (value(row, "redirect_status") === "approved") {
-      addIssue({
-        level: "warning",
-        code: "redirect_approved_before_routes",
-        file: redirectFile.relativePath,
-        row: row.__rowNumber,
-        entityType: "redirect",
-        entityKey: value(row, "legacy_path"),
-        message:
-          "Redirects should stay draft/deferred until final frontend route patterns are approved."
       });
     }
   }
@@ -1611,10 +1531,7 @@ function validateReviewFlags() {
 
   const flagsByName = new Set(flagRows.map((row) => value(row, "flag")));
 
-  for (const expectedFlag of [
-    "cloudinary_upload_required",
-    "checkout_policy_required"
-  ]) {
+  for (const expectedFlag of ["cloudinary_upload_required", "checkout_policy_required"]) {
     if (!flagsByName.has(expectedFlag)) {
       addIssue({
         level: "warning",
@@ -1644,9 +1561,7 @@ function validateReviewFlags() {
 function isTableProduct(row) {
   return (
     value(row, "product_kind") === "table" ||
-    ["tables", "indoor-tables", "outdoor-tables"].includes(
-      value(row, "primary_category_key")
-    )
+    ["tables", "indoor-tables", "outdoor-tables"].includes(value(row, "primary_category_key"))
   );
 }
 
@@ -1711,9 +1626,7 @@ function isHttpUrl(url) {
 function hasAcceptedCloudinaryFolderPrefix(folder) {
   const normalizedFolder = folder.replace(/^\/+/, "");
 
-  return ACCEPTED_CLOUDINARY_FOLDER_PREFIXES.some((prefix) =>
-    normalizedFolder.startsWith(prefix)
-  );
+  return ACCEPTED_CLOUDINARY_FOLDER_PREFIXES.some((prefix) => normalizedFolder.startsWith(prefix));
 }
 
 function parseCloudinaryDeliveryUrl(url) {
@@ -1725,10 +1638,7 @@ function parseCloudinaryDeliveryUrl(url) {
     return null;
   }
 
-  if (
-    parsedUrl.protocol !== "https:" ||
-    parsedUrl.hostname !== CLOUDINARY_DELIVERY_HOST
-  ) {
+  if (parsedUrl.protocol !== "https:" || parsedUrl.hostname !== CLOUDINARY_DELIVERY_HOST) {
     return null;
   }
 
@@ -1759,9 +1669,7 @@ function parseCloudinaryDeliveryUrl(url) {
 
 function isAggregateReviewKey(entityKey) {
   return (
-    entityKey.startsWith("all-") ||
-    entityKey.endsWith("-v1") ||
-    entityKey.includes("articles")
+    entityKey.startsWith("all-") || entityKey.endsWith("-v1") || entityKey.includes("articles")
   );
 }
 
@@ -1791,10 +1699,7 @@ function writeOutputs(schemaEnums) {
     path.join(OUTPUT_DIR, "import_validation_warnings.csv"),
     formatIssuesCsv(issues.filter((issue) => issue.level === "warning"))
   );
-  fs.writeFileSync(
-    path.join(OUTPUT_DIR, "import_validation_report.md"),
-    formatReport(summary)
-  );
+  fs.writeFileSync(path.join(OUTPUT_DIR, "import_validation_report.md"), formatReport(summary));
 }
 
 function buildSummary(schemaEnums) {
@@ -1818,17 +1723,13 @@ function buildSummary(schemaEnums) {
     schemaPath: relativePath(SCHEMA_PATH),
     totals: {
       expectedFiles: EXPECTED_FILES.length,
-      loadedFiles: [...csvFiles.values()].filter((fileInfo) => fileInfo.exists)
-        .length,
+      loadedFiles: [...csvFiles.values()].filter((fileInfo) => fileInfo.exists).length,
       errors: issueCount("error"),
       warnings: issueCount("warning")
     },
     files,
     schemaEnums: Object.fromEntries(
-      Object.keys(SCHEMA_ENUMS).map((enumName) => [
-        enumName,
-        schemaEnums[enumName] ?? []
-      ])
+      Object.keys(SCHEMA_ENUMS).map((enumName) => [enumName, schemaEnums[enumName] ?? []])
     ),
     boundaries: {
       writesToDatabase: false,
@@ -1933,9 +1834,7 @@ function formatIssueList(issueRows) {
   }
 
   return issueRows.map((issue) => {
-    const location = [issue.file, issue.row ? `row ${issue.row}` : ""]
-      .filter(Boolean)
-      .join(": ");
+    const location = [issue.file, issue.row ? `row ${issue.row}` : ""].filter(Boolean).join(": ");
     const entity = [issue.entity_type, issue.entity_key].filter(Boolean).join("/");
     const details = issue.details ? ` Details: ${issue.details}` : "";
     return `- ${issue.code}${location ? ` (${location})` : ""}${

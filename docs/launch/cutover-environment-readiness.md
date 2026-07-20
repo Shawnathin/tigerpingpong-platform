@@ -2,9 +2,9 @@
 
 ## 1) Executive summary
 
-TigerPingPong has a stable payment and order backbone on Render, but a safe custom-domain cutover depends on operational confirmation, not code changes.
+TigerPingPong has a stable payment and order backbone on Render, but a safe custom-domain cutover depends on operational confirmation after the SEO cutover release is deployed.
 
-Key remaining condition before live DNS/domain switch: align final domain decisions and runtime variables (`CORS_ORIGIN`, `CHECKOUT_SUCCESS_URL`, `CHECKOUT_CANCEL_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_BASE_URL`) and run a final production-domain smoke proof.
+The canonical decision is final: `https://tigerpingpong.ca` is canonical, while `.com` and `www` hosts redirect permanently. Before live DNS changes, deploy the cutover release, align runtime variables (`CORS_ORIGIN`, `CHECKOUT_SUCCESS_URL`, `CHECKOUT_CANCEL_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_BASE_URL`), and run the Render-origin smoke proof.
 
 As of this pass, no production code, infra, DNS, webhook routing, database, or payment integrations were changed in this task.
 
@@ -15,19 +15,21 @@ As of this pass, no production code, infra, DNS, webhook routing, database, or p
   - web storefront on `tigerpingpong-web`
   - API/webhook on `tigerpingpong-platform`
 - Current blockers are operational and can be handled through controlled cutover steps:
-  - domain/canonical/redirect decision,
+  - deploy and verify the approved canonical/redirect implementation,
   - production env variable confirmation for selected domain,
   - final pre-cutover smoke on the actual public domain.
 - Launch is **not blocked by missing app/runtime logic** in this checklist task.
 
-Status: **Needs manual cutover proof execution before release.**
+Status: **Pre-DNS hold until Render-origin, Stripe test-mode, CORS, staff-auth, and rollback proofs pass.**
 
 ## 3) Production services checklist
 
 ### Domain / DNS
 
-- Canonical domain is undecided between `tigerpingpong.ca` / `www.tigerpingpong.ca` / `tigerpingpong.com` / `www.tigerpingpong.com`.
-- DNS and Render domain mappings must be finalized by operations (not by this task).
+- Canonical domain is `https://tigerpingpong.ca`.
+- `https://www.tigerpingpong.ca`, `https://tigerpingpong.com`, and `https://www.tigerpingpong.com` are redirect-only aliases.
+- Path-specific legacy redirects must run before host catch-all redirects so old product URLs land directly on their final `.ca` destinations.
+- DNS and Render domain mappings must be changed only after every pre-DNS gate passes.
 - Keep Render web URL available for rollback verification.
 - Ensure HTTPS and certificate coverage are active for all intended cutover hosts.
 
@@ -121,10 +123,11 @@ Status: **Needs manual cutover proof execution before release.**
 
 ### Public URL/base URL values
 
-- `NEXT_PUBLIC_SITE_URL`
-- `NEXT_PUBLIC_API_BASE_URL`
-- `CHECKOUT_SUCCESS_URL`
-- `CHECKOUT_CANCEL_URL`
+- `NEXT_PUBLIC_SITE_URL=https://tigerpingpong.ca`
+- `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com`
+- `CHECKOUT_SUCCESS_URL=https://tigerpingpong.ca/checkout/success?session_id={CHECKOUT_SESSION_ID}`
+- `CHECKOUT_CANCEL_URL=https://tigerpingpong.ca/checkout/cancel`
+- `CORS_ORIGIN` must include `https://tigerpingpong.ca`, `https://www.tigerpingpong.ca`, and `https://tigerpingpong-web.onrender.com` using the API service's supported delimiter format.
 
 ### Webhook URL values
 
@@ -137,11 +140,10 @@ No secret values should be logged in outputs.
 
 ## 5) Required operator confirmations
 
-- Who controls DNS and will execute the domain mapping (`tigerpingpong.ca`, `www`, `.com` variants)?
+- Confirm who controls DNS and will execute the domain mapping (`tigerpingpong.ca`, `www`, `.com` variants).
 - Where are production env vars set and reviewed (Render Environment settings in web vs API service)?
-- Will the first public launch use Stripe test mode or live mode?
-- Which domain should be canonical after cutover (including www/non-www policy)?
-- Will return URLs from Stripe use canonical domain only, or allow non-canonical aliasing?
+- Run the pre-DNS checkout in Stripe test mode; use matching live credentials and `STRIPE_EXPECTED_LIVEMODE=true` only for the controlled production order.
+- Return URLs use the canonical `.ca` apex only.
 - Is rollback to Render default URL required to remain enabled for the same session?
 - Who will approve the final cutover decision if any verification step fails?
 
@@ -182,7 +184,7 @@ All steps are read-only and should be executed on the selected final public doma
 
 ### Pre-cutover (before DNS flips)
 
-1. Confirm final domain + www/non-www policy.
+1. Confirm the approved `.ca` apex canonical and redirect-only alias policy is deployed.
 2. Confirm staging/prod env values above are set in the correct service.
 3. Keep `NEXT_PUBLIC_API_BASE_URL` and webhook endpoint on API service URL.
 
@@ -256,13 +258,12 @@ All steps are read-only and should be executed on the selected final public doma
 
 ## 10) Open blockers
 
-- Final domain and redirect policy still pending.
-- Final alignment of `CORS_ORIGIN` and return URLs to selected domain.
+- Deploy and verify the approved redirect, sitemap, canonical, and robots release on the Render origin.
+- Final alignment of `CORS_ORIGIN` and canonical `.ca` return URLs in Render.
 - Final staff/operator smoke validation for full paid order flow with webhook confirmation is pending.
-- Final decision on whether `.com` routes are canonical/redirect-only is still pending.
+- Save current DNS records and the previous successful Render deploy IDs before DNS changes.
+- Export the current `.ca` Search Console performance, indexed-pages, and sitemap baseline before cutover.
 
 ## 11) Recommended next executable task
 
-Recommended next task: `create a production env contract doc`
-
-Rationale: this cutover checklist establishes proof sequence, but the operator team needs a service-by-service contract showing who owns each production env variable, expected value shape, and verification owner before the final domain launch execution.
+Recommended next task: deploy the frozen cutover branch to the Render origin and execute the pre-DNS route, sitemap, mobile, protected-route, image, and Stripe test-mode proofs.

@@ -26,7 +26,11 @@ async function main() {
   }
 
   const manifest = JSON.parse(readFileSync(MANIFEST_PATH, "utf8"));
-  const uploadEntries = manifest.entries.filter((entry) => entry.uploadAction === "upload");
+  const uploadEntries = manifest.entries.filter(
+    (entry) =>
+      entry.uploadAction === "upload" &&
+      (args.assetIds.length === 0 || args.assetIds.includes(entry.assetId))
+  );
   const sourceRoot = path.resolve(args.sourceRoot);
   const planned = [];
 
@@ -129,6 +133,7 @@ async function main() {
 
 function parseArgs(argv) {
   const parsed = {
+    assetIds: [],
     commit: false,
     help: false,
     sourceRoot: path.join(os.homedir(), "Downloads")
@@ -139,6 +144,19 @@ function parseArgs(argv) {
 
     if (arg === "--commit") {
       parsed.commit = true;
+      continue;
+    }
+
+    if (arg === "--asset-id") {
+      const value = argv[index + 1];
+      if (!value) throw new Error("--asset-id requires an asset ID.");
+      parsed.assetIds.push(value);
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--asset-id=")) {
+      parsed.assetIds.push(arg.slice("--asset-id=".length));
       continue;
     }
 
@@ -176,6 +194,7 @@ Real upload:
   node scripts/media/upload-about-story-media.mjs --commit
 
 Options:
+  --asset-id <id>      Limit work to one approved asset; repeatable.
   --source-root <path>  Root containing the approved source-relative files.
   --commit              Upload after hash and Cloudinary collision preflight.
   --help                Show this help.

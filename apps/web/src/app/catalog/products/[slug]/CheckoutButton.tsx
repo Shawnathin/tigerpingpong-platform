@@ -16,6 +16,7 @@ import { AquaProductVisual } from "./AquaProductVisual";
 import styles from "./page.module.css";
 
 const AQUA_PRODUCT_SLUG = "tiger-aqua-outdoor-indoor-paddle";
+const PLAZA_PRODUCT_SLUG = "tiger-plaza-outdoor-table-grey";
 
 export interface ProductOptionGroup {
   displayName: string;
@@ -238,7 +239,9 @@ export function CheckoutButton({
   const addToCartButtonRef = useRef<HTMLButtonElement>(null);
   const firstOptionRef = useRef<HTMLInputElement>(null);
   const [addedProduct, setAddedProduct] = useState<CartProductInput | null>(null);
-  const [selectedOptionValues, setSelectedOptionValues] = useState<Record<string, string>>({});
+  const [selectedOptionValues, setSelectedOptionValues] = useState<Record<string, string>>(() =>
+    getInitialOptionValues(product.productSlug, productOptions)
+  );
   const [selectionError, setSelectionError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const selectedOptions = useMemo(
@@ -374,7 +377,13 @@ export function CheckoutButton({
                             type="radio"
                             value={optionValue.value}
                           />
-                          <span className={styles.tigerOptionMedia}>
+                          <span
+                            className={`${styles.tigerOptionMedia} ${
+                              product.productSlug === AQUA_PRODUCT_SLUG
+                                ? ""
+                                : styles.tigerTableOptionMedia
+                            }`.trim()}
+                          >
                             {product.productSlug === AQUA_PRODUCT_SLUG ? (
                               <AquaProductVisual
                                 altText={optionValue.thumbnailAlt ?? shopperLabel}
@@ -558,6 +567,21 @@ export function CheckoutButton({
         <AddToCartModal onClose={handleCloseModal} product={addedProduct ?? product} />
       ) : null}
     </>
+  );
+}
+
+function getInitialOptionValues(
+  productSlug: string,
+  productOptions: ProductOptionGroup[]
+): Record<string, string> {
+  if (productSlug !== PLAZA_PRODUCT_SLUG) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    productOptions
+      .filter((optionGroup) => optionGroup.values.length === 1)
+      .map((optionGroup) => [optionGroup.name, optionGroup.values[0].value])
   );
 }
 

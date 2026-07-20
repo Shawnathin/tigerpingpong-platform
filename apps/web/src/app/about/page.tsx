@@ -40,7 +40,8 @@ function StoryFigure({
 }
 
 export default function AboutPage() {
-  const { hero, origin, vancouver, outdoor, manufacturing, names, roadshow, closing } = tigerStory;
+  const { hero, earlyDays, origin, vancouver, outdoor, manufacturing, names, roadshow, closing } =
+    tigerStory;
 
   return (
     <>
@@ -67,10 +68,36 @@ export default function AboutPage() {
             <p className={styles.heroBody}>{hero.body}</p>
           </div>
           <p className={styles.heroCaption}>{hero.image.caption}</p>
-          <a className={styles.heroBridge} href={`#${origin.anchor}`}>
+          <a className={styles.heroBridge} href={`#${earlyDays.anchor}`}>
             <span>{hero.bridge}</span>
             <span className={styles.bridgeBall} aria-hidden="true" />
           </a>
+        </section>
+
+        <section
+          className={`${styles.earlyDays} ${styles.storySection}`}
+          id={earlyDays.anchor}
+          aria-labelledby="early-days-title"
+        >
+          <div className={styles.earlyDaysGrid}>
+            <header className={styles.chapterCopy}>
+              <p className={styles.eyebrow}>{earlyDays.eyebrow}</p>
+              <h2 id="early-days-title">{earlyDays.heading}</h2>
+              <p>{earlyDays.body}</p>
+            </header>
+            <div className={styles.earlyDaysGallery}>
+              <StoryFigure
+                className={`${styles.earlyTable} ${styles.reveal}`}
+                image={earlyDays.images[0]}
+                sizes="(max-width: 900px) 94vw, 42vw"
+              />
+              <StoryFigure
+                className={`${styles.earlyNightlife} ${styles.reveal}`}
+                image={earlyDays.images[1]}
+                sizes="(max-width: 900px) 94vw, 30vw"
+              />
+            </div>
+          </div>
         </section>
 
         <section

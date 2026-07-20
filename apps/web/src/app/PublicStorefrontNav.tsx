@@ -42,11 +42,6 @@ const NAV_ITEMS: Array<{
     label: "Accessories"
   },
   {
-    href: "/resources/",
-    id: "resources",
-    label: "Resources"
-  },
-  {
     href: "/contact",
     id: "contact",
     label: "Contact"
@@ -77,11 +72,6 @@ const MOBILE_NAV_ITEMS: Array<{
     href: "/accessories/",
     id: "accessories",
     label: "Accessories"
-  },
-  {
-    href: "/resources/",
-    id: "resources",
-    label: "Resources"
   },
   {
     href: "/contact/",

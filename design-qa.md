@@ -152,6 +152,45 @@ final result: passed
 
 ---
 
+# About — Owner-Corrected Origin Story QA
+
+Date: 2026-07-20
+
+Scope: Launch-safe About-page story and caption refinements only.
+
+## Findings
+
+- The first-table story now begins with the green, skinny-legged pre-Expo table and the early crew who kept pushing.
+- The two-person crew photograph is the supporting people image; the owner-requested selfie is no longer rendered.
+- The orange-legged table is correctly introduced next as the first Expo iteration, tied to Expo 86 and “World in Motion—World in Touch.”
+- The Vancouver gallery captions now identify Food Cart Fest in Vancouver, Tiger Club Night in Vancouver, the UBC Athletics Department, and GoFest in Whistler.
+- The early hand-work caption correctly identifies hand-carved wood templates rather than cardboard.
+- Desktop and 390-pixel mobile checks show no horizontal overflow, all retained images load, and the section order remains intact.
+- No URL, metadata, canonical, pricing, availability, shipping, cart, checkout, or SEO-file behaviour changed.
+
+final result: passed
+
+---
+
+# Homepage and Accessories Cover Imagery QA
+
+Date: 2026-07-20
+
+Scope: The annotated homepage Outdoor Gear shelf and cover feature, plus the shared Accessories and Covers category presentations.
+
+## Findings
+
+- The pre-brand glowing cover render is no longer used on the homepage shelf, homepage cover feature, Accessories product stage, or Covers hero.
+- The Accessories and Covers placements reuse the owner-selected real cover photograph already served by Cloudinary, preserving its natural fabric folds and honest product shape. The homepage feature uses Cloudinary's background-removal derivative of that exact source so the same honest cover sits cleanly on the mist panel without a white square.
+- The homepage Outdoor Gear shelf pairs that same cover photograph with the real Net & Post Set image used by the Accessories hero, so the route preview and destination now agree.
+- The homepage cover feature uses a Pacific-navy copy panel and mist-blue product panel, separating it clearly from the warm Vancouver section while retaining Tiger orange for the action.
+- The 386-pixel source is never rendered beyond its native width in the full cover feature. Mobile layouts contain the imagery without document-level horizontal overflow.
+- Product URLs, headings, metadata, prices, availability, shipping, cart, checkout, canonicals, and SEO files are unchanged.
+
+final result: passed
+
+---
+
 # Table Purchasing Rail V2 — Launch-Day QA
 
 Date: 2026-07-20
@@ -195,7 +234,7 @@ The proof files remain under ignored `exports/` and are not committed as product
 
 - No actionable P0, P1, or P2 visual issue remains across the five desktop and five mobile product openings.
 - Each page opens on its approved catalog-order colour while leaving the cart choice unselected.
-- Expo, Portland Indoor, Whistler, and Plaza use recovered 1600–5000-pixel media. Portland Outdoor retains its approved current-model gallery and introduces no V1 table images.
+- Expo now has eight current-model views: its Blue and Grey cutouts, Vancouver event image, Blue poolside lifestyle image, Grey sunset lifestyle image, folded storage view, and Blue/Grey playback views. The 800-pixel functional images remain at their native resolution and are never upscaled. Portland Indoor, Whistler, and Plaza retain their recovered high-resolution media, while Portland Outdoor retains its approved current-model gallery and introduces no V1 table images.
 - All table media sits on a plain white contained canvas. Product frames, legs, nets, wheels, and controls remain visible without destructive cropping or stretching.
 - Before selection, the complete curated gallery is visible. After selection, only the matching colour and shared detail/lifestyle views remain.
 - Expo contains no obsolete Green/Black media. Plaza exposes its one real Grey choice rather than silently bypassing required selection.
@@ -204,7 +243,7 @@ The proof files remain under ignored `exports/` and are not committed as product
 - Exact existing variant keys reach cart and mocked checkout for every colour. No SKU, option value, price, line identity, or hosted-checkout contract changes.
 - Aqua remains `tiger-v2`; Vice retains the default gallery presentation.
 - Keyboard operation, alternatives, required-selection focus, reduced-motion behavior, and document overflow pass at every approved width.
-- Cloudinary verification reports 21 of 21 gallery URLs successful. The local catalog repair dry run reports five products, 21 assets, zero warnings, and zero errors.
+- Cloudinary verification reports 26 of 26 gallery URLs successful. The local catalog repair dry run reports five products, 26 assets, zero warnings, and zero errors.
 - Full launch preflight passes with 41 unit tests and 61 active browser tests; 11 screenshot-only jobs are intentionally skipped because the visual evidence was captured separately. The tracked-secret scan reports zero findings, and the production audit gate has no high or critical advisories (two moderate advisories remain).
 - Production catalog application is intentionally pending owner approval.
 

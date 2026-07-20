@@ -1,7 +1,7 @@
 # Tiger Brand Change Control
 
-Version: 1.0
-Effective: 2026-07-18
+Version: 2.0
+Effective: 2026-07-20
 Approver: Shawn Cleve
 
 The brand system should evolve when Tiger learns something—not every time a contributor finds a different adjective.
@@ -48,17 +48,25 @@ Update version headers in every materially affected brand file. `docs/brand/READ
 
 ## Pending owner decisions
 
-### Expected story refinement
-
-Shawn has said one more story update will be developed after version 1.0. The content is not yet supplied.
-
-Rule: do not infer, draft, or retrofit this missing chapter. When Shawn provides it, record the exact decision, identify which existing canonical copy it changes, update the facts register first, then update the Bible, typed story source, page copy, and story map as needed.
-
 ### Product discovery
 
 Deeper individual product stories remain to be completed. Vice and ball stories are provisional. Aqua and Portland Outdoor still have factual questions listed in `docs/brand/FACTS-AND-CLAIMS.md` and `docs/planning/tiger-storytelling-content-map-v1.md`.
 
 ## Decision history
+
+## 2026-07-20 — Correct the pre-Expo and first Expo chronology
+
+Owner decision: The green skinny-leg table was Tiger's first table and came before Expo. The orange-legged table was the first Expo iteration—the point when the product began getting better. The early crew hauled bins of paddles and balls around Vancouver on the Expo Line; the first Expo then travelled to Chinatown nights, rainy street festivals, driveways, and packed rooms.
+
+Reason: The version 1.0 narrative accidentally combined two different tables and compressed a meaningful part of Tiger's persistence into one chapter.
+
+Evidence or source: Shawn's explicit correction on 2026-07-20 and owner-cleared photographs of the green table, early crew, orange first Expo, and rainy event setup.
+
+Files updated: Facts register, Brand Bible, typed Tiger story, About page, About media manifest, and storytelling content map.
+
+Copy or claim replaced: “Good energy. Questionable table.” as the complete origin chapter. It is replaced by distinct pre-Expo and first Expo chapters.
+
+Follow-up: Preserve this two-step chronology in all future About excerpts and product-name stories.
 
 ## 2026-07-18 — Brand operating system version 1.0
 
@@ -72,4 +80,4 @@ Files updated: `AGENTS.md` and `docs/brand/`.
 
 Copy or claim replaced: None. Version 1.0 consolidates and governs existing approved work.
 
-Follow-up: Add Shawn's expected story refinement and complete the individual product-story discovery passes.
+Follow-up: Complete the individual product-story discovery passes.

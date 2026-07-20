@@ -108,8 +108,8 @@ test("homepage opens on established Vancouver roots and a summer-in-Canada campa
     /portland-summer-lifestyle-background-v1/
   );
   await expect(
-    page.getByAltText("Black Tiger PingPong table cover with a white logo.")
-  ).toHaveCount(1);
+    page.getByAltText("Black Tiger PingPong cover fitted over a table with natural fabric folds.")
+  ).toHaveAttribute("src", /tiger-table-cover-black-polyester(?:%2F|\/)01-main/);
 });
 
 test("homepage keeps the hero actions immediate and never overflows", async ({ page }) => {

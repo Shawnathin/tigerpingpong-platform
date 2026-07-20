@@ -33,3 +33,16 @@ Finish the reviewed URL migration contract on current main, prove the public cra
 ## Status
 
 Implementation is complete locally on `codex/final-seo-cutover-readiness`, based on the green Aqua shipping commit `ad45991`. The final `pnpm launch:preflight` passes lint, Prisma generation/validation, typecheck, 59 unit tests, production build, 69 active Chromium tests, tracked-secret scanning, and the high-severity production audit gate; 11 evidence-only tests skip and two moderate advisories remain below the gate. External Render-origin, Stripe, configuration, TLS, DNS, and controlled-live-order gates remain pending.
+
+Implementation and local visual QA are complete on `codex/table-gallery-variant-restoration`, based on the merged Aqua V2 work from PR #119.
+
+- Ten missing high-resolution assets were uploaded under deterministic Cloudinary IDs and added to the tracked manifest; all 21 delivery URLs verify successfully.
+- The catalog repair tool validates all five live products and exact existing variants with zero errors, but `--apply` has not been run.
+- Desktop and mobile screenshots for all five product pages show correct product models, white contained media, compact galleries, and explicit colour choices with no open P0–P2 visual issue.
+- Focused gallery, cart, Aqua, `/tables`, and table-subcategory browser regressions pass after giving the two multi-route checks an appropriate 60-second test budget.
+- Full launch preflight passes: lint, Prisma generation/validation, typecheck, 41 unit tests, production build, 61 active browser tests, tracked-secret scan, and the high-severity production audit gate. Eleven screenshot-only browser jobs are intentionally skipped; two moderate dependency advisories remain.
+- Production catalog remains unchanged pending owner approval of all five local pages.
+- The launch-day rail pass removes the legacy empty purchasing-panel height, adds colour-specific table thumbnails on white canvases, and gives Plaza's single Grey choice the full selector width.
+- Follow-up branch `codex/table-variant-selector-images` verifies the launch rail against production API data: table colour choices now show their approved table photographs instead of fallback colour dots, while the original variant keys and checkout path remain unchanged.
+- The Balls category hero now uses the exact owner-supplied Cloudinary image at 1600 × 1600. No catalog, media, API, pricing, cart, or checkout data was changed.
+- The launch-day About refinement now tells the owner-corrected origin sequence: the rough green pre-Expo table, the early crew who kept pushing, then the orange-legged first Expo. The owner-removed selfie is no longer rendered, and Vancouver event captions identify Tiger Club Night, UBC Athletics Department, GoFest in Whistler, and Food Cart Fest Vancouver.

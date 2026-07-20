@@ -362,6 +362,17 @@ export const tigerTablesProductStories = {
   }
 } satisfies Record<string, TigerTablesProductStory>;
 
+export const tigerTablePurchaseStory = {
+  optionLegend: "Choose your top colour",
+  availability: "In stock. Ready to ship.",
+  shipping: ["Every table ships free across Canada.", "Yes, even to cottage country."],
+  help: {
+    href: "tel:+18885525259",
+    label: "Not sure which colour? Call Tiger."
+  },
+  selectionError: "Choose your table colour first."
+} as const;
+
 export const tigerTableCategoryStories = {
   indoor: {
     kind: "indoor",

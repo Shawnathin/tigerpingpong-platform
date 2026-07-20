@@ -25,7 +25,7 @@ export interface ProductOptionGroup {
 }
 
 export interface ProductOptionValue {
-  accent?: "canada-red" | "ocean-blue" | "pack";
+  accent?: "blue" | "canada-red" | "green" | "grey" | "ocean-blue" | "pack";
   currency?: string;
   label: string;
   priceCents?: number;
@@ -40,7 +40,7 @@ export interface TigerPurchasePresentation {
   descriptor: string;
   mode: "tiger-v2";
   optionLegend: string;
-  pricePrefix: string;
+  pricePrefix?: string;
   selectionError: string;
   summary: string;
   supportHref: string;
@@ -330,7 +330,7 @@ export function CheckoutButton({
         <div className={styles.tigerPurchaseControls} data-purchase-presentation="tiger-v2">
           <div className={styles.tigerPriceRow}>
             <strong aria-live="polite" data-testid="product-price">
-              {!selectedOptionPrice ? (
+              {!selectedOptionPrice && presentation.pricePrefix ? (
                 <span className={styles.tigerPricePrefix}>{presentation.pricePrefix}</span>
               ) : null}
               {displayedPrice}

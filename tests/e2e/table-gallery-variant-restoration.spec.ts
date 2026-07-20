@@ -5,6 +5,7 @@ import path from "node:path";
 
 interface TableCase {
   colorValues: string[];
+  descriptor: string;
   heading: string;
   price: string;
   slug: string;
@@ -13,30 +14,35 @@ interface TableCase {
 const TABLES: TableCase[] = [
   {
     colorValues: ["Blue", "Grey"],
+    descriptor: "Easygoing outdoor.",
     heading: "Expo Outdoor",
     price: "$1,300.00",
     slug: "tiger-expo-outdoor-table"
   },
   {
     colorValues: ["Green", "Grey"],
+    descriptor: "Home-court feel.",
     heading: "Portland Indoor",
     price: "$1,300.00",
     slug: "tiger-portland-indoor-table"
   },
   {
     colorValues: ["Blue", "Grey"],
+    descriptor: "Tough outside. Smart inside.",
     heading: "Portland Outdoor",
     price: "$1,500.00",
     slug: "tiger-portland-outdoor-table"
   },
   {
     colorValues: ["Blue", "Green"],
+    descriptor: "For the serious rallies.",
     heading: "Whistler",
     price: "$1,600.00",
     slug: "tiger-whistler-indoor-table"
   },
   {
     colorValues: ["Grey"],
+    descriptor: "Made for shared spaces.",
     heading: "Plaza",
     price: "$2,600.00",
     slug: "tiger-plaza-outdoor-table-grey"
@@ -78,6 +84,16 @@ test("all five tables open with their complete curated gallery and catalogue lea
     expect(response?.status()).toBe(200);
     await expect(page.getByRole("heading", { level: 1, name: table.heading })).toBeVisible();
     await expect(page.getByTestId("product-price")).toContainText(table.price);
+    await expect(page.locator('[data-purchase-presentation="tiger-v2"]')).toHaveCount(1);
+    await expect(page.getByText(table.descriptor, { exact: true })).toBeVisible();
+    await expect(page.getByText("In stock. Ready to ship.", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("Every table ships free across Canada.", { exact: true })
+    ).toBeVisible();
+    await expect(page.getByText("Yes, even to cottage country.", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("Not sure which colour? Call Tiger.", { exact: true })
+    ).toHaveAttribute("href", "tel:+18885525259");
     await expect(page.locator('[data-gallery-presentation="table"]')).toHaveCount(1);
     await expect(page.locator('[aria-label="Product images"] button')).toHaveCount(
       product.assets.length
@@ -117,6 +133,11 @@ test("each colour selects the matching image and removes other colours from view
       );
 
       const input = page.locator(`input[value="${colorValue}"]`);
+      const optionCard = input.locator("..");
+      await expect(optionCard.locator("img")).toHaveAttribute(
+        "src",
+        new RegExp(matching[0].cloudinary.publicId)
+      );
       await input.evaluate((element: HTMLInputElement) => element.click());
       await expect(input).toBeChecked();
       await expectMainImageFor(page, matching[0].cloudinary.publicId);
@@ -144,16 +165,16 @@ test("every table requires a colour and preserves the exact variant key in the c
     await page.evaluate(() => window.localStorage.removeItem("tigerpingpong.cart.v1"));
 
     await page.getByRole("button", { name: "Add to cart" }).click();
-    await expect(
-      page.getByText("Select top colour to add this item.", { exact: true })
-    ).toBeVisible();
+    await expect(page.getByText("Choose your table colour first.", { exact: true })).toBeVisible();
     await expect(page.locator(`input[value="${table.colorValues[0]}"]`)).toBeFocused();
 
     const selectedColor = table.colorValues[0];
     const variantKey = product.approvedVariantKeys.find((key: string) => {
       return key.toLowerCase().endsWith(selectedColor.toLowerCase());
     });
-    await page.locator(`input[value="${selectedColor}"]`).check({ force: true });
+    const selectedInput = page.locator(`input[value="${selectedColor}"]`);
+    await selectedInput.evaluate((element: HTMLInputElement) => element.click());
+    await expect(selectedInput).toBeChecked();
     await page.getByRole("button", { name: "Add to cart" }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -170,6 +191,22 @@ test("every table requires a colour and preserves the exact variant key in the c
     });
     await page.keyboard.press("Escape");
   }
+});
+
+test("Plaza's single Grey choice fills the V2 selector", async ({ page }) => {
+  await page.goto(productPath("tiger-plaza-outdoor-table-grey"));
+
+  const dimensions = await page.locator("fieldset").evaluate((fieldset) => {
+    const choices = fieldset.querySelector("div");
+    const card = fieldset.querySelector("label");
+
+    return {
+      cardWidth: card?.getBoundingClientRect().width ?? 0,
+      choicesWidth: choices?.getBoundingClientRect().width ?? 0
+    };
+  });
+
+  expect(dimensions.cardWidth).toBeGreaterThan(dimensions.choicesWidth * 0.9);
 });
 
 test("table galleries stay accessible and overflow-free at the approved widths", async ({

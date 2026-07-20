@@ -141,6 +141,29 @@ final result: passed
 
 ---
 
+# Table Purchasing Rail V2 — Launch-Day QA
+
+Date: 2026-07-20
+
+Branch: `codex/table-gallery-variant-restoration`
+
+Scope: Apply Aqua's approved Purchasing Rail V2 skin to Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler Indoor, and Plaza Outdoor without changing catalog or checkout behaviour.
+
+## Findings
+
+- All five tables use a content-height glass purchasing card with their existing Tiger descriptor and story, exact live price, colour selection, availability, free-table-shipping reassurance, Add to cart action, and phone help.
+- Blue, Grey, and Green choices use the first approved image for the exact existing variant on a contained white canvas. Plaza's single Grey choice spans the selector width.
+- The lead gallery image still does not preselect a colour. Missing selections focus the first radio and show **Choose your table colour first.**
+- Selecting a colour still changes the featured gallery image and sends the exact existing variant key and `Top colour` option through the cart.
+- Desktop captures at 1440 pixels show the Add to cart action inside every initial table purchase card without the former empty rail height.
+- Mobile captures at 390 pixels retain the compact gallery-first flow, two-column choices where applicable, full-width Plaza choice, and zero document overflow.
+- Aqua's approved V2 page is unchanged. Vice and other non-table products retain the legacy purchasing presentation.
+- No media upload, catalog write, API, database, pricing, Stripe, URL, SEO, deployment, or production change is part of this skin pass.
+
+final result: passed
+
+---
+
 # Table Gallery & Variant Restoration QA
 
 Date: 2026-07-19
@@ -171,7 +194,7 @@ The proof files remain under ignored `exports/` and are not committed as product
 - Aqua remains `tiger-v2`; Vice retains the default gallery presentation.
 - Keyboard operation, alternatives, required-selection focus, reduced-motion behavior, and document overflow pass at every approved width.
 - Cloudinary verification reports 21 of 21 gallery URLs successful. The local catalog repair dry run reports five products, 21 assets, zero warnings, and zero errors.
-- Full launch preflight passes with 41 unit tests and 60 active browser tests; 11 screenshot-only jobs are intentionally skipped because the visual evidence was captured separately. The tracked-secret scan reports zero findings, and the production audit gate has no high or critical advisories (two moderate advisories remain).
+- Full launch preflight passes with 41 unit tests and 61 active browser tests; 11 screenshot-only jobs are intentionally skipped because the visual evidence was captured separately. The tracked-secret scan reports zero findings, and the production audit gate has no high or critical advisories (two moderate advisories remain).
 - Production catalog application is intentionally pending owner approval.
 
 final result: passed locally; production catalog apply pending approval

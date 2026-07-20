@@ -2,7 +2,7 @@
 
 ## Active task
 
-Table Gallery & Variant Restoration.
+Table Gallery, Variant Restoration & Launch-Day Purchasing Rail V2.
 
 ## Selected task card
 
@@ -16,6 +16,7 @@ Restore and harden the product galleries and required colour selection on Expo O
 - Responsive Cloudinary derivatives at 480, 800, 1200, and 1600 pixels with contained white gallery canvases.
 - Dry-run-first upload and catalog-repair tools with collision checks, transactional apply, verification, snapshot, and rollback support.
 - Focused unit and Playwright regression proof for all five tables, Aqua V2, and one non-table accessory.
+- Aqua's approved content-height Purchasing Rail V2 on all five table pages, using exact live table prices, restored variant thumbnails, and table-specific Tiger copy.
 
 ## Locked decisions
 
@@ -24,7 +25,8 @@ Restore and harden the product galleries and required colour selection on Expo O
 - Portland Outdoor retains its approved current-model nine-image sequence. The obsolete local `Portland Outdoor v1` folder is prohibited.
 - Exact current-model Portland sources below the preferred 1600-pixel threshold are retained only where no larger matching original could be recovered; they are never upscaled.
 - Expo Green/Black and exact/near-duplicate images stay out of the restored gallery.
-- Aqua keeps its approved V2 gallery and purchasing rail. Tables keep the legacy purchasing presentation.
+- Aqua keeps its approved V2 gallery and purchasing rail. All five tables reuse that approved rail skin without changing their galleries, prices, variant keys, cart lines, or checkout payloads.
+- Table rails use `In stock. Ready to ship.`, the approved free-Canada-wide table shipping message and cottage-country line, and a real-person colour-help link.
 
 ## Boundaries
 
@@ -44,11 +46,12 @@ Restore and harden the product galleries and required colour selection on Expo O
 
 ## Status
 
-Implementation and local visual QA are complete on `codex/table-gallery-variant-restoration`, stacked on the conflict-free Aqua branch while PR #119 awaits owner merge.
+Implementation and local visual QA are complete on `codex/table-gallery-variant-restoration`, based on the merged Aqua V2 work from PR #119.
 
 - Ten missing high-resolution assets were uploaded under deterministic Cloudinary IDs and added to the tracked manifest; all 21 delivery URLs verify successfully.
 - The catalog repair tool validates all five live products and exact existing variants with zero errors, but `--apply` has not been run.
 - Desktop and mobile screenshots for all five product pages show correct product models, white contained media, compact galleries, and explicit colour choices with no open P0–P2 visual issue.
 - Focused gallery, cart, Aqua, `/tables`, and table-subcategory browser regressions pass after giving the two multi-route checks an appropriate 60-second test budget.
-- Full launch preflight passes: lint, Prisma generation/validation, typecheck, 41 unit tests, production build, 60 active browser tests, tracked-secret scan, and the high-severity production audit gate. Eleven screenshot-only browser jobs are intentionally skipped; two moderate dependency advisories remain.
+- Full launch preflight passes: lint, Prisma generation/validation, typecheck, 41 unit tests, production build, 61 active browser tests, tracked-secret scan, and the high-severity production audit gate. Eleven screenshot-only browser jobs are intentionally skipped; two moderate dependency advisories remain.
 - Production catalog remains unchanged pending owner approval of all five local pages.
+- The launch-day rail pass removes the legacy empty purchasing-panel height, adds colour-specific table thumbnails on white canvases, and gives Plaza's single Grey choice the full selector width.

@@ -7,16 +7,18 @@ import {
   ServiceUnavailableException
 } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
+import {
+  calculateCanadaShippingCents,
+  CURRENT_CANADA_SHIPPING_RULE,
+  CURRENT_CANADA_SHIPPING_RULE_VERSION
+} from "@tigerpingpong/shared";
 import Stripe from "stripe";
 
 import { CheckoutConfig, getCheckoutConfig } from "../config";
 
 const CHECKOUT_SOURCE = "tigerpingpong-web";
-const FLAT_SHIPPING_CENTS = 1500;
-const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 const MAX_ITEMS = 20;
 const MAX_QUANTITY_PER_LINE = 10;
-const SHIPPING_RULE = "canada_free_over_100_flat_15";
 const STRIPE_CHECKOUT_SOURCE = "stripe_checkout";
 const STRIPE_TAX_BEHAVIOR = "exclusive" as const;
 const V1_CURRENCY = "cad";
@@ -755,10 +757,7 @@ export class CheckoutService implements OnModuleDestroy {
       const optionSummary = this.formatSelectedOptions(optionValidation.selectedOptions);
       const displayName = optionSummary ? `${product.name} (${optionSummary})` : product.name;
 
-      if (
-        item.expectedUnitPriceCents !== null &&
-        item.expectedUnitPriceCents !== unitPriceCents
-      ) {
+      if (item.expectedUnitPriceCents !== null && item.expectedUnitPriceCents !== unitPriceCents) {
         cartChanges.push({
           cartLineId,
           currency: "CAD",
@@ -1080,7 +1079,7 @@ export class CheckoutService implements OnModuleDestroy {
 
   private calculateTotals(items: SnapshotLineItem[]): CheckoutTotals {
     const subtotalCents = items.reduce((subtotal, item) => subtotal + item.lineTotalCents, 0);
-    const shippingCents = subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS ? 0 : FLAT_SHIPPING_CENTS;
+    const shippingCents = calculateCanadaShippingCents(subtotalCents, items);
 
     return {
       subtotalCents,
@@ -1106,7 +1105,7 @@ export class CheckoutService implements OnModuleDestroy {
             subtotalCents: totals.subtotalCents,
             shippingCents: totals.shippingCents,
             totalCents: totals.totalCents,
-            shippingRule: SHIPPING_RULE,
+            shippingRule: CURRENT_CANADA_SHIPPING_RULE,
             checkoutSource: STRIPE_CHECKOUT_SOURCE,
             customerEmail,
             items: {
@@ -1207,7 +1206,10 @@ export class CheckoutService implements OnModuleDestroy {
     });
   }
 
-  private createStripeLineItem(config: CheckoutConfig, item: CreatedCheckoutOrder["items"][number]) {
+  private createStripeLineItem(
+    config: CheckoutConfig,
+    item: CreatedCheckoutOrder["items"][number]
+  ) {
     const productData: { images?: string[]; name: string } = {
       name: item.name
     };
@@ -1241,7 +1243,7 @@ export class CheckoutService implements OnModuleDestroy {
       source: CHECKOUT_SOURCE,
       website: "tigerpingpong",
       environment: config.appEnv,
-      shippingRuleVersion: "v1",
+      shippingRuleVersion: CURRENT_CANADA_SHIPPING_RULE_VERSION,
       subtotalCents: String(order.subtotalCents),
       shippingCents: String(order.shippingCents),
       totalCents: String(order.totalCents),

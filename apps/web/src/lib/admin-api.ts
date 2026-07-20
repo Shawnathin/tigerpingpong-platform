@@ -246,6 +246,11 @@ export interface AdminSettings {
   checkoutEnabled: boolean;
   currency: string;
   flatRateShippingCents: number;
+  freeShippingException?: {
+    productSlug: string;
+    requiresExclusiveCart: boolean;
+    variantKey: string;
+  };
   freeShippingThresholdCents: number;
   storeName: string;
   stripeMode: string;
@@ -459,7 +464,9 @@ async function readAdminErrorMessage(response: Response): Promise<string | null>
   }
 
   if (Array.isArray(message)) {
-    return normalizeSafeErrorMessage(message.filter((entry) => typeof entry === "string").join(" "));
+    return normalizeSafeErrorMessage(
+      message.filter((entry) => typeof entry === "string").join(" ")
+    );
   }
 
   return null;

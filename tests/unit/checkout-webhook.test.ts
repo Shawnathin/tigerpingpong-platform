@@ -1,5 +1,10 @@
 import Stripe from "stripe";
 import { describe, expect, it, vi } from "vitest";
+import {
+  AQUA_FOUR_PACK_PRODUCT_SLUG,
+  AQUA_FOUR_PACK_VARIANT_KEY,
+  CURRENT_CANADA_SHIPPING_RULE
+} from "../../packages/shared/src";
 
 import { CheckoutService } from "../../apps/api/src/checkout/checkout.service";
 import { StripeWebhookService } from "../../apps/api/src/webhooks/stripe-webhook.service";
@@ -54,7 +59,13 @@ describe("server-authoritative checkout", () => {
 
   it("calculates the approved shipping boundary on the server", () => {
     const service = new CheckoutService() as unknown as {
-      calculateTotals(items: Array<{ lineTotalCents: number }>): {
+      calculateTotals(
+        items: Array<{
+          lineTotalCents: number;
+          productSlug?: string;
+          variantKey?: string | null;
+        }>
+      ): {
         shippingCents: number;
         totalCents: number;
       };
@@ -67,6 +78,35 @@ describe("server-authoritative checkout", () => {
     expect(service.calculateTotals([{ lineTotalCents: 10_001 }])).toMatchObject({
       shippingCents: 0,
       totalCents: 10_001
+    });
+    expect(
+      service.calculateTotals([
+        {
+          lineTotalCents: 8_000,
+          productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+          variantKey: AQUA_FOUR_PACK_VARIANT_KEY
+        }
+      ])
+    ).toMatchObject({
+      shippingCents: 0,
+      totalCents: 8_000
+    });
+    expect(
+      service.calculateTotals([
+        {
+          lineTotalCents: 8_000,
+          productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+          variantKey: AQUA_FOUR_PACK_VARIANT_KEY
+        },
+        {
+          lineTotalCents: 800,
+          productSlug: "product-one",
+          variantKey: null
+        }
+      ])
+    ).toMatchObject({
+      shippingCents: 1_500,
+      totalCents: 10_300
     });
   });
 
@@ -85,12 +125,14 @@ describe("server-authoritative checkout", () => {
 
     await expect(
       service.createCheckoutSession({
-        items: [{
-          productSlug: "product-one",
-          quantity: 1,
-          selectedOptions: [],
-          expectedUnitPriceCents: 700
-        }]
+        items: [
+          {
+            productSlug: "product-one",
+            quantity: 1,
+            selectedOptions: [],
+            expectedUnitPriceCents: 700
+          }
+        ]
       })
     ).rejects.toMatchObject({ status: 409 });
     expect(service.createPendingOrder).not.toHaveBeenCalled();
@@ -148,7 +190,14 @@ describe("Stripe webhook safety checks with local fakes", () => {
     shippingCents: 1_500,
     totalCents: 2_300,
     shippingRule: "canada_free_over_100_flat_15",
-    items: [{ lineTotalCents: 800, currency: "CAD" }]
+    items: [
+      {
+        lineTotalCents: 800,
+        currency: "CAD",
+        productSlug: "product-one",
+        variantKey: null
+      }
+    ]
   };
   const baseSession = {
     object: "checkout.session",
@@ -177,7 +226,11 @@ describe("Stripe webhook safety checks with local fakes", () => {
     data: { object: baseSession }
   };
 
-  function validate(overrides: Record<string, unknown> = {}, eventLivemode = false) {
+  function validate(
+    overrides: Record<string, unknown> = {},
+    eventLivemode = false,
+    orderOverrides: Record<string, unknown> = {}
+  ) {
     const service = new StripeWebhookService() as unknown as {
       validateSessionForOrder(
         event: unknown,
@@ -190,13 +243,93 @@ describe("Stripe webhook safety checks with local fakes", () => {
     return service.validateSessionForOrder(
       { ...baseEvent, livemode: eventLivemode, data: { object: session } },
       session,
-      baseOrder,
+      { ...baseOrder, ...orderOverrides },
       { expectedLivemode: false, stripeTaxEnabled: false, stripeWebhookSecret: "unused" }
     );
   }
 
   it("accepts matching paid Canadian totals", () => {
     expect(validate()).toBeNull();
+  });
+
+  it("accepts the exact Aqua 4-pack exception and still validates legacy pending orders", () => {
+    const aquaItem = {
+      currency: "CAD",
+      lineTotalCents: 8_000,
+      productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+      variantKey: AQUA_FOUR_PACK_VARIANT_KEY
+    };
+
+    expect(
+      validate(
+        {
+          amount_subtotal: 8_000,
+          amount_total: 8_000,
+          shipping_cost: { amount_total: 0 },
+          total_details: { amount_discount: 0, amount_shipping: 0, amount_tax: 0 }
+        },
+        false,
+        {
+          items: [aquaItem],
+          shippingCents: 0,
+          shippingRule: CURRENT_CANADA_SHIPPING_RULE,
+          subtotalCents: 8_000,
+          totalCents: 8_000
+        }
+      )
+    ).toBeNull();
+
+    expect(
+      validate(
+        {
+          amount_subtotal: 8_000,
+          amount_total: 9_500,
+          shipping_cost: { amount_total: 1_500 },
+          total_details: { amount_discount: 0, amount_shipping: 1_500, amount_tax: 0 }
+        },
+        false,
+        {
+          items: [aquaItem],
+          shippingCents: 1_500,
+          subtotalCents: 8_000,
+          totalCents: 9_500
+        }
+      )
+    ).toBeNull();
+  });
+
+  it("rejects free shipping on a mixed under-threshold cart", () => {
+    expect(
+      validate(
+        {
+          amount_subtotal: 8_800,
+          amount_total: 8_800,
+          shipping_cost: { amount_total: 0 },
+          total_details: { amount_discount: 0, amount_shipping: 0, amount_tax: 0 }
+        },
+        false,
+        {
+          items: [
+            {
+              currency: "CAD",
+              lineTotalCents: 8_000,
+              productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+              variantKey: AQUA_FOUR_PACK_VARIANT_KEY
+            },
+            {
+              currency: "CAD",
+              lineTotalCents: 800,
+              productSlug: "product-one",
+              variantKey: null
+            }
+          ],
+          shippingCents: 0,
+          shippingRule: CURRENT_CANADA_SHIPPING_RULE,
+          subtotalCents: 8_800,
+          totalCents: 8_800
+        }
+      )
+    ).toBe("order_shipping_rule_total_mismatch");
   });
 
   it("routes amount, country, and livemode mismatches to manual review reasons", () => {

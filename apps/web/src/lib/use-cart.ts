@@ -25,7 +25,7 @@ export function useCart() {
   const items = useMemo(() => parseCartSnapshot(snapshot), [snapshot]);
   const itemCount = getCartItemCount(items);
   const subtotalCents = getCartSubtotalCents(items);
-  const shippingCents = items.length > 0 ? getCartShippingCents(subtotalCents) : 0;
+  const shippingCents = items.length > 0 ? getCartShippingCents(subtotalCents, items) : 0;
   const totalCents = subtotalCents + shippingCents;
 
   return {
@@ -37,7 +37,7 @@ export function useCart() {
     reconcileItems: reconcileCartItems,
     removeItem: removeCartItem,
     shippingCents,
-    shippingCopy: getCartShippingCopy(subtotalCents),
+    shippingCopy: getCartShippingCopy(subtotalCents, items),
     subtotalCents,
     totalCents,
     updateQuantity: updateCartItemQuantity

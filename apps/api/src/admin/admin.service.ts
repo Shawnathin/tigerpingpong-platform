@@ -8,6 +8,12 @@ import {
   ServiceUnavailableException
 } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
+import {
+  AQUA_FOUR_PACK_PRODUCT_SLUG,
+  AQUA_FOUR_PACK_VARIANT_KEY,
+  CANADA_FLAT_RATE_SHIPPING_CENTS,
+  CANADA_FREE_SHIPPING_THRESHOLD_CENTS
+} from "@tigerpingpong/shared";
 
 type AdminOrderStatus =
   | "canceled"
@@ -17,7 +23,13 @@ type AdminOrderStatus =
   | "paid"
   | "refunded";
 
-type AdminMediaRole = "primary" | "gallery" | "detail" | "lifestyle" | "variant" | "source_reference";
+type AdminMediaRole =
+  | "primary"
+  | "gallery"
+  | "detail"
+  | "lifestyle"
+  | "variant"
+  | "source_reference";
 
 interface AdminListQuery {
   limit?: string;
@@ -122,8 +134,6 @@ const ADMIN_ORDER_STATUSES: readonly AdminOrderStatus[] = [
 ];
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
 const DEFAULT_LIMIT = 50;
-const FLAT_SHIPPING_CENTS = 1500;
-const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 const MAX_LIMIT = 100;
 const MAX_MEDIA_SORT_ORDER = 999;
 const MIN_MEDIA_SORT_ORDER = 0;
@@ -224,10 +234,7 @@ const adminProductDetailSelect = {
   createdAt: true,
   updatedAt: true,
   media: {
-    orderBy: [
-      { isPrimary: "desc" },
-      { sortOrder: "asc" }
-    ],
+    orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
     select: {
       mediaKey: true,
       role: true,
@@ -834,9 +841,7 @@ export class AdminService implements OnModuleDestroy {
       throw new ServiceUnavailableException({ message: "Admin product could not be saved." });
     }
 
-    this.logger.log(
-      JSON.stringify({ event: "admin_product_updated", productId, changedFields })
-    );
+    this.logger.log(JSON.stringify({ event: "admin_product_updated", productId, changedFields }));
 
     return this.getProduct(productId);
   }
@@ -1172,8 +1177,13 @@ export class AdminService implements OnModuleDestroy {
         supportEmail: SUPPORT_EMAIL,
         supportPhone: SUPPORT_PHONE,
         currency: "CAD",
-        freeShippingThresholdCents: FREE_SHIPPING_THRESHOLD_CENTS,
-        flatRateShippingCents: FLAT_SHIPPING_CENTS,
+        freeShippingThresholdCents: CANADA_FREE_SHIPPING_THRESHOLD_CENTS,
+        flatRateShippingCents: CANADA_FLAT_RATE_SHIPPING_CENTS,
+        freeShippingException: {
+          productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+          variantKey: AQUA_FOUR_PACK_VARIANT_KEY,
+          requiresExclusiveCart: true
+        },
         checkoutEnabled: this.isCheckoutConfigured(process.env),
         stripeMode: this.getStripeModeIndicator(process.env.STRIPE_SECRET_KEY)
       },
@@ -1321,7 +1331,8 @@ export class AdminService implements OnModuleDestroy {
       isPublic: media.isPublic,
       isActive: media.isActive,
       reviewStatus: media.reviewStatus,
-      previewUrl: media.cloudinarySecureUrl ?? this.createCloudinaryDeliveryUrl(media.cloudinaryPublicId),
+      previewUrl:
+        media.cloudinarySecureUrl ?? this.createCloudinaryDeliveryUrl(media.cloudinaryPublicId),
       updatedAt: this.serializeDate(media.updatedAt)
     };
   }
@@ -1495,7 +1506,10 @@ export class AdminService implements OnModuleDestroy {
     variants: NormalizedProductVariantUpdate[]
   ): void {
     const existingIds = new Set(product.variants.map((variant) => variant.id));
-    if (variants.length !== existingIds.size || variants.some((variant) => !existingIds.has(variant.id))) {
+    if (
+      variants.length !== existingIds.size ||
+      variants.some((variant) => !existingIds.has(variant.id))
+    ) {
       throw new BadRequestException({
         message: "variants must contain each existing product variant exactly once."
       });
@@ -1532,7 +1546,10 @@ export class AdminService implements OnModuleDestroy {
         if (!variant.isActive || !existing) {
           return false;
         }
-        if (existing.purchaseModeOverride && !CHECKOUT_PURCHASE_MODES.has(existing.purchaseModeOverride)) {
+        if (
+          existing.purchaseModeOverride &&
+          !CHECKOUT_PURCHASE_MODES.has(existing.purchaseModeOverride)
+        ) {
           return false;
         }
         return true;
@@ -1577,7 +1594,9 @@ export class AdminService implements OnModuleDestroy {
     if (
       update.variants.some((variant) => {
         const existing = variantsById.get(variant.id);
-        return existing?.priceCents !== variant.priceCents || existing?.isActive !== variant.isActive;
+        return (
+          existing?.priceCents !== variant.priceCents || existing?.isActive !== variant.isActive
+        );
       })
     ) {
       changedFields.push("variants");
@@ -2215,7 +2234,7 @@ export class AdminService implements OnModuleDestroy {
     }
 
     const pathAfterUpload = parts.slice(uploadIndex + 1);
-    const version = pathAfterUpload[0]?.match(/^v\d+$/) ? pathAfterUpload.shift() ?? null : null;
+    const version = pathAfterUpload[0]?.match(/^v\d+$/) ? (pathAfterUpload.shift() ?? null) : null;
     const publicPath = pathAfterUpload.join("/");
 
     if (!publicPath) {

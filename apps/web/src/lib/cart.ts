@@ -1,9 +1,21 @@
-import { V1_FLAT_RATE_SHIPPING_COPY, V1_FREE_SHIPPING_COPY } from "./shipping";
+import {
+  calculateCanadaShippingCents,
+  CANADA_FLAT_RATE_SHIPPING_CENTS,
+  CANADA_FREE_SHIPPING_THRESHOLD_CENTS,
+  isAquaFourPackShippingItem,
+  type CanadaShippingItem
+} from "@tigerpingpong/shared";
+
+import {
+  AQUA_FOUR_PACK_FREE_SHIPPING_COPY,
+  V1_FLAT_RATE_SHIPPING_COPY,
+  V1_FREE_SHIPPING_COPY
+} from "./shipping";
 
 export const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
 export const CART_CHANGE_EVENT = "tigerpingpong:cart-change";
-export const FLAT_SHIPPING_CENTS = 1500;
-export const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
+export const FLAT_SHIPPING_CENTS = CANADA_FLAT_RATE_SHIPPING_CENTS;
+export const FREE_SHIPPING_THRESHOLD_CENTS = CANADA_FREE_SHIPPING_THRESHOLD_CENTS;
 export const MAX_CART_QUANTITY_PER_LINE = 10;
 
 export interface CartItem {
@@ -206,11 +218,23 @@ export function getCartSubtotalCents(items: CartItem[]): number {
   return items.reduce((subtotal, item) => subtotal + item.unitPriceCents * item.quantity, 0);
 }
 
-export function getCartShippingCents(subtotalCents: number): number {
-  return subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS ? 0 : FLAT_SHIPPING_CENTS;
+export function getCartShippingCents(
+  subtotalCents: number,
+  items: readonly CartItem[] = []
+): number {
+  return calculateCanadaShippingCents(subtotalCents, toCanadaShippingItems(items));
 }
 
-export function getCartShippingCopy(subtotalCents: number): string {
+export function getCartShippingCopy(
+  subtotalCents: number,
+  items: readonly CartItem[] = []
+): string {
+  const shippingItems = toCanadaShippingItems(items);
+
+  if (shippingItems.length > 0 && shippingItems.every(isAquaFourPackShippingItem)) {
+    return AQUA_FOUR_PACK_FREE_SHIPPING_COPY;
+  }
+
   return subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS
     ? V1_FREE_SHIPPING_COPY
     : V1_FLAT_RATE_SHIPPING_COPY;
@@ -234,6 +258,13 @@ export function getCartLineId(productSlug: string, selectedOptions: CartItemOpti
     .join("&");
 
   return optionSignature ? `${normalizedSlug}::${optionSignature}` : normalizedSlug;
+}
+
+function toCanadaShippingItems(items: readonly CartItem[]): CanadaShippingItem[] {
+  return items.map((item) => ({
+    productSlug: item.productSlug,
+    variantKey: item.selectedVariantKey
+  }));
 }
 
 function writeCartItems(items: CartItem[]): CartItem[] {

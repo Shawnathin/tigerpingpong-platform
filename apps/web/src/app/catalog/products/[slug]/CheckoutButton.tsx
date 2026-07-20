@@ -263,7 +263,12 @@ export function CheckoutButton({
     : basePriceLabel;
   const displayedShippingLines =
     selectedOptionPrice && !shippingLinesAreFixed
-      ? [getV1ShippingMessage(selectedOptionPrice.priceCents)]
+      ? [
+          getV1ShippingMessage(selectedOptionPrice.priceCents, {
+            productSlug: product.productSlug,
+            variantKey: selectedOptionPrice.variantKey
+          })
+        ]
       : shippingLines;
 
   useEffect(() => {

@@ -20,14 +20,18 @@ export default function ShippingReturnsPage() {
           </h1>
           <p className={styles.intro}>
             Tiger Ping Pong ships storefront orders within Canada. Orders over $100 CAD ship free
-            across Canada.
+            across Canada. The Aqua 4-Pack w/ 3 Balls also ships free when it is the only item in
+            the cart.
           </p>
         </section>
 
         <section className={styles.ruleGrid} aria-labelledby="shipping-rules-title">
           <div className={styles.ruleLead}>
             <p className={styles.eyebrow}>Shipping rule</p>
-            <h2 id="shipping-rules-title">Over $100 ships free. $100 or under ships for $15.</h2>
+            <h2 id="shipping-rules-title">
+              Over $100 ships free. The Aqua 4-Pack ships free on its own. Otherwise, shipping is
+              $15.
+            </h2>
           </div>
 
           <article>
@@ -44,8 +48,16 @@ export default function ShippingReturnsPage() {
 
           <article>
             <span>$100 CAD or under</span>
-            <strong>Orders $100 CAD or under use $15 CAD flat-rate shipping.</strong>
+            <strong>Other orders $100 CAD or under use $15 CAD flat-rate shipping.</strong>
             <p>Exactly $100.00 CAD still uses the $15 flat-rate shipping rule.</p>
+          </article>
+
+          <article>
+            <span>Aqua 4-Pack exception</span>
+            <strong>The Aqua 4-Pack w/ 3 Balls ships free across Canada.</strong>
+            <p>
+              The free-shipping exception applies when that 4-pack is the only item in the cart.
+            </p>
           </article>
         </section>
 

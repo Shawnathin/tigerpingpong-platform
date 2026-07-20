@@ -977,7 +977,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 ? [...tigerTablePurchaseStory.shipping]
                 : getPurchaseShippingLines(product)
           }
-          shippingLinesAreFixed={isTable || isAqua}
+          shippingLinesAreFixed={isTable}
         />
 
         {isAqua ? (

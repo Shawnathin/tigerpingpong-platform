@@ -617,7 +617,10 @@ test("primary discovery and shipping routes retain factual storefront behavior",
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(
-      page.getByText("Orders $100 CAD or under use $15 CAD flat-rate shipping.")
+      page.getByText("Other orders $100 CAD or under use $15 CAD flat-rate shipping.")
+    ).toBeVisible();
+    await expect(
+      page.getByText("The Aqua 4-Pack w/ 3 Balls ships free across Canada.")
     ).toBeVisible();
   }
 

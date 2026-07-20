@@ -78,6 +78,17 @@ export default async function AdminSettingsPage() {
               <dt>Flat-rate shipping amount</dt>
               <dd>{formatMoney(settings.flatRateShippingCents, settings.currency)}</dd>
             </div>
+            {settings.freeShippingException ? (
+              <div>
+                <dt>Free-shipping product exception</dt>
+                <dd>
+                  Aqua 4-Pack w/ 3 Balls
+                  {settings.freeShippingException.requiresExclusiveCart
+                    ? " (only item in cart)"
+                    : ""}
+                </dd>
+              </div>
+            ) : null}
             <div>
               <dt>Checkout enabled</dt>
               <dd>{formatBoolean(settings.checkoutEnabled)}</dd>

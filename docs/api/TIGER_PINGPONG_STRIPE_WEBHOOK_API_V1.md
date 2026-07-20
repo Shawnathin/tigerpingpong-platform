@@ -241,8 +241,11 @@ Before marking an order paid, the service verifies:
 - order has at least one item
 - item line totals equal the order subtotal
 - item currencies are CAD
-- order shipping rule is `canada_free_over_100_flat_15`
-- order subtotal/shipping still satisfy the V1 Canada shipping threshold
+- order shipping rule is either the current
+  `canada_free_over_100_flat_15_aqua_4_pack_free` rule or the supported legacy
+  `canada_free_over_100_flat_15` rule
+- order subtotal, item snapshots, and shipping still satisfy the stored rule;
+  only an Aqua 4-pack-only order receives the current below-threshold exception
 - event/session livemode matches `STRIPE_EXPECTED_LIVEMODE` when that env var is
   set
 

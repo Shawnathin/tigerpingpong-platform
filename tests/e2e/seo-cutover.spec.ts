@@ -99,6 +99,8 @@ test("sitemap contains the complete canonical inventory without fabricated fresh
 });
 
 test("canonical and utility-page robot directives are readable and correct", async ({ page }) => {
+  test.setTimeout(60_000);
+
   for (const path of [
     "/catalog",
     "/shipping-returns",

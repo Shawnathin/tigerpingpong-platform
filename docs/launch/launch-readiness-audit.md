@@ -93,7 +93,10 @@ Web service (`tigerpingpong-web`):
 
 - Checkout session creation validates payload shape, line items, options, quantities, and product status/visibility/purchase mode.
 - Server calculates subtotal/shipping totals and creates Stripe Checkout session with shipping restriction to `CA`.
-- `shippingRule` is enforced as `canada_free_over_100_flat_15`.
+- New checkout orders use
+  `canada_free_over_100_flat_15_aqua_4_pack_free`; the exact Aqua 4-pack ships
+  free when it is the only cart line, while legacy pending orders retain
+  threshold-only webhook validation.
 - Webhook validates signature, supports `checkout.session.completed`, checks session/order IDs, payment status, amount/country/livemode (if configured), and marks order paid only after all checks pass.
 
 ## 11) Catalog/product/media readiness findings
@@ -107,8 +110,9 @@ Web service (`tigerpingpong-web`):
 
 - Required options are enforced for checkout-eligible items requiring selection.
 - Shipping is enforced as:
-  - free only when subtotal > `10000` cents,
-  - else `$15.00 CAD`, including exactly `$100.00 CAD`.
+  - free when subtotal > `10000` cents,
+  - free for an Aqua 4-pack-only order,
+  - else `$15.00 CAD`, including exactly `$100.00 CAD` and mixed under-threshold carts.
 - Cart state is local-only and not payment truth; backend is source of status.
 - Success/cancel pages explicitly avoid client-side payment marking.
 

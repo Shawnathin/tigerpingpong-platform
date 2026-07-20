@@ -111,6 +111,46 @@ test("all four Aqua options show live prices and the correct gallery image", asy
   }
 });
 
+test("only the Aqua four-pack receives under-threshold free shipping", async ({ page }) => {
+  await page.goto(AQUA_PATH);
+  await selectAqua(page, "4-pack-3-balls");
+
+  await expect(page.getByTestId("product-price")).toHaveText("$80.00");
+  await expect(
+    page.getByText("The Aqua 4-Pack w/ 3 Balls ships free across Canada.", { exact: true })
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Add to cart" }).click();
+  await page
+    .getByRole("dialog", { name: /is in your cart/i })
+    .getByRole("link", { name: "View cart" })
+    .click();
+
+  const shippingRow = page.locator("dt", { hasText: /^Shipping$/ }).locator("..");
+  await expect(shippingRow.locator("dd")).toHaveText("Free");
+
+  await page.goto("/catalog/products/tiger-premium-balls-6-orange");
+  await page.locator('label[for="tiger-premium-balls-6-orange-package-single-pack"]').click();
+  await page.getByRole("button", { name: "Add to cart" }).click();
+  await page
+    .getByRole("dialog", { name: /is in your cart/i })
+    .getByRole("link", { name: "View cart" })
+    .click();
+
+  await expect(
+    page
+      .locator("dt", { hasText: /^Subtotal$/ })
+      .locator("..")
+      .locator("dd")
+  ).toHaveText("$88.00");
+  await expect(
+    page
+      .locator("dt", { hasText: /^Shipping$/ })
+      .locator("..")
+      .locator("dd")
+  ).toHaveText("$15.00");
+});
+
 test("Aqua requires a choice, preserves the internal variant key, and sends it to checkout", async ({
   page
 }) => {

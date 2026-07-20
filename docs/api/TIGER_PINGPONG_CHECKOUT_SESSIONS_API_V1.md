@@ -136,7 +136,7 @@ The pending order stores:
 - `subtotalCents`
 - `shippingCents`
 - `totalCents`
-- `shippingRule: canada_free_over_100_flat_15`
+- `shippingRule: canada_free_over_100_flat_15_aqua_4_pack_free`
 - `checkoutSource: stripe_checkout`
 - optional `customerEmail`
 - `stripeCheckoutSessionId` after Stripe session creation succeeds
@@ -171,23 +171,34 @@ products can change after checkout starts.
 
 ## Shipping Calculation
 
-V1 shipping rule:
+Current shipping rule:
 
 ```text
-canada_free_over_100_flat_15
+canada_free_over_100_flat_15_aqua_4_pack_free
 ```
 
-The backend calculates shipping from the validated order subtotal:
+The backend calculates shipping from the validated order subtotal and the
+server-resolved product/variant snapshots:
 
 ```text
-subtotalCents > 10000  -> shippingCents = 0
-subtotalCents <= 10000 -> shippingCents = 1500
+subtotalCents > 10000                                          -> shippingCents = 0
+every line is Aqua variant tiger-aqua-package-4-pack-3-balls  -> shippingCents = 0
+otherwise                                                      -> shippingCents = 1500
 ```
 
 Threshold behavior:
 
 - `10001` cents and above gets free shipping.
 - `10000` cents exactly gets $15 flat-rate shipping.
+- An order containing only the Aqua `4-Pack w/ 3 Balls` variant gets free
+  shipping across Canada below the threshold.
+- A mixed order containing the Aqua 4-pack and another product follows the
+  normal subtotal rule, so an under-threshold mixed order gets $15 shipping.
+
+Pending orders created under the legacy
+`canada_free_over_100_flat_15` rule keep threshold-only validation so a later
+Stripe webhook can complete them safely. The Prisma field default remains
+unchanged for compatibility; checkout explicitly stores the current rule.
 
 Stripe Checkout is configured with:
 
@@ -227,7 +238,7 @@ Checkout Session metadata includes:
 - `publicReference`
 - `source: tigerpingpong-web`
 - `environment`
-- `shippingRuleVersion: v1`
+- `shippingRuleVersion: v2`
 - `subtotalCents`
 - `shippingCents`
 - `totalCents`

@@ -5,6 +5,7 @@ export default defineConfig({
   fullyParallel: false,
   retries: 0,
   reporter: "list",
+  workers: 2,
   use: {
     baseURL: "http://127.0.0.1:3100",
     trace: "retain-on-failure"

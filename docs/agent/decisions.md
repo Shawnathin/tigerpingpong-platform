@@ -17,3 +17,11 @@ Decision: Complete code, test, policy-draft, security, and handoff gates on a de
 Why: The repository can be made auditable and reproducible without exposing credentials or creating production side effects. External proof requires authorized operators and named go/no-go ownership.
 
 Out of scope: No payment-truth, total, webhook-authority, schema, migration, production configuration, external-service, or production-data mutation.
+
+## 2026-07-20 - Add one Aqua 4-pack shipping exception
+
+Decision: The exact Aqua `4-Pack w/ 3 Balls` variant ships free across Canada when it is the only cart item. Any mixed order follows the normal order-level rule: over $100 CAD ships free; $100 CAD or under uses $15 flat-rate shipping.
+
+Why: Requiring the exact product and variant on every cart line prevents another under-threshold SKU from inheriting the exception. Webhook validation continues to recognize the legacy threshold-only rule for already-pending orders.
+
+Out of scope: No other product exception, price/catalog mutation, schema/migration, payment-truth change, webhook-authority change, international shipping, DNS, deployment, or external-service mutation.

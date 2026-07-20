@@ -6,6 +6,7 @@
 
 ## Done
 
+- Aqua 4-pack Canada-wide free-shipping exception: exact product/variant matching is shared across checkout, webhook validation, cart/PDP estimates, customer policy copy, and protected settings while legacy pending orders remain valid.
 - Admin recovery and removal-only storefront cleanup: removed Make runtime coupling, preserved manual shipment records, simplified the cart dialog, and stripped audited public marketing filler. Aggregate preflight passed.
 - Added repository-local dependency, security, test, CI, policy, accessibility, and operator-handoff remediation without external service mutation.
 - `Release readiness: repository-local remediation and operator handoff` — aggregate preflight passed; candidate staged for review.

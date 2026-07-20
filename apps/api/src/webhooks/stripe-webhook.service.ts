@@ -6,14 +6,12 @@ import {
   ServiceUnavailableException
 } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
+import { calculateCanadaShippingCents, isCanadaShippingRule } from "@tigerpingpong/shared";
 import StripeConstructor from "stripe";
 
 import { StripeWebhookConfig, getStripeWebhookConfig } from "../config";
 
 const CHECKOUT_SESSION_COMPLETED_EVENT = "checkout.session.completed";
-const FLAT_SHIPPING_CENTS = 1500;
-const FREE_SHIPPING_THRESHOLD_CENTS = 10000;
-const SHIPPING_RULE = "canada_free_over_100_flat_15";
 const SUPPORTED_EVENTS = new Set<string>([CHECKOUT_SESSION_COMPLETED_EVENT]);
 const V1_CURRENCY = "cad";
 
@@ -402,12 +400,15 @@ export class StripeWebhookService implements OnModuleDestroy {
       return "order_item_currency_mismatch";
     }
 
-    if (order.shippingRule !== SHIPPING_RULE) {
+    if (!isCanadaShippingRule(order.shippingRule)) {
       return "order_shipping_rule_mismatch";
     }
 
-    const expectedShippingCents =
-      order.subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS ? 0 : FLAT_SHIPPING_CENTS;
+    const expectedShippingCents = calculateCanadaShippingCents(
+      order.subtotalCents,
+      order.items,
+      order.shippingRule
+    );
 
     if (order.shippingCents !== expectedShippingCents) {
       return "order_shipping_rule_total_mismatch";

@@ -17,6 +17,8 @@ Restore and harden the product galleries and required colour selection on Expo O
 - Dry-run-first upload and catalog-repair tools with collision checks, transactional apply, verification, snapshot, and rollback support.
 - Focused unit and Playwright regression proof for all five tables, Aqua V2, and one non-table accessory.
 - Aqua's approved content-height Purchasing Rail V2 on all five table pages, using exact live table prices, restored variant thumbnails, and table-specific Tiger copy.
+- A launch-day selector fallback that maps each existing table variant key to its exact approved Cloudinary gallery image when production media rows have not yet received variant assignments.
+- The owner-selected 1600-pixel PingPong Balls category photograph as the Balls hero image.
 
 ## Locked decisions
 
@@ -27,6 +29,7 @@ Restore and harden the product galleries and required colour selection on Expo O
 - Expo Green/Black and exact/near-duplicate images stay out of the restored gallery.
 - Aqua keeps its approved V2 gallery and purchasing rail. All five tables reuse that approved rail skin without changing their galleries, prices, variant keys, cart lines, or checkout payloads.
 - Table rails use `In stock. Ready to ship.`, the approved free-Canada-wide table shipping message and cottage-country line, and a real-person colour-help link.
+- Existing API-assigned variant media remains authoritative. The tracked gallery manifest is used only when an exact live variant-media match is absent; no colour is inferred from labels or swatches.
 
 ## Boundaries
 
@@ -55,3 +58,5 @@ Implementation and local visual QA are complete on `codex/table-gallery-variant-
 - Full launch preflight passes: lint, Prisma generation/validation, typecheck, 41 unit tests, production build, 61 active browser tests, tracked-secret scan, and the high-severity production audit gate. Eleven screenshot-only browser jobs are intentionally skipped; two moderate dependency advisories remain.
 - Production catalog remains unchanged pending owner approval of all five local pages.
 - The launch-day rail pass removes the legacy empty purchasing-panel height, adds colour-specific table thumbnails on white canvases, and gives Plaza's single Grey choice the full selector width.
+- Follow-up branch `codex/table-variant-selector-images` verifies the launch rail against production API data: table colour choices now show their approved table photographs instead of fallback colour dots, while the original variant keys and checkout path remain unchanged.
+- The Balls category hero now uses the exact owner-supplied Cloudinary image at 1600 × 1600. No catalog, media, API, pricing, cart, or checkout data was changed.

@@ -216,6 +216,11 @@ test.describe("Tiger gear categories", () => {
   test("Balls keeps both six-packs distinct and gives 140 its own moment", async ({ page }) => {
     await page.goto(routes.balls.path);
 
+    await expect(page.locator("#gear img")).toHaveAttribute(
+      "src",
+      "https://res.cloudinary.com/djfcisldm/image/upload/v1781745091/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01.jpg"
+    );
+
     await expect(
       page.getByRole("heading", { level: 2, name: "How many rematches?" })
     ).toBeVisible();

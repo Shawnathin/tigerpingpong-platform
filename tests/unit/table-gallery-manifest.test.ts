@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
+import { getTigerTableVariantSelectorMedia } from "../../apps/web/src/lib/tiger-story";
+
 interface ManifestAsset {
   cloudinary: {
     assetId: string;
@@ -47,6 +49,20 @@ describe("table gallery media manifest", () => {
     for (const product of manifest.products) {
       expect(product.assets[0]?.variantKey).toBe(product.catalogLeadVariantKey);
       expect(product.approvedVariantKeys).toContain(product.catalogLeadVariantKey);
+    }
+  });
+
+  it("maps every approved table colour to its first Cloudinary gallery image", () => {
+    for (const product of manifest.products) {
+      for (const variantKey of product.approvedVariantKeys) {
+        const expectedAsset = product.assets.find((asset) => asset.variantKey === variantKey);
+        const selectorMedia = getTigerTableVariantSelectorMedia(product.productSlug, variantKey);
+
+        expect(selectorMedia).toEqual({
+          altText: expectedAsset?.altText,
+          src: expectedAsset?.cloudinary.secureUrl
+        });
+      }
     }
   });
 

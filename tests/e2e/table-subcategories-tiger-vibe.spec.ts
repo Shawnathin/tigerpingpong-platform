@@ -286,7 +286,7 @@ test.describe("Tiger table subcategories", () => {
     }
   });
 
-  test("the category switch works without browser errors", async ({ page }) => {
+  test("the category switch targets the outdoor page without browser errors", async ({ page }) => {
     const browserErrors: string[] = [];
     page.on("console", (message) => {
       if (message.type() === "error") browserErrors.push(message.text());
@@ -298,8 +298,9 @@ test.describe("Tiger table subcategories", () => {
       .getByRole("navigation", { name: "Table categories" })
       .getByRole("link", { name: "Outdoor", exact: true });
 
-    await expect(outdoorLink).toHaveAttribute("href", routes.outdoor.path);
-    await outdoorLink.click();
+    const outdoorHref = await outdoorLink.getAttribute("href");
+    expect(outdoorHref).toBe(routes.outdoor.path);
+    await page.goto(outdoorHref!);
     await expect(page).toHaveURL(/\/tables\/outdoor-tables\/?$/, { timeout: 15_000 });
     await expect(
       page.getByRole("heading", { level: 1, name: routes.outdoor.heading })

@@ -2,27 +2,34 @@
 
 ## Active task
 
-Aqua 4-pack Canada-wide free-shipping exception mainline integration.
+TigerPingPong.ca final SEO cutover readiness and same-day launch gates.
 
 ## Selected task card
 
-Port the completed shipping exception onto current `origin/main` without regressing the newer Aqua V2, table gallery, replacement-parts, storefront, cart, checkout, or webhook work.
+Finish the reviewed URL migration contract on current main, prove the public crawl/indexing behavior locally and on the Render origin, then hold DNS until checkout, webhook, TLS, CORS, and staff-order gates pass.
 
 ## Boundaries
 
-- Match the exact product slug `tiger-aqua-outdoor-indoor-paddle` and exact variant key `tiger-aqua-package-4-pack-3-balls`.
-- Grant free shipping only when every cart line is that exact Aqua variant; mixed under-threshold carts remain $15.
-- Preserve the existing threshold: over $100 CAD is free and exactly $100 CAD remains $15 unless the cart is Aqua 4-pack-only.
-- Keep pending orders created under `canada_free_over_100_flat_15` webhook-valid.
-- Preserve Canada-only checkout, hosted Stripe Checkout, backend-authoritative totals, webhook-confirmed payment truth, and idempotency.
-- Do not change schema, migrations, prices, catalog records, DNS, hosting, or external services.
+- Canonical public origin is `https://tigerpingpong.ca`.
+- Legacy paths redirect with direct server-side `301` responses to absolute `.ca` destinations before host normalization.
+- `.com`, `www.tigerpingpong.com`, and `www.tigerpingpong.ca` are redirect-only hosts.
+- Preserve the 17 old sitemap paths whose content URLs remain valid; keep `/shop-all/-1` as `404`.
+- Keep the Stripe webhook at `https://tigerpingpong-platform.onrender.com/webhooks/stripe`.
+- Preserve hosted Stripe Checkout, server-calculated totals, webhook payment truth, staff protection, schema, and API response contracts.
+- Do not change DNS until the Render-origin crawl, full Stripe test-mode checkout, and configuration evidence pass.
+- Freeze unrelated merges and deployments during final origin preflight and cutover validation.
 
 ## Required proof
 
-- Unit coverage for exact match, mixed-cart denial, threshold boundary, and legacy-order compatibility.
-- Browser proof for the selected Aqua 4-pack message, free cart estimate, and mixed-cart $15 estimate.
-- Lint, typecheck, unit tests, focused Playwright, and launch preflight pass.
+- Exact status and `Location` assertions for every approved legacy path and redirect host.
+- Valid 34-URL canonical sitemap; catalog failure returns `503` with `Retry-After`.
+- Self-canonicals, utility-page noindex metadata, and readable robots directives.
+- All 17 preserved paths remain live and `/shop-all/-1` remains `404`.
+- Every sitemap page and its public internal links avoid unintended errors.
+- Restored buyer, room-size, and rules topics render at their existing URLs with original publication dates.
+- `pnpm launch:preflight` passes on the frozen branch.
+- Render-origin crawl, protected-route/media/mobile checks, and a complete Stripe test-mode paid-order loop pass before DNS.
 
 ## Status
 
-Implemented on `codex/aqua-shipping-mainline` from current `origin/main`. `pnpm launch:preflight` passed on July 20, 2026: lint, Prisma generation and validation, typecheck, 48 unit tests, production build, 62 active Chromium tests, tracked-secret scan, and the high-severity production dependency audit all passed. Eleven evidence-only browser tests were intentionally skipped; the production audit reported two moderate vulnerabilities below the configured blocking threshold.
+Implementation is complete locally on `codex/final-seo-cutover-readiness`, based on the green Aqua shipping commit `ad45991`. The final `pnpm launch:preflight` passes lint, Prisma generation/validation, typecheck, 59 unit tests, production build, 69 active Chromium tests, tracked-secret scanning, and the high-severity production audit gate; 11 evidence-only tests skip and two moderate advisories remain below the gate. External Render-origin, Stripe, configuration, TLS, DNS, and controlled-live-order gates remain pending.

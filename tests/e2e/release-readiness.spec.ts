@@ -613,16 +613,14 @@ test("primary discovery and shipping routes retain factual storefront behavior",
     page.getByRole("link", { name: /View product details.*6 Pack Orange/i })
   ).toBeVisible();
 
-  for (const path of ["/shipping", "/shipping-returns"]) {
-    await page.goto(path);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(
-      page.getByText("Other orders $100 CAD or under use $15 CAD flat-rate shipping.")
-    ).toBeVisible();
-    await expect(
-      page.getByText("The Aqua 4-Pack w/ 3 Balls ships free across Canada.")
-    ).toBeVisible();
-  }
+  await page.goto("/shipping-returns");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(
+    page.getByText("Other orders $100 CAD or under use $15 CAD flat-rate shipping.")
+  ).toBeVisible();
+  await expect(
+    page.getByText("The Aqua 4-Pack w/ 3 Balls ships free across Canada.")
+  ).toBeVisible();
 
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByRole("link", { name: "Shipping & Returns" }).first()).toBeVisible();

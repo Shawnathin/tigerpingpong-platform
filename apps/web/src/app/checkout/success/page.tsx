@@ -14,7 +14,11 @@ import styles from "../page.module.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Checkout Status | Tiger Ping Pong"
+  title: "Checkout Status | Tiger Ping Pong",
+  robots: {
+    index: false,
+    follow: false
+  }
 };
 
 interface CheckoutSuccessPageProps {

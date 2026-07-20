@@ -66,7 +66,7 @@ Import order:
 5. `product_variants_import_v1.csv` -> `ProductVariant`, `ProductOption`,
    `ProductOptionValue`, and `ProductVariantOptionValue`
 6. `product_media_import_v1.csv` -> `ProductMedia`
-7. `redirects_draft_v1.csv` -> `Redirect`
+7. `redirects_launch_v1.csv` -> `Redirect`
 8. `import_review_flags_v1.csv` -> `ImportReviewFlag`
 
 Stable CSV keys are used for upserts where Prisma has a unique key. Review flags
@@ -133,16 +133,16 @@ order by media_key;
 
 Expected review artifact row counts:
 
-| Table area | Expected reviewed rows |
-| --- | ---: |
-| Brands | 1 |
-| Categories | 9 |
-| Product families | 10 |
-| Products | 17 |
-| Product variants | 15 |
-| Product media | 13 |
-| Redirects | 29 |
-| Import review flags | 14 |
+| Table area          | Expected reviewed rows |
+| ------------------- | ---------------------: |
+| Brands              |                      1 |
+| Categories          |                      9 |
+| Product families    |                     10 |
+| Products            |                     17 |
+| Product variants    |                     15 |
+| Product media       |                     13 |
+| Redirects           |                     29 |
+| Import review flags |                     14 |
 
 ## Rollback And Reset Warning
 

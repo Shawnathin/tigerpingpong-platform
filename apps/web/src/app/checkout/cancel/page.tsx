@@ -5,7 +5,11 @@ import { PublicStorefrontNav } from "../../PublicStorefrontNav";
 import styles from "../page.module.css";
 
 export const metadata: Metadata = {
-  title: "Checkout Canceled | Tiger Ping Pong"
+  title: "Checkout Canceled | Tiger Ping Pong",
+  robots: {
+    index: false,
+    follow: false
+  }
 };
 
 export default function CheckoutCancelPage() {

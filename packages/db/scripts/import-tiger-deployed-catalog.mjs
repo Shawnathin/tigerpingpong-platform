@@ -18,7 +18,12 @@ const TARGET_PREFIX = "--target=";
 const ALLOWED_TARGETS = new Set(["staging", "production"]);
 
 const FILE_CONFIGS = [
-  { id: "brands", file: "brands_import_v1.csv", table: "brands", keyColumn: "brand_key" },
+  {
+    id: "brands",
+    file: "brands_import_v1.csv",
+    table: "brands",
+    keyColumn: "brand_key"
+  },
   {
     id: "categories",
     file: "categories_import_v1.csv",
@@ -31,7 +36,12 @@ const FILE_CONFIGS = [
     table: "product_families",
     keyColumn: "family_key"
   },
-  { id: "products", file: "products_import_v1.csv", table: "products", keyColumn: "product_key" },
+  {
+    id: "products",
+    file: "products_import_v1.csv",
+    table: "products",
+    keyColumn: "product_key"
+  },
   {
     id: "variants",
     file: "product_variants_import_v1.csv",
@@ -46,7 +56,7 @@ const FILE_CONFIGS = [
   },
   {
     id: "redirects",
-    file: "redirects_draft_v1.csv",
+    file: "redirects_launch_v1.csv",
     table: "redirects",
     keyColumn: "legacy_path",
     writeMode: "skipped"
@@ -347,13 +357,19 @@ async function summarizeExistingRows(prisma, importData) {
       where: { key: { in: stableKeys(importData, "brands", "brand_key") } }
     }),
     categories: await prisma.category.count({
-      where: { key: { in: stableKeys(importData, "categories", "category_key") } }
+      where: {
+        key: { in: stableKeys(importData, "categories", "category_key") }
+      }
     }),
     families: await prisma.productFamily.count({
       where: { key: { in: stableKeys(importData, "families", "family_key") } }
     }),
-    products: await prisma.product.count({ where: { key: { in: productKeys } } }),
-    variants: await prisma.productVariant.count({ where: { key: { in: variantKeys } } }),
+    products: await prisma.product.count({
+      where: { key: { in: productKeys } }
+    }),
+    variants: await prisma.productVariant.count({
+      where: { key: { in: variantKeys } }
+    }),
     media: await prisma.productMedia.count({
       where: { mediaKey: { in: stableKeys(importData, "media", "media_key") } }
     }),
@@ -817,7 +833,9 @@ function printPlan(plan) {
   console.log(`- product_variants: ${plan.writableRows.variants}`);
   console.log(`- product_media: ${plan.writableRows.media}`);
   console.log(`- import_review_flags: ${plan.writableRows.reviewFlags}`);
-  console.log(`- redirects: ${plan.writableRows.redirectsSkipped} reviewed rows, skipped in deployed writes`);
+  console.log(
+    `- redirects: ${plan.writableRows.redirectsSkipped} reviewed rows, skipped in deployed writes`
+  );
 
   console.log("");
   console.log("Aqua planning snapshot:");
@@ -849,18 +867,24 @@ function printWritePreflight(safety, importData, existing) {
   console.log("Write preflight passed. About to write deployed catalog rows.");
   console.log(`Target: ${safety.target}`);
   console.log("Affected existing rows matched by stable keys before write:");
-  console.log(`- brands: ${existing.brands} existing / ${rows(importData, "brands").length} reviewed`);
+  console.log(
+    `- brands: ${existing.brands} existing / ${rows(importData, "brands").length} reviewed`
+  );
   console.log(
     `- categories: ${existing.categories} existing / ${rows(importData, "categories").length} reviewed`
   );
   console.log(
     `- product_families: ${existing.families} existing / ${rows(importData, "families").length} reviewed`
   );
-  console.log(`- products: ${existing.products} existing / ${rows(importData, "products").length} reviewed`);
+  console.log(
+    `- products: ${existing.products} existing / ${rows(importData, "products").length} reviewed`
+  );
   console.log(
     `- product_variants: ${existing.variants} existing / ${rows(importData, "variants").length} reviewed`
   );
-  console.log(`- product_media: ${existing.media} existing / ${rows(importData, "media").length} reviewed`);
+  console.log(
+    `- product_media: ${existing.media} existing / ${rows(importData, "media").length} reviewed`
+  );
   console.log(
     `- option links for imported variants: ${existing.optionLinksForImportedVariants} existing, refreshed per imported variant`
   );

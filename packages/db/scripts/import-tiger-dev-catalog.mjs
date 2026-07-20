@@ -48,25 +48,14 @@ const MEDIA_ROLES = new Set([
 ]);
 const REDIRECT_STATUSES = new Set(["draft", "approved", "deferred"]);
 const REVIEW_SEVERITIES = new Set(["info", "medium", "high", "blocker"]);
-const REVIEW_RESOLUTION_STATUSES = new Set([
-  "open",
-  "resolved",
-  "deferred"
-]);
+const REVIEW_RESOLUTION_STATUSES = new Set(["open", "resolved", "deferred"]);
 
 const FILE_CONFIGS = [
   {
     id: "brands",
     file: "brands_import_v1.csv",
     keyColumn: "brand_key",
-    requiredColumns: [
-      "brand_key",
-      "name",
-      "slug",
-      "source_evidence",
-      "is_active",
-      "notes"
-    ],
+    requiredColumns: ["brand_key", "name", "slug", "source_evidence", "is_active", "notes"],
     requiredValueColumns: ["brand_key", "name", "slug", "is_active"],
     booleanColumns: ["is_active"],
     uniqueColumns: ["brand_key", "slug"]
@@ -113,13 +102,7 @@ const FILE_CONFIGS = [
       "source_evidence",
       "notes"
     ],
-    requiredValueColumns: [
-      "family_key",
-      "brand_key",
-      "primary_category_key",
-      "name",
-      "slug"
-    ],
+    requiredValueColumns: ["family_key", "brand_key", "primary_category_key", "name", "slug"],
     uniqueColumns: ["family_key", "slug"]
   },
   {
@@ -167,11 +150,7 @@ const FILE_CONFIGS = [
       "shipping_review_required",
       "source_review_status"
     ],
-    booleanColumns: [
-      "v1_public_navigation",
-      "v1_checkout_scope",
-      "shipping_review_required"
-    ],
+    booleanColumns: ["v1_public_navigation", "v1_checkout_scope", "shipping_review_required"],
     integerColumns: ["price_cents"],
     enumColumns: {
       product_kind: PRODUCT_KINDS,
@@ -201,13 +180,7 @@ const FILE_CONFIGS = [
       "source_url",
       "notes"
     ],
-    requiredValueColumns: [
-      "variant_key",
-      "product_key",
-      "currency",
-      "is_active",
-      "source_url"
-    ],
+    requiredValueColumns: ["variant_key", "product_key", "currency", "is_active", "source_url"],
     booleanColumns: ["is_active"],
     integerColumns: ["price_cents"],
     enumColumns: {
@@ -256,7 +229,7 @@ const FILE_CONFIGS = [
   },
   {
     id: "redirects",
-    file: "redirects_draft_v1.csv",
+    file: "redirects_launch_v1.csv",
     keyColumn: "legacy_path",
     requiredColumns: [
       "legacy_path",
@@ -266,12 +239,7 @@ const FILE_CONFIGS = [
       "redirect_status",
       "notes"
     ],
-    requiredValueColumns: [
-      "legacy_path",
-      "new_path_candidate",
-      "entity_type",
-      "redirect_status"
-    ],
+    requiredValueColumns: ["legacy_path", "new_path_candidate", "entity_type", "redirect_status"],
     enumColumns: {
       redirect_status: REDIRECT_STATUSES
     },
@@ -291,13 +259,7 @@ const FILE_CONFIGS = [
       "resolution_status",
       "notes"
     ],
-    requiredValueColumns: [
-      "entity_type",
-      "entity_key",
-      "flag",
-      "severity",
-      "resolution_status"
-    ],
+    requiredValueColumns: ["entity_type", "entity_key", "flag", "severity", "resolution_status"],
     enumColumns: {
       severity: REVIEW_SEVERITIES,
       resolution_status: REVIEW_RESOLUTION_STATUSES
@@ -371,9 +333,7 @@ function validateSafety(args) {
   const normalizedDatabaseUrl = databaseUrl.toLowerCase();
 
   if (/(^|[^a-z])prod(uction)?([^a-z]|$)/.test(normalizedDatabaseUrl)) {
-    issues.push(
-      "DATABASE_URL appears to reference production. Refusing to import."
-    );
+    issues.push("DATABASE_URL appears to reference production. Refusing to import.");
   }
 
   return {
@@ -580,9 +540,7 @@ function validateTypedValues(fileInfo, issues) {
 
 function validateEnumValues(fileInfo, issues) {
   for (const row of fileInfo.rows) {
-    for (const [column, allowedValues] of Object.entries(
-      fileInfo.config.enumColumns ?? {}
-    )) {
+    for (const [column, allowedValues] of Object.entries(fileInfo.config.enumColumns ?? {})) {
       const rowValue = value(row, column);
 
       if (rowValue !== "" && !allowedValues.has(rowValue)) {
@@ -666,25 +624,13 @@ function validateReferences(files, issues) {
 
   for (const row of families.rows) {
     requireIndexedValue(families, row, "brand_key", brands, issues);
-    requireIndexedValue(
-      families,
-      row,
-      "primary_category_key",
-      categories,
-      issues
-    );
+    requireIndexedValue(families, row, "primary_category_key", categories, issues);
   }
 
   for (const row of products.rows) {
     requireIndexedValue(products, row, "family_key", families, issues);
     requireIndexedValue(products, row, "brand_key", brands, issues);
-    requireIndexedValue(
-      products,
-      row,
-      "primary_category_key",
-      categories,
-      issues
-    );
+    requireIndexedValue(products, row, "primary_category_key", categories, issues);
   }
 
   for (const row of variants.rows) {
@@ -779,8 +725,7 @@ function validateBusinessRules(files, issues) {
     issues.push({
       file: categories.relativePath,
       row: replacementPartsCategory.__rowNumber,
-      message:
-        "Replacement Parts category must stay out of v1 public navigation and checkout."
+      message: "Replacement Parts category must stay out of v1 public navigation and checkout."
     });
   }
 
@@ -789,10 +734,7 @@ function validateBusinessRules(files, issues) {
     const primaryCategoryKey = value(row, "primary_category_key");
     const purchaseMode = value(row, "purchase_mode");
 
-    if (
-      productKind === "replacement_part" ||
-      primaryCategoryKey === "replacement-parts"
-    ) {
+    if (productKind === "replacement_part" || primaryCategoryKey === "replacement-parts") {
       if (asBoolean(row, "v1_public_navigation")) {
         issues.push({
           file: products.relativePath,
@@ -823,8 +765,7 @@ function validateBusinessRules(files, issues) {
         issues.push({
           file: products.relativePath,
           row: row.__rowNumber,
-          message:
-            "Table products must keep shipping_review_required=true before public checkout."
+          message: "Table products must keep shipping_review_required=true before public checkout."
         });
       }
 
@@ -832,8 +773,7 @@ function validateBusinessRules(files, issues) {
         issues.push({
           file: products.relativePath,
           row: row.__rowNumber,
-          message:
-            "Table products must not be imported as fully checkout-ready."
+          message: "Table products must not be imported as fully checkout-ready."
         });
       }
     }
@@ -849,8 +789,7 @@ function validateBusinessRules(files, issues) {
       issues.push({
         file: media.relativePath,
         row: row.__rowNumber,
-        message:
-          "cloudinary_secure_url must be blank or a Cloudinary HTTPS delivery URL."
+        message: "cloudinary_secure_url must be blank or a Cloudinary HTTPS delivery URL."
       });
     }
 
@@ -858,8 +797,7 @@ function validateBusinessRules(files, issues) {
       issues.push({
         file: media.relativePath,
         row: row.__rowNumber,
-        message:
-          "cloudinary_public_id is required when cloudinary_secure_url is populated."
+        message: "cloudinary_public_id is required when cloudinary_secure_url is populated."
       });
     }
   }
@@ -1014,9 +952,7 @@ async function importFamilies(tx, importData, state, result) {
   for (const row of rows(importData, "families")) {
     sortOrder += 10;
 
-    const primaryCategory = state.categories.get(
-      value(row, "primary_category_key")
-    );
+    const primaryCategory = state.categories.get(value(row, "primary_category_key"));
     const brand = state.brands.get(value(row, "brand_key"));
     const family = await tx.productFamily.upsert({
       where: {
@@ -1072,9 +1008,7 @@ async function importProducts(tx, importData, state, result) {
   for (const row of rows(importData, "products")) {
     const family = state.families.get(value(row, "family_key"));
     const brand = state.brands.get(value(row, "brand_key"));
-    const primaryCategory = state.categories.get(
-      value(row, "primary_category_key")
-    );
+    const primaryCategory = state.categories.get(value(row, "primary_category_key"));
     const product = await tx.product.upsert({
       where: {
         key: value(row, "product_key")

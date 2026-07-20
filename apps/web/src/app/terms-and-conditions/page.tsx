@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
+import { getPathMetadata } from "../../lib/seo";
 import styles from "../shipping/page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = getPathMetadata({
   title: "Terms & Conditions | Tiger Ping Pong",
-  description: "Terms for using TigerPingPong.ca and ordering from Tiger Ping Pong."
-};
+  description: "Terms for using TigerPingPong.ca and ordering from Tiger Ping Pong.",
+  pathname: "/terms-and-conditions"
+});
 
 export default function TermsAndConditionsPage() {
   return (

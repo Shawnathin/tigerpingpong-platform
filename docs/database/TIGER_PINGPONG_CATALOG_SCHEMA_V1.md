@@ -165,7 +165,7 @@ Later reviewed CSV artifacts can map to this schema by stable keys:
 - `product_variants_import_v1.csv` -> `ProductVariant`,
   `ProductOption`, `ProductOptionValue`, and `ProductVariantOptionValue`
 - `product_media_import_v1.csv` -> `ProductMedia`
-- `redirects_draft_v1.csv` -> `Redirect`
+- `redirects_launch_v1.csv` -> `Redirect`
 - `import_review_flags_v1.csv` -> `ImportReviewFlag`
 
 CSV artifacts remain review-only until a separate import task is approved.

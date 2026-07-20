@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import {
+  CANONICAL_SITE_ORIGIN,
+  getLegacyPathRedirect,
+  isLegacyRedirectHost,
+  toCanonicalRedirectUrl
+} from "./lib/legacy-redirects";
+
 const BASIC_AUTH_REALM = "Tiger Ping Pong Staff";
 const INTERNAL_RESPONSE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
@@ -9,10 +16,27 @@ const INTERNAL_RESPONSE_HEADERS = {
 };
 
 export const config = {
-  matcher: ["/internal/:path*", "/admin", "/admin/:path*"]
+  matcher: ["/((?!_next/static|_next/image).*)"]
 };
 
 export function middleware(request: NextRequest) {
+  const pathDestination = getLegacyPathRedirect(request.nextUrl.pathname);
+
+  if (pathDestination) {
+    return NextResponse.redirect(toCanonicalRedirectUrl(pathDestination), 301);
+  }
+
+  if (isLegacyRedirectHost(getRequestHostname(request))) {
+    const canonicalUrl = new URL(request.nextUrl.pathname, `${CANONICAL_SITE_ORIGIN}/`);
+    canonicalUrl.search = request.nextUrl.search;
+
+    return NextResponse.redirect(canonicalUrl, 301);
+  }
+
+  if (!isStaffPath(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
   const username = process.env.INTERNAL_ORDERS_BASIC_AUTH_USER?.trim();
   const password = process.env.INTERNAL_ORDERS_BASIC_AUTH_PASSWORD?.trim();
 
@@ -29,6 +53,26 @@ export function middleware(request: NextRequest) {
   setInternalResponseHeaders(response.headers);
 
   return response;
+}
+
+function isStaffPath(pathname: string): boolean {
+  return (
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/internal" ||
+    pathname.startsWith("/internal/")
+  );
+}
+
+function getRequestHostname(request: NextRequest): string {
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const host = forwardedHost || request.headers.get("host")?.trim() || request.nextUrl.hostname;
+
+  return host
+    .replace(/^\[/, "")
+    .replace(/\](:\d+)?$/, "")
+    .replace(/:\d+$/, "")
+    .toLowerCase();
 }
 
 function unauthorized(): NextResponse {

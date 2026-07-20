@@ -54,7 +54,7 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
       "A practical buyer's guide for matching table type, room, storage, and playing style.",
     postedBy: "Tiger PingPong",
     publishedDate: "2022-08-12",
-    updatedDate: "2026-06-15",
+    updatedDate: "2026-07-20",
     excerpt:
       "Compare indoor and outdoor tables, room needs, tabletop materials, storage, portability, and the features that matter before choosing a table.",
     category: "Buying Guide",
@@ -115,7 +115,7 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
       {
         heading: "Set a budget around how the table will be used",
         body: [
-          "Table prices vary widely by construction, playing surface, frame strength, indoor or outdoor design, folding systems, wheels, levellers, and overall finish.",
+          "Table prices vary widely because of tabletop thickness and finish, frame strength, manufacturing location, indoor or outdoor construction, folding systems, wheels, levellers, and overall build quality.",
           "Instead of starting with the lowest possible price, decide what the table needs to do. A casual family table, a garage-friendly table, and a table for serious practice do not need the same feature set."
         ],
         bullets: [
@@ -137,6 +137,13 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
         ]
       },
       {
+        heading: "Choose a colour and finish you can play on",
+        body: [
+          "Green, blue, and grey are common table colours, so colour can be chosen to suit the room or outdoor setting. Visibility matters more than decoration: the surface should be dark enough to contrast with the ball and should not create distracting glare.",
+          "A matte finish makes the ball easier to track than a glossy or reflective surface. For an outdoor location, also consider how direct sun and the surrounding background will affect visibility and surface temperature."
+        ]
+      },
+      {
         heading: "Check the frame, wheels, portability, and storage",
         body: [
           "The frame should keep the table stable during play. Look for sturdy legs, a locking folding system where applicable, and adjustable leg levellers if the floor is not perfectly even.",
@@ -146,6 +153,20 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
           "Folding tables are easier to store in compact rooms.",
           "Playback mode can be useful for solo practice when one half folds upright.",
           "One-piece tables make sense when the table will stay permanently set up."
+        ]
+      },
+      {
+        heading: "Folding versus one-piece tables",
+        body: [
+          "A folding table is usually the practical choice when the room has another purpose or the table must be rolled away after play. Check the folded footprint, locking mechanism, wheel locks, and whether one half can be raised for solo playback.",
+          "A one-piece table is simpler when it has a permanent, level location and never needs compact storage. It still needs a stable frame and enough access around it for setup, cleaning, and play."
+        ]
+      },
+      {
+        heading: "Competition-table considerations",
+        body: [
+          "If the goal is serious club or competition practice, start with the official full-size footprint and prioritize a uniform bounce, a dark matte playing surface, a stable undercarriage, and a correctly fitted net assembly.",
+          "A full-size table is not automatically approved for every sanctioned event. If a particular competition standard matters, confirm the current equipment requirements and the exact model's approval status with the event organizer or governing body before buying."
         ]
       },
       {
@@ -165,6 +186,20 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
           { label: "Shop all tables", href: "/tables/" },
           { label: "Contact Tiger PingPong", href: "/contact" }
         ]
+      },
+      {
+        heading: "Final table-buying checklist",
+        body: [
+          "Before ordering, make sure the table fits the location, the way it will be stored, and the level of play you expect. Then verify the product-specific details instead of assuming every table includes the same features."
+        ],
+        bullets: [
+          "Confirm indoor or outdoor construction for the place the table will live.",
+          "Measure the table footprint, player clearance, doorway access, and folded storage space.",
+          "Compare tabletop material, thickness, matte finish, frame stability, and levelling feet.",
+          "Decide whether folding, playback mode, and locking wheels are required.",
+          "Check assembly, shipping, warranty, maintenance, and replacement-parts support.",
+          "For competition preparation, verify current event and equipment requirements."
+        ]
       }
     ]
   },
@@ -175,7 +210,7 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
       "Room planning notes for table footprint, clearances, lighting, and small-space play.",
     postedBy: "Tiger PingPong",
     publishedDate: "2022-05-06",
-    updatedDate: "2026-06-15",
+    updatedDate: "2026-07-20",
     excerpt:
       "Understand table dimensions, room clearance, ceiling height, lighting, temperature, and practical ways to make a smaller room work.",
     category: "Room Planning",
@@ -226,10 +261,17 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
         ]
       },
       {
+        heading: "Competition playing areas are much larger",
+        body: [
+          "The current ITTF international-competition regulations specify a playing space containing at least 14 metres long by 7 metres wide by 5 metres high, or about 46 feet by 23 feet by 16.4 feet. That event footprint includes far more movement and operating space than a casual home room needs.",
+          "For home planning, use the casual and recreational clearances above. If you are preparing a club or event space, check the rules for that competition level rather than treating a home-room recommendation as a tournament standard."
+        ]
+      },
+      {
         heading: "Ceiling height, lights, and net clearance",
         body: [
           "A 10-foot ceiling is a helpful target for comfortable play. Lower ceilings can still work for casual rallies, but hanging lights, beams, and low fixtures can interrupt serves, lobs, and higher returns.",
-          "A standard net is about 6 inches high and extends slightly beyond each side of the table. Keep the area around the net and table edges clear so players are not reaching around clutter during points."
+          "A standard net is 15.25 centimetres, or 6 inches, above the playing surface. Its posts extend 15.25 centimetres outside each sideline. Keep the table edges and net area clear so players are not reaching around clutter during points."
         ]
       },
       {
@@ -252,10 +294,17 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
         ]
       },
       {
+        heading: "Smaller table options",
+        body: [
+          "When a full-size 9-foot by 5-foot table cannot fit safely, a compact table or conversion top can preserve casual play without pretending to provide a regulation-size experience. Common compact footprints include roughly 7 feet by 3.5 feet and 4 feet by 2 feet, but dimensions vary by model.",
+          "Measure the actual product in both playing and stored positions. A smaller top reduces the table footprint, but players still need clear space to move, swing, and retrieve the ball."
+        ]
+      },
+      {
         heading: "Lighting, temperature, and flooring",
         body: [
-          "Good lighting helps players see the ball clearly. Natural light is useful, but direct glare on the table can make the ball harder to track, so aim for bright, even light.",
-          "Comfortable room temperature helps people play longer. Flooring should be smooth and stable enough for movement; avoid surfaces that are slippery, uneven, or likely to trip players."
+          "Good lighting helps players see the ball clearly. Natural light is useful, but uncovered windows and direct glare can make the ball harder to track, so aim for bright, even light without a reflection on the tabletop.",
+          "A comfortable planning range is about 20 to 25 degrees Celsius, or 68 to 77 degrees Fahrenheit. Flooring should be stable enough for movement; avoid surfaces that are slippery, uneven, brightly reflective, or likely to trip players."
         ],
         bullets: [
           "Avoid glare on the tabletop.",
@@ -370,7 +419,7 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
     subtitle: "Beginner-friendly table tennis rules for casual games and confident starts.",
     postedBy: "Tiger PingPong",
     publishedDate: "2022-05-06",
-    updatedDate: "2026-06-15",
+    updatedDate: "2026-07-20",
     excerpt:
       "Learn the basic laws and common playing rules that help casual and beginner players start a table tennis match.",
     category: "Rules",
@@ -397,8 +446,8 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
       {
         heading: "Equipment basics",
         body: [
-          "For a standard game, you need a table, net assembly, ball, and paddle. A full-size table is 9 feet long, 5 feet wide, and 2.5 feet high, with the playing surface divided by a net.",
-          "A standard table tennis ball is 40 mm and lightweight. Paddles vary widely, but beginner players mostly need something comfortable, controlled, and appropriate for their level."
+          "For a standard game, you need a table, net assembly, ball, and paddle. The official playing surface is 2.74 metres long, 1.525 metres wide, and 76 centimetres high—about 9 feet by 5 feet by 2.5 feet—with a 15.25-centimetre net.",
+          "The official ball is spherical, 40 millimetres in diameter, 2.7 grams, plastic, matte, and white or orange. A legal racket blade is flat and rigid, at least 85% natural wood by thickness, with a matte black side and a bright colour clearly different from black and the ball colour on the other side."
         ],
         links: [
           { label: "Shop tables", href: "/tables/" },
@@ -408,10 +457,10 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
         ]
       },
       {
-        heading: "How a point starts",
+        heading: "How to make a legal serve",
         body: [
-          "A point starts with a serve. In casual play, players often decide who serves first by a coin toss or a simple hand-guess game with the ball.",
-          "The server holds the ball in an open palm, tosses it upward, and strikes it as it falls. A legal serve bounces once on the server's side, passes over or around the net, and then bounces on the receiver's side."
+          "The right to choose the first server, receiver, or end is decided by lot; a coin toss is a simple casual equivalent. Service starts with the ball resting freely on the open, stationary palm of the server's free hand.",
+          "The server projects the ball near vertically without spin so it rises at least 16 centimetres, then strikes it as it falls. The ball must remain above the playing surface, behind the end line, and visible to the receiver before it is hit. A legal serve bounces first on the server's court and then directly on the receiver's court."
         ],
         bullets: [
           "In singles, the serve does not need to be diagonal.",
@@ -446,30 +495,38 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
         heading: "Lets, returns, and common point losses",
         body: [
           "If a serve touches the net and still lands correctly, it is a let and the serve is replayed. If it touches the net and does not land on the receiver's side, the server loses the point.",
-          "During a rally, a ball that clips the net and still lands on the opponent's side stays in play."
+          "A legal return may pass directly over or around the net assembly, or touch it, as long as the ball then touches the opponent's court. During a rally, a net clip that still lands on the opponent's side remains in play."
         ],
         bullets: [
           "You lose the point if the ball bounces twice on your side.",
-          "You usually must let the ball bounce before hitting it.",
+          "Do not volley a ball that is still above or travelling toward your playing surface before it bounces; that is obstruction.",
           "You lose the point if your return misses the opponent's side.",
-          "You lose the point if you move the table or put your free hand on the table during play.",
+          "You lose the point if you move the playing surface, touch the net assembly, or put your free hand on the playing surface during a rally.",
           "In doubles, hitting out of order loses the point."
         ]
       },
       {
         heading: "Games, matches, and doubles basics",
         body: [
-          "A match is usually the best of an odd number of games, such as best of 3, 5, or 7. Players normally switch ends after each game.",
-          "For casual doubles, remember the two biggest differences: the serve is diagonal from right half to right half, and teammates alternate shots after the return."
+          "A match consists of the best of an odd number of games, commonly 3, 5, or 7. Players change ends for each new game; in the last possible game of a match, they change ends when the first player or pair reaches 5 points.",
+          "In doubles, the serve travels from the server's right half-court to the receiver's right half-court. Players then alternate returns in the fixed order. At each service change, the previous receiver becomes the server and the previous server's partner becomes the receiver."
         ]
       },
       {
         heading: "Common beginner questions",
         body: [
           "Can you only score on your serve? No. Either player or pair can win any point.",
-          "What happens if the ball spins back over the net after landing on the opponent's side? In a basic casual game, the player who hit that shot wins the point if the opponent cannot legally reach and return it."
+          "Is a game played to 11 or 21? The current rule is 11 points, with a two-point lead required. At 10-10, service changes after every point.",
+          "May you touch the table? Touching the vertical side is not the same as touching the playing surface, but moving the table, touching the net, or placing the free hand on the playing surface during a rally loses the point.",
+          "What happens if the ball spins back over the net after landing on the opponent's side? The opponent may reach over or around the net to make a legal return; if no legal return is made, the player who produced the shot wins the point."
         ],
-        links: [{ label: "Read the buyer's guide", href: "/resources/choose-a-ping-pong-table" }]
+        links: [
+          { label: "Read the buyer's guide", href: "/resources/choose-a-ping-pong-table" },
+          {
+            label: "Read the official 2026 ITTF Statutes",
+            href: "https://documents.ittf.sport/sites/default/files/public/2026-02/2026_Statutes_v1_consolidated_clean.pdf"
+          }
+        ]
       }
     ]
   }

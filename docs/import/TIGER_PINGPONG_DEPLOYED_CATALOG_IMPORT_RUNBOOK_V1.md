@@ -132,7 +132,7 @@ Variant option CSV columns also imply refreshed rows in:
 - `product_option_values`
 - `product_variant_option_values`
 
-Reviewed rows in `redirects_draft_v1.csv` are still validated and printed in
+Reviewed rows in `redirects_launch_v1.csv` are still validated and printed in
 planning output, but deployed writes skip the `redirects` table until URL
 structure and redirect policy are explicitly approved.
 

@@ -57,7 +57,7 @@ test("about story opens on present-day Vancouver and follows the West Coast rall
   });
   const heroImage = hero.locator("img");
   const firstTable = page.getByAltText(
-    "People playing on Tiger's first imported PingPong table at an outdoor Vancouver event."
+    "Tiger's first pre-Expo PingPong table with a green top and skinny legs."
   );
 
   await expect(hero).toBeInViewport();
@@ -78,7 +78,7 @@ test("about story opens on present-day Vancouver and follows the West Coast rall
   const landingPositions = await page.evaluate(() => {
     const heroElement = document.querySelector('[data-testid="about-current-hero"]');
     const firstTableImage = document.querySelector(
-      'img[alt="People playing on Tiger\'s first imported PingPong table at an outdoor Vancouver event."]'
+      'img[alt="Tiger\'s first pre-Expo PingPong table with a green top and skinny legs."]'
     );
 
     return {
@@ -93,13 +93,23 @@ test("about story opens on present-day Vancouver and follows the West Coast rall
   expect(landingPositions.firstTableTop).toBeGreaterThanOrEqual(landingPositions.viewportHeight);
 
   const anchorOrder = await page.evaluate(() =>
-    ["start", "vancouver", "built-better", "names", "across-canada"].map((id) => {
+    [
+      "start",
+      "early-days",
+      "first-serve",
+      "vancouver",
+      "built-better",
+      "names",
+      "across-canada"
+    ].map((id) => {
       const section = document.getElementById(id);
       return { id, top: section?.offsetTop ?? -1 };
     })
   );
   expect(anchorOrder.map(({ id }) => id)).toEqual([
     "start",
+    "early-days",
+    "first-serve",
     "vancouver",
     "built-better",
     "names",
@@ -110,8 +120,8 @@ test("about story opens on present-day Vancouver and follows the West Coast rall
     [...anchorOrder.map(({ top }) => top)].sort((a, b) => a - b)
   );
 
-  await expect(page.locator('a[href="#first-serve"]')).toHaveText(
-    "The story starts with a much worse table."
+  await expect(page.locator('a[href="#early-days"]')).toHaveText(
+    "The story starts with a very skinny table."
   );
   await expect(page.locator('a[href="/catalog/products/tiger-expo-outdoor-table"]')).toHaveText(
     "Meet Expo"
@@ -142,15 +152,15 @@ test("about story opens on present-day Vancouver and follows the West Coast rall
   await expect(contactLink).toBeFocused();
 
   await expect(page.locator("main h1")).toHaveCount(1);
-  await expect(page.locator("main h2")).toHaveCount(7);
+  await expect(page.locator("main h2")).toHaveCount(8);
   const imageAlternatives = await page
     .locator("main img")
     .evaluateAll((images) => images.map((image) => image.getAttribute("alt")?.trim() ?? ""));
-  expect(imageAlternatives).toHaveLength(12);
+  expect(imageAlternatives).toHaveLength(14);
   expect(imageAlternatives.every(Boolean)).toBeTruthy();
 
   const aboutLinks = page.locator(
-    'main a[href="#first-serve"], main a[href^="/catalog/products/"], main a[href="/tables/"], main a[href="/contact"]'
+    'main a[href="#early-days"], main a[href^="/catalog/products/"], main a[href="/tables/"], main a[href="/contact"]'
   );
   expect(
     await aboutLinks.evaluateAll((links) => links.every((link) => link.tabIndex >= 0))
@@ -174,7 +184,7 @@ test("about story stays deliberate and overflow-free from mobile through desktop
 
     const layout = await page.evaluate(() => {
       const firstTable = document.querySelector(
-        'img[alt="People playing on Tiger\'s first imported PingPong table at an outdoor Vancouver event."]'
+        'img[alt="Tiger\'s first pre-Expo PingPong table with a green top and skinny legs."]'
       );
       const originCopy = document.querySelector("#first-serve header");
 
@@ -205,7 +215,7 @@ test("about story honors reduced motion", async ({ page }) => {
     const heroImage = document.querySelector('[data-testid="about-current-hero"] img');
     const heroCopy = document.querySelector('[data-testid="about-current-hero"] h1')?.parentElement;
     const firstTable = document.querySelector(
-      'img[alt="People playing on Tiger\'s first imported PingPong table at an outdoor Vancouver event."]'
+      'img[alt="Tiger\'s first pre-Expo PingPong table with a green top and skinny legs."]'
     );
     const revealFigure = firstTable?.closest("figure");
 

@@ -16,6 +16,7 @@ import {
 import { getCanonicalUrl } from "../../../../lib/seo";
 import {
   getTigerAquaPurchaseOptionStory,
+  getTigerTableGalleryMedia,
   getTigerTableVariantSelectorMedia,
   tigerAquaProductStory,
   tigerTablePurchaseStory,
@@ -284,10 +285,28 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
   const uniqueCloudinaryMediaItems = getUniqueMediaItems(cloudinaryMediaItems);
   const fallbackMediaItems = getUniqueMediaItems(getFallbackMediaItems(product));
 
+  const tableManifestMediaItems = getTigerTableGalleryMedia(product.slug).map((media, index) => ({
+    altText: media.altText,
+    caption: null,
+    isPrimary: index === 0,
+    mediaKey: media.mediaKey,
+    role: media.role,
+    sortOrder: media.sortOrder,
+    src: media.src,
+    title: product.name,
+    variantKey: media.variantKey
+  }));
+
   // Keep Aqua's reviewed eight-image gallery canonical while the API media
   // activation catches up. This exception is intentionally product-scoped.
   if (product.slug === AQUA_PRODUCT_SLUG && fallbackMediaItems.length === 8) {
     return fallbackMediaItems;
+  }
+
+  // Keep the reviewed table galleries canonical while the production catalog
+  // media mapping is awaiting its separately approved write.
+  if (tableManifestMediaItems.length > 0) {
+    return tableManifestMediaItems;
   }
 
   if (uniqueCloudinaryMediaItems.length > 0) {
@@ -562,11 +581,9 @@ function getTableCheckoutOptionGroups(
         (mediaItem) =>
           Boolean(optionValue.variantKey) && mediaItem.variantKey === optionValue.variantKey
       );
-      const selectorMedia =
-        variantMedia ??
-        (optionValue.variantKey
-          ? getTigerTableVariantSelectorMedia(product.slug, optionValue.variantKey)
-          : undefined);
+      const selectorMedia = optionValue.variantKey
+        ? (getTigerTableVariantSelectorMedia(product.slug, optionValue.variantKey) ?? variantMedia)
+        : variantMedia;
 
       return {
         ...optionValue,

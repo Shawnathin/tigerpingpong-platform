@@ -677,17 +677,20 @@ Canonical source:
 Implemented sequence:
 
 1. Present-day Expo Outdoor hero — current gear, Vancouver, and the North Shore first.
-2. The first serve — the questionable first table and Vancouver rain below the fold.
-3. Vancouver shows up — events, people, UBC, and Whistler as real-life product testing.
-4. Outdoor-minded interlude — why outdoor gear also earns its place inside.
-5. The gear catches up — German-made tables and Tiger-owned custom moulds.
-6. The names are a map — Expo, Whistler, and Portland as pieces of home and culture.
-7. Pointed east — Pacific roots, Stampede Park, Ontario, and a growing Canadian map.
-8. Closing promise — good gear, real Vancouver help, and no runaround.
+2. Before Expo — the green skinny-leg first table, early crew, and bins of gear moving around Vancouver on the Expo Line.
+3. Then came Expo — the orange-legged first Expo, its Expo 86 name, Chinatown nights, and Vancouver rain.
+4. Vancouver shows up — events, people, UBC, and Whistler as real-life product testing.
+5. Outdoor-minded interlude — why outdoor gear also earns its place inside.
+6. The gear catches up — German-made tables and Tiger-owned custom moulds.
+7. The names are a map — Expo, Whistler, and Portland as pieces of home and culture.
+8. Pointed east — Pacific roots, Stampede Park, Ontario, and a growing Canadian map.
+9. Closing promise — good gear, real Vancouver help, and no runaround.
 
 Stable excerpt anchors:
 
 - `/about#start`
+- `/about#early-days`
+- `/about#first-serve`
 - `/about#vancouver`
 - `/about#built-better`
 - `/about#names`

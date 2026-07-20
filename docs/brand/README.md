@@ -1,7 +1,7 @@
 # Tiger PingPong Brand Operating System
 
-Version: 1.0
-Effective: 2026-07-18
+Version: 2.0
+Effective: 2026-07-20
 Brand owner: Shawn Cleve
 Status: Canonical after merge
 
@@ -75,4 +75,4 @@ Reuse and extract from these sources before introducing a parallel component or 
 
 Only Shawn can lock a new brand fact, product story, origin story, or operational promise. Contributors may propose revisions and may mark copy provisional, but must not quietly promote an inference into fact.
 
-One known story refinement is still expected from Shawn after version 1.0. Until it is supplied and recorded through [CHANGE-CONTROL.md](./CHANGE-CONTROL.md), do not guess what it is or rewrite the canonical origin narrative around it.
+The version 2.0 origin refinement is now locked: the green skinny-leg table came before Expo; the orange-legged table was the first Expo iteration. Do not combine them into one table or one event chapter.

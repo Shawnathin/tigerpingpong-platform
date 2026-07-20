@@ -72,31 +72,38 @@ export function HomepageExperience() {
           </h2>
         </header>
         <div className={styles.shopGrid}>
-          {homepage.shop.items.map((item, index) => (
-            <a
-              className={styles.shopItem}
-              data-featured={index === 1 ? "true" : undefined}
-              href={item.href}
-              key={item.heading}
-            >
-              <div className={styles.shopItemCopy}>
-                <h3>{item.heading}</h3>
-                <p>{item.body}</p>
-              </div>
-              <span aria-hidden="true" className={styles.shopItemAction}>
-                Explore
-              </span>
-              <div className={styles.shopItemVisual}>
-                <Image
-                  alt=""
-                  height={item.image.sourceDimensions.height}
-                  sizes="(max-width: 899px) 34vw, 18vw"
-                  src={item.image.finalUrl}
-                  width={item.image.sourceDimensions.width}
-                />
-              </div>
-            </a>
-          ))}
+          {homepage.shop.items.map((item, index) => {
+            const images = [item.image, ...("secondaryImage" in item ? [item.secondaryImage] : [])];
+
+            return (
+              <a
+                className={styles.shopItem}
+                data-featured={index === 1 ? "true" : undefined}
+                href={item.href}
+                key={item.heading}
+              >
+                <div className={styles.shopItemCopy}>
+                  <h3>{item.heading}</h3>
+                  <p>{item.body}</p>
+                </div>
+                <span aria-hidden="true" className={styles.shopItemAction}>
+                  Explore
+                </span>
+                <div className={styles.shopItemVisual} data-count={images.length}>
+                  {images.map((image) => (
+                    <Image
+                      alt=""
+                      height={image.sourceDimensions.height}
+                      key={image.assetId}
+                      sizes="(max-width: 899px) 34vw, 18vw"
+                      src={image.finalUrl}
+                      width={image.sourceDimensions.width}
+                    />
+                  ))}
+                </div>
+              </a>
+            );
+          })}
         </div>
       </section>
 

@@ -55,10 +55,7 @@ export default function ContactPage() {
                 unoptimized
               />
             </div>
-            <figcaption>
-              <span>{contact.hero.image.caption}</span>
-              <strong>Vancouver, BC</strong>
-            </figcaption>
+            <figcaption>{contact.hero.image.caption}</figcaption>
           </figure>
         </section>
 

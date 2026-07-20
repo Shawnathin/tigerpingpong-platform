@@ -1,7 +1,7 @@
 # The Tiger PingPong Brand Bible
 
-Version: 1.0
-Effective: 2026-07-18
+Version: 2.0
+Effective: 2026-07-20
 Owner: Shawn Cleve
 
 ## The brand in one sentence
@@ -58,21 +58,35 @@ Canonical idea:
 
 > Raised on the West Coast.
 
-### 2. Admit the questionable first serve
+### 2. Start before Expo
 
-Tiger started with a skinny-legged table the team was excited about. It was not good enough. Tiger took it to Chinatown nights, rainy events, driveways, and packed rooms anyway. The table revealed what not to do; the people revealed what mattered.
+Tiger started with a green, skinny-legged table that was not good enough. The early team kept pushing together, hauling bins of paddles and balls onto Vancouver's Expo Line and setting up wherever people would play. The first table revealed what not to do; the people revealed what mattered.
 
 Canonical idea:
 
-> Good energy. Questionable table.
+> A skinny table and a lot of hustle.
 
 Supporting caption:
 
-> Big dreams. Tiny legs.
+> The first table. It had some issues.
 
 Do not name the first table's country of origin. The point is Tiger owning its early choice, not blaming a place or supplier.
 
-### 3. Let Vancouver become the product test
+### 3. Let Expo start catching up
+
+The orange-legged table was the first Expo iteration—the point when the product began to catch up with the energy around it. The name came from Expo 86 and its theme, “World in Motion—World in Touch.” Tiger took that first Expo to Chinatown nights, rainy street festivals, driveways, and packed rooms.
+
+Canonical idea:
+
+> The table started catching up.
+
+Supporting caption:
+
+> The first Expo, finding its feet.
+
+Never present the orange first Expo as Tiger's first-ever table.
+
+### 4. Let Vancouver become the product test
 
 Food Cart Fest, Science World, the Shipyards, schools, universities, community events, corporate events, Whistler, rain, crowds, kids, parties, and spilled drinks turned the city into a practical brief.
 
@@ -82,7 +96,7 @@ Canonical idea:
 
 The proof is real photography and specific places, not a long client list or unsupported dominance claim.
 
-### 4. Explain why Tiger is outdoor-minded
+### 5. Explain why Tiger is outdoor-minded
 
 Tiger makes so much outdoor gear because the people behind it are outdoor people. On the West Coast, waiting for perfect weather is not a useful plan. The same resilience also earns a place indoors when kids, parties, moisture, shared use, or busy rooms are part of real life.
 
@@ -92,7 +106,7 @@ Canonical idea:
 
 Outdoor should never be framed as a compromise product or as useful only on a patio.
 
-### 5. Show how the gear caught up
+### 6. Show how the gear caught up
 
 Tiger stopped settling. Every current Tiger table is made in Germany. For injection-moulded gear, Tiger designs and owns custom moulds and works with specialist manufacturing partners.
 
@@ -104,7 +118,7 @@ This is where the north star belongs:
 
 > Serious about the gear. Easygoing about the game.
 
-### 6. Make the names part of the map
+### 7. Make the names part of the map
 
 - **Expo** refers to Expo 86 in Vancouver. Its verified theme, “World in Motion—World in Touch,” gives the name a fitting connection to a game built on movement and contact.
 - **Whistler** is part of the West Coast landscape and identity. It does not need an invented legend.
@@ -112,7 +126,7 @@ This is where the north star belongs:
 
 Do not retrofit a location story onto a product name without owner confirmation.
 
-### 7. Point the story across Canada
+### 8. Point the story across Canada
 
 The narrative can move through Whistler, UBC, Stampede Park, the Ontario border, the Royal Caribbean ship, and the wrapped truck and trailer. Tiger grew through tables, events, and long drives while continuing to live and work in Vancouver.
 
@@ -219,7 +233,8 @@ Use these deliberately, not as a bag of stickers:
 - **Good gear. Real help. No runaround.** — service promise.
 - **The city was our product test.** — Vancouver proof.
 - **Outside is one of our rooms.** — outdoor-minded philosophy.
-- **Good energy. Questionable table.** — origin chapter.
+- **A skinny table and a lot of hustle.** — pre-Expo origin chapter.
+- **The table started catching up.** — first Expo chapter.
 - **Make a Splash.** — Aqua seasonal territory.
 - **Take it Outside.** — Portland/outdoor territory.
 - **Ultra Protection.** — Table Cover territory.

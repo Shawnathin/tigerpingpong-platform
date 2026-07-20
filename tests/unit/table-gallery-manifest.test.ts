@@ -60,7 +60,13 @@ describe("table gallery media manifest", () => {
 
         expect(selectorMedia).toEqual({
           altText: expectedAsset?.altText,
-          src: expectedAsset?.cloudinary.secureUrl
+          src:
+            product.productSlug === "tiger-portland-outdoor-table"
+              ? expectedAsset?.cloudinary.secureUrl.replace(
+                  "/image/upload/",
+                  "/image/upload/c_crop,w_1280,h_853,x_160,y_373/c_limit,w_800/f_auto,q_auto/"
+                )
+              : expectedAsset?.cloudinary.secureUrl
         });
       }
     }
@@ -88,7 +94,9 @@ describe("table gallery media manifest", () => {
       const longestEdge = Math.max(asset.source.width, asset.source.height);
       if (longestEdge < manifest.delivery.minimumUsefulSourceEdge) {
         expect(asset.qualityStatus).toBe("best_available_current_model");
-        expect(asset.mediaKey).toContain("tiger-portland-outdoor-table");
+        expect(["verified_current_model", "verified_current_v2"]).toContain(
+          asset.modelVerification
+        );
       }
     }
   });

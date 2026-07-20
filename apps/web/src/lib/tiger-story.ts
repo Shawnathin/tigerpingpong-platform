@@ -75,6 +75,8 @@ interface TigerTableProductGalleryManifest {
       cloudinary: {
         secureUrl: string;
       };
+      mediaKey: string;
+      role: string;
       sortOrder: number;
       variantKey: string | null;
     }>;
@@ -104,6 +106,10 @@ export interface TigerTablesProductStory {
   body: string;
   cta: string;
   descriptor: string;
+  detail: {
+    body: string;
+    heading: string;
+  };
   image?: TigerStoryImage;
   mode: "Indoor" | "Outdoor";
 }
@@ -228,9 +234,45 @@ export function getTigerTableVariantSelectorMedia(
   return asset
     ? {
         altText: asset.altText,
-        src: asset.cloudinary.secureUrl
+        src: getTableVariantSelectorUrl(productSlug, asset.cloudinary.secureUrl)
       }
     : undefined;
+}
+
+export function getTigerTableGalleryMedia(productSlug: string): Array<{
+  altText: string;
+  mediaKey: string;
+  role: string;
+  sortOrder: number;
+  src: string;
+  variantKey: string | null;
+}> {
+  const product = tableProductGalleryManifest.products.find(
+    (candidate) => candidate.productSlug === productSlug
+  );
+
+  return (product?.assets ?? [])
+    .slice()
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .map((asset) => ({
+      altText: asset.altText,
+      mediaKey: asset.mediaKey,
+      role: asset.role,
+      sortOrder: asset.sortOrder,
+      src: asset.cloudinary.secureUrl,
+      variantKey: asset.variantKey
+    }));
+}
+
+function getTableVariantSelectorUrl(productSlug: string, sourceUrl: string): string {
+  if (productSlug !== "tiger-portland-outdoor-table") {
+    return sourceUrl;
+  }
+
+  return sourceUrl.replace(
+    "/image/upload/",
+    "/image/upload/c_crop,w_1280,h_853,x_160,y_373/c_limit,w_800/f_auto,q_auto/"
+  );
 }
 const aquaProductStoryImageByAssetId = new Map(
   aquaProductStoryImageMap.entries.map((entry) => [entry.assetId, entry] as const)
@@ -351,11 +393,33 @@ const aquaProductImage = requireHomepagePromotionImage(
   "Red and blue Tiger Aqua outdoor PingPong paddles.",
   "Aqua outdoor paddles."
 );
-const coverProductImage = requireHomepagePromotionImage(
-  "cover",
-  "Black Tiger PingPong table cover with a white logo.",
-  "Tiger table cover."
-);
+const realCoverProductImage: TigerStoryImage = {
+  altText: "Black Tiger PingPong cover fitted over a table with natural fabric folds.",
+  assetId: "GEAR-COVER-001",
+  caption: "Tiger table cover.",
+  cloudinaryPublicId: "tigerpingpong/products/tiger-table-cover-black-polyester/01-main",
+  finalUrl:
+    "https://res.cloudinary.com/djfcisldm/image/upload/v1781303672/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg",
+  role: "product",
+  sourceDimensions: { height: 386, width: 386 }
+};
+const homepageCoverCutoutImage: TigerStoryImage = {
+  ...realCoverProductImage,
+  assetId: "HOM-COVER-001",
+  caption: "Tiger table cover cutout.",
+  finalUrl:
+    "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png/v1781303672/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg"
+};
+const realNetProductImage: TigerStoryImage = {
+  altText: "Tiger PingPong net and post set in its clear carrying case.",
+  assetId: "GEAR-NET-001",
+  caption: "Tiger net and post set.",
+  cloudinaryPublicId: "tigerpingpong/products/tiger-net-post-set/01-main",
+  finalUrl:
+    "https://res.cloudinary.com/djfcisldm/image/upload/v1781303667/tigerpingpong/products/tiger-net-post-set/01-main.png",
+  role: "product",
+  sourceDimensions: { height: 386, width: 386 }
+};
 const portlandProductImage = requireHomepageSummerImage("HOM-SUM-002");
 
 export const tigerHomepageAquaCampaigns = {
@@ -382,6 +446,10 @@ export const tigerTablesProductStories = {
     mode: "Outdoor",
     descriptor: "Easygoing outdoor.",
     body: "We made Expo for backyards that want more playing and less overthinking. It’s the easy yes when you want a real outdoor table and a good time.",
+    detail: {
+      heading: "Built to keep things easy.",
+      body: "Expo is the easygoing outdoor table: a weather-ready top, a frame that folds, and wheels that help it roll away when the rally is done. Backyard, patio, cottage—set it up and get playing."
+    },
     cta: "Meet Expo",
     image: requireTablesCategoryImage("TAB-CAT-003")
   },
@@ -389,6 +457,10 @@ export const tigerTablesProductStories = {
     mode: "Indoor",
     descriptor: "Home-court feel.",
     body: "We made Portland Indoor for basements, rec rooms, and community centres that see plenty of rallies and very little rain. Serious table, relaxed room.",
+    detail: {
+      heading: "Home court, handled.",
+      body: "Portland Indoor puts playing feel first in dry rooms that see plenty of use. It folds and rolls away when you need the space back—because the basement still has to be a basement sometimes."
+    },
     cta: "Meet Portland Indoor",
     image: requireTablesCategoryImage("TAB-CAT-004")
   },
@@ -396,6 +468,10 @@ export const tigerTablesProductStories = {
     mode: "Outdoor",
     descriptor: "Tough outside. Smart inside.",
     body: "We made Portland Outdoor for patios, garages, and busy game rooms where weather, kids, and spilled drinks all happen. It’s the table you worry about less.",
+    detail: {
+      heading: "Real life happens. Keep playing.",
+      body: "Portland Outdoor is made for patios, garages, and busy game rooms where weather, kids, and the odd spilled drink are part of the plan. It folds, rolls, and gives you one less thing to worry about."
+    },
     cta: "Meet Portland Outdoor",
     image: portlandProductImage
   },
@@ -403,6 +479,10 @@ export const tigerTablesProductStories = {
     mode: "Indoor",
     descriptor: "For the serious rallies.",
     body: "We made Whistler for players who notice the bounce, even if nobody is keeping score. A little more game, zero extra attitude.",
+    detail: {
+      heading: "More game. Zero extra attitude.",
+      body: "Whistler is for dry rooms and players who notice the bounce, even when nobody is keeping score. Serious playing feel for rec rooms, schools, and community centres that see plenty of rallies."
+    },
     cta: "Meet Whistler",
     image: requireTablesCategoryImage("TAB-CAT-005")
   },
@@ -410,6 +490,10 @@ export const tigerTablesProductStories = {
     mode: "Outdoor",
     descriptor: "Made for shared spaces.",
     body: "We made Plaza for parks, campuses, and community centres where the table belongs to everyone. The whole neighbourhood is invited.",
+    detail: {
+      heading: "Put it down. Let everyone play.",
+      body: "Plaza is made for parks, campuses, community centres—and the kind of backyard where the pool gets a vote. It’s a fixed outdoor table for shared spaces, beautiful spaces, and whoever has next."
+    },
     cta: "Meet Plaza",
     image: requireTablesCategoryImage("TAB-CAT-006")
   }
@@ -509,7 +593,7 @@ export const tigerGearProductStories = {
     body: "Durable Oxford outdoor fabric, a snug fit, and a corded slide-buckle strap help keep the cover where you left it.",
     cta: "Cover it up",
     copyStatus: "approved",
-    image: coverProductImage
+    image: realCoverProductImage
   },
   "tiger-net-post-set": {
     eyebrow: "Net and post set",
@@ -583,8 +667,8 @@ export const tigerGearCategoryStories = {
       heading: "Weather happens.",
       body: "Rain, dust, leaves, and whatever just blew in sideways. Cover the table and get on with your day.",
       featuredSlugs: [],
-      image: coverProductImage,
-      tone: "amber"
+      image: realCoverProductImage,
+      tone: "mist"
     },
     productSlugs: ["tiger-table-cover-black-polyester"]
   },
@@ -864,7 +948,8 @@ export const tigerStory = {
           heading: "Outdoor Gear",
           body: "Ready for real life",
           href: "/accessories/",
-          image: coverProductImage
+          image: realCoverProductImage,
+          secondaryImage: realNetProductImage
         }
       ]
     },
@@ -908,7 +993,7 @@ export const tigerStory = {
         href: "/catalog/products/tiger-table-cover-black-polyester",
         label: "Cover It Up"
       },
-      image: coverProductImage
+      image: homepageCoverCutoutImage
     }
   },
   tables: {
@@ -969,14 +1054,21 @@ export const tigerStory = {
     eyebrow: "Our story",
     heading: "Raised on the West Coast.",
     body: "Vancouver is our home court. It shaped the gear we make, the way we help, and the kind of company we wanted to be. Now we’re bringing that rally to the rest of Canada.",
-    bridge: "The story starts with a much worse table.",
+    bridge: "The story starts with a very skinny table.",
     image: requireStoryImage("MAY-011")
+  },
+  earlyDays: {
+    anchor: "early-days",
+    eyebrow: "Before Expo",
+    heading: "A skinny table and a lot of hustle.",
+    body: "Tiger started with a green table that had very skinny legs and plenty of other issues. It was bad. We kept pushing. It took all of us—hauling bins of paddles and balls onto the Expo Line, setting up around Vancouver, and learning what the game needed by playing it with people.",
+    images: [requireStoryImage("EARLY-001"), requireStoryImage("EARLY-003")]
   },
   origin: {
     anchor: "first-serve",
-    eyebrow: "Where it started",
-    heading: "Good energy. Questionable table.",
-    body: "Tiger started with a table we were pretty excited about. It had skinny legs, questionable construction, and taught us most of what not to do. But we took it everywhere. Chinatown nights. Rainy street festivals. Driveways. Packed rooms. The table was not great. The people around it were exactly right.",
+    eyebrow: "Then came Expo",
+    heading: "The table started catching up.",
+    body: "Expo took its name from Expo 86 and its theme, ‘World in Motion—World in Touch.’ That felt right for a table headed to Chinatown nights, rainy street festivals, driveways, and packed rooms. The orange-legged first Expo still had things to teach us—but it was the first time the product started to match the energy around it.",
     images: [requireStoryImage("Y13-003"), requireStoryImage("EXT-001")]
   },
   vancouver: {

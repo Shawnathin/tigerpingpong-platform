@@ -103,6 +103,141 @@
             "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515184/tigerpingpong/products/tiger-expo-outdoor-table/gallery-restoration/expo-event-vancouver-v1.jpg",
             "bytes": 1719439
           }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-lifestyle-poolside-01",
+          "role": "lifestyle",
+          "variantKey": "tiger-expo-outdoor-table-color-blue",
+          "sortOrder": 4,
+          "isPrimary": false,
+          "altText": "Blue Tiger Expo Outdoor PingPong table beside a backyard pool",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "expo-poolside-blue-owner-01.jpg",
+            "sha256": "ea38826f408d6a4f09fbc42af83d14231b9a521dd1b1a3c02474249a7a440401",
+            "width": 4032,
+            "height": 3024
+          },
+          "cloudinary": {
+            "assetId": "13119ab72440f800c5f886165d4bd1e9",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-poolside-blue-owner-01",
+            "version": "1784575463",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575463/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-poolside-blue-owner-01.jpg",
+            "bytes": 5810965
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-lifestyle-sunset-01",
+          "role": "lifestyle",
+          "variantKey": "tiger-expo-outdoor-table-color-grey",
+          "sortOrder": 5,
+          "isPrimary": false,
+          "altText": "Grey Tiger Expo Outdoor PingPong table on a deck overlooking the Pacific at sunset",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "expo-sunset-grey-owner-01.jpg",
+            "sha256": "98d199442bf1dd47b4c75e69cdf90b2b0cc5a9662dde87ad9ce6e72052418a79",
+            "width": 1448,
+            "height": 1086
+          },
+          "cloudinary": {
+            "assetId": "7c9ab68ed24beb6333dbde9194fde344",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-sunset-grey-owner-01",
+            "version": "1784575465",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575465/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-sunset-grey-owner-01.jpg",
+            "bytes": 2066262
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-folded-01",
+          "role": "gallery",
+          "variantKey": null,
+          "sortOrder": 6,
+          "isPrimary": false,
+          "altText": "Tiger Expo Outdoor PingPong table folded upright for storage",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "expo-folded-owner-01.jpg",
+            "sha256": "33f7f76b45793fbf58b6442cf32f6c7694fb37dd94fb7f9c612c7488bb905a53",
+            "width": 800,
+            "height": 500
+          },
+          "cloudinary": {
+            "assetId": "c18eda8df26ba6cf9e10b64965da827f",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-folded-owner-01",
+            "version": "1784575465",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575465/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-folded-owner-01.jpg",
+            "bytes": 50894
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-playback-grey-01",
+          "role": "gallery",
+          "variantKey": "tiger-expo-outdoor-table-color-grey",
+          "sortOrder": 7,
+          "isPrimary": false,
+          "altText": "Grey Tiger Expo Outdoor PingPong table set up for solo playback",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "expo-playback-grey-owner-01.jpg",
+            "sha256": "c8d0a2fe45f4f28f116237ffb91b05d08daf670fb4f0ac21080f406ef83cb698",
+            "width": 800,
+            "height": 500
+          },
+          "cloudinary": {
+            "assetId": "d495c3400f2e8f0882c3d161441c994f",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-grey-owner-01",
+            "version": "1784575466",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575466/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-grey-owner-01.jpg",
+            "bytes": 72898
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-playback-blue-01",
+          "role": "gallery",
+          "variantKey": "tiger-expo-outdoor-table-color-blue",
+          "sortOrder": 8,
+          "isPrimary": false,
+          "altText": "Blue Tiger Expo Outdoor PingPong table set up for solo playback",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "expo-playback-blue-owner-01.jpg",
+            "sha256": "ae8fa92362e6909c0d18816484c67bc086491ffc8839c520ed9a45be209bc15a",
+            "width": 800,
+            "height": 500
+          },
+          "cloudinary": {
+            "assetId": "c7be74c443085a8cc80751cb7944073a",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01",
+            "version": "1784575467",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575467/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01.jpg",
+            "bytes": 135578
+          }
         }
       ]
     },

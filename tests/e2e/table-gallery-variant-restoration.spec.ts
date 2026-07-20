@@ -156,10 +156,10 @@ test("each colour selects the matching image and removes other colours from view
   }
 });
 
-test("every table requires a colour and preserves the exact variant key in the cart", async ({
+test("multi-colour tables require a colour and preserve the exact variant key in the cart", async ({
   page
 }) => {
-  for (const table of TABLES) {
+  for (const table of TABLES.filter((candidate) => candidate.colorValues.length > 1)) {
     const product = manifestProduct(table.slug);
     await page.goto(productPath(table.slug));
     await page.evaluate(() => window.localStorage.removeItem("tigerpingpong.cart.v1"));
@@ -195,6 +195,8 @@ test("every table requires a colour and preserves the exact variant key in the c
 
 test("Plaza's single Grey choice fills the V2 selector", async ({ page }) => {
   await page.goto(productPath("tiger-plaza-outdoor-table-grey"));
+
+  await expect(page.locator('input[value="Grey"]')).toBeChecked();
 
   const dimensions = await page.locator("fieldset").evaluate((fieldset) => {
     const choices = fieldset.querySelector("div");

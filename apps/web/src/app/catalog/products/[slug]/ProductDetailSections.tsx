@@ -2,6 +2,7 @@ import {
   getProductContentBySlug,
   type NormalizedProductContent
 } from "../../../../lib/product-content";
+import { tigerTablesProductStories } from "../../../../lib/tiger-story";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
@@ -228,11 +229,10 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
       {
         title: "Playback Position",
         value: "Fold one side up and practice solo between matches.",
-        visual: detailVisual(
-          "tiger-expo-outdoor-table",
-          "playback-position",
-          "Expo Outdoor table set in playback position"
-        )
+        visual: {
+          alt: "Blue Expo Outdoor table with one side raised for solo playback",
+          src: "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,c_limit,w_800/v1784575467/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01.jpg"
+        }
       },
       {
         title: "Built-In Storage",
@@ -716,7 +716,9 @@ export function QuickFactsSection({
   return (
     <section
       className={
-        isTable ? styles.detailStrip : `${styles.detailStrip} ${styles.accessoryDetailStrip}`
+        isTable
+          ? `${styles.detailStrip} ${styles.tableDetailStrip}`
+          : `${styles.detailStrip} ${styles.accessoryDetailStrip}`
       }
       aria-labelledby="quick-facts-title"
     >
@@ -1155,6 +1157,14 @@ function getStoryHeading(product: CatalogProductDetail): string {
   const kind = normalizeKind(product.productKind);
   const useFact = getUseFact(product, null);
 
+  if (kind === "table") {
+    const tableStory = getTigerTableProductStory(product.slug);
+
+    if (tableStory) {
+      return tableStory.detail.heading;
+    }
+  }
+
   if (kind !== "table") {
     return "Product details.";
   }
@@ -1207,11 +1217,7 @@ function getDetailStripHeading(product: CatalogProductDetail): string {
     return "Key facts.";
   }
 
-  if (product.slug === "tiger-expo-outdoor-table") {
-    return "Why customers choose Expo.";
-  }
-
-  return `Why customers choose ${getProductDisplayLabel(product)}.`;
+  return "The good stuff.";
 }
 
 function getDetailStripIntro(product: CatalogProductDetail): string {
@@ -1383,10 +1389,20 @@ function getProductStoryCopy(
   normalizedContent: NormalizedProductContent | null
 ): string | null {
   if (isTableProduct(product)) {
+    const tableStory = getTigerTableProductStory(product.slug);
+
+    if (tableStory) {
+      return tableStory.detail.body;
+    }
+
     return getSafeLongDescription(normalizedContent?.longDescription);
   }
 
   return getAccessoryStoryCopy(normalizedContent?.longDescription);
+}
+
+function getTigerTableProductStory(productSlug: string) {
+  return tigerTablesProductStories[productSlug as keyof typeof tigerTablesProductStories] ?? null;
 }
 
 function getAccessoryStoryCopy(value: string | null | undefined): string | null {
@@ -1548,15 +1564,20 @@ function getSurfaceStat(normalizedContent: NormalizedProductContent | null): Lab
   const thicknessMatch =
     surface.match(/\b\d+(?:\.\d+)?\s*mm\b/i) ?? surface.match(/\b\d+(?:\/\d+)?"\b/);
   const value = thicknessMatch ? thicknessMatch[0].replace(/\s+/g, "") : "Top";
-  const label = surface
+  const technicalLabel = surface
     .replace(thicknessMatch?.[0] ?? "", "")
     .replace(/\btable\s*top\b/gi, "")
     .replace(/\s*\/\s*/g, " / ")
     .replace(/\s+/g, " ")
     .trim();
+  const label = /melamine\s+resin/i.test(technicalLabel)
+    ? "Weather-ready top"
+    : /chipboard/i.test(technicalLabel)
+      ? "Indoor playing top"
+      : technicalLabel || surface;
 
   return {
-    label: label || surface,
+    label,
     value
   };
 }
@@ -1588,7 +1609,7 @@ function getMadeInStat(normalizedContent: NormalizedProductContent | null): Labe
   }
 
   return {
-    label: "Made in Germany",
+    label: "Made in",
     value: "Germany"
   };
 }

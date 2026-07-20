@@ -1,7 +1,7 @@
 # Tiger Facts and Claims Register
 
-Version: 1.0
-Effective: 2026-07-18
+Version: 2.0
+Effective: 2026-07-20
 Owner: Shawn Cleve
 
 This file governs what Tiger may state as fact. It is intentionally stricter than the voice guide.
@@ -49,8 +49,10 @@ Competitor sites are never evidence for Tiger product claims.
 
 | Claim                                                                                                                                                                            | Status             | Scope and evidence                                                                                                                   |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Tiger's first table had skinny legs, questionable construction, and was not good enough.                                                                                         | **Locked — owner** | Tiger owns the choice. Tell it with affection and honesty.                                                                           |
-| The first table was taken to Chinatown nights, rainy street festivals, driveways, and packed rooms.                                                                              | **Locked — owner** | Supported by the owner's archive and approved About story.                                                                           |
+| Tiger's first table was the green, skinny-legged pre-Expo table. It was not good enough.                                                                                         | **Locked — owner** | Tiger owns the choice. Tell it with affection and honesty. Never identify the orange table as the first-ever Tiger table.            |
+| Tiger's early crew hauled bins of paddles and balls around Vancouver on the Expo Line and kept setting up wherever people would play.                                            | **Locked — owner** | Owner-supplied history and cleared early-crew archive photographs. Do not invent dates or a formal transit partnership.              |
+| The orange-legged table was the first Expo iteration and the point when Tiger began getting the table right.                                                                     | **Locked — owner** | Owner-supplied correction. “Began getting it right” does not mean this iteration was final or flawless.                              |
+| The first Expo iteration was taken to Chinatown nights, rainy street festivals, driveways, and packed rooms.                                                                     | **Locked — owner** | Supported by the owner's archive and approved About story.                                                                           |
 | Tiger has hosted or supplied play at Food Cart Fest, Science World, the Shipyards, Vancouver and Whistler events, schools, universities, community spaces, and corporate events. | **Locked — owner** | Use specific names with cleared real photography where possible. Avoid implying formal sponsorship or exclusivity unless documented. |
 | Tiger gear has appeared at UBC, on a Royal Caribbean ship, at Stampede Park, and during cross-Canada travel.                                                                     | **Locked — owner** | Owner-supplied and represented in cleared archive selections. Do not invent dates, contracts, or scope.                              |
 | Tiger is in every university, every school, every city, or every park in BC.                                                                                                     | **Prohibited**     | The owner's discovery language expressed scale and pride, not a verified universal inventory. Convert it into specific proof.        |

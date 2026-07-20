@@ -2553,6 +2553,39 @@
     min-height: 132px;
   }
 
+  .tableDetailStrip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    padding: 14px;
+  }
+
+  .tableDetailStrip .detailStripHeading {
+    grid-column: 1 / -1;
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+
+  .tableDetailStrip .detailStripHeading h2 {
+    font-size: clamp(1.65rem, 8vw, 2rem);
+  }
+
+  .tableDetailStrip .detailStatCard {
+    aspect-ratio: 1;
+    min-height: 0;
+    border-radius: 14px;
+    padding: clamp(8px, 2.4vw, 12px);
+  }
+
+  .tableDetailStrip .detailStatCard strong {
+    font-size: clamp(0.9rem, 4.2vw, 1.45rem);
+  }
+
+  .tableDetailStrip .detailStatCard dt {
+    font-size: clamp(0.56rem, 1.8vw, 0.68rem);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
   .featureTrack {
     grid-auto-columns: minmax(280px, 86vw);
   }
@@ -2838,6 +2871,15 @@
   background: #ffffff;
 }
 
+.tigerTableOptionMedia {
+  padding: 8px 10px;
+}
+
+.tigerTableOptionMedia img {
+  width: 92%;
+  height: 92%;
+}
+
 .aquaWhiteVisual {
   position: relative;
   display: block;
@@ -3048,6 +3090,10 @@
     min-height: 132px;
     border-radius: 15px;
     padding: 7px;
+  }
+
+  .tigerTableOptionMedia {
+    padding: 7px 9px;
   }
 
   .tigerOptionCopy strong {

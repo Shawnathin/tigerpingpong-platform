@@ -14,6 +14,10 @@ import {
   type NormalizedProductContent
 } from "../../../../lib/product-content";
 import { getCanonicalUrl } from "../../../../lib/seo";
+import {
+  getTigerAquaPurchaseOptionStory,
+  tigerAquaProductStory
+} from "../../../../lib/tiger-story";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
@@ -31,6 +35,7 @@ import {
   TABLE_COMPARISON_PRODUCT_SLUGS,
   TableComparisonSection
 } from "./ProductDetailSections";
+import { AquaProductExperience } from "./AquaProductExperience";
 import { ProductHeroPurchase } from "./ProductHeroPurchase";
 import type { ProductMediaGalleryItem } from "./ProductMediaGallery";
 import styles from "./page.module.css";
@@ -67,7 +72,9 @@ type ProductJsonLd = {
 };
 
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
+const AQUA_PRODUCT_SLUG = tigerAquaProductStory.slug;
 const PRODUCT_HERO_DISPLAY_TITLES: Record<string, string> = {
+  [AQUA_PRODUCT_SLUG]: tigerAquaProductStory.hero.heading,
   "tiger-expo-outdoor-table": "Expo Outdoor",
   "tiger-net-post-set": "Net & Post Set",
   "tiger-premium-balls-140": "140-Pack Balls",
@@ -121,8 +128,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   const normalizedContent = getProductContentBySlug(product.slug);
 
-  const title = `${product.name} | Tiger Ping Pong`;
-  const description = getProductMetadataDescription(product, normalizedContent);
+  const isAqua = product.slug === AQUA_PRODUCT_SLUG;
+  const title = isAqua ? tigerAquaProductStory.metadata.title : `${product.name} | Tiger Ping Pong`;
+  const description = isAqua
+    ? tigerAquaProductStory.metadata.description
+    : getProductMetadataDescription(product, normalizedContent);
   const canonicalUrl = getCanonicalUrl(`/catalog/products/${product.slug}`);
 
   return {
@@ -136,7 +146,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description,
       type: "website",
       url: canonicalUrl,
-      siteName: "Tiger Ping Pong"
+      siteName: "Tiger PingPong"
     }
   };
 }
@@ -271,6 +281,12 @@ function getMediaItems(product: CatalogProductDetail): ProductMediaGalleryItem[]
   const uniqueCloudinaryMediaItems = getUniqueMediaItems(cloudinaryMediaItems);
   const fallbackMediaItems = getUniqueMediaItems(getFallbackMediaItems(product));
 
+  // Keep Aqua's reviewed eight-image gallery canonical while the API media
+  // activation catches up. This exception is intentionally product-scoped.
+  if (product.slug === AQUA_PRODUCT_SLUG && fallbackMediaItems.length === 8) {
+    return fallbackMediaItems;
+  }
+
   if (uniqueCloudinaryMediaItems.length > 0) {
     return uniqueCloudinaryMediaItems;
   }
@@ -307,11 +323,12 @@ function getFallbackMediaItems(product: CatalogProductDetail): ProductMediaGalle
       altText: media.alt,
       caption: media.caption,
       isPrimary: index === 0,
-      mediaKey: `${product.key}-fallback-${index + 1}`,
+      mediaKey: media.mediaKey ?? `${product.key}-fallback-${index + 1}`,
       role: media.role,
       sortOrder: index,
       src,
-      title: media.title
+      title: media.title,
+      variantKey: media.variantKey
     });
   }
 
@@ -335,9 +352,13 @@ function getUniqueMediaItems(mediaItems: ProductMediaGalleryItem[]): ProductMedi
 }
 
 interface CheckoutOptionValue {
+  accent?: "canada-red" | "ocean-blue" | "pack";
   currency?: string;
   label: string;
   priceCents?: number;
+  shopperLabel?: string;
+  thumbnailAlt?: string;
+  thumbnailSrc?: string;
   value: string;
   variantKey?: string;
 }
@@ -476,6 +497,34 @@ function getCheckoutOptionGroups(product: CatalogProductDetail): CheckoutOptionG
     }));
 }
 
+function getAquaCheckoutOptionGroups(
+  product: CatalogProductDetail,
+  optionGroups: CheckoutOptionGroup[]
+): CheckoutOptionGroup[] {
+  if (product.slug !== AQUA_PRODUCT_SLUG) {
+    return optionGroups;
+  }
+
+  return optionGroups.map((optionGroup) => ({
+    ...optionGroup,
+    values: optionGroup.values.map((optionValue) => {
+      const story = getTigerAquaPurchaseOptionStory(optionValue.variantKey);
+
+      if (!story) {
+        return optionValue;
+      }
+
+      return {
+        ...optionValue,
+        accent: story.accent,
+        shopperLabel: story.shopperLabel,
+        thumbnailAlt: story.altText,
+        thumbnailSrc: story.src
+      };
+    })
+  }));
+}
+
 function isRequiredCheckoutOptionGroup(
   product: CatalogProductDetail,
   optionGroup: CheckoutOptionGroup
@@ -518,7 +567,10 @@ function getValidVariantPriceCents(priceCents: number | null): number | undefine
 }
 
 function getCartProductPriceCents(product: CatalogProductDetail): number {
-  const checkoutOptionGroups = getCheckoutOptionGroups(product);
+  const checkoutOptionGroups = getAquaCheckoutOptionGroups(
+    product,
+    getCheckoutOptionGroups(product)
+  );
 
   if (checkoutOptionGroups.length !== 1) {
     return product.priceCents ?? 0;
@@ -659,14 +711,18 @@ function getHeroDisplayTitle(product: CatalogProductDetail): string {
   return PRODUCT_HERO_DISPLAY_TITLES[product.slug] ?? product.name;
 }
 
-function getHeroEyebrow(): string {
-  return "Tiger PingPong";
+function getHeroEyebrow(product: CatalogProductDetail): string {
+  return product.slug === AQUA_PRODUCT_SLUG ? tigerAquaProductStory.hero.eyebrow : "Tiger PingPong";
 }
 
 function getHeroPriceSummary(
   product: CatalogProductDetail,
   normalizedContent: NormalizedProductContent | null
 ): string | null {
+  if (product.slug === AQUA_PRODUCT_SLUG) {
+    return null;
+  }
+
   if (normalizeOptionKey(product.productKind) === "table") {
     return null;
   }
@@ -693,11 +749,14 @@ function getProductJsonLd(
   const jsonLd: ProductJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.name
+    name: product.slug === AQUA_PRODUCT_SLUG ? tigerAquaProductStory.hero.heading : product.name
   };
 
   const brand = getCleanSourcedCopy(normalizedContent?.brand);
-  const description = getCleanSourcedCopy(normalizedContent?.shortDescription);
+  const description =
+    product.slug === AQUA_PRODUCT_SLUG
+      ? tigerAquaProductStory.metadata.description
+      : getCleanSourcedCopy(normalizedContent?.shortDescription);
   const image = mediaItems.map((mediaItem) => mediaItem.src).filter(isAbsoluteImageUrl);
 
   if (brand) {
@@ -767,7 +826,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     return <ErrorState error={error ?? "Product details are temporarily unavailable."} />;
   }
 
-  const checkoutOptionGroups = getCheckoutOptionGroups(product);
+  const checkoutOptionGroups = getAquaCheckoutOptionGroups(
+    product,
+    getCheckoutOptionGroups(product)
+  );
   const isCheckoutEligible = isProductCheckoutEligible(product, checkoutOptionGroups);
   const mediaItems = getMediaItems(product);
   const normalizedContent = getProductContentBySlug(product.slug);
@@ -775,13 +837,20 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
   const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
   const heroDisplayTitle = getHeroDisplayTitle(product);
-  const heroEyebrow = getHeroEyebrow();
+  const heroEyebrow = getHeroEyebrow(product);
   const heroPriceSummary = getHeroPriceSummary(product, normalizedContent);
   const productJsonLd = getProductJsonLd(product, normalizedContent, mediaItems);
   const isTable = isTableProduct(product);
-  const heroClassName = isTable
-    ? styles.productHero
-    : `${styles.productHero} ${styles.accessoryHero}`;
+  const isAqua = product.slug === AQUA_PRODUCT_SLUG;
+  const heroClassName = isAqua
+    ? `${styles.productHero} ${styles.accessoryHero} ${styles.aquaHero}`
+    : isTable
+      ? styles.productHero
+      : `${styles.productHero} ${styles.accessoryHero}`;
+  const basePriceLabel = formatPrice(
+    isAqua ? getCartProductPriceCents(product) : product.priceCents,
+    product.currency
+  );
 
   return (
     <>
@@ -796,8 +865,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <ProductFamilySwitcher product={product} products={publicProducts} />
 
         <ProductHeroPurchase
-          availabilityMessage={V1_IN_STOCK_HANDLING_COPY}
-          basePriceLabel={formatPrice(product.priceCents, product.currency)}
+          availabilityMessage={
+            isAqua ? tigerAquaProductStory.purchase.availability : V1_IN_STOCK_HANDLING_COPY
+          }
+          basePriceLabel={basePriceLabel}
           categoryName={product.category.name}
           heroClassName={heroClassName}
           heroEyebrow={heroEyebrow}
@@ -805,29 +876,54 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           isCheckoutEligible={isCheckoutEligible}
           mediaItems={mediaItems}
           priceSummary={heroPriceSummary}
+          presentation={
+            isAqua
+              ? {
+                  descriptor: tigerAquaProductStory.hero.descriptor,
+                  mode: "tiger-v2",
+                  optionLegend: tigerAquaProductStory.purchase.optionLegend,
+                  pricePrefix: tigerAquaProductStory.purchase.pricePrefix,
+                  selectionError: tigerAquaProductStory.purchase.selectionError,
+                  summary: tigerAquaProductStory.hero.body,
+                  supportHref: tigerAquaProductStory.purchase.help.href,
+                  supportText: tigerAquaProductStory.purchase.help.label
+                }
+              : undefined
+          }
           product={toCartProductInput(product)}
           productName={product.name}
           productOptions={checkoutOptionGroups}
           productSlug={product.slug}
-          shippingLines={getPurchaseShippingLines(product)}
-          shippingLinesAreFixed={isTable}
+          sectionId={isAqua ? tigerAquaProductStory.hero.anchor : undefined}
+          shippingLines={
+            isAqua
+              ? [...tigerAquaProductStory.purchase.shipping]
+              : getPurchaseShippingLines(product)
+          }
+          shippingLinesAreFixed={isTable || isAqua}
         />
 
-        <QuickFactsSection normalizedContent={normalizedContent} product={product} />
-        <ProductStorySection normalizedContent={normalizedContent} product={product} />
-        {isTable ? (
-          <>
-            <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
-            <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
-          </>
+        {isAqua ? (
+          <AquaProductExperience />
         ) : (
           <>
-            <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
-            <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
+            <QuickFactsSection normalizedContent={normalizedContent} product={product} />
+            <ProductStorySection normalizedContent={normalizedContent} product={product} />
+            {isTable ? (
+              <>
+                <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
+                <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
+              </>
+            ) : (
+              <>
+                <EverydayDetailsSection normalizedContent={normalizedContent} product={product} />
+                <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
+              </>
+            )}
+            <SpecsGridSection normalizedContent={normalizedContent} product={product} />
+            <TableComparisonSection currentSlug={product.slug} products={tableComparisonProducts} />
           </>
         )}
-        <SpecsGridSection normalizedContent={normalizedContent} product={product} />
-        <TableComparisonSection currentSlug={product.slug} products={tableComparisonProducts} />
       </main>
       <PublicStorefrontFooter />
     </>

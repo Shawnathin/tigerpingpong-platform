@@ -90,22 +90,104 @@ const product = {
     }
   ]
 };
+const aquaProduct = {
+  key: "tiger-aqua-outdoor-indoor-paddle",
+  slug: "tiger-aqua-outdoor-indoor-paddle",
+  name: "Aqua Outdoor / Indoor Paddle",
+  productKind: "paddle",
+  purchaseMode: "online_checkout",
+  priceCents: 2500,
+  currency: "CAD",
+  v1PublicNavigation: true,
+  v1CheckoutScope: true,
+  shippingReviewRequired: false,
+  family: { key: "aqua-paddles", slug: "aqua-paddles", name: "Aqua Paddles" },
+  category: { key: "paddles", slug: "paddles", name: "Paddles" },
+  primaryMedia: null,
+  shortDescription: "Weather-resistant Aqua paddle for shared spaces and real life.",
+  description: "Local Aqua fixture for browser tests.",
+  media: [],
+  variants: [
+    {
+      id: "aqua-single-coral",
+      key: "tiger-aqua-package-single-coral",
+      name: "Single - Coral Red",
+      priceCents: 2500,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package",
+          displayName: "Package",
+          value: "single-coral-red",
+          label: "Single - Coral Red",
+          sortOrder: 1,
+          optionSortOrder: 1
+        }
+      ]
+    },
+    {
+      id: "aqua-single-ocean-blue",
+      key: "tiger-aqua-package-single-ocean-blue",
+      name: "Single - Ocean Blue",
+      priceCents: 2500,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package",
+          displayName: "Package",
+          value: "single-ocean-blue",
+          label: "Single - Ocean Blue",
+          sortOrder: 2,
+          optionSortOrder: 1
+        }
+      ]
+    },
+    {
+      id: "aqua-two-pack",
+      key: "tiger-aqua-package-2-pack-3-balls",
+      name: "2 Pack + 3 Balls",
+      priceCents: 4500,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package",
+          displayName: "Package",
+          value: "2-pack-3-balls",
+          label: "2 Pack + 3 Balls",
+          sortOrder: 3,
+          optionSortOrder: 1
+        }
+      ]
+    },
+    {
+      id: "aqua-four-pack",
+      key: "tiger-aqua-package-4-pack-3-balls",
+      name: "4 Pack + 3 Balls",
+      priceCents: 8000,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package",
+          displayName: "Package",
+          value: "4-pack-3-balls",
+          label: "4 Pack + 3 Balls",
+          sortOrder: 4,
+          optionSortOrder: 1
+        }
+      ]
+    }
+  ]
+};
 const accessoryProducts = [
-  {
-    key: "tiger-aqua-outdoor-indoor-paddle",
-    slug: "tiger-aqua-outdoor-indoor-paddle",
-    name: "Aqua Outdoor / Indoor Paddle",
-    productKind: "paddle",
-    purchaseMode: "online_checkout",
-    priceCents: 2500,
-    currency: "CAD",
-    v1PublicNavigation: true,
-    v1CheckoutScope: true,
-    shippingReviewRequired: false,
-    family: { key: "aqua-paddles", slug: "aqua-paddles", name: "Aqua Paddles" },
-    category: { key: "paddles", slug: "paddles", name: "Paddles" },
-    primaryMedia: null
-  },
+  aquaProduct,
   {
     key: "tiger-vice-paddle",
     slug: "tiger-vice-paddle",
@@ -383,7 +465,10 @@ const internalOrder = {
 
 const server = createServer(async (request, response) => {
   response.setHeader("Content-Type", "application/json; charset=utf-8");
-  response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3100");
+  response.setHeader(
+    "Access-Control-Allow-Origin",
+    process.env.MOCK_CATALOG_ORIGIN ?? "http://127.0.0.1:3100"
+  );
   response.setHeader("Access-Control-Allow-Headers", "Content-Type");
   response.setHeader("Access-Control-Allow-Methods", "GET, PATCH, POST, OPTIONS");
 
@@ -419,6 +504,29 @@ const server = createServer(async (request, response) => {
 
   if (request.url === `/catalog/products/${product.slug}`) {
     response.end(JSON.stringify({ product }));
+    return;
+  }
+
+  if (request.url === `/catalog/products/${aquaProduct.slug}`) {
+    response.end(JSON.stringify({ product: aquaProduct }));
+    return;
+  }
+
+  const simpleProduct = [...accessoryProducts, ...tableProducts].find(
+    (candidate) => request.url === `/catalog/products/${candidate.slug}`
+  );
+  if (simpleProduct) {
+    response.end(
+      JSON.stringify({
+        product: {
+          ...simpleProduct,
+          description: "Local catalog fixture for browser tests.",
+          media: [],
+          shortDescription: `${simpleProduct.name} local browser fixture.`,
+          variants: []
+        }
+      })
+    );
     return;
   }
 
@@ -474,22 +582,28 @@ const server = createServer(async (request, response) => {
   if (request.url === "/checkout/sessions" && request.method === "POST") {
     const body = await readJsonBody(request);
     const changes = [];
+    let subtotalCents = 0;
     for (const item of body.items ?? []) {
-      const variant = product.variants.find(
+      const catalogProduct = [product, aquaProduct].find(
+        (candidate) => candidate.slug === item.productSlug
+      );
+      const variant = catalogProduct?.variants.find(
         (candidate) => candidate.key === item.selectedVariantKey
       );
-      const currentPrice = variant?.priceCents ?? product.priceCents;
+      const currentPrice = variant?.priceCents ?? catalogProduct?.priceCents ?? 0;
       const cartLineId = getMockCartLineId(item);
-      if (!product.v1CheckoutScope || (variant && !variant.isActive)) {
+      if (!catalogProduct?.v1CheckoutScope || (variant && !variant.isActive)) {
         changes.push({ cartLineId, status: "unavailable" });
       } else if (item.expectedUnitPriceCents !== currentPrice) {
         changes.push({
           cartLineId,
           currency: "CAD",
-          name: product.name,
+          name: catalogProduct.name,
           status: "price_changed",
           unitPriceCents: currentPrice
         });
+      } else {
+        subtotalCents += currentPrice * (item.quantity ?? 1);
       }
     }
     if (changes.length > 0) {
@@ -499,6 +613,7 @@ const server = createServer(async (request, response) => {
       );
       return;
     }
+    const shippingCents = subtotalCents > 10000 ? 0 : 1500;
     response.end(
       JSON.stringify({
         checkoutSessionId: "cs_test_local",
@@ -506,10 +621,10 @@ const server = createServer(async (request, response) => {
         currency: "CAD",
         orderId: "order-local",
         publicReference: "TPP-LOCAL",
-        shippingCents: 1500,
-        shippingLabel: "Flat-rate shipping",
-        subtotalCents: 800,
-        totalCents: 2300
+        shippingCents,
+        shippingLabel: shippingCents === 0 ? "Free shipping" : "Flat-rate shipping",
+        subtotalCents,
+        totalCents: subtotalCents + shippingCents
       })
     );
     return;

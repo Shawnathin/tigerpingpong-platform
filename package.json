@@ -19,6 +19,8 @@
     "scrape:tiger:test": "node tools/tiger-scraper/src/tiger-scraper.mjs --seed=/tables/ --seed=/accessories/ --limit=12 --max-depth=2 --output=var/scrapes/tigerpingpong/test",
     "validate:tiger-import": "node tools/tiger-import-validator/src/validate-tiger-import.mjs",
     "media:cloudinary:products": "node scripts/upload-product-media-to-cloudinary.mjs",
+    "media:cloudinary:aqua": "node scripts/media/upload-aqua-product-media.mjs",
+    "media:cloudinary:aqua-story": "node scripts/media/upload-aqua-story-media.mjs",
     "media:cloudinary:homepage-summer": "node scripts/media/upload-homepage-summer-media.mjs",
     "media:cloudinary:tables-category": "node scripts/media/upload-tables-category-media.mjs",
     "launch:env:validate": "node scripts/launch/validate-production-env.mjs",

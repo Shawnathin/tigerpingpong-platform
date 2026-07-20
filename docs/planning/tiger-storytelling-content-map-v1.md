@@ -419,116 +419,56 @@ Canonical gear copy is typed with an internal-only status. Aqua and Cover wordin
 
 ## Aqua product page
 
-### Hero purchase panel
+This is the approved Aqua V2 pilot. It replaces the earlier long-form template and does not automatically migrate any other product.
 
-Eyebrow:
+### Hero gallery and purchase rail
 
-> Tiger PingPong
+- Eyebrow: **Aqua outdoor / indoor paddle**
+- H1: **Aqua Paddle**
+- Descriptor: **Built for the paddle someone forgot outside.**
+- Body: **Weather-resistant, ultra-durable, and ready for patios, schools, community centres, rec rooms, and real life.**
+- Exact eight-image gallery opens with Ocean Blue and Canada Red. The selected package updates the featured image.
+- Purchasing Rail V2 shows **Starting at** the live base price until one of four required packages is selected, then announces the exact live variant price.
+- Shopper-facing packages: Single · Canada Red, Single · Ocean Blue, 2 paddles + 3 balls, and 4 paddles + 3 balls.
+- Availability: **In stock. Ready to ship.**
+- Shipping: **Over $100? Shipping’s on us. $100 or less? Just $15 across Canada.**
+- Help: **Not sure which pack? Call Tiger.**
+- Selection error: **Choose your Aqua first.**
+- Action: **Add to cart**
 
-Title:
+### Product proof
 
-> Aqua
+One low-profile glass strip:
 
-One-line descriptor:
+1. **Weather-resistant** — Ready for patios and changing conditions.
+2. **Made for hard use** — Schools, community centres, and shared spaces welcome.
+3. **Indoor works too** — The same resilience makes sense wherever paddles get shared, dropped, and forgotten.
 
-> Weather-resistant paddles for indoor and outdoor play.
+### Why Aqua exists
 
-Keep price, package choice, availability, shipping, and Add to Cart immediately visible. Do not put the full story above the purchase controls.
+- Eyebrow: **Why Aqua exists**
+- H2: **Something had to last longer.**
+- Body: **Schools and community centres were burning through soggy, split paddles. Patios and backyards weren’t much kinder. We made Aqua to handle more of real life—so everyone else could get on with the game.**
+- Pull line: **We did the hard work. You just play.**
 
-### Quick-fact strip
+### Designed in Vancouver
 
-Eyebrow:
+- Eyebrow: **Made with intention**
+- H2: **Designed in Vancouver.**
+- Body: **Aqua was our first custom injection-moulded paddle. The multi-step process was new territory, and we gave the packaging the same attention—right down to making it 100% recyclable. It took more work than expected. We stuck with it, so you can get on with playing.**
+- Caption: **The box works hard too. 100% recyclable packaging.**
+- Visual: the original four-paddle packaging photograph.
 
-> Quick facts
+### Closing purchase return
 
-Heading:
+- H2: **Ready for real life.**
+- Body: **Patio, school, cottage, rec room—pick your colour or pack and get the rally going.**
+- Signature: **Designed in Vancouver. Ready across Canada.**
+- CTAs: **Choose your Aqua** → `#buy-aqua`; **Call Tiger** → `tel:+18885525259`
 
-> Tough outside. Good anywhere.
+### Aqua claim holds
 
-Recommended four facts, subject to final product confirmation:
-
-1. Weather resistant — Sun, rain, and snow
-2. Textured surface — Consistent rebound
-3. Comfort grip — Easy everyday control
-4. Pack options — One, two, or four players
-
-### Why We Made It band
-
-Placement: immediately after quick facts.
-
-Eyebrow:
-
-> Why we made it
-
-Heading:
-
-> Because it rains. Duh.
-
-Body:
-
-> Kids leave paddles outside. Schools need gear that can take a beating. Nobody wants to rescue the equipment every time the forecast changes its mind. Aqua is weather-resistant, ultra-durable, and made for patios, parks, rec rooms, and every rally in between.
-
-### Indoor-use story
-
-Eyebrow:
-
-> Good indoors too
-
-Heading:
-
-> Outdoor tough. Indoor welcome.
-
-Body:
-
-> Aqua’s durable build and injection-moulded textured surface make it a smart choice for schools, offices, camps, and shared spaces—anywhere paddles get dropped, passed around, or treated like community property.
-
-### Feature section heading
-
-> All the good parts, close up.
-
-Recommended feature order:
-
-1. Weather resistance
-2. Textured playing surface and rebound
-3. Comfort grip and control
-4. High-use durability
-5. Package and colour choices
-6. Recyclable packaging
-
-### Aqua FAQ
-
-Publish now:
-
-#### Can I use Aqua indoors?
-
-> Absolutely. Aqua is made for indoor and outdoor recreational play. Its durable construction is especially useful in schools, offices, camps, rec rooms, and other shared spaces.
-
-#### What comes with each package?
-
-> Choose a single Coral Red paddle, a single Ocean Blue paddle, a two-paddle set with three balls, or a four-paddle set with three balls.
-
-Hold until product facts are confirmed:
-
-- Can Aqua stay outside permanently?
-- How does Aqua compare with a wood-and-rubber paddle for spin and speed?
-- What material is Aqua made from?
-- What does Aqua weigh?
-- Is Aqua covered by a warranty?
-- Are the included balls standard or outdoor-weighted?
-
-### Aqua mobile trims
-
-Why heading:
-
-> Because it rains.
-
-Why body:
-
-> Kids leave paddles outside. Schools need gear that lasts. Aqua is weather-resistant, ultra-durable, and ready for every rally in between.
-
-Indoor heading:
-
-> Tough outside. Smart inside.
+Do not publish weatherproofing, permanent outdoor-storage guidance, material, dimensions, weight, performance ratings, warranty, care, or unverified ball specifications. **Canada Red** is public copy; internal `coral` identifiers remain unchanged for cart and checkout compatibility.
 
 ---
 

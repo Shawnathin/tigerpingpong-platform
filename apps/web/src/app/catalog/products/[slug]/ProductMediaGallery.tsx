@@ -2,7 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { getVisibleProductMediaItems } from "../../../../lib/product-gallery";
+
+import { AquaProductVisual } from "./AquaProductVisual";
 import styles from "./page.module.css";
+
+const AQUA_PRODUCT_SLUG = "tiger-aqua-outdoor-indoor-paddle";
 
 export interface ProductMediaGalleryItem {
   altText: string | null;
@@ -36,28 +41,47 @@ export function ProductMediaGallery({
   productSlug,
   selectedVariantKey
 }: ProductMediaGalleryProps) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedMediaKey, setSelectedMediaKey] = useState<string | null>(
+    () => mediaItems[0]?.mediaKey ?? null
+  );
   const [failedMediaKeys, setFailedMediaKeys] = useState<Set<string>>(() => new Set());
-  const selectedMedia = mediaItems[selectedIndex] ?? mediaItems[0];
-  const activeIndex = mediaItems[selectedIndex] ? selectedIndex : 0;
+  const isAquaGallery = productSlug === AQUA_PRODUCT_SLUG;
+  const shoppingMediaItems = useMemo(
+    () =>
+      isAquaGallery
+        ? mediaItems.filter((media) => media.isPrimary || Boolean(media.variantKey))
+        : mediaItems,
+    [isAquaGallery, mediaItems]
+  );
+  const visibleMediaItems = useMemo(
+    () =>
+      isAquaGallery
+        ? shoppingMediaItems
+        : getVisibleProductMediaItems(shoppingMediaItems, selectedVariantKey),
+    [isAquaGallery, selectedVariantKey, shoppingMediaItems]
+  );
+  const requestedMedia =
+    visibleMediaItems.find((media) => media.mediaKey === selectedMediaKey) ?? visibleMediaItems[0];
+  const selectedMedia =
+    getUsableMedia(requestedMedia, failedMediaKeys) ??
+    visibleMediaItems.find(
+      (media) => !media.variantKey && getUsableMedia(media, failedMediaKeys)
+    ) ??
+    visibleMediaItems.find((media) => getUsableMedia(media, failedMediaKeys)) ??
+    requestedMedia;
   const label = getMediaLabel(selectedMedia, `${productName} image pending`);
   const selectedSrc = failedMediaKeys.has(selectedMedia.mediaKey) ? null : selectedMedia.src;
-  const hasMultipleImages = mediaItems.length > 1;
-  const thumbnailItems = useMemo(() => mediaItems, [mediaItems]);
+  const hasMultipleImages = visibleMediaItems.length > 1;
 
   useEffect(() => {
-    if (!selectedVariantKey) {
-      return;
-    }
+    const matchingVariantMedia = selectedVariantKey
+      ? shoppingMediaItems.find((media) => media.variantKey === selectedVariantKey)
+      : null;
+    const sharedMedia = shoppingMediaItems.find((media) => !media.variantKey);
+    const nextMedia = matchingVariantMedia ?? sharedMedia ?? shoppingMediaItems[0];
 
-    const variantMediaIndex = mediaItems.findIndex(
-      (media) => media.variantKey === selectedVariantKey
-    );
-
-    if (variantMediaIndex >= 0) {
-      setSelectedIndex(variantMediaIndex);
-    }
-  }, [mediaItems, selectedVariantKey]);
+    setSelectedMediaKey(nextMedia?.mediaKey ?? null);
+  }, [selectedVariantKey, shoppingMediaItems]);
 
   function markImageFailed(mediaKey: string): void {
     setFailedMediaKeys((currentFailedKeys) => {
@@ -70,7 +94,13 @@ export function ProductMediaGallery({
   return (
     <div className={styles.gallery} data-product-slug={productSlug}>
       <figure className={styles.mainMedia}>
-        {selectedSrc ? (
+        {isAquaGallery ? (
+          <AquaProductVisual
+            altText={selectedMedia.altText ?? productName}
+            testId="product-main-image"
+            variantKey={selectedMedia.variantKey}
+          />
+        ) : selectedSrc ? (
           <img
             data-testid="product-main-image"
             src={selectedSrc}
@@ -87,22 +117,30 @@ export function ProductMediaGallery({
 
       {hasMultipleImages ? (
         <div className={styles.thumbnailGrid} aria-label="Product images">
-          {thumbnailItems.map((media, index) => {
+          {visibleMediaItems.map((media) => {
             const thumbnailLabel = getMediaLabel(media, productName);
             const thumbnailSrc = failedMediaKeys.has(media.mediaKey) ? null : media.src;
-            const isSelected = index === activeIndex;
+            const isSelected = media.mediaKey === selectedMedia.mediaKey;
 
             return (
               <button
                 aria-label={`Show ${thumbnailLabel}`}
                 aria-pressed={isSelected}
                 className={styles.thumbnailButton}
+                data-media-key={media.mediaKey}
                 key={media.mediaKey}
-                onClick={() => setSelectedIndex(index)}
+                onClick={() => setSelectedMediaKey(media.mediaKey)}
                 type="button"
               >
                 <span className={styles.thumbnailImage}>
-                  {thumbnailSrc ? (
+                  {isAquaGallery ? (
+                    <AquaProductVisual
+                      altText={thumbnailLabel}
+                      compact
+                      decorative
+                      variantKey={media.variantKey}
+                    />
+                  ) : thumbnailSrc ? (
                     <img
                       src={thumbnailSrc}
                       alt=""
@@ -120,4 +158,15 @@ export function ProductMediaGallery({
       ) : null}
     </div>
   );
+}
+
+function getUsableMedia(
+  media: ProductMediaGalleryItem | undefined,
+  failedMediaKeys: Set<string>
+): ProductMediaGalleryItem | null {
+  if (!media?.src || failedMediaKeys.has(media.mediaKey)) {
+    return null;
+  }
+
+  return media;
 }

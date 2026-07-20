@@ -1,10 +1,9 @@
 import type { ProductMediaSummary } from "../types/catalog";
 
 const CLOUDINARY_CLOUD_NAME =
-  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ??
-  process.env.CLOUDINARY_CLOUD_NAME ??
-  "djfcisldm";
+  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? process.env.CLOUDINARY_CLOUD_NAME ?? "djfcisldm";
 const CLOUDINARY_PRODUCT_FOLDER = "tigerpingpong/products";
+export const PRODUCT_MEDIA_RESPONSIVE_WIDTHS = [480, 800, 1200, 1600] as const;
 
 export function resolveProductMediaUrl(
   media: Pick<
@@ -33,6 +32,38 @@ export function resolveProductMediaUrl(
 export function normalizeMediaSrc(src: string | null | undefined): string | null {
   const normalizedSrc = src?.trim();
   return normalizedSrc ? normalizedSrc : null;
+}
+
+export function buildResponsiveCloudinaryUrl(src: string, width: number): string {
+  if (!Number.isFinite(width) || width <= 0 || !isCloudinaryUploadUrl(src)) {
+    return src;
+  }
+
+  const roundedWidth = Math.round(width);
+  return src.replace("/image/upload/", `/image/upload/f_auto,q_auto,c_limit,w_${roundedWidth}/`);
+}
+
+export function buildResponsiveCloudinarySrcSet(
+  src: string,
+  widths: readonly number[] = PRODUCT_MEDIA_RESPONSIVE_WIDTHS
+): string | undefined {
+  if (!isCloudinaryUploadUrl(src)) {
+    return undefined;
+  }
+
+  return widths
+    .filter((width) => Number.isFinite(width) && width > 0)
+    .map((width) => `${buildResponsiveCloudinaryUrl(src, width)} ${Math.round(width)}w`)
+    .join(", ");
+}
+
+function isCloudinaryUploadUrl(src: string): boolean {
+  try {
+    const url = new URL(src);
+    return url.hostname === "res.cloudinary.com" && url.pathname.includes("/image/upload/");
+  } catch {
+    return false;
+  }
 }
 
 function normalizeCloudinaryPublicId(publicId: string | null | undefined): string | null {

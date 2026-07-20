@@ -1004,6 +1004,17 @@
   padding: clamp(18px, 3vw, 34px);
 }
 
+.gallery[data-gallery-presentation="table"] .mainMedia,
+.gallery[data-gallery-presentation="table"] .thumbnailImage {
+  background: #ffffff;
+}
+
+.gallery[data-gallery-presentation="table"] .mainMedia img,
+.gallery[data-gallery-presentation="table"] .thumbnailImage img {
+  object-fit: contain;
+  mix-blend-mode: normal;
+}
+
 .thumbnailGrid {
   width: fit-content;
   max-width: 100%;

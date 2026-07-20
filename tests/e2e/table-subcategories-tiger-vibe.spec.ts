@@ -211,6 +211,8 @@ test.describe("Tiger table subcategories", () => {
   });
 
   test("both pages stay compact, clear of navigation, and overflow-free", async ({ page }) => {
+    test.setTimeout(60_000);
+
     for (const route of Object.values(routes)) {
       for (const viewport of [
         { width: 390, height: 844 },

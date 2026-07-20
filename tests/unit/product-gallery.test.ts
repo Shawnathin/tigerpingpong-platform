@@ -14,9 +14,13 @@ const mediaItems = [
 ];
 
 describe("getVisibleProductMediaItems", () => {
-  it("shows only shared media before an option is selected", () => {
+  it("shows the complete curated gallery before an option is selected", () => {
     expect(getVisibleProductMediaItems(mediaItems, null).map(({ mediaKey }) => mediaKey)).toEqual([
       "01-main",
+      "02-ocean",
+      "03-canada-red",
+      "04-two-pack",
+      "05-four-pack",
       "06-face",
       "07-grip",
       "08-package"

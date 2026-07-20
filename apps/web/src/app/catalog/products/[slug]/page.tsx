@@ -486,7 +486,7 @@ function getCheckoutOptionGroups(product: CatalogProductDetail): CheckoutOptionG
     })
     .filter(
       (optionGroup) =>
-        optionGroup.values.length > 1 && isRequiredCheckoutOptionGroup(product, optionGroup)
+        optionGroup.values.length > 0 && isRequiredCheckoutOptionGroup(product, optionGroup)
     )
     .sort((left, right) => left.optionSortOrder - right.optionSortOrder)
     .map((optionGroup) => ({

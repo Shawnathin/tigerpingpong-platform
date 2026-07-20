@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
 import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
+const repoRoot = path.resolve(import.meta.dirname, "../..");
+const tableGalleryManifest = JSON.parse(
+  readFileSync(path.join(repoRoot, "data/media/table-product-gallery-manifest-v1.json"), "utf8")
+);
 
 const port = Number(process.env.MOCK_CATALOG_PORT ?? 3101);
 const product = {
@@ -361,6 +368,53 @@ const tableProducts = [
     primaryMedia: null
   }
 ];
+const tableVariantFixtures = {
+  "tiger-expo-outdoor-table": [
+    colorVariant("tiger-expo-outdoor-table-color-blue", "Blue", null),
+    colorVariant("tiger-expo-outdoor-table-color-grey", "Grey", null)
+  ],
+  "tiger-portland-indoor-table": [
+    colorVariant("tiger-portland-indoor-table-color-green", "Green", null),
+    colorVariant("tiger-portland-indoor-table-color-grey", "Grey", null)
+  ],
+  "tiger-portland-outdoor-table": [
+    portlandOutdoorVariant("tiger-portland-outdoor-table-v2-blue", "Blue"),
+    portlandOutdoorVariant("tiger-portland-outdoor-table-v2-grey", "Grey")
+  ],
+  "tiger-whistler-indoor-table": [
+    colorVariant("tiger-whistler-indoor-table-color-blue", "Blue", 160000),
+    colorVariant("tiger-whistler-indoor-table-color-green", "Green", 160000)
+  ],
+  "tiger-plaza-outdoor-table-grey": [
+    colorVariant("tiger-plaza-outdoor-table-grey-color-grey", "Grey", null)
+  ]
+};
+const tableDetailProducts = tableProducts.map((tableProduct) => {
+  const manifestProduct = tableGalleryManifest.products.find(
+    (candidate) => candidate.productSlug === tableProduct.slug
+  );
+  if (!manifestProduct) throw new Error(`Missing table gallery fixture: ${tableProduct.slug}`);
+  const media = manifestProduct.assets.map((asset) => ({
+    altText: asset.altText,
+    caption: null,
+    cloudinaryPublicId: asset.cloudinary.publicId,
+    cloudinarySecureUrl: asset.cloudinary.secureUrl,
+    isPrimary: asset.isPrimary,
+    mediaKey: asset.mediaKey,
+    role: asset.role,
+    sortOrder: asset.sortOrder,
+    title: null,
+    variantKey: asset.variantKey
+  }));
+  return {
+    ...tableProduct,
+    description: "Local manifest-backed table gallery fixture.",
+    media,
+    primaryMedia: media.find((asset) => asset.isPrimary) ?? null,
+    shortDescription: `${tableProduct.name} local browser fixture.`,
+    variants: tableVariantFixtures[tableProduct.slug]
+  };
+});
 let adminProductUpdatedAt = "2026-07-16T12:00:00.000Z";
 
 function getAdminProduct() {
@@ -512,7 +566,15 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  const simpleProduct = [...accessoryProducts, ...tableProducts].find(
+  const tableDetailProduct = tableDetailProducts.find(
+    (candidate) => request.url === `/catalog/products/${candidate.slug}`
+  );
+  if (tableDetailProduct) {
+    response.end(JSON.stringify({ product: tableDetailProduct }));
+    return;
+  }
+
+  const simpleProduct = accessoryProducts.find(
     (candidate) => request.url === `/catalog/products/${candidate.slug}`
   );
   if (simpleProduct) {
@@ -584,7 +646,7 @@ const server = createServer(async (request, response) => {
     const changes = [];
     let subtotalCents = 0;
     for (const item of body.items ?? []) {
-      const catalogProduct = [product, aquaProduct].find(
+      const catalogProduct = [product, aquaProduct, ...tableDetailProducts].find(
         (candidate) => candidate.slug === item.productSlug
       );
       const variant = catalogProduct?.variants.find(
@@ -655,6 +717,56 @@ function getMockCartLineId(item) {
     .map((option) => `${option.name.trim().toLowerCase()}=${option.value.trim().toLowerCase()}`)
     .join("&");
   return options ? `${item.productSlug}::${options}` : item.productSlug;
+}
+
+function colorVariant(key, color, priceCents) {
+  return {
+    currency: "CAD",
+    isActive: true,
+    key,
+    name: color,
+    options: [
+      {
+        displayName: "Color",
+        label: color,
+        name: "Color",
+        optionSortOrder: 10,
+        sortOrder: 10,
+        value: color
+      }
+    ],
+    priceCents,
+    purchaseModeOverride: null
+  };
+}
+
+function portlandOutdoorVariant(key, color) {
+  return {
+    currency: "CAD",
+    isActive: true,
+    key,
+    name: `V2 ${color}`,
+    options: [
+      {
+        displayName: "Model",
+        label: "V2",
+        name: "Model",
+        optionSortOrder: 10,
+        sortOrder: 10,
+        value: "V2"
+      },
+      {
+        displayName: "Color",
+        label: color,
+        name: "Color",
+        optionSortOrder: 20,
+        sortOrder: 20,
+        value: color
+      }
+    ],
+    priceCents: null,
+    purchaseModeOverride: null
+  };
 }
 
 server.listen(port, "127.0.0.1", () => {

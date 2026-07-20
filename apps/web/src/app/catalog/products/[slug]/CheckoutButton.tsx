@@ -246,8 +246,14 @@ export function CheckoutButton({
     [productOptions, selectedOptionValues]
   );
   const selectedOptionPrice = useMemo(
-    () => getSelectedOptionPrice(productOptions, selectedOptionValues),
-    [productOptions, selectedOptionValues]
+    () =>
+      getSelectedOptionPrice(
+        productOptions,
+        selectedOptionValues,
+        product.unitPriceCents,
+        product.currency
+      ),
+    [product.currency, product.unitPriceCents, productOptions, selectedOptionValues]
   );
   const isSelectionComplete = productOptions.every(
     (optionGroup) => !optionGroup.required || Boolean(selectedOptionValues[optionGroup.name])
@@ -458,11 +464,11 @@ export function CheckoutButton({
               <div className={styles.checkoutBox}>
                 {productOptions.length > 0 ? (
                   <div className={styles.optionSelectors}>
-                    {productOptions.map((optionGroup) => (
+                    {productOptions.map((optionGroup, groupIndex) => (
                       <fieldset className={styles.optionSelector} key={optionGroup.name}>
                         <legend>{getOptionLegend(optionGroup)}</legend>
                         <div className={styles.optionChoices}>
-                          {optionGroup.values.map((optionValue) => {
+                          {optionGroup.values.map((optionValue, optionIndex) => {
                             const inputId =
                               `${product.productSlug}-${optionGroup.name}-${optionValue.value}`
                                 .toLowerCase()
@@ -485,6 +491,11 @@ export function CheckoutButton({
                                   name={`${product.productSlug}-${optionGroup.name}`}
                                   onChange={() =>
                                     handleOptionChange(optionGroup.name, optionValue.value)
+                                  }
+                                  ref={
+                                    groupIndex === 0 && optionIndex === 0
+                                      ? firstOptionRef
+                                      : undefined
                                   }
                                   type="radio"
                                   value={optionValue.value}
@@ -578,36 +589,43 @@ function getSelectionError(productOptions: ProductOptionGroup[]): string {
 
 function getSelectedOptionPrice(
   productOptions: ProductOptionGroup[],
-  selectedOptionValues: Record<string, string>
+  selectedOptionValues: Record<string, string>,
+  basePriceCents: number,
+  baseCurrency: string
 ): {
   currency: string;
   priceCents: number;
   thumbnailSrc?: string;
   variantKey?: string;
 } | null {
-  const pricedSelections = productOptions
+  const selections = productOptions
     .map((optionGroup) => {
       const selectedValue = selectedOptionValues[optionGroup.name];
       return optionGroup.values.find((value) => value.value === selectedValue);
     })
-    .filter(
-      (
-        optionValue
-      ): optionValue is ProductOptionValue & {
-        priceCents: number;
-      } => Boolean(optionValue && typeof optionValue.priceCents === "number")
-    );
+    .filter((optionValue): optionValue is ProductOptionValue => Boolean(optionValue));
 
-  if (pricedSelections.length !== 1) {
+  if (productOptions.length === 0 || selections.length !== productOptions.length) {
     return null;
   }
 
-  const pricedSelection = pricedSelections[0];
+  const explicitPrices = selections
+    .map((selection) => selection.priceCents)
+    .filter((priceCents): priceCents is number => typeof priceCents === "number");
+  const variantKeys = [
+    ...new Set(
+      selections
+        .map((selection) => selection.variantKey)
+        .filter((variantKey): variantKey is string => Boolean(variantKey))
+    )
+  ];
+  const selectedCurrency = selections.find((selection) => selection.currency)?.currency;
+  const selectedThumbnail = selections.find((selection) => selection.thumbnailSrc)?.thumbnailSrc;
 
   return {
-    currency: pricedSelection.currency ?? "CAD",
-    priceCents: pricedSelection.priceCents,
-    thumbnailSrc: pricedSelection.thumbnailSrc,
-    variantKey: pricedSelection.variantKey
+    currency: selectedCurrency ?? baseCurrency,
+    priceCents: explicitPrices.length === 1 ? explicitPrices[0] : basePriceCents,
+    thumbnailSrc: selectedThumbnail,
+    variantKey: variantKeys.length === 1 ? variantKeys[0] : undefined
   };
 }

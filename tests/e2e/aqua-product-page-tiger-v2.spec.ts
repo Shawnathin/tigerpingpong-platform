@@ -214,15 +214,16 @@ test("Aqua keeps its heading, image, focus, and reduced-motion contracts", async
   await expect(page.locator('input[value="single-coral-red"]')).toBeFocused();
 });
 
-test("legacy table and accessory products do not receive Purchasing Rail V2", async ({ page }) => {
-  for (const path of [
-    "/catalog/products/tiger-expo-outdoor-table",
-    "/catalog/products/tiger-vice-paddle"
-  ]) {
-    await page.goto(path);
-    await expect(page.locator('[data-purchase-presentation="tiger-v2"]')).toHaveCount(0);
-    await expect(page.locator("h1")).toHaveCount(1);
-  }
+test("tables use Purchasing Rail V2 while non-table accessories retain the legacy rail", async ({
+  page
+}) => {
+  await page.goto("/catalog/products/tiger-expo-outdoor-table");
+  await expect(page.locator('[data-purchase-presentation="tiger-v2"]')).toHaveCount(1);
+  await expect(page.locator("h1")).toHaveCount(1);
+
+  await page.goto("/catalog/products/tiger-vice-paddle");
+  await expect(page.locator('[data-purchase-presentation="tiger-v2"]')).toHaveCount(0);
+  await expect(page.locator("h1")).toHaveCount(1);
 });
 
 test("capture Aqua V2 visual evidence", async ({ page }) => {

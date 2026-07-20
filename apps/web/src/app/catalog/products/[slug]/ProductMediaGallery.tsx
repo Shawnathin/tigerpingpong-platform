@@ -3,11 +3,22 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { getVisibleProductMediaItems } from "../../../../lib/product-gallery";
+import {
+  buildResponsiveCloudinarySrcSet,
+  buildResponsiveCloudinaryUrl
+} from "../../../../lib/product-media";
 
 import { AquaProductVisual } from "./AquaProductVisual";
 import styles from "./page.module.css";
 
 const AQUA_PRODUCT_SLUG = "tiger-aqua-outdoor-indoor-paddle";
+const TABLE_PRODUCT_SLUGS = new Set([
+  "tiger-expo-outdoor-table",
+  "tiger-portland-indoor-table",
+  "tiger-portland-outdoor-table",
+  "tiger-whistler-indoor-table",
+  "tiger-plaza-outdoor-table-grey"
+]);
 
 export interface ProductMediaGalleryItem {
   altText: string | null;
@@ -46,6 +57,7 @@ export function ProductMediaGallery({
   );
   const [failedMediaKeys, setFailedMediaKeys] = useState<Set<string>>(() => new Set());
   const isAquaGallery = productSlug === AQUA_PRODUCT_SLUG;
+  const isTableGallery = TABLE_PRODUCT_SLUGS.has(productSlug);
   const shoppingMediaItems = useMemo(
     () =>
       isAquaGallery
@@ -78,7 +90,9 @@ export function ProductMediaGallery({
       ? shoppingMediaItems.find((media) => media.variantKey === selectedVariantKey)
       : null;
     const sharedMedia = shoppingMediaItems.find((media) => !media.variantKey);
-    const nextMedia = matchingVariantMedia ?? sharedMedia ?? shoppingMediaItems[0];
+    const nextMedia = selectedVariantKey
+      ? (matchingVariantMedia ?? sharedMedia ?? shoppingMediaItems[0])
+      : shoppingMediaItems[0];
 
     setSelectedMediaKey(nextMedia?.mediaKey ?? null);
   }, [selectedVariantKey, shoppingMediaItems]);
@@ -92,7 +106,11 @@ export function ProductMediaGallery({
   }
 
   return (
-    <div className={styles.gallery} data-product-slug={productSlug}>
+    <div
+      className={styles.gallery}
+      data-gallery-presentation={isAquaGallery ? "aqua" : isTableGallery ? "table" : "default"}
+      data-product-slug={productSlug}
+    >
       <figure className={styles.mainMedia}>
         {isAquaGallery ? (
           <AquaProductVisual
@@ -103,7 +121,9 @@ export function ProductMediaGallery({
         ) : selectedSrc ? (
           <img
             data-testid="product-main-image"
-            src={selectedSrc}
+            src={isTableGallery ? buildResponsiveCloudinaryUrl(selectedSrc, 1200) : selectedSrc}
+            srcSet={isTableGallery ? buildResponsiveCloudinarySrcSet(selectedSrc) : undefined}
+            sizes={isTableGallery ? "(max-width: 899px) 92vw, 58vw" : undefined}
             alt={selectedMedia.altText ?? productName}
             onError={() => markImageFailed(selectedMedia.mediaKey)}
           />
@@ -142,7 +162,11 @@ export function ProductMediaGallery({
                     />
                   ) : thumbnailSrc ? (
                     <img
-                      src={thumbnailSrc}
+                      src={
+                        isTableGallery
+                          ? buildResponsiveCloudinaryUrl(thumbnailSrc, 480)
+                          : thumbnailSrc
+                      }
                       alt=""
                       aria-hidden="true"
                       onError={() => markImageFailed(media.mediaKey)}

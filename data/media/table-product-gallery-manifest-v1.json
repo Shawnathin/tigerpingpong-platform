@@ -1,0 +1,638 @@
+{
+  "schemaVersion": 1,
+  "status": "cloudinary_verified_pending_local_preview_and_catalog_apply",
+  "generatedAt": "2026-07-19T00:00:00.000Z",
+  "sourceRoot": "exports/table-gallery-media",
+  "delivery": {
+    "widths": [480, 800, 1200, 1600],
+    "transformation": "f_auto,q_auto,c_limit",
+    "minimumUsefulSourceEdge": 1600,
+    "neverUpscale": true
+  },
+  "safety": {
+    "rawMediaCommitted": false,
+    "productionCatalogWritten": false,
+    "cloudinaryAssetsDeleted": false,
+    "databaseHistoryDeleted": false
+  },
+  "products": [
+    {
+      "productSlug": "tiger-expo-outdoor-table",
+      "catalogLeadVariantKey": "tiger-expo-outdoor-table-color-blue",
+      "approvedVariantKeys": [
+        "tiger-expo-outdoor-table-color-blue",
+        "tiger-expo-outdoor-table-color-grey"
+      ],
+      "obsoleteVariantLabels": ["Green", "Black"],
+      "assets": [
+        {
+          "mediaKey": "tiger-expo-outdoor-table-primary-01",
+          "role": "primary",
+          "variantKey": "tiger-expo-outdoor-table-color-blue",
+          "sortOrder": 1,
+          "isPrimary": true,
+          "altText": "Tiger Expo Outdoor PingPong table with a blue top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
+            "sha256": "ccfa9fff309f028a16a2dbcdede972f17b8f9b13793e18d8e786b9c6a842c88c",
+            "width": 5000,
+            "height": 2500
+          },
+          "cloudinary": {
+            "assetId": "38aeb2c68d9e14ca6231ea1b2c8b715f",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary",
+            "version": "1784269865",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-variant-grey-01",
+          "role": "variant",
+          "variantKey": "tiger-expo-outdoor-table-color-grey",
+          "sortOrder": 2,
+          "isPrimary": false,
+          "altText": "Tiger Expo Outdoor PingPong table with a grey top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784390092/tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1.jpg",
+            "sha256": "0a0a86e303efcbb44cf4dfa943a94f1ad6bef918ee4c999ca2cb65b673f994de",
+            "width": 5000,
+            "height": 2500
+          },
+          "cloudinary": {
+            "assetId": "e5f5453e11f340ae585d6f44d19b129d",
+            "publicId": "tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1",
+            "version": "1784390092",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784390092/tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-lifestyle-vancouver-01",
+          "role": "lifestyle",
+          "variantKey": null,
+          "sortOrder": 3,
+          "isPrimary": false,
+          "altText": "Tiger Expo Outdoor table set up at a Whistler community event",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "expo-event-vancouver-v1.jpg",
+            "sha256": "c7d58167bfbf06845ccccf5853df72d5795bd5edd13402166019883af14a1ae4",
+            "width": 2400,
+            "height": 1800
+          },
+          "cloudinary": {
+            "assetId": "4f2e0eb8483d55a6025fcf723edb36d3",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/gallery-restoration/expo-event-vancouver-v1",
+            "version": "1784515184",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515184/tigerpingpong/products/tiger-expo-outdoor-table/gallery-restoration/expo-event-vancouver-v1.jpg",
+            "bytes": 1719439
+          }
+        }
+      ]
+    },
+    {
+      "productSlug": "tiger-portland-indoor-table",
+      "catalogLeadVariantKey": "tiger-portland-indoor-table-color-green",
+      "approvedVariantKeys": [
+        "tiger-portland-indoor-table-color-green",
+        "tiger-portland-indoor-table-color-grey"
+      ],
+      "assets": [
+        {
+          "mediaKey": "tiger-portland-indoor-table-primary-01",
+          "role": "primary",
+          "variantKey": "tiger-portland-indoor-table-color-green",
+          "sortOrder": 1,
+          "isPrimary": true,
+          "altText": "Tiger Portland Indoor PingPong table with a green top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "portland-indoor-green-v1.jpg",
+            "sha256": "c7b712c03f402fe7e2350df639930fb2138d032260032bed28d3e34efd3efc4b",
+            "width": 2400,
+            "height": 1200
+          },
+          "cloudinary": {
+            "assetId": "789349e50f21f40bc8a348f5e494ec40",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-green-v1",
+            "version": "1784515185",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515185/tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-green-v1.jpg",
+            "bytes": 326622
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-variant-grey-01",
+          "role": "variant",
+          "variantKey": "tiger-portland-indoor-table-color-grey",
+          "sortOrder": 2,
+          "isPrimary": false,
+          "altText": "Tiger Portland Indoor PingPong table with a grey top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784390093/tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1.jpg",
+            "sha256": "0a800d9a34ecc294186dafa5c3fb972c2773895145a73300807258d07c6dd18a",
+            "width": 2400,
+            "height": 1200
+          },
+          "cloudinary": {
+            "assetId": "24e7d5fd2f3ab0de9eda146daedf7add",
+            "publicId": "tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1",
+            "version": "1784390093",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784390093/tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-lifestyle-lobby-01",
+          "role": "lifestyle",
+          "variantKey": null,
+          "sortOrder": 3,
+          "isPrimary": false,
+          "altText": "Tiger Portland Indoor table in a bright Vancouver office game room",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "portland-indoor-lobby-v1.jpg",
+            "sha256": "380d02d549489b7095c6f67cdc996a96a6d778d2950e3dbca0c8c7d60a8532ba",
+            "width": 2400,
+            "height": 1800
+          },
+          "cloudinary": {
+            "assetId": "b44c74ed231e4f1bda27e80260c25c8b",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-lobby-v1",
+            "version": "1784515186",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515186/tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-lobby-v1.jpg",
+            "bytes": 1123916
+          }
+        }
+      ]
+    },
+    {
+      "productSlug": "tiger-portland-outdoor-table",
+      "catalogLeadVariantKey": "tiger-portland-outdoor-table-v2-blue",
+      "approvedVariantKeys": [
+        "tiger-portland-outdoor-table-v2-blue",
+        "tiger-portland-outdoor-table-v2-grey"
+      ],
+      "qualityException": "Owner approved the current V2 views. Exact current-model originals top out at 800–1280 pixels; they are preserved without upscaling. The local Portland Outdoor v1 archive is prohibited.",
+      "assets": [
+        {
+          "mediaKey": "tiger-portland-outdoor-table-gallery-01",
+          "role": "primary",
+          "variantKey": "tiger-portland-outdoor-table-v2-blue",
+          "sortOrder": 1,
+          "isPrimary": true,
+          "altText": "Tiger Portland Outdoor V2 PingPong table with a blue top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg",
+            "sha256": "8693831df8693ba12fef602fbad17313704fab7738735281c9e4fec1549b4e98",
+            "width": 1280,
+            "height": 853,
+            "publishedCanvasWidth": 1600,
+            "publishedCanvasHeight": 1600
+          },
+          "cloudinary": {
+            "assetId": "8b54e9c01ec284d1a5fd4779ce707e0c",
+            "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01",
+            "version": "1781745057",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-primary-01",
+          "role": "variant",
+          "variantKey": "tiger-portland-outdoor-table-v2-grey",
+          "sortOrder": 2,
+          "isPrimary": false,
+          "altText": "Tiger Portland Outdoor V2 PingPong table with a grey top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745058/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02.jpg",
+            "sha256": "a5db80bb8fc9120405afb68ed07936d7deca352e655e5dbe2035b84df0c7cae0",
+            "width": 1280,
+            "height": 853,
+            "publishedCanvasWidth": 1600,
+            "publishedCanvasHeight": 1600
+          },
+          "cloudinary": {
+            "assetId": "c616d8f508a1707a8c7b41841f5a8598",
+            "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02",
+            "version": "1781745058",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745058/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-variant-grey-playback-01",
+          "role": "variant",
+          "variantKey": "tiger-portland-outdoor-table-v2-grey",
+          "sortOrder": 3,
+          "isPrimary": false,
+          "altText": "Tiger Portland Outdoor V2 grey table set up for single-player practice",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "portland-outdoor-grey-playback-v1.jpg",
+            "sourceUrl": "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1",
+            "sha256": "a2b152d40135c79d6222ae508bc40f5c2d446f7d81cf020f95e1a670746baf3a",
+            "width": 800,
+            "height": 750
+          },
+          "cloudinary": {
+            "assetId": "f931e6bce087760e6b970d571f3eba04",
+            "publicId": "tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1",
+            "version": "1784515187",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg",
+            "bytes": 112078
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-gallery-03",
+          "role": "variant",
+          "variantKey": "tiger-portland-outdoor-table-v2-grey",
+          "sortOrder": 4,
+          "isPrimary": false,
+          "altText": "Tiger Portland Outdoor V2 grey table folded for compact storage",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03.jpg",
+            "sha256": "d864a53b6e5400024dbcba707ebae55c2088334490c79553cddf4badc0d43ef9",
+            "width": 1000,
+            "height": 1000,
+            "publishedCanvasWidth": 1600,
+            "publishedCanvasHeight": 1600
+          },
+          "cloudinary": {
+            "assetId": "4195d28d8b3d5629aaa31669fbdb3423",
+            "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03",
+            "version": "1781745059",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-gallery-04",
+          "role": "variant",
+          "variantKey": "tiger-portland-outdoor-table-v2-blue",
+          "sortOrder": 5,
+          "isPrimary": false,
+          "altText": "Tiger Portland Outdoor V2 blue table set up for single-player practice",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04.jpg",
+            "sha256": "ce866be728482a0f8f0ca4d41b87f3b85e6caeb1659071dcd6d6d0c8be47b63e",
+            "width": 1000,
+            "height": 1000,
+            "publishedCanvasWidth": 1600,
+            "publishedCanvasHeight": 1600
+          },
+          "cloudinary": {
+            "assetId": "5b1d07d73c7d9021f29e2a39b053304f",
+            "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04",
+            "version": "1781745059",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-detail-net-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 6,
+          "isPrimary": false,
+          "altText": "Close view of the adjustable net on the Tiger Portland Outdoor V2 table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "portland-outdoor-net-detail-v1.jpg",
+            "sourceUrl": "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/products/112/775/Adjustable_net__31391.1685566300.jpg?c=1",
+            "sha256": "dd978166f3663faae518f5b1b13cf3c0470e3ff898d59caa2972bba17546aec0",
+            "width": 1000,
+            "height": 750
+          },
+          "cloudinary": {
+            "assetId": "c793761a44e934ee6852db83870bdd45",
+            "publicId": "tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1",
+            "version": "1784515188",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg",
+            "bytes": 145866
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-detail-storage-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 7,
+          "isPrimary": false,
+          "altText": "Paddle and ball storage built into the Tiger Portland Outdoor V2 table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "portland-outdoor-storage-detail-v1.jpg",
+            "sourceUrl": "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/products/112/776/Paddle_and_Ball_Storege__12960.1685566300.jpg?c=1",
+            "sha256": "18a7c02fcafb3f261e47c188a37723fe198055aaae2069a2fed4b9a819d9feca",
+            "width": 1000,
+            "height": 750
+          },
+          "cloudinary": {
+            "assetId": "554d2c1902586a848fa47f7c16068099",
+            "publicId": "tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1",
+            "version": "1784515188",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg",
+            "bytes": 117221
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-gallery-05",
+          "role": "variant",
+          "variantKey": "tiger-portland-outdoor-table-v2-blue",
+          "sortOrder": 8,
+          "isPrimary": false,
+          "altText": "Tiger Portland Outdoor V2 blue table folded for compact storage",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745060/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05.jpg",
+            "sha256": "47a3e3f5b1491fb67f2c66b84b4b1afcae627c3b43ef6b78cf08cf20eec0590d",
+            "width": 1000,
+            "height": 1000,
+            "publishedCanvasWidth": 1600,
+            "publishedCanvasHeight": 1600
+          },
+          "cloudinary": {
+            "assetId": "6bda0c863fbeda8d21b3ca3e91c162a2",
+            "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05",
+            "version": "1781745060",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745060/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-lifestyle-patio-01",
+          "role": "lifestyle",
+          "variantKey": null,
+          "sortOrder": 9,
+          "isPrimary": false,
+          "altText": "Tiger Portland Outdoor table on a shaded garden patio",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "approved",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784388274/tigerpingpong/storefront/tables/hero-portland-patio.jpg",
+            "sha256": "f74234261424f52474becd0f98edf6f7948ef5276c1c2be86eca869e3a471a5d",
+            "width": 3264,
+            "height": 2448
+          },
+          "cloudinary": {
+            "assetId": "4da1691b28701f75f49446af9887c7da",
+            "publicId": "tigerpingpong/storefront/tables/hero-portland-patio",
+            "version": "1784388274",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784388274/tigerpingpong/storefront/tables/hero-portland-patio.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "productSlug": "tiger-whistler-indoor-table",
+      "catalogLeadVariantKey": "tiger-whistler-indoor-table-color-blue",
+      "approvedVariantKeys": [
+        "tiger-whistler-indoor-table-color-blue",
+        "tiger-whistler-indoor-table-color-green"
+      ],
+      "assets": [
+        {
+          "mediaKey": "tiger-whistler-indoor-table-primary-01",
+          "role": "primary",
+          "variantKey": "tiger-whistler-indoor-table-color-blue",
+          "sortOrder": 1,
+          "isPrimary": true,
+          "altText": "Tiger Whistler Indoor PingPong table with a blue top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269867/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg",
+            "sha256": "3025b851bd544cb132ef67d76dde926da253b2f08f928b552a5b50cad81f3b8a",
+            "width": 5000,
+            "height": 2500
+          },
+          "cloudinary": {
+            "assetId": "70758fbb26ef4944ec3568ddcfecbdad",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary",
+            "version": "1784269867",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269867/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-whistler-indoor-table-variant-green-01",
+          "role": "variant",
+          "variantKey": "tiger-whistler-indoor-table-color-green",
+          "sortOrder": 2,
+          "isPrimary": false,
+          "altText": "Tiger Whistler Indoor PingPong table with a green top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "whistler-indoor-green-v1.jpg",
+            "sha256": "b3b1dab9c283d3acc81df911c6e618c895629d8263a882cf9e052704238fdb4c",
+            "width": 2400,
+            "height": 1200
+          },
+          "cloudinary": {
+            "assetId": "0e34530fec9c4b4e18732b108be65c2c",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-green-v1",
+            "version": "1784515189",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515189/tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-green-v1.jpg",
+            "bytes": 357879
+          }
+        },
+        {
+          "mediaKey": "tiger-whistler-indoor-table-lifestyle-lobby-01",
+          "role": "lifestyle",
+          "variantKey": null,
+          "sortOrder": 3,
+          "isPrimary": false,
+          "altText": "Tiger Whistler Indoor table in a modern Vancouver lobby",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "whistler-indoor-lobby-v1.jpg",
+            "sha256": "5f889d2e706fc6a0f5315b79be5fe76fbad6859c4c01d2ed2cdaf72f45b76491",
+            "width": 1800,
+            "height": 2400
+          },
+          "cloudinary": {
+            "assetId": "818334dfc1f1fbc14d8616bc96343da4",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-lobby-v1",
+            "version": "1784515190",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515190/tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-lobby-v1.jpg",
+            "bytes": 854767
+          }
+        }
+      ]
+    },
+    {
+      "productSlug": "tiger-plaza-outdoor-table-grey",
+      "catalogLeadVariantKey": "tiger-plaza-outdoor-table-grey-color-grey",
+      "approvedVariantKeys": ["tiger-plaza-outdoor-table-grey-color-grey"],
+      "assets": [
+        {
+          "mediaKey": "tiger-plaza-outdoor-table-grey-primary-01",
+          "role": "primary",
+          "variantKey": "tiger-plaza-outdoor-table-grey-color-grey",
+          "sortOrder": 1,
+          "isPrimary": true,
+          "altText": "Tiger Plaza Outdoor PingPong table in grey",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "reuse",
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg",
+            "sha256": "ba2104ee07facf61b3903bd336bce028b05dc7cb9b46ac8eb3793cdb685a1b8c",
+            "width": 5000,
+            "height": 2500
+          },
+          "cloudinary": {
+            "assetId": "cc74b09a143b898a11b551eee819922f",
+            "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary",
+            "version": "1784269866",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-plaza-outdoor-table-grey-lifestyle-community-01",
+          "role": "lifestyle",
+          "variantKey": null,
+          "sortOrder": 2,
+          "isPrimary": false,
+          "altText": "Tiger Plaza Outdoor table in a downtown Vancouver shared space",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "plaza-community-space-v1.jpg",
+            "sha256": "ba9279c85552479684476b21c27e784c491c253950ed7a287cda243f0e54cdcc",
+            "width": 1800,
+            "height": 2400
+          },
+          "cloudinary": {
+            "assetId": "5b2b24c2fde15b181b0125cce5f8ac58",
+            "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-community-space-v1",
+            "version": "1784515191",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515191/tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-community-space-v1.jpg",
+            "bytes": 2404315
+          }
+        },
+        {
+          "mediaKey": "tiger-plaza-outdoor-table-grey-lifestyle-urban-01",
+          "role": "lifestyle",
+          "variantKey": null,
+          "sortOrder": 3,
+          "isPrimary": false,
+          "altText": "Tiger Plaza Outdoor table in a public Vancouver plaza",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "upload",
+          "source": {
+            "type": "local",
+            "relativePath": "plaza-urban-plaza-v1.jpg",
+            "sha256": "edb8436ffdc0140b9ab2bc48fd095f3c2a6e63a29acf3c2195e2fa94a9ac1188",
+            "width": 2400,
+            "height": 1713
+          },
+          "cloudinary": {
+            "assetId": "c5faab217d9f117b51ef68c5fac77ca2",
+            "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-urban-plaza-v1",
+            "version": "1784515192",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515192/tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-urban-plaza-v1.jpg",
+            "bytes": 1764304
+          }
+        }
+      ]
+    }
+  ]
+}

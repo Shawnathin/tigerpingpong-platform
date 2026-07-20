@@ -16,7 +16,9 @@ import {
 import { getCanonicalUrl } from "../../../../lib/seo";
 import {
   getTigerAquaPurchaseOptionStory,
-  tigerAquaProductStory
+  tigerAquaProductStory,
+  tigerTablePurchaseStory,
+  tigerTablesProductStories
 } from "../../../../lib/tiger-story";
 import type {
   CatalogProductDetail,
@@ -352,7 +354,7 @@ function getUniqueMediaItems(mediaItems: ProductMediaGalleryItem[]): ProductMedi
 }
 
 interface CheckoutOptionValue {
-  accent?: "canada-red" | "ocean-blue" | "pack";
+  accent?: "blue" | "canada-red" | "green" | "grey" | "ocean-blue" | "pack";
   currency?: string;
   label: string;
   priceCents?: number;
@@ -486,7 +488,7 @@ function getCheckoutOptionGroups(product: CatalogProductDetail): CheckoutOptionG
     })
     .filter(
       (optionGroup) =>
-        optionGroup.values.length > 1 && isRequiredCheckoutOptionGroup(product, optionGroup)
+        optionGroup.values.length > 0 && isRequiredCheckoutOptionGroup(product, optionGroup)
     )
     .sort((left, right) => left.optionSortOrder - right.optionSortOrder)
     .map((optionGroup) => ({
@@ -520,6 +522,52 @@ function getAquaCheckoutOptionGroups(
         shopperLabel: story.shopperLabel,
         thumbnailAlt: story.altText,
         thumbnailSrc: story.src
+      };
+    })
+  }));
+}
+
+function getTableOptionAccent(label: string): CheckoutOptionValue["accent"] {
+  const normalizedLabel = normalizeOptionKey(label);
+
+  if (normalizedLabel.includes("blue")) {
+    return "blue";
+  }
+
+  if (normalizedLabel.includes("green")) {
+    return "green";
+  }
+
+  if (normalizedLabel.includes("grey") || normalizedLabel.includes("gray")) {
+    return "grey";
+  }
+
+  return undefined;
+}
+
+function getTableCheckoutOptionGroups(
+  product: CatalogProductDetail,
+  optionGroups: CheckoutOptionGroup[],
+  mediaItems: ProductMediaGalleryItem[]
+): CheckoutOptionGroup[] {
+  if (!isTableProduct(product)) {
+    return optionGroups;
+  }
+
+  return optionGroups.map((optionGroup) => ({
+    ...optionGroup,
+    values: optionGroup.values.map((optionValue) => {
+      const variantMedia = mediaItems.find(
+        (mediaItem) =>
+          Boolean(optionValue.variantKey) && mediaItem.variantKey === optionValue.variantKey
+      );
+
+      return {
+        ...optionValue,
+        accent: getTableOptionAccent(optionValue.label),
+        shopperLabel: optionValue.label,
+        thumbnailAlt: variantMedia?.altText ?? undefined,
+        thumbnailSrc: variantMedia?.src ?? undefined
       };
     })
   }));
@@ -826,12 +874,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     return <ErrorState error={error ?? "Product details are temporarily unavailable."} />;
   }
 
-  const checkoutOptionGroups = getAquaCheckoutOptionGroups(
+  const mediaItems = getMediaItems(product);
+  const checkoutOptionGroups = getTableCheckoutOptionGroups(
     product,
-    getCheckoutOptionGroups(product)
+    getAquaCheckoutOptionGroups(product, getCheckoutOptionGroups(product)),
+    mediaItems
   );
   const isCheckoutEligible = isProductCheckoutEligible(product, checkoutOptionGroups);
-  const mediaItems = getMediaItems(product);
   const normalizedContent = getProductContentBySlug(product.slug);
   const catalogProducts = await loadCatalogProductSummaries();
   const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
@@ -842,11 +891,17 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const productJsonLd = getProductJsonLd(product, normalizedContent, mediaItems);
   const isTable = isTableProduct(product);
   const isAqua = product.slug === AQUA_PRODUCT_SLUG;
+  const tableStory = isTable
+    ? tigerTablesProductStories[product.slug as keyof typeof tigerTablesProductStories]
+    : undefined;
+  const hasTableV2 = Boolean(isTable && tableStory);
   const heroClassName = isAqua
     ? `${styles.productHero} ${styles.accessoryHero} ${styles.aquaHero}`
-    : isTable
-      ? styles.productHero
-      : `${styles.productHero} ${styles.accessoryHero}`;
+    : hasTableV2
+      ? `${styles.productHero} ${styles.tableV2Hero}`
+      : isTable
+        ? styles.productHero
+        : `${styles.productHero} ${styles.accessoryHero}`;
   const basePriceLabel = formatPrice(
     isAqua ? getCartProductPriceCents(product) : product.priceCents,
     product.currency
@@ -866,7 +921,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         <ProductHeroPurchase
           availabilityMessage={
-            isAqua ? tigerAquaProductStory.purchase.availability : V1_IN_STOCK_HANDLING_COPY
+            isAqua
+              ? tigerAquaProductStory.purchase.availability
+              : hasTableV2
+                ? tigerTablePurchaseStory.availability
+                : V1_IN_STOCK_HANDLING_COPY
           }
           basePriceLabel={basePriceLabel}
           categoryName={product.category.name}
@@ -888,7 +947,17 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   supportHref: tigerAquaProductStory.purchase.help.href,
                   supportText: tigerAquaProductStory.purchase.help.label
                 }
-              : undefined
+              : hasTableV2 && tableStory
+                ? {
+                    descriptor: tableStory.descriptor,
+                    mode: "tiger-v2",
+                    optionLegend: tigerTablePurchaseStory.optionLegend,
+                    selectionError: tigerTablePurchaseStory.selectionError,
+                    summary: tableStory.body,
+                    supportHref: tigerTablePurchaseStory.help.href,
+                    supportText: tigerTablePurchaseStory.help.label
+                  }
+                : undefined
           }
           product={toCartProductInput(product)}
           productName={product.name}
@@ -898,7 +967,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           shippingLines={
             isAqua
               ? [...tigerAquaProductStory.purchase.shipping]
-              : getPurchaseShippingLines(product)
+              : hasTableV2
+                ? [...tigerTablePurchaseStory.shipping]
+                : getPurchaseShippingLines(product)
           }
           shippingLinesAreFixed={isTable || isAqua}
         />

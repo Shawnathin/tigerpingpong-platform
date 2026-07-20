@@ -141,6 +141,66 @@ final result: passed
 
 ---
 
+# Table Purchasing Rail V2 — Launch-Day QA
+
+Date: 2026-07-20
+
+Branch: `codex/table-gallery-variant-restoration`
+
+Scope: Apply Aqua's approved Purchasing Rail V2 skin to Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler Indoor, and Plaza Outdoor without changing catalog or checkout behaviour.
+
+## Findings
+
+- All five tables use a content-height glass purchasing card with their existing Tiger descriptor and story, exact live price, colour selection, availability, free-table-shipping reassurance, Add to cart action, and phone help.
+- Blue, Grey, and Green choices use the first approved image for the exact existing variant on a contained white canvas. Plaza's single Grey choice spans the selector width.
+- The lead gallery image still does not preselect a colour. Missing selections focus the first radio and show **Choose your table colour first.**
+- Selecting a colour still changes the featured gallery image and sends the exact existing variant key and `Top colour` option through the cart.
+- Desktop captures at 1440 pixels show the Add to cart action inside every initial table purchase card without the former empty rail height.
+- Mobile captures at 390 pixels retain the compact gallery-first flow, two-column choices where applicable, full-width Plaza choice, and zero document overflow.
+- Aqua's approved V2 page is unchanged. Vice and other non-table products retain the legacy purchasing presentation.
+- No media upload, catalog write, API, database, pricing, Stripe, URL, SEO, deployment, or production change is part of this skin pass.
+
+final result: passed
+
+---
+
+# Table Gallery & Variant Restoration QA
+
+Date: 2026-07-19
+
+Branch: `codex/table-gallery-variant-restoration`
+
+Scope: Restore full curated galleries and required colour-to-media behavior on all five table product pages without changing Aqua V2 or the legacy table purchasing presentation.
+
+## Evidence
+
+- Desktop and mobile viewport/full-page captures for Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler Indoor, and Plaza Outdoor: `exports/table-gallery-qa/playwright/`
+- Viewports: 1440 × 1000 and 390 × 844, plus automated overflow checks at 417, 768, and 1280 pixels.
+- State: complete curated gallery before selection; every available colour selected and verified separately in Playwright.
+
+The proof files remain under ignored `exports/` and are not committed as production media.
+
+## Findings
+
+- No actionable P0, P1, or P2 visual issue remains across the five desktop and five mobile product openings.
+- Each page opens on its approved catalog-order colour while leaving the cart choice unselected.
+- Expo, Portland Indoor, Whistler, and Plaza use recovered 1600–5000-pixel media. Portland Outdoor retains its approved current-model gallery and introduces no V1 table images.
+- All table media sits on a plain white contained canvas. Product frames, legs, nets, wheels, and controls remain visible without destructive cropping or stretching.
+- Before selection, the complete curated gallery is visible. After selection, only the matching colour and shared detail/lifestyle views remain.
+- Expo contains no obsolete Green/Black media. Plaza exposes its one real Grey choice rather than silently bypassing required selection.
+- Responsive Cloudinary `srcset` delivery provides 480, 800, 1200, and 1600-pixel candidates without upscaling source exceptions.
+- Mobile thumbnails scroll inside their own strip without document overflow. Desktop and mobile retain the existing purchasing panel, prices, availability, shipping copy, and product story below.
+- Exact existing variant keys reach cart and mocked checkout for every colour. No SKU, option value, price, line identity, or hosted-checkout contract changes.
+- Aqua remains `tiger-v2`; Vice retains the default gallery presentation.
+- Keyboard operation, alternatives, required-selection focus, reduced-motion behavior, and document overflow pass at every approved width.
+- Cloudinary verification reports 21 of 21 gallery URLs successful. The local catalog repair dry run reports five products, 21 assets, zero warnings, and zero errors.
+- Full launch preflight passes with 41 unit tests and 61 active browser tests; 11 screenshot-only jobs are intentionally skipped because the visual evidence was captured separately. The tracked-secret scan reports zero findings, and the production audit gate has no high or critical advisories (two moderate advisories remain).
+- Production catalog application is intentionally pending owner approval.
+
+final result: passed locally; production catalog apply pending approval
+
+---
+
 # Aqua Product Page + Purchasing Rail V2 QA
 
 Date: 2026-07-18

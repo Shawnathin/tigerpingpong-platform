@@ -2,56 +2,56 @@
 
 ## Active task
 
-Aqua Product Page + Tiger Purchasing Rail V2.
+Table Gallery, Variant Restoration & Launch-Day Purchasing Rail V2.
 
 ## Selected task card
 
-Replace the rejected long Aqua page with a shorter, conversion-first product experience and use Aqua as the isolated pilot for Tiger’s future universal purchasing rail.
+Restore and harden the product galleries and required colour selection on Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler Indoor, and Plaza Outdoor after the Aqua gallery work.
 
 ## Deliverable
 
-- Exact eight-image Aqua gallery with package-aware featured media.
-- Aqua-only `tiger-v2` purchasing presentation with four live-priced package choices.
-- Short approved story sequence: product proof, why Aqua exists, first custom-mould and recyclable-packaging proof, and purchase return.
-- Original Aqua packaging photograph plus extracted Aqua packaging wordmark and halftone used as supporting identity.
-- Collision-safe, hash-verified media manifests and upload scripts.
-- Typed canonical copy, claim records, focused tests, screenshots, and local review at port `3120`.
+- A tracked 21-asset manifest covering the five table galleries, exact live variant keys, order, ownership, checksums, dimensions, Cloudinary identifiers, roles, and alternatives.
+- Full curated galleries before selection; matching colour media plus shared details after selection.
+- Required table-colour choices that preserve the existing SKU, variant key, live price, cart line, and Stripe Checkout payload.
+- Responsive Cloudinary derivatives at 480, 800, 1200, and 1600 pixels with contained white gallery canvases.
+- Dry-run-first upload and catalog-repair tools with collision checks, transactional apply, verification, snapshot, and rollback support.
+- Focused unit and Playwright regression proof for all five tables, Aqua V2, and one non-table accessory.
+- Aqua's approved content-height Purchasing Rail V2 on all five table pages, using exact live table prices, restored variant thumbnails, and table-specific Tiger copy.
 
 ## Locked decisions
 
-- Aqua is the pilot; all non-Aqua products retain the legacy purchase presentation.
-- **Canada Red** is the public label. Existing internal `coral` keys, option values, SKUs, and checkout mappings remain unchanged.
-- Approved claims are **weather-resistant** and **ultra-durable**. Do not strengthen them to weatherproof or permanent outdoor storage.
-- Multi-packs contain three balls. Prices and availability remain live catalog data.
-- Aqua was designed in Vancouver using a Tiger-owned custom mould produced by specialist partners.
-- Aqua was Tiger's first custom injection-moulded paddle; its packaging is 100% recyclable.
-- No AI-generated product pixels, unsupported legacy claims, vendor material, quotes, or manufacturing drama enter the page.
+- Initial leads remain Blue for Expo, Portland Outdoor, and Whistler; Green for Portland Indoor; Grey for Plaza.
+- The lead image does not select a cart colour. Every table still requires an explicit choice.
+- Portland Outdoor retains its approved current-model nine-image sequence. The obsolete local `Portland Outdoor v1` folder is prohibited.
+- Exact current-model Portland sources below the preferred 1600-pixel threshold are retained only where no larger matching original could be recovered; they are never upscaled.
+- Expo Green/Black and exact/near-duplicate images stay out of the restored gallery.
+- Aqua keeps its approved V2 gallery and purchasing rail. All five tables reuse that approved rail skin without changing their galleries, prices, variant keys, cart lines, or checkout payloads.
+- Table rails use `In stock. Ready to ship.`, the approved free-Canada-wide table shipping message and cottage-country line, and a real-person colour-help link.
 
 ## Boundaries
 
-- No backend, public API, database schema, payment, checkout, URL, canonical, redirect, sitemap, robots, deployment, or DNS changes.
-- Preserve cart payloads, gallery mapping, focus management, added-to-cart dialog, and hosted Stripe Checkout.
-- Raw photographs, source packaging, emails, and video remain local and uncommitted.
-- Do not migrate another product to Purchasing Rail V2 before owner review.
+- No production catalog write before owner visual approval.
+- No variant creation, pricing change, checkout change, public API schema change, database migration, URL/SEO change, payment change, deployment, or automatic merge.
+- No Cloudinary deletion and no database-history deletion.
+- Raw source media stays local and ignored.
 
 ## Required proof
 
-- All four live option prices and exact selected packages reach cart and checkout.
-- Public UI says Canada Red while the internal coral compatibility key survives.
-- Story order, headings, metadata, anchors, images, and alternatives are correct.
-- One table and one non-Aqua accessory retain the legacy rail.
-- No overflow at 390, 417, 768, 1280, or 1440 pixels.
+- All five default galleries, lead images, prices, choices, media dimensions, and destinations are correct.
+- Every colour changes the featured image and removes other-colour media while retaining shared images.
+- Exact selected variant keys reach cart and mocked checkout unchanged, including Plaza's single Grey choice.
+- White contained canvases, alternatives, keyboard control, thumbnail scrolling, reduced motion, and zero overflow at 390, 417, 768, 1280, and 1440 pixels.
+- Aqua V2 and a non-table accessory remain unchanged.
 - Formatting, lint, typecheck, unit tests, focused Playwright, production build, secret scan, and launch preflight are recorded.
-- Desktop, tablet, mobile, and full-page evidence is captured before push.
 
 ## Status
 
-Implementation and validation are complete on `codex/aqua-product-page-tiger-v2`; PR #119 is pushed and awaiting merge.
+Implementation and local visual QA are complete on `codex/table-gallery-variant-restoration`, based on the merged Aqua V2 work from PR #119.
 
-- Rejected work was checkpointed separately before selective recovery.
-- Exact Aqua gallery and media manifests are in place.
-- Aqua Purchasing Rail V2, Canada Red presentation mapping, story sections, and local mock catalog are implemented.
-- Owner review replaced the blue scenic purchase imagery with exact Aqua cutouts on plain white in both the gallery and package selector.
-- Desktop, tablet, and mobile visual QA is complete with no open P0–P2 differences.
-- Full launch preflight passes: production build, 33 unit tests, 53 active Playwright tests, tracked-secret scan, and the high-severity production audit gate. Nine screenshot-only Playwright jobs are intentionally skipped; two moderate dependency advisories remain.
-- The branch now includes current `main` so PR #119 can merge cleanly; no deployment or automatic merge was performed.
+- Ten missing high-resolution assets were uploaded under deterministic Cloudinary IDs and added to the tracked manifest; all 21 delivery URLs verify successfully.
+- The catalog repair tool validates all five live products and exact existing variants with zero errors, but `--apply` has not been run.
+- Desktop and mobile screenshots for all five product pages show correct product models, white contained media, compact galleries, and explicit colour choices with no open P0–P2 visual issue.
+- Focused gallery, cart, Aqua, `/tables`, and table-subcategory browser regressions pass after giving the two multi-route checks an appropriate 60-second test budget.
+- Full launch preflight passes: lint, Prisma generation/validation, typecheck, 41 unit tests, production build, 61 active browser tests, tracked-secret scan, and the high-severity production audit gate. Eleven screenshot-only browser jobs are intentionally skipped; two moderate dependency advisories remain.
+- Production catalog remains unchanged pending owner approval of all five local pages.
+- The launch-day rail pass removes the legacy empty purchasing-panel height, adds colour-specific table thumbnails on white canvases, and gives Plaza's single Grey choice the full selector width.

@@ -70,6 +70,11 @@ order visibility all pass.
 - The approved import map validates with 0 errors. Its 57 warnings are existing
   catalog/media review items rather than redirect-map failures.
 - `git diff --check` passes.
+- GitHub's slower runner exposed an unrelated 5-second table-category URL
+  assertion timeout after all SEO tests passed. The application was not
+  changed; the test now asserts its exact destination `href` and allows 15
+  seconds for the dev-server navigation. Twenty consecutive focused
+  repetitions pass, and the complete gate is rerun after this test-only change.
 
 ### Production contract and sequence
 

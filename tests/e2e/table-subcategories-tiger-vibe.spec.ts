@@ -294,12 +294,13 @@ test.describe("Tiger table subcategories", () => {
     page.on("pageerror", (error) => browserErrors.push(error.message));
 
     await page.goto(routes.indoor.path);
-    await page
+    const outdoorLink = page
       .getByRole("navigation", { name: "Table categories" })
-      .getByRole("link", { name: "Outdoor", exact: true })
-      .click();
+      .getByRole("link", { name: "Outdoor", exact: true });
 
-    await expect(page).toHaveURL(/\/tables\/outdoor-tables\/?$/);
+    await expect(outdoorLink).toHaveAttribute("href", routes.outdoor.path);
+    await outdoorLink.click();
+    await expect(page).toHaveURL(/\/tables\/outdoor-tables\/?$/, { timeout: 15_000 });
     await expect(
       page.getByRole("heading", { level: 1, name: routes.outdoor.heading })
     ).toBeVisible();

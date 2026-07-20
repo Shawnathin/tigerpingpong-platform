@@ -46,13 +46,12 @@ Replace the rejected long Aqua page with a shorter, conversion-first product exp
 
 ## Status
 
-Implementation and validation are complete on `codex/aqua-product-page-tiger-v2`; the page is waiting for owner review.
+Implementation and validation are complete on `codex/aqua-product-page-tiger-v2`; PR #119 is pushed and awaiting merge.
 
 - Rejected work was checkpointed separately before selective recovery.
 - Exact Aqua gallery and media manifests are in place.
 - Aqua Purchasing Rail V2, Canada Red presentation mapping, story sections, and local mock catalog are implemented.
 - Owner review replaced the blue scenic purchase imagery with exact Aqua cutouts on plain white in both the gallery and package selector.
-- The live local page is available at `http://127.0.0.1:3120/catalog/products/tiger-aqua-outdoor-indoor-paddle`.
 - Desktop, tablet, and mobile visual QA is complete with no open P0–P2 differences.
 - Full launch preflight passes: production build, 33 unit tests, 53 active Playwright tests, tracked-secret scan, and the high-severity production audit gate. Nine screenshot-only Playwright jobs are intentionally skipped; two moderate dependency advisories remain.
-- Nothing has been pushed, deployed, or merged.
+- The branch now includes current `main` so PR #119 can merge cleanly; no deployment or automatic merge was performed.

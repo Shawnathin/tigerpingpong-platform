@@ -1061,14 +1061,14 @@ export const tigerStory = {
     anchor: "early-days",
     eyebrow: "Before Expo",
     heading: "A skinny table and a lot of hustle.",
-    body: "Tiger started with a green table that had very skinny legs and plenty of other issues. It was bad. We kept pushing. It took all of us—hauling bins of paddles and balls onto the Expo Line, setting up around Vancouver, and learning what the game needed by playing it with people.",
+    body: "Tiger started with a table and a lot to learn. The table was bad. The rallies were good. People kept showing up, so we did too. They helped us figure out what good gear needed to do.",
     images: [requireStoryImage("EARLY-001"), requireStoryImage("EARLY-003")]
   },
   origin: {
     anchor: "first-serve",
-    eyebrow: "Then came Expo",
+    eyebrow: "Next stop",
     heading: "The table started catching up.",
-    body: "Expo took its name from Expo 86 and its theme, ‘World in Motion—World in Touch.’ That felt right for a table headed to Chinatown nights, rainy street festivals, driveways, and packed rooms. The orange-legged first Expo still had things to teach us—but it was the first time the product started to match the energy around it.",
+    body: "We searched factory floors around the world before finding the right manufacturing partners in Germany. The result was a German-made table that finally matched the people and energy around it. We called it Expo—a nod to ’86 and all those late-night train rides with totes full of paddles and balls.",
     images: [requireStoryImage("Y13-003"), requireStoryImage("EXT-001")]
   },
   vancouver: {
@@ -1130,7 +1130,7 @@ export const tigerStory = {
     anchor: "across-canada",
     eyebrow: "Better gear. Bigger map.",
     heading: "Then we pointed the truck east.",
-    body: "Whistler. UBC. Stampede Park. The Ontario border. Even a Royal Caribbean ship. Tiger grew one table, one event, and one long drive at a time. We still live and work in Vancouver. We still answer the phone. We’re just bringing the rally to more neighbours now—from the West Coast to the rest of Canada.",
+    body: "Whistler. UBC. Stampede Park. The Ontario border. Even sailing on Royal Caribbean ships. Tiger grew one table, one event, and one long drive at a time. We still live and work in Vancouver. We still answer the phone. We’re just bringing the rally to more neighbours now—from the West Coast to the rest of Canada.",
     images: [
       requireStoryImage("EXT-098"),
       requireStoryImage("EXT-101"),
@@ -1194,7 +1194,7 @@ export const tigerStory = {
   closing: {
     heading: "Good gear. Real help. No runaround.",
     body: "Need help choosing a table for a basement, patio, school, or brewery? Call us. You’ll get a real person in Vancouver, and we’ll get it sorted. Because it’s PingPong. It should be fun—even the part where you buy it.",
-    signature: "Raised on the West Coast. Ready for Canada.",
+    signature: "Raised on the West Coast. Built for Canada.",
     actions: [
       { href: "/tables/", label: "Find your table" },
       { href: "/contact", label: "Talk to a real person" }

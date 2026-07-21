@@ -2,11 +2,12 @@
 
 ## In Progress
 
-- Final SEO cutover readiness: code and aggregate local preflight are green on the frozen branch; Render-origin/Stripe/configuration/DNS gates remain.
-- Plan B operator approval, database, Stripe/tax, hosting, monitoring, DNS, and go/no-go work.
+- Select the next focused post-launch task from current `develop`.
 
 ## Done
 
+- Owner confirmed TigerPingPong.ca live and working on 2026-07-21.
+- Post-launch repository cleanup: consolidated to one clean worktree, preserved dirty/unique work, created and pushed `develop`, aligned local `main` with live `origin/main`, and installed a local direct-`main` push guard.
 - Frozen SEO cutover local gate: `pnpm launch:preflight` passed 59 unit tests, production build, 69 active Chromium tests, secret scanning, and the high-severity dependency gate; 11 evidence-only tests skipped and two moderate advisories remain below the gate.
 - Approved `.ca` URL contract, 28 path-specific redirects, redirect-only `.com`/`www` hosts, 34-URL sitemap behavior, canonicals/noindex/robots metadata, and restored sourced resource coverage implemented with focused local proof.
 - Aqua 4-pack Canada-wide free-shipping exception: exact product/variant matching is shared across checkout, webhook validation, cart/PDP estimates, customer policy copy, and protected settings while legacy pending orders remain valid.

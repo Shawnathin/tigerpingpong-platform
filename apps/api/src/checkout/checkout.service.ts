@@ -1056,7 +1056,6 @@ export class CheckoutService implements OnModuleDestroy {
       product.status === "active" &&
       product.v1PublicNavigation &&
       product.v1CheckoutScope &&
-      product.productKind !== "replacement_part" &&
       CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
       product.family.isActive &&
       product.family.isPublic &&

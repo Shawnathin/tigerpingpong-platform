@@ -89,7 +89,10 @@ not duplicate option-link rows.
 ## Business Guardrails
 
 - Only the `Tiger PingPong` v1 brand is accepted.
-- Replacement Parts remain draft/deferred, non-public, and out of checkout.
+- Public Replacement Parts require active status, matching public/checkout
+  flags, `online_checkout`, a positive CAD price, an internal SKU, approved
+  source review, and primary Cloudinary media with alt text. Private parts must
+  stay out of checkout; the reviewed replacement nets remain draft/deferred.
 - Table products remain checkout candidates only and keep
   `shipping_review_required=true`.
 - Existing BigCommerce image URLs are stored as source metadata only.
@@ -137,12 +140,12 @@ Expected review artifact row counts:
 | ------------------- | ---------------------: |
 | Brands              |                      1 |
 | Categories          |                      9 |
-| Product families    |                     10 |
-| Products            |                     17 |
-| Product variants    |                     15 |
-| Product media       |                     13 |
-| Redirects           |                     29 |
-| Import review flags |                     14 |
+| Product families    |                     11 |
+| Products            |                     19 |
+| Product variants    |                     19 |
+| Product media       |                     50 |
+| Redirects           |                     28 |
+| Import review flags |                     15 |
 
 ## Rollback And Reset Warning
 

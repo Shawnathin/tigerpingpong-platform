@@ -1814,10 +1814,6 @@ export class AdminService implements OnModuleDestroy {
       reasons.push("not_checkout_scope");
     }
 
-    if (product.productKind === "replacement_part") {
-      reasons.push("replacement_part_deferred");
-    }
-
     if (!CHECKOUT_PURCHASE_MODES.has(product.purchaseMode)) {
       reasons.push("purchase_mode_not_checkoutable");
     }

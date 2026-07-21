@@ -1,8 +1,13 @@
 import Image from "next/image";
+import { headers } from "next/headers";
 
+import { getProducts } from "../../lib/catalog-api";
+import { resolveLiveCuratedReplacementParts } from "../../lib/curated-replacement-parts";
 import { getPathMetadata } from "../../lib/seo";
+import { V1_FLAT_RATE_SHIPPING_COPY } from "../../lib/shipping";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
+import { ReplacementPartPurchase } from "./ReplacementPartPurchase";
 import styles from "./page.module.css";
 import { replacementPartsContent } from "./replacement-parts-content";
 
@@ -13,8 +18,28 @@ export const metadata = getPathMetadata({
     "Find Tiger PingPong Part 40, download table manuals, watch setup videos, or send our Vancouver team a photo for replacement-part help."
 });
 
-export default function ReplacementPartsPage() {
+async function loadLiveReplacementParts() {
+  try {
+    const requestHeaders = await headers();
+    const testCatalogMode =
+      process.env.NODE_ENV === "production"
+        ? null
+        : requestHeaders.get("x-tiger-test-catalog-mode");
+
+    if (testCatalogMode === "unavailable") {
+      throw new Error("Test-only replacement-parts catalog failure.");
+    }
+
+    return resolveLiveCuratedReplacementParts(await getProducts());
+  } catch {
+    return [];
+  }
+}
+
+export default async function ReplacementPartsPage() {
   const { contact, hero, identification, manuals, part40 } = replacementPartsContent;
+  const liveReplacementParts = await loadLiveReplacementParts();
+  const livePart40 = liveReplacementParts.find((part) => part.configuration.slug === part40.slug);
 
   return (
     <>
@@ -71,11 +96,29 @@ export default function ReplacementPartsPage() {
             <p className={styles.partBody}>{part40.body}</p>
             <p className={styles.fitNote}>
               <strong>Good to know</strong>
-              <span>{part40.fit}</span>
+              <span>{part40.compatibility}</span>
+              <a href={contact.part40EmailHref}>{part40.supportPrompt}</a>
             </p>
-            <a className={styles.darkAction} href={contact.part40EmailHref}>
-              Ask for Part 40
-            </a>
+            {livePart40 ? (
+              <ReplacementPartPurchase
+                product={{
+                  categoryName: livePart40.product.category.name,
+                  currency: livePart40.product.currency,
+                  imageUrl: livePart40.imageUrl,
+                  name: livePart40.product.name,
+                  productKind: livePart40.product.productKind,
+                  productSlug: livePart40.product.slug,
+                  unitPriceCents: livePart40.product.priceCents
+                }}
+                shippingCopy={V1_FLAT_RATE_SHIPPING_COPY}
+                supportHref={contact.part40EmailHref}
+                supportPrompt={part40.supportPrompt}
+              />
+            ) : (
+              <a className={styles.darkAction} href={contact.part40EmailHref}>
+                Ask about Part 40
+              </a>
+            )}
           </div>
           <blockquote className={styles.partQuote}>
             <span aria-hidden="true">40</span>

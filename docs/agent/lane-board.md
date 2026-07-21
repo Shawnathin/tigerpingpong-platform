@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Select the next focused post-launch task from current `develop`.
+- `codex/feature/replacement-parts-commerce-v1` — Part 40 online commerce plus the guarded foundation for later curated common parts. Production catalog write remains separately approval-gated.
 
 ## Done
 

@@ -24,6 +24,7 @@
   admin proof remain pending.
 
 - Post-launch replacement-parts experience:
+  - Add any replacement part beyond Part 40 only after its catalog data, media, compatibility copy, availability, and curated rank are approved.
   - Link manuals and setup videos from each applicable product page.
   - Add a general table/part finder plus a dedicated parts page for each table.
   - Put each table's five most-requested parts first instead of exposing one giant grid.

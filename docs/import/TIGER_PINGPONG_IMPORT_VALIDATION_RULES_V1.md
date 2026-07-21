@@ -144,22 +144,27 @@ Violations are errors.
 
 ## Replacement Part Rules
 
-Replacement Parts are preserved for traceability, redirects, and future review.
-They are not part of v1 public navigation or checkout.
+Replacement Parts use a curated approval model. Individually approved common
+parts may be public and checkout-capable; every other part remains private and
+non-checkoutable.
 
 Rules:
 
 - The `replacement-parts` category must exist.
-- The `replacement-parts` category must use `v1_public_navigation=false`.
-- The `replacement-parts` category must use `v1_checkout_scope=false`.
 - Replacement Part products must use `product_kind=replacement_part`.
-- Replacement Part products must use `v1_public_navigation=false`.
-- Replacement Part products must use `v1_checkout_scope=false`.
-- Replacement Part products must use `purchase_mode=deferred_from_v1` or an
-  equivalent disabled purchase mode.
+- Public and checkout flags must match.
+- When any approved public part exists, the category must be public and
+  checkout-capable so the API and backend eligibility gates agree.
+- A public Replacement Part must use `status=active`,
+  `purchase_mode=online_checkout`, a positive integer `price_cents`, `CAD`, a
+  non-empty internal SKU, `source_review_status=approved_for_schema_planning`,
+  and primary Cloudinary media with a public ID, secure URL, and alt text.
+- A private Replacement Part must not use an online checkout purchase mode.
+- Deferred/disabled parts should retain a `replacement_part_deferred` review
+  flag for traceability.
 
-Public navigation, checkout scope, or purchase-mode violations are errors.
-Missing deferral review flags are warnings.
+Incomplete or contradictory public commerce records are errors. Missing
+deferral review flags are warnings.
 
 ## Table Rules
 

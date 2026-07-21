@@ -82,6 +82,18 @@ describe("server-authoritative checkout", () => {
     expect(
       service.calculateTotals([
         {
+          lineTotalCents: 700,
+          productSlug: "tiger-pingpong-replacement-part-40",
+          variantKey: null
+        }
+      ])
+    ).toMatchObject({
+      shippingCents: 1_500,
+      totalCents: 2_200
+    });
+    expect(
+      service.calculateTotals([
+        {
           lineTotalCents: 8_000,
           productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
           variantKey: AQUA_FOUR_PACK_VARIANT_KEY
@@ -131,6 +143,57 @@ describe("server-authoritative checkout", () => {
             quantity: 1,
             selectedOptions: [],
             expectedUnitPriceCents: 700
+          }
+        ]
+      })
+    ).rejects.toMatchObject({ status: 409 });
+    expect(service.createPendingOrder).not.toHaveBeenCalled();
+  });
+
+  it("allows an approved replacement part while keeping deferred parts unavailable", async () => {
+    const service = new CheckoutService() as unknown as {
+      createCheckoutSession(body: unknown): Promise<unknown>;
+      createPendingOrder: ReturnType<typeof vi.fn>;
+      isProductCheckoutable(product: unknown): boolean;
+      loadCheckoutProducts: () => Promise<Map<string, unknown>>;
+      readCheckoutConfig: () => unknown;
+      getPrisma: () => unknown;
+    };
+    const part40 = {
+      ...checkoutProduct,
+      key: "tiger-pingpong-replacement-part-40",
+      slug: "tiger-pingpong-replacement-part-40",
+      name: "Tiger PingPong Part 40",
+      sku: "8123",
+      productKind: "replacement_part",
+      priceCents: 700
+    };
+    const deferredNet = {
+      ...part40,
+      key: "tiger-replacement-net",
+      slug: "tiger-replacement-net",
+      status: "draft",
+      v1PublicNavigation: false,
+      v1CheckoutScope: false,
+      purchaseMode: "deferred_from_v1"
+    };
+
+    expect(service.isProductCheckoutable(part40)).toBe(true);
+    expect(service.isProductCheckoutable(deferredNet)).toBe(false);
+
+    service.readCheckoutConfig = () => ({});
+    service.getPrisma = () => ({});
+    service.loadCheckoutProducts = async () => new Map([[part40.slug, part40]]);
+    service.createPendingOrder = vi.fn();
+
+    await expect(
+      service.createCheckoutSession({
+        items: [
+          {
+            productSlug: part40.slug,
+            quantity: 1,
+            selectedOptions: [],
+            expectedUnitPriceCents: 1
           }
         ]
       })

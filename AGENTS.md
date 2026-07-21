@@ -57,8 +57,9 @@ These are implementation requirements, not optional inspiration:
 - This repo uses the master build-control chat to choose one task at a time.
 - `goals.md` is the current version source of truth.
 - `docs/agent/current-task.md` is the current task source of truth.
-- `develop` is the shared post-launch integration branch. Create focused feature/fix branches from current `develop` when practical.
-- Production `main` is updated through reviewed pull requests. Do not push directly to `main` from a local checkout.
+- `develop` is the shared post-launch integration branch. Every task gets its own branch created from current `develop`; do not implement directly on `develop`.
+- Task branches merge only into `develop` through pull requests. They must never push or open pull requests directly to `main`.
+- Production `main` is updated only by an approved pull request whose source is `develop`. No other branch may update `main`.
 - Codex executes only the selected task card. Side chats may recommend work, but they do not choose tasks.
 - Side quests, useful ideas, and not-now work go to `docs/agent/parking-lot.md` unless Shawn explicitly selects them.
 - During onboarding, do not make runtime, deployment, schema, migration, dependency, env, hosting, payment, or app behavior changes.
@@ -260,10 +261,16 @@ Payment code is high risk. Be conservative.
 
 ## Git and PR workflow
 
-- Work on a branch, not directly on `main`.
+- Start each task by updating `develop` with `git pull --ff-only origin develop`, then create a dedicated branch from it.
+- Use `feature/`, `fix/`, `docs/`, or `chore/` branches according to the task. Codex-created branches retain the required `codex/` prefix.
+- Open task-branch pull requests against `develop`, never `main`.
+- Do not commit feature work directly on `develop`; it is an integration and approval branch.
+- Only an approved `develop` pull request may target and update production `main`.
+- Approval means Shawn explicitly authorizes the `develop`-to-`main` merge; never merge or enable auto-merge without that authorization.
+- Keep both `develop` and `main` free of force pushes and direct pushes.
 - Keep PRs focused and boring.
 - Do not mix feature work with broad cleanup.
-- Do not merge unrelated launch steps into the same PR.
+- Do not merge unrelated work into the same PR.
 - Use descriptive branch names such as:
   - `feature/044-product-media-gallery-options-v1`
   - `docs/047-url-structure-footer-planning`

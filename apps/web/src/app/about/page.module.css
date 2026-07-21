@@ -873,11 +873,27 @@
   }
 }
 
+@keyframes road-reveal {
+  from {
+    opacity: 1;
+    translate: 0 22px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
 @supports (animation-timeline: view()) {
   .reveal {
     animation: story-reveal linear both;
     animation-range: entry 8% cover 30%;
     animation-timeline: view();
+  }
+
+  .roadStop.reveal {
+    animation-name: road-reveal;
   }
 }
 

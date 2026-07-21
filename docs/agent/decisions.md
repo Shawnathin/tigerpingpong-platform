@@ -36,7 +36,7 @@ Out of scope: No DNS change before origin preflight, no Change of Address reques
 
 ## 2026-07-21 - Adopt the post-launch development lane
 
-Decision: Keep production `main` aligned with the live site, use `develop` as the shared integration branch, prefer focused feature/fix branches for isolated work, and promote changes to `main` through reviewed pull requests. A repository-local pre-push hook rejects direct pushes to `main` from this clone.
+Decision: Keep production `main` aligned with the live site. Every task uses its own branch created from current `develop`, task branches merge only into `develop`, and only an approved pull request from `develop` may update `main`. Direct and force pushes to both protected branches are forbidden. A repository-local pre-push hook also rejects direct pushes to `main` from this clone.
 
 Why: The site is live, so production needs a deliberate promotion boundary while experimentation and cleanup continue away from `main`.
 

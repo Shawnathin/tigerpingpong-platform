@@ -28,4 +28,4 @@ Make Part 40 the first approved online replacement part at the live catalog pric
 
 ## Status
 
-Implementation and focused proof are complete on 2026-07-21. The draft feature pull request remains dependent on workflow PR #127, which is still open. Production catalog write and deployment remain separately review-gated. The canonical local preflight reached Playwright and exposed development-server timeout noise in the aggregate two-worker crawl; all Part 40 checks pass as a focused suite, and each timed-out legacy check passes in isolation.
+Implementation and focused proof are complete on 2026-07-21. Workflow PR #127 has merged into `develop`, and this feature branch now incorporates that policy. Draft PR #128 remains separately review-gated, as do any production catalog write and deployment. Hosted CI passed lint, typecheck, 62 unit tests, the production build, and all 72 active browser tests; its only remaining failure is the newly published high-severity transitive `sharp` advisory, whose cross-major override is pending owner approval.

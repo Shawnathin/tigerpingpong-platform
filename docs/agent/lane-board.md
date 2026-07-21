@@ -6,6 +6,8 @@
 
 ## Done
 
+- PR #127 merged the branch-policy enforcement task into `develop`; only a later explicitly approved `develop` pull request may promote it to `main`.
+- Created the dedicated `codex/enforce-development-branch-flow` branch from current `develop`; documented and automated the required `task branch -> develop -> main` promotion path.
 - Owner confirmed TigerPingPong.ca live and working on 2026-07-21.
 - Post-launch repository cleanup: consolidated to one clean worktree, preserved dirty/unique work, created and pushed `develop`, aligned local `main` with live `origin/main`, and installed a local direct-`main` push guard.
 - Frozen SEO cutover local gate: `pnpm launch:preflight` passed 59 unit tests, production build, 69 active Chromium tests, secret scanning, and the high-severity dependency gate; 11 evidence-only tests skipped and two moderate advisories remain below the gate.

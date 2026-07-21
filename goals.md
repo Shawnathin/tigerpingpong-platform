@@ -98,4 +98,4 @@ Anything not required to safely launch v1 goes to `docs/agent/parking-lot.md`. M
 
 ## Post-launch direction
 
-Post-launch work can focus on stability and measured improvements: media cleanup, product cards, richer admin tools, SEO expansion, inventory/availability controls, catalog editing, and conversion improvements. Work starts from `develop` or a focused branch and reaches production `main` through a reviewed pull request.
+Post-launch work can focus on stability and measured improvements: media cleanup, product cards, richer admin tools, SEO expansion, inventory/availability controls, catalog editing, and conversion improvements. Every task starts on its own branch created from current `develop`, merges back only into `develop`, and reaches production `main` only through an approved pull request from `develop`.

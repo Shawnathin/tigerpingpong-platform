@@ -1164,6 +1164,9 @@ export class CheckoutService implements OnModuleDestroy {
       shipping_address_collection: {
         allowed_countries: ["CA" as const]
       },
+      phone_number_collection: {
+        enabled: true
+      },
       shipping_options: [
         {
           shipping_rate_data: {

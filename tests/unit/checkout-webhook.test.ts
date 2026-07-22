@@ -201,6 +201,71 @@ describe("server-authoritative checkout", () => {
     expect(service.createPendingOrder).not.toHaveBeenCalled();
   });
 
+  it("requires Stripe Checkout to collect a customer phone number", async () => {
+    const createSession = vi.fn().mockResolvedValue({
+      id: "cs_test_phone",
+      url: "https://checkout.stripe.com/test"
+    });
+    const service = new CheckoutService() as unknown as {
+      createStripeSession(config: unknown, order: unknown): Promise<unknown>;
+      getStripe: () => {
+        checkout: {
+          sessions: {
+            create: typeof createSession;
+          };
+        };
+      };
+    };
+    service.getStripe = () => ({
+      checkout: {
+        sessions: {
+          create: createSession
+        }
+      }
+    });
+
+    await service.createStripeSession(
+      {
+        appEnv: "test",
+        cancelUrl: "https://example.com/checkout/cancel",
+        stripeSecretKey: "sk_test_local_only",
+        stripeTaxEnabled: false,
+        successUrl: "https://example.com/checkout/success"
+      },
+      {
+        customerEmail: null,
+        id: "order_phone",
+        items: [
+          {
+            imageUrl: null,
+            name: "Product One",
+            quantity: 1,
+            unitPriceCents: 800
+          }
+        ],
+        publicReference: "order-phone-reference",
+        shippingCents: 1_500,
+        subtotalCents: 800,
+        totalCents: 2_300
+      }
+    );
+
+    expect(createSession).toHaveBeenCalledWith(
+      expect.objectContaining({
+        mode: "payment",
+        phone_number_collection: {
+          enabled: true
+        },
+        shipping_address_collection: {
+          allowed_countries: ["CA"]
+        }
+      }),
+      {
+        idempotencyKey: "checkout_session_create:order_phone"
+      }
+    );
+  });
+
   it("rejects missing and invalid required product options against catalog variants", () => {
     const service = new CheckoutService() as unknown as {
       validateLineItemOptions(item: unknown, product: unknown): unknown;
@@ -313,6 +378,36 @@ describe("Stripe webhook safety checks with local fakes", () => {
 
   it("accepts matching paid Canadian totals", () => {
     expect(validate()).toBeNull();
+  });
+
+  it("stores the phone number collected by Stripe on the paid order", () => {
+    const service = new StripeWebhookService() as unknown as {
+      createPaidOrderUpdate(
+        session: unknown,
+        paymentIntentId: string | null,
+        paidAt: Date
+      ): Record<string, unknown>;
+    };
+    const paidAt = new Date("2026-07-22T12:00:00.000Z");
+
+    expect(
+      service.createPaidOrderUpdate(
+        {
+          ...baseSession,
+          customer_details: {
+            email: "customer@example.com",
+            name: "Test Customer",
+            phone: "+16045550123"
+          }
+        },
+        "pi_test_1",
+        paidAt
+      )
+    ).toMatchObject({
+      customerPhone: "+16045550123",
+      shippingPhone: "+16045550123",
+      status: "paid"
+    });
   });
 
   it("accepts the exact Aqua 4-pack exception and still validates legacy pending orders", () => {

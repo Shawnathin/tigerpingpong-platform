@@ -2,30 +2,28 @@
 
 ## Active task
 
-Part 40 commerce and replacement-parts foundation.
+Stripe owner order alerts and Checkout phone collection.
 
 ## Selected task card
 
-Make Part 40 the first approved online replacement part at the live catalog price, keep the existing support/manual hub, and establish a guarded reusable pattern for later curated common parts.
+Have Stripe email Shawn after each successful storefront payment and require a customer phone number in hosted Stripe Checkout, using the existing webhook-confirmed paid-order storage and protected order views.
 
 ## Boundaries
 
-- Work only on `codex/feature/replacement-parts-commerce-v1` and target its pull request to `develop`, never `main`.
-- Preserve Stripe Checkout, webhook payment truth, Canada-only shipping, and the existing `$15` / over-`$100` rule.
-- Keep the two replacement-net records draft, private, and deferred.
-- Keep replacement parts out of the generic catalog UI, generic product pages, and sitemap.
-- Do not write deployed catalog data, upload media, or change schema, migrations, DNS, Render, Stripe, or Cloudinary in this task branch.
-- Leave additional parts, table-first finding, interactive diagrams, per-table pages, product-page manual links, and install guidance parked.
+- Work only on `codex/feature/stripe-order-alerts-phone-collection` and target its pull request to `develop`, never `main`.
+- Preserve hosted Stripe Checkout, webhook-confirmed payment truth, idempotency, Canada-only shipping, Stripe Tax behavior, and all current shipping rules.
+- Use Stripe's personal successful-payment email preference for Shawn's owner alert; do not add an application email provider or duplicate customer order email.
+- Collect the phone number only for transaction and fulfillment use under the existing privacy policy.
+- Reuse the existing `customerPhone` and `shippingPhone` order fields and protected admin/internal views; do not change schema or migrations.
+- Do not change customer receipt settings, payment methods, webhook endpoints, DNS, Render, Supabase data, catalog data, or production deployment in this task.
 
 ## Required proof
 
-- Reviewed catalog validation passes with Part 40 active/online and both nets deferred.
-- `--scope=replacement-parts` dry-run prints only the replacement-parts dependencies and records without opening a database connection.
-- Checkout/admin eligibility accepts approved Part 40 and rejects deferred nets; client prices remain non-authoritative.
-- The page shows the live API price and purchase controls only when Part 40 is currently checkout-ready, with email fallback on API failure.
-- One Part 40 produces `$7` subtotal, `$15` shipping, and `$22` pre-tax total in the existing cart.
-- Focused and aggregate lint, typecheck, unit, browser, build, and security checks pass.
+- New Checkout Sessions send `phone_number_collection.enabled: true` while retaining Canadian shipping-address collection and the existing idempotency key.
+- Webhook processing continues to write `customer_details.phone` to `customerPhone` and `shippingPhone` only after the paid transition is validated.
+- Focused unit tests, lint, typecheck, and production build pass.
+- Stripe Dashboard evidence confirms Shawn's `Successful payments` email notification preference is enabled in the Tiger PingPong account.
 
 ## Status
 
-Implementation and proof are complete on 2026-07-21. Workflow PR #127 has merged into `develop`, and this feature branch now incorporates that policy. The owner approved a narrow root override from Next's transitive `sharp@0.34.5` to patched `sharp@0.35.3`; the production audit now reports two moderate and zero high/critical advisories, and the production build plus local and Cloudinary Next image routes pass. The two-worker local browser run retained its existing fixed-timeout development-server noise, while the clean hosted rerun passed all 72 active browser tests with 11 evidence-only skips. Draft PR #128, any production catalog write, and deployment all remain separately review-gated.
+Implementation and local proof are complete on 2026-07-22. Stripe's live `Successful payments — Email` preference was enabled for Shawn in the Tiger PingPong account and remained enabled after reopening the Dashboard. New Checkout Sessions now require phone collection; the existing paid-webhook path stores the number in `customerPhone` and `shippingPhone`. Lint, typecheck, all 64 unit tests, and the production-style build pass. The code remains local and undeployed pending review, commit, and a task-branch pull request to `develop`.

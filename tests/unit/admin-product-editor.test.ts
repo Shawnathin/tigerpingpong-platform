@@ -223,4 +223,42 @@ describe("protected product editor", () => {
       )
     ).rejects.toThrow("active_variant_price_required");
   });
+
+  it("reports approved replacement parts as eligible and deferred ones as unavailable", () => {
+    const service = new AdminService() as unknown as {
+      getCheckoutEligibility(product: unknown): { eligible: boolean; reasons: string[] };
+    };
+    const part40 = {
+      ...createProduct(),
+      key: "tiger-pingpong-replacement-part-40",
+      slug: "tiger-pingpong-replacement-part-40",
+      name: "Tiger PingPong Part 40",
+      productKind: "replacement_part",
+      priceCents: 700,
+      sku: "8123"
+    };
+    const deferredNet = {
+      ...part40,
+      key: "tiger-replacement-net",
+      slug: "tiger-replacement-net",
+      status: "draft",
+      v1PublicNavigation: false,
+      v1CheckoutScope: false,
+      purchaseMode: "deferred_from_v1"
+    };
+
+    expect(service.getCheckoutEligibility(part40)).toEqual({ eligible: true, reasons: [] });
+    expect(service.getCheckoutEligibility(deferredNet)).toMatchObject({ eligible: false });
+    expect(service.getCheckoutEligibility(deferredNet).reasons).toEqual(
+      expect.arrayContaining([
+        "product_not_active",
+        "not_public_navigation",
+        "not_checkout_scope",
+        "purchase_mode_not_checkoutable"
+      ])
+    );
+    expect(service.getCheckoutEligibility(deferredNet).reasons).not.toContain(
+      "replacement_part_deferred"
+    );
+  });
 });

@@ -18,7 +18,8 @@ require an additional explicit `--write` flag after validation passes.
 ## Hard Boundaries
 
 - Do not run `pnpm import:tiger:dev` against deployed Render/Supabase databases.
-- Do not change product publishing status as part of validator cleanup.
+- Do not change product publishing status outside the explicitly reviewed import
+  scope and owner-approved catalog rows.
 - Do not change checkout, payment, webhook, order truth, tax, shipment/admin
   work, or public styling.
 - Do not upload media from this runbook.
@@ -69,12 +70,26 @@ Production dry run:
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=production --dry-run
 ```
 
+Replacement-parts-only production dry run:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=production --scope=replacement-parts --dry-run
+```
+
+`--scope=replacement-parts` limits the planned and written rows to the Tiger
+brand dependency, the Replacement Parts category, its families, its products,
+their variants/media, and directly related review flags. The full CSV set is
+still validated before scoping. Omit `--scope` for the legacy full-catalog
+behavior.
+
 The deployed importer refuses to run unless all of these are true:
 
 - `DATABASE_URL` is set.
 - `--confirm-deployed-import` is present.
 - Exactly one target is present: `--target=staging` or `--target=production`.
 - Exactly one mode is present: `--dry-run` or `--write`.
+- At most one supported scope is present: `--scope=replacement-parts` or the
+  default full-catalog scope.
 - `pnpm validate:tiger-import` exits successfully with 0 errors.
 - No unknown or ambiguous arguments are passed.
 
@@ -83,7 +98,8 @@ Dry run behavior:
 - Runs `pnpm validate:tiger-import`.
 - Reads only `data/import-review/tigerpingpong/v1/`.
 - Prints planned row counts and sample stable keys by affected table area.
-- Prints an Aqua-specific planning snapshot.
+- Prints an Aqua-specific snapshot for the full scope or an exact
+  replacement-parts product snapshot for `--scope=replacement-parts`.
 - Opens no Prisma/database connection.
 - Writes no rows.
 
@@ -100,6 +116,13 @@ Production uses the same shape with `--target=production`:
 
 ```bash
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=production --write
+```
+
+An approved replacement-parts-only write uses the same explicit scope as its
+reviewed dry run:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" pnpm import:tiger:deployed -- --confirm-deployed-import --target=production --scope=replacement-parts --write
 ```
 
 Write behavior:
@@ -146,10 +169,11 @@ Before any deployed write is approved:
 1. Capture the exact git SHA and CSV artifact state being imported.
 2. Export or snapshot the deployed database through the approved Supabase/Render
    database backup process.
-3. Export the affected catalog tables listed above plus any existing Aqua rows
-   from `products`, `product_variants`, `product_options`,
-   `product_option_values`, `product_variant_option_values`, and
-   `product_media` to a dated local/private backup location.
+3. Export the affected catalog tables listed above plus the exact stable keys
+   printed by the dry run. For `--scope=replacement-parts`, include the
+   Replacement Parts category, `replacement-nets` and `table-opening-parts`
+   families, all three reviewed replacement-part products, their media, and
+   directly related review flags.
 4. Record the target label, database host, operator, backup location, and import
    command in the launch notes.
 5. Re-run `pnpm validate:tiger-import` and the deployed dry run immediately
@@ -279,16 +303,43 @@ Rows without reviewed Cloudinary assignments, including current Aqua source
 media rows, should keep Cloudinary fields blank. Source BigCommerce/CDN URLs are
 traceability metadata and are not the final production media strategy.
 
-## Current PR 081 Baseline
+## Current Validation Baseline
 
-After validator cleanup, the expected local baseline is:
+The warning count evolves as reviewed catalog evidence grows. The durable gate
+is zero errors plus human review of every warning in the selected scope:
 
 ```text
-Tiger import validation PASS: 0 errors, 14 warnings.
+Tiger import validation PASS: 0 errors, <reviewed warning count> warnings.
 ```
 
-The previous 11 errors were stale `cloudinary_secure_url` failures for existing
-reviewed non-Aqua media rows. Aqua rows validate with blank Cloudinary fields.
+Do not pin an old warning count as proof. Attach the current validator report
+and scoped dry-run output to the release review.
+
+## Part 40 Post-Import Verification Checklist
+
+After an approved replacement-parts scoped write, verify:
+
+- `/catalog/products` returns `tiger-pingpong-replacement-part-40` with active
+  checkout flags, current CAD price, and the approved Cloudinary primary image.
+- `/replacement-parts/` shows the live price, `$15 CAD` under-threshold shipping
+  disclosure, Add to Cart, photo-help fallback, five manuals, and four videos.
+- A one-unit cart shows `$7.00` subtotal, `$15.00` shipping, and `$22.00`
+  pre-tax total when the reviewed live price remains 700 cents.
+- The cart item returns to `/replacement-parts/#part-40`; the generic product
+  route and sitemap do not publish Part 40.
+- `tiger-table-net-replacement-set` and `tiger-replacement-net` remain draft,
+  private, deferred, and non-checkoutable.
+- Checkout resolves the price from the deployed catalog and rejects a stale or
+  tampered client price before an order or Stripe session is created.
+
+## Part 40 Visibility Rollback
+
+Prefer a corrected reviewed CSV plus the same guarded scoped importer. Return
+Part 40 to support-only mode by setting its reviewed row to `status=draft`, both
+public/checkout flags to `false`, and `purchase_mode=deferred_from_v1`; then run
+the scoped dry run and approved scoped write. Do not delete the product or its
+media. The Replacement Parts page will automatically hide price and purchase
+controls and retain the working photo-email support path.
 
 ## Aqua Post-Import Verification Checklist
 

@@ -55,13 +55,14 @@ test("replacement-parts page makes Part 40 and real help the clear starting poin
   ).toBeVisible();
   await expect(
     part40.getByText(
-      "Used on selected Expo Indoor, Expo Outdoor, Portland Indoor, and Portland Outdoor tables. We'll confirm fit before anything ships.",
+      "Part 40 is used on selected Expo Indoor, Expo Outdoor, Portland Indoor, and Portland Outdoor tables.",
       { exact: true }
     )
   ).toBeVisible();
 
   const part40EmailHref = await part40
-    .getByRole("link", { name: "Ask for Part 40" })
+    .getByRole("link", { name: "Not sure? Send us a photo before ordering.", exact: true })
+    .first()
     .getAttribute("href");
   const decodedPart40EmailHref = decodeURIComponent((part40EmailHref ?? "").replaceAll("+", " "));
   expect(decodedPart40EmailHref).toContain("Part 40 fit check");
@@ -69,8 +70,83 @@ test("replacement-parts page makes Part 40 and real help the clear starting poin
   expect(decodedPart40EmailHref).toContain("Order number (if available):");
 
   await expect(page.locator("main")).not.toContainText("TP03");
-  await expect(part40.getByRole("button")).toHaveCount(0);
-  await expect(part40.locator('a[href="/cart"]')).toHaveCount(0);
+  await expect(part40.locator("form, input, select, fieldset")).toHaveCount(0);
+});
+
+test("Part 40 uses the live catalog price and the existing cart and shipping rules", async ({
+  page
+}) => {
+  await page.goto("/replacement-parts/");
+
+  const purchase = page.getByTestId("part-40-purchase");
+  await expect(purchase.getByTestId("part-40-live-price")).toHaveText("$7.00 CAD");
+  await expect(
+    purchase.getByText("Orders $100 CAD or under use $15 CAD flat-rate shipping.", {
+      exact: true
+    })
+  ).toBeVisible();
+
+  const addButton = purchase.getByRole("button", { name: "Add to Cart" });
+  await addButton.focus();
+  await expect(addButton).toBeFocused();
+  await page.keyboard.press("Enter");
+
+  const confirmation = purchase.getByRole("status");
+  await expect(confirmation).toContainText("Part 40 is in your cart.");
+  const supportLink = purchase.getByRole("link", {
+    name: "Not sure? Send us a photo before ordering."
+  });
+  await page.keyboard.press("Tab");
+  await expect(supportLink).toBeFocused();
+  await page.keyboard.press("Tab");
+
+  const viewCart = confirmation.getByRole("link", { name: "View Cart" });
+  await expect(viewCart).toBeFocused();
+  await viewCart.click();
+  await expect(page).toHaveURL(/\/cart\/?$/);
+  await expect(page.getByRole("region", { name: "Cart review" })).toBeVisible({
+    timeout: 15_000
+  });
+
+  const cartItem = page.locator("main article").filter({ hasText: "Tiger PingPong Part 40" });
+  await expect(cartItem).toContainText("$7.00 each");
+  await expect(
+    cartItem.getByRole("link", { name: "Tiger PingPong Part 40", exact: true })
+  ).toHaveAttribute("href", "/replacement-parts/#part-40");
+
+  const orderSummary = page.getByRole("complementary", { name: "Order summary" });
+  await expect(orderSummary).toContainText("Subtotal$7.00");
+  await expect(orderSummary).toContainText("Shipping$15.00");
+  await expect(orderSummary).toContainText("Total$22.00");
+});
+
+test("Part 40 falls back to photo help when live catalog data is unavailable", async ({ page }) => {
+  await page.setExtraHTTPHeaders({ "x-tiger-test-catalog-mode": "unavailable" });
+  await page.goto("/replacement-parts/");
+
+  const part40 = page.getByTestId("part-40-feature");
+  await expect(part40.getByTestId("part-40-purchase")).toHaveCount(0);
+  await expect(part40.getByRole("link", { name: "Ask about Part 40" })).toHaveAttribute(
+    "href",
+    /^mailto:info@tigerpingpong\.com/
+  );
+  await expect(part40).not.toContainText("$7.00");
+  await expect(part40.getByRole("button", { name: /add to cart/i })).toHaveCount(0);
+});
+
+test("Part 40 stays on the dedicated support hub instead of generic discovery", async ({
+  request
+}) => {
+  const genericProductPage = await request.get(
+    "/catalog/products/tiger-pingpong-replacement-part-40"
+  );
+  expect(genericProductPage.status()).toBe(404);
+
+  const genericCatalog = await (await request.get("/catalog")).text();
+  expect(genericCatalog).not.toContain("Tiger PingPong Part 40");
+
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  expect(sitemap).not.toContain("/catalog/products/tiger-pingpong-replacement-part-40");
 });
 
 test("manual shelf exposes five downloads, four setup videos, and no dead controls", async ({
@@ -135,7 +211,9 @@ test("replacement-parts experience stays readable and overflow-free across break
 }) => {
   for (const viewport of [
     { height: 844, width: 390 },
+    { height: 844, width: 417 },
     { height: 1024, width: 768 },
+    { height: 900, width: 1280 },
     { height: 900, width: 1440 }
   ]) {
     await page.setViewportSize(viewport);
@@ -178,7 +256,9 @@ test("capture replacement-parts design evidence", async ({ page }) => {
 
   for (const viewport of [
     { height: 900, name: "desktop", width: 1440 },
+    { height: 900, name: "desktop-1280", width: 1280 },
     { height: 1024, name: "tablet", width: 768 },
+    { height: 844, name: "mobile-417", width: 417 },
     { height: 844, name: "mobile", width: 390 }
   ]) {
     await page.setViewportSize(viewport);

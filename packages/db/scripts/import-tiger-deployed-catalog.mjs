@@ -15,7 +15,9 @@ const DRY_RUN_FLAG = "--dry-run";
 const WRITE_FLAG = "--write";
 const HELP_FLAG = "--help";
 const TARGET_PREFIX = "--target=";
+const SCOPE_PREFIX = "--scope=";
 const ALLOWED_TARGETS = new Set(["staging", "production"]);
+const ALLOWED_SCOPES = new Set(["all", "replacement-parts"]);
 
 const FILE_CONFIGS = [
   {
@@ -97,15 +99,16 @@ async function main() {
     return;
   }
 
-  const importData = loadImportData();
+  const fullImportData = loadImportData();
 
-  if (importData.issues.length > 0) {
-    printCsvFailure(importData.issues);
+  if (fullImportData.issues.length > 0) {
+    printCsvFailure(fullImportData.issues);
     process.exitCode = 1;
     return;
   }
 
-  const plan = createPlan(importData);
+  const importData = applyImportScope(fullImportData, safety.scope);
+  const plan = createPlan(importData, safety.scope);
   printPlan(plan);
 
   if (safety.dryRun) {
@@ -123,6 +126,9 @@ function validateSafety(args) {
   const targets = args
     .filter((arg) => arg.startsWith(TARGET_PREFIX))
     .map((arg) => arg.slice(TARGET_PREFIX.length));
+  const scopes = args
+    .filter((arg) => arg.startsWith(SCOPE_PREFIX))
+    .map((arg) => arg.slice(SCOPE_PREFIX.length));
   const dryRun = args.includes(DRY_RUN_FLAG);
   const write = args.includes(WRITE_FLAG);
 
@@ -132,7 +138,8 @@ function validateSafety(args) {
       arg !== CONFIRM_FLAG &&
       arg !== DRY_RUN_FLAG &&
       arg !== WRITE_FLAG &&
-      !arg.startsWith(TARGET_PREFIX)
+      !arg.startsWith(TARGET_PREFIX) &&
+      !arg.startsWith(SCOPE_PREFIX)
     ) {
       issues.push(`Unknown argument: ${arg}`);
     }
@@ -158,6 +165,14 @@ function validateSafety(args) {
     issues.push(`Unsupported deployed target: ${targets[0]}. Use staging or production.`);
   }
 
+  if (scopes.length > 1) {
+    issues.push("At most one deployed import scope is allowed.");
+  }
+
+  if (scopes.length === 1 && !ALLOWED_SCOPES.has(scopes[0])) {
+    issues.push(`Unsupported deployed import scope: ${scopes[0]}. Use all or replacement-parts.`);
+  }
+
   if (dryRun && write) {
     issues.push(`Choose exactly one mode: ${DRY_RUN_FLAG} or ${WRITE_FLAG}.`);
   }
@@ -170,6 +185,7 @@ function validateSafety(args) {
     dryRun,
     write,
     target: targets[0] ?? null,
+    scope: scopes[0] ?? "all",
     issues
   };
 }
@@ -236,7 +252,83 @@ function loadImportData() {
   return { files, issues };
 }
 
-function createPlan(importData) {
+function applyImportScope(importData, scope) {
+  if (scope === "all") {
+    return importData;
+  }
+
+  const familyRows = rows(importData, "families");
+  const scopedFamilies = familyRows
+    .map((row, index) => ({ ...row, __sourceSortOrder: (index + 1) * 10 }))
+    .filter((row) => value(row, "primary_category_key") === "replacement-parts");
+  const familyKeys = new Set(scopedFamilies.map((row) => value(row, "family_key")));
+  const scopedProducts = rows(importData, "products").filter(
+    (row) =>
+      value(row, "primary_category_key") === "replacement-parts" ||
+      familyKeys.has(value(row, "family_key"))
+  );
+  const productKeys = new Set(scopedProducts.map((row) => value(row, "product_key")));
+  const scopedMedia = rows(importData, "media").filter((row) =>
+    productKeys.has(value(row, "product_key"))
+  );
+  const mediaKeys = new Set(scopedMedia.map((row) => value(row, "media_key")));
+  const scopedRows = new Map([
+    [
+      "brands",
+      rows(importData, "brands").filter((row) => value(row, "brand_key") === "tiger-pingpong")
+    ],
+    [
+      "categories",
+      rows(importData, "categories").filter(
+        (row) => value(row, "category_key") === "replacement-parts"
+      )
+    ],
+    ["families", scopedFamilies],
+    ["products", scopedProducts],
+    [
+      "variants",
+      rows(importData, "variants").filter((row) => productKeys.has(value(row, "product_key")))
+    ],
+    ["media", scopedMedia],
+    [
+      "redirects",
+      rows(importData, "redirects").filter((row) => {
+        const entityType = value(row, "entity_type");
+        const entityKey = value(row, "entity_key");
+        return (
+          (entityType === "product" && productKeys.has(entityKey)) ||
+          (entityType === "category" && entityKey === "replacement-parts")
+        );
+      })
+    ],
+    [
+      "flags",
+      rows(importData, "flags").filter((row) => {
+        const entityType = value(row, "entity_type");
+        const entityKey = value(row, "entity_key");
+        return (
+          (entityType === "product" && productKeys.has(entityKey)) ||
+          (entityType === "family" && familyKeys.has(entityKey)) ||
+          (entityType === "category" && entityKey === "replacement-parts") ||
+          (entityType === "media" && mediaKeys.has(entityKey))
+        );
+      })
+    ]
+  ]);
+  const files = new Map(
+    Array.from(importData.files.entries()).map(([fileId, fileInfo]) => [
+      fileId,
+      {
+        ...fileInfo,
+        rows: scopedRows.get(fileId) ?? []
+      }
+    ])
+  );
+
+  return { files, issues: [] };
+}
+
+function createPlan(importData, scope) {
   const products = rows(importData, "products");
   const variants = rows(importData, "variants");
   const media = rows(importData, "media");
@@ -255,6 +347,7 @@ function createPlan(importData) {
   );
 
   return {
+    scope,
     filePlans: FILE_CONFIGS.map((config) => {
       const fileInfo = importData.files.get(config.id);
       return {
@@ -304,6 +397,15 @@ function createPlan(importData) {
         (row) =>
           value(row, "entity_key") === "aqua-paddles" && value(row, "resolution_status") === "open"
       ).length
+    },
+    replacementParts: {
+      mediaRows: media.length,
+      products: products.map((row) => ({
+        key: value(row, "product_key"),
+        priceCents: value(row, "price_cents"),
+        purchaseMode: value(row, "purchase_mode"),
+        status: value(row, "status")
+      }))
     }
   };
 }
@@ -496,10 +598,13 @@ async function importCategories(tx, importData, state, result) {
 }
 
 async function importFamilies(tx, importData, state, result) {
-  let sortOrder = 0;
+  let fallbackSortOrder = 0;
 
   for (const row of rows(importData, "families")) {
-    sortOrder += 10;
+    fallbackSortOrder += 10;
+    const sortOrder = Number.isInteger(row.__sourceSortOrder)
+      ? row.__sourceSortOrder
+      : fallbackSortOrder;
 
     const primaryCategory = state.categories.get(value(row, "primary_category_key"));
     const brand = state.brands.get(value(row, "brand_key"));
@@ -746,6 +851,9 @@ function printHelp() {
 Dry-run planning command:
   DATABASE_URL=postgresql://... pnpm import:tiger:deployed -- ${CONFIRM_FLAG} --target=staging ${DRY_RUN_FLAG}
 
+Replacement-parts-only planning command:
+  DATABASE_URL=postgresql://... pnpm import:tiger:deployed -- ${CONFIRM_FLAG} --target=staging --scope=replacement-parts ${DRY_RUN_FLAG}
+
 Actual write command:
   DATABASE_URL=postgresql://... pnpm import:tiger:deployed -- ${CONFIRM_FLAG} --target=staging ${WRITE_FLAG}
 
@@ -753,10 +861,15 @@ Targets:
   --target=staging
   --target=production
 
+Scopes:
+  --scope=replacement-parts
+  --scope=all (default)
+
 Safety:
   - Requires DATABASE_URL.
   - Requires ${CONFIRM_FLAG}.
   - Requires exactly one explicit target.
+  - Defaults to the full catalog unless a supported scope is explicit.
   - Requires exactly one mode: ${DRY_RUN_FLAG} or ${WRITE_FLAG}.
   - Runs pnpm validate:tiger-import before planning or writes.
   - Refuses to write when validation fails.
@@ -778,6 +891,7 @@ function printBanner(safety) {
   console.log("Tiger PingPong deployed catalog import v1");
   console.log(`Target: ${safety.target}`);
   console.log(`Mode: ${safety.dryRun ? "dry run, no database connection" : "Prisma write"}`);
+  console.log(`Scope: ${safety.scope}`);
   console.log(`CSV source: ${relativePath(INPUT_DIR)}`);
   console.log("Validator: pnpm validate:tiger-import");
 }
@@ -838,6 +952,19 @@ function printPlan(plan) {
   );
 
   console.log("");
+  if (plan.scope === "replacement-parts") {
+    console.log("Replacement-parts planning snapshot:");
+
+    for (const product of plan.replacementParts.products) {
+      console.log(
+        `- ${product.key}: status=${product.status}, purchase_mode=${product.purchaseMode}, price_cents=${product.priceCents}`
+      );
+    }
+
+    console.log(`- Replacement-part media rows: ${plan.replacementParts.mediaRows}`);
+    return;
+  }
+
   console.log("Aqua planning snapshot:");
   console.log(
     `- Parent product: ${plan.aqua.productKey} (${plan.aqua.productSlug}), status=${plan.aqua.status}, purchase_mode=${plan.aqua.purchaseMode}`
@@ -966,6 +1093,10 @@ function combineNotes(noteParts) {
 function sourceProviderForUrl(sourceUrl) {
   if (!sourceUrl) {
     return "unknown";
+  }
+
+  if (sourceUrl.includes("res.cloudinary.com")) {
+    return "cloudinary";
   }
 
   return sourceUrl.includes("bigcommerce.com") ? "bigcommerce" : "unknown";

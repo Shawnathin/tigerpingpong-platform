@@ -29,8 +29,8 @@ Are these CSV review artifacts structurally ready for a future import task?
 - Checks Prisma enum values for product kind, status, purchase mode, review
   status, media role, and redirect status.
 - Enforces the one-brand v1 rule for `tiger-pingpong`.
-- Confirms Replacement Parts stay deferred from v1 public navigation and
-  checkout.
+- Confirms every public Replacement Part has the complete approved commerce
+  record and every private/deferred part remains non-checkoutable.
 - Confirms table rows remain marked for shipping/freight policy review.
 - Confirms the business-approved Aqua prices and Net & Post checkout-ready
   status stay reflected in the CSVs.
@@ -96,7 +96,9 @@ Examples:
 - References to missing brands, categories, families, products, variants, or
   media rows where the relationship is practical to validate.
 - Invalid Prisma enum values.
-- Replacement Parts marked as public navigation or checkout scope.
+- Public Replacement Parts missing matching active/checkout flags, positive
+  CAD price, SKU, approval, or primary Cloudinary media; private parts using an
+  online checkout purchase mode.
 - Table products treated as fully approved checkout without policy review.
 - Invalid `cloudinary_secure_url` values.
 - Populated `cloudinary_secure_url` values without a matching

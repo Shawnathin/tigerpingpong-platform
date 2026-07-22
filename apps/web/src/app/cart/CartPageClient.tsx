@@ -23,6 +23,16 @@ function CartThumbnail({ item }: { item: CartItem }) {
   return <span aria-hidden="true">{item.name.charAt(0)}</span>;
 }
 
+function getCartItemHref(item: CartItem): string {
+  if (item.productKind === "replacement_part") {
+    return item.productSlug === "tiger-pingpong-replacement-part-40"
+      ? "/replacement-parts/#part-40"
+      : "/replacement-parts/";
+  }
+
+  return `/catalog/products/${item.productSlug}`;
+}
+
 export function CartPageClient() {
   const {
     itemCount,
@@ -107,7 +117,7 @@ export function CartPageClient() {
             <article className={styles.cartItem} key={item.cartLineId}>
               <a
                 className={styles.itemImage}
-                href={`/catalog/products/${item.productSlug}`}
+                href={getCartItemHref(item)}
                 aria-label={`View ${item.name}`}
               >
                 <CartThumbnail item={item} />
@@ -116,7 +126,7 @@ export function CartPageClient() {
               <div className={styles.itemInfo}>
                 <p>{item.categoryName ?? "Tiger Ping Pong"}</p>
                 <h2>
-                  <a href={`/catalog/products/${item.productSlug}`}>{item.name}</a>
+                  <a href={getCartItemHref(item)}>{item.name}</a>
                 </h2>
                 {item.selectedOptions.length > 0 ? (
                   <em>{formatCartItemOptions(item.selectedOptions)}</em>

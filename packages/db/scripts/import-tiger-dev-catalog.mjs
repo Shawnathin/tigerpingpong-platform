@@ -716,16 +716,26 @@ function validateBusinessRules(files, issues) {
   }
 
   const replacementPartsCategory = categories.index.get("replacement-parts");
+  const replacementProducts = products.rows.filter(
+    (row) =>
+      value(row, "product_kind") === "replacement_part" ||
+      value(row, "primary_category_key") === "replacement-parts"
+  );
+  const hasPublicReplacementPart = replacementProducts.some(
+    (row) => asBoolean(row, "v1_public_navigation") || asBoolean(row, "v1_checkout_scope")
+  );
 
   if (
-    replacementPartsCategory &&
-    (asBoolean(replacementPartsCategory, "v1_public_navigation") ||
-      asBoolean(replacementPartsCategory, "v1_checkout_scope"))
+    hasPublicReplacementPart &&
+    (!replacementPartsCategory ||
+      !asBoolean(replacementPartsCategory, "v1_public_navigation") ||
+      !asBoolean(replacementPartsCategory, "v1_checkout_scope"))
   ) {
     issues.push({
       file: categories.relativePath,
-      row: replacementPartsCategory.__rowNumber,
-      message: "Replacement Parts category must stay out of v1 public navigation and checkout."
+      row: replacementPartsCategory?.__rowNumber,
+      message:
+        "Replacement Parts category must be public and checkout-capable when it contains an approved public part."
     });
   }
 
@@ -735,27 +745,101 @@ function validateBusinessRules(files, issues) {
     const purchaseMode = value(row, "purchase_mode");
 
     if (productKind === "replacement_part" || primaryCategoryKey === "replacement-parts") {
-      if (asBoolean(row, "v1_public_navigation")) {
+      const productKey = value(row, "product_key");
+      const isPublicNavigation = asBoolean(row, "v1_public_navigation");
+      const isCheckoutScope = asBoolean(row, "v1_checkout_scope");
+      const isPublic = isPublicNavigation || isCheckoutScope;
+
+      if (productKind !== "replacement_part") {
         issues.push({
           file: products.relativePath,
           row: row.__rowNumber,
-          message: "Replacement Parts must not be public in v1 navigation."
+          message: "Products assigned to replacement-parts must use product_kind=replacement_part."
         });
       }
 
-      if (asBoolean(row, "v1_checkout_scope")) {
+      if (isPublicNavigation !== isCheckoutScope) {
         issues.push({
           file: products.relativePath,
           row: row.__rowNumber,
-          message: "Replacement Parts must not be checkout-enabled in v1."
+          message:
+            "Replacement Parts must use matching v1_public_navigation and v1_checkout_scope flags."
         });
       }
 
-      if (purchaseMode !== "deferred_from_v1") {
+      if (isPublic && value(row, "status") !== "active") {
         issues.push({
           file: products.relativePath,
           row: row.__rowNumber,
-          message: "Replacement Parts must use purchase_mode=deferred_from_v1."
+          message: "Public Replacement Parts must have status=active."
+        });
+      }
+
+      if (isPublic && purchaseMode !== "online_checkout") {
+        issues.push({
+          file: products.relativePath,
+          row: row.__rowNumber,
+          message: "Public Replacement Parts must use purchase_mode=online_checkout."
+        });
+      }
+
+      if (isPublic) {
+        const priceCents = Number(value(row, "price_cents"));
+        const approvedPrimaryMedia = media.rows.find(
+          (mediaRow) =>
+            value(mediaRow, "product_key") === productKey &&
+            asBoolean(mediaRow, "is_primary") &&
+            value(mediaRow, "cloudinary_public_id") !== "" &&
+            value(mediaRow, "cloudinary_secure_url") !== "" &&
+            value(mediaRow, "alt_text") !== ""
+        );
+
+        if (!Number.isInteger(priceCents) || priceCents <= 0) {
+          issues.push({
+            file: products.relativePath,
+            row: row.__rowNumber,
+            message: "Public Replacement Parts must have a positive integer price_cents value."
+          });
+        }
+
+        if (value(row, "currency") !== "CAD") {
+          issues.push({
+            file: products.relativePath,
+            row: row.__rowNumber,
+            message: "Public Replacement Parts must use CAD currency."
+          });
+        }
+
+        if (value(row, "sku") === "") {
+          issues.push({
+            file: products.relativePath,
+            row: row.__rowNumber,
+            message: "Public Replacement Parts must have an internal SKU."
+          });
+        }
+
+        if (value(row, "source_review_status") !== "approved_for_schema_planning") {
+          issues.push({
+            file: products.relativePath,
+            row: row.__rowNumber,
+            message:
+              "Public Replacement Parts must have source_review_status=approved_for_schema_planning."
+          });
+        }
+
+        if (!approvedPrimaryMedia) {
+          issues.push({
+            file: media.relativePath,
+            row: row.__rowNumber,
+            message:
+              "Public Replacement Parts must have primary Cloudinary media with delivery fields and alt text."
+          });
+        }
+      } else if (["online_checkout_candidate", "online_checkout"].includes(purchaseMode)) {
+        issues.push({
+          file: products.relativePath,
+          row: row.__rowNumber,
+          message: "Private Replacement Parts must not use an online checkout purchase mode."
         });
       }
     }
@@ -1480,6 +1564,10 @@ function combineNotes(noteParts) {
 function sourceProviderForUrl(sourceUrl) {
   if (!sourceUrl) {
     return "unknown";
+  }
+
+  if (sourceUrl.includes("res.cloudinary.com")) {
+    return "cloudinary";
   }
 
   return sourceUrl.includes("bigcommerce.com") ? "bigcommerce" : "unknown";

@@ -1,7 +1,7 @@
 # Tiger Brand Change Control
 
-Version: 2.0
-Effective: 2026-07-20
+Version: 2.1
+Effective: 2026-07-21
 Approver: Shawn Cleve
 
 The brand system should evolve when Tiger learns something—not every time a contributor finds a different adjective.
@@ -53,6 +53,20 @@ Update version headers in every materially affected brand file. `docs/brand/READ
 Deeper individual product stories remain to be completed. Vice and ball stories are provisional. Aqua and Portland Outdoor still have factual questions listed in `docs/brand/FACTS-AND-CLAIMS.md` and `docs/planning/tiger-storytelling-content-map-v1.md`.
 
 ## Decision history
+
+## 2026-07-21 — Approve Part 40 as Tiger's first online replacement part
+
+Owner decision: Sell Tiger PingPong Part 40 from the dedicated Replacement Parts support hub. Customers use the approved selected Expo Indoor, Expo Outdoor, Portland Indoor, and Portland Outdoor compatibility list; anyone unsure sends photos before ordering. The current catalog seed is `$7 CAD`, with no fit selector or quantity discount. Future parts require their own approved catalog data, media, compatibility copy, and curated rank.
+
+Reason: Part 40 is Tiger's most-requested quick fix. Selling the small clip directly is more useful than treating every part as an email-only request, while the support path remains available for uncertain fit and every unapproved part.
+
+Evidence or source: Shawn's explicit written approval and corrections on 2026-07-21; reviewed legacy record for SKU `8123`, price, and selected-table compatibility; verified owner-provided Part 40 image. Live catalog remains price and availability truth.
+
+Files updated: Facts register, brand system version, reviewed catalog CSVs, importer validation, dedicated Replacement Parts page, and focused commerce tests.
+
+Copy or claim replaced: “Service path only. No public part catalog, inventory, price, or availability promise.” The new rule permits individually approved common parts on the dedicated hub; it does not publish the deferred replacement nets or a general parts catalogue.
+
+Follow-up: Complete separately approved data and media review before adding another part. Keep table-first finding, diagrams, per-table pages, product-page manual links, and install guidance parked.
 
 ## 2026-07-20 — Correct the pre-Expo and first Expo chronology
 

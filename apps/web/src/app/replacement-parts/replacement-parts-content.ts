@@ -1,4 +1,5 @@
 import mediaManifestData from "../../../../../data/media/replacement-parts-launch-media-v1.json";
+import { curatedReplacementParts } from "../../lib/curated-replacement-parts";
 
 interface ReplacementPartsMediaEntry {
   altText?: string;
@@ -99,8 +100,11 @@ I'll attach a photo of the part and the table label.`
 );
 
 const part40Media = requireImplementedMedia("replacement-part-40-primary");
+const part40Configuration = curatedReplacementParts.find(
+  (part) => part.slug === "tiger-pingpong-replacement-part-40"
+);
 
-if (part40Media.assetType !== "image" || !part40Media.altText) {
+if (part40Media.assetType !== "image" || !part40Media.altText || !part40Configuration) {
   throw new Error("Part 40 media is missing its image metadata.");
 }
 
@@ -148,10 +152,12 @@ export const replacementPartsContent = {
     requireManual("manual-plaza-outdoor")
   ] satisfies ReplacementManual[],
   part40: {
-    body: "If a selected Expo or Portland table gets opened the wrong way, this little clip is often what gives. It's cheap, easy to mail, and a much better fix than replacing the whole opening system.",
+    body: part40Configuration.body,
+    compatibility: part40Configuration.compatibility,
     eyebrow: "Most-requested fix",
-    fit: "Used on selected Expo Indoor, Expo Outdoor, Portland Indoor, and Portland Outdoor tables. We'll confirm fit before anything ships.",
-    heading: "Part 40. Small clip. Big save.",
-    punchline: "Good news: Part 40 fits in an envelope. The nearly four-foot rod does not."
+    heading: part40Configuration.heading,
+    punchline: "Good news: Part 40 fits in an envelope. The nearly four-foot rod does not.",
+    slug: part40Configuration.slug,
+    supportPrompt: part40Configuration.supportPrompt
   }
 } as const;

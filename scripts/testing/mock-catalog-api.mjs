@@ -193,6 +193,42 @@ const aquaProduct = {
     }
   ]
 };
+const part40Product = {
+  key: "tiger-pingpong-replacement-part-40",
+  slug: "tiger-pingpong-replacement-part-40",
+  name: "Tiger PingPong Part 40",
+  productKind: "replacement_part",
+  purchaseMode: "online_checkout",
+  priceCents: 700,
+  currency: "CAD",
+  v1PublicNavigation: true,
+  v1CheckoutScope: true,
+  shippingReviewRequired: false,
+  family: {
+    key: "table-opening-parts",
+    slug: "table-opening-parts",
+    name: "Table-Opening Parts"
+  },
+  category: {
+    key: "replacement-parts",
+    slug: "replacement-parts",
+    name: "Replacement Parts"
+  },
+  primaryMedia: {
+    mediaKey: "tiger-pingpong-replacement-part-40-primary-01",
+    role: "primary",
+    cloudinaryPublicId: "tiger-pingpong/replacement-parts/part-40",
+    cloudinarySecureUrl:
+      "https://res.cloudinary.com/djfcisldm/image/upload/v1784409335/tiger-pingpong/replacement-parts/part-40.jpg",
+    altText: "Black Tiger Part 40 replacement clip on a white background",
+    title: "Tiger PingPong Part 40",
+    caption: null,
+    sortOrder: 1,
+    isPrimary: true
+  },
+  media: [],
+  variants: []
+};
 const accessoryProducts = [
   aquaProduct,
   {
@@ -542,7 +578,7 @@ const server = createServer(async (request, response) => {
           brands: 1,
           categories: 5,
           productFamilies: 12,
-          products: 12,
+          products: 13,
           variants: 0,
           media: 0
         }
@@ -552,7 +588,9 @@ const server = createServer(async (request, response) => {
   }
 
   if (request.url === "/catalog/products") {
-    response.end(JSON.stringify({ products: [product, ...accessoryProducts, ...tableProducts] }));
+    response.end(
+      JSON.stringify({ products: [product, part40Product, ...accessoryProducts, ...tableProducts] })
+    );
     return;
   }
 
@@ -563,6 +601,11 @@ const server = createServer(async (request, response) => {
 
   if (request.url === `/catalog/products/${aquaProduct.slug}`) {
     response.end(JSON.stringify({ product: aquaProduct }));
+    return;
+  }
+
+  if (request.url === `/catalog/products/${part40Product.slug}`) {
+    response.end(JSON.stringify({ product: part40Product }));
     return;
   }
 
@@ -646,7 +689,7 @@ const server = createServer(async (request, response) => {
     const changes = [];
     let subtotalCents = 0;
     for (const item of body.items ?? []) {
-      const catalogProduct = [product, aquaProduct, ...tableDetailProducts].find(
+      const catalogProduct = [product, aquaProduct, part40Product, ...tableDetailProducts].find(
         (candidate) => candidate.slug === item.productSlug
       );
       const variant = catalogProduct?.variants.find(

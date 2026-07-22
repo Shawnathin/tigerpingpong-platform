@@ -2,10 +2,11 @@
 
 ## In Progress
 
-- `codex/feature/replacement-parts-commerce-v1` — Part 40 online commerce plus the guarded foundation for later curated common parts. Production catalog write remains separately approval-gated.
+- `codex/feature/stripe-order-alerts-phone-collection` — Stripe successful-payment owner email is enabled; required hosted-Checkout phone collection and its paid-order storage proof are complete locally and await review/PR/deployment.
 
 ## Done
 
+- PR #128 merged the Part 40 commerce and replacement-parts foundation into `develop`; production catalog write and deployment remain separately approval-gated.
 - PR #127 merged the branch-policy enforcement task into `develop`; only a later explicitly approved `develop` pull request may promote it to `main`.
 - Created the dedicated `codex/enforce-development-branch-flow` branch from current `develop`; documented and automated the required `task branch -> develop -> main` promotion path.
 - Owner confirmed TigerPingPong.ca live and working on 2026-07-21.

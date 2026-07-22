@@ -1,5 +1,9 @@
 # TigerPingPong Website Launch v1
 
+## Version status
+
+**Shipped.** Shawn confirmed on 2026-07-21 that the production site is live and working. The pre-launch scope and proof list below are retained as the historical v1 contract; unchecked evidence must not be retroactively claimed without a recorded source.
+
 ## Version name
 
 TigerPingPong Website Launch v1
@@ -92,6 +96,6 @@ The website is live online at the intended production domain, with the v1 catalo
 
 Anything not required to safely launch v1 goes to `docs/agent/parking-lot.md`. Media polish, deeper admin tools, product description upgrades, image automation, SEO expansion, design refinements, and repo-wide formatting cleanup are parked unless selected as launch blockers.
 
-## What happens after this version ships
+## Post-launch direction
 
-After v1 is live, the next version can focus on polish: media cleanup, product cards, richer admin tools, SEO expansion, inventory/availability controls, catalog editing, and conversion improvements.
+Post-launch work can focus on stability and measured improvements: media cleanup, product cards, richer admin tools, SEO expansion, inventory/availability controls, catalog editing, and conversion improvements. Every task starts on its own branch created from current `develop`, merges back only into `develop`, and reaches production `main` only through an approved pull request from `develop`.

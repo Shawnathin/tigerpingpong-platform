@@ -218,6 +218,7 @@ The backend creates a Stripe Checkout Session with:
 - `product_data.name` from the item snapshot
 - `product_data.images` only when a safe public HTTPS image URL exists
 - `shipping_address_collection.allowed_countries: ["CA"]`
+- `phone_number_collection.enabled: true`
 - exactly one `shipping_options` entry based on backend-calculated shipping
 - `success_url` from `CHECKOUT_SUCCESS_URL`
 - `cancel_url` from `CHECKOUT_CANCEL_URL`

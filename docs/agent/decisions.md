@@ -33,3 +33,11 @@ Decision: Keep `https://tigerpingpong.ca` canonical. Serve direct permanent redi
 Why: The business is changing hosting and selected paths, not its canonical domain. Direct destinations, complete canonical signals, and a failure-safe sitemap reduce migration ambiguity and preserve relevant old-site equity without sending obsolete products to unrelated pages.
 
 Out of scope: No DNS change before origin preflight, no Change of Address request, no webhook move, no schema/API/payment-truth change, and no client or manual paid-state mutation.
+
+## 2026-07-21 - Adopt the post-launch development lane
+
+Decision: Keep production `main` aligned with the live site. Every task uses its own branch created from current `develop`, task branches merge only into `develop`, and only an approved pull request from `develop` may update `main`. Direct and force pushes to both protected branches are forbidden. A repository-local pre-push hook also rejects direct pushes to `main` from this clone.
+
+Why: The site is live, so production needs a deliberate promotion boundary while experimentation and cleanup continue away from `main`.
+
+Out of scope: No application, deployment, DNS, database, payment, hosting, catalog, media, or production-data change was made as part of repository cleanup.

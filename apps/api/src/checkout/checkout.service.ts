@@ -1056,7 +1056,6 @@ export class CheckoutService implements OnModuleDestroy {
       product.status === "active" &&
       product.v1PublicNavigation &&
       product.v1CheckoutScope &&
-      product.productKind !== "replacement_part" &&
       CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
       product.family.isActive &&
       product.family.isPublic &&
@@ -1164,6 +1163,9 @@ export class CheckoutService implements OnModuleDestroy {
       line_items: order.items.map((item) => this.createStripeLineItem(config, item)),
       shipping_address_collection: {
         allowed_countries: ["CA" as const]
+      },
+      phone_number_collection: {
+        enabled: true
       },
       shipping_options: [
         {

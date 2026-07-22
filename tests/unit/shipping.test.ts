@@ -32,6 +32,25 @@ describe("V1 Canada shipping boundary", () => {
     expect(getCartShippingCopy(subtotal)).toBe(copy);
     expect(getV1ShippingMessage(subtotal)).toBe(copy);
   });
+
+  it("charges the standard flat rate for one Part 40", () => {
+    const part40 = {
+      cartLineId: "tiger-pingpong-replacement-part-40",
+      categoryName: "Replacement Parts",
+      currency: "CAD",
+      imageUrl: null,
+      name: "Tiger PingPong Part 40",
+      productKind: "replacement_part",
+      productSlug: "tiger-pingpong-replacement-part-40",
+      quantity: 1,
+      selectedOptions: [],
+      unitPriceCents: 700
+    } satisfies CartItem;
+
+    expect(getCartShippingCents(700, [part40])).toBe(1_500);
+    expect(700 + getCartShippingCents(700, [part40])).toBe(2_200);
+    expect(getCartShippingCopy(700, [part40])).toBe(V1_FLAT_RATE_SHIPPING_COPY);
+  });
 });
 
 describe("Aqua 4-pack Canada-wide free shipping", () => {

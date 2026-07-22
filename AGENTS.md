@@ -16,15 +16,16 @@ Keep this file short, current, and project-specific. If a rule becomes wrong, fi
 - **Database:** Supabase Postgres through Prisma in `packages/db`
 - **Payments:** Stripe Checkout and Stripe webhooks
 - **Production targets:** Render web service and Render API/platform service
-- **Current storefront:** `https://tigerpingpong-web.onrender.com`
+- **Current storefront:** `https://tigerpingpong.ca`
+- **Render storefront origin:** `https://tigerpingpong-web.onrender.com`
 - **Current API/webhook service:** `https://tigerpingpong-platform.onrender.com`
 - **Current Stripe webhook endpoint:** `https://tigerpingpong-platform.onrender.com/webhooks/stripe`
 
 ## Product purpose
 
-This repo powers the custom TigerPingPong ecommerce launch. It owns the public storefront, catalog/product pages, cart, Stripe Checkout creation, webhook-confirmed paid orders, protected internal order review, protected admin shell, and catalog/media import tooling.
+This repo powers the live custom TigerPingPong ecommerce platform. It owns the public storefront, catalog/product pages, cart, Stripe Checkout creation, webhook-confirmed paid orders, protected internal order review, protected admin shell, and catalog/media import tooling.
 
-The project is past the basic-feasibility stage. The current work is launch discipline: product-page polish, real product content, checkout trust, minimal staff fulfillment records, URL/SEO planning, category/home/footer polish, final QA, then domain cutover.
+The v1 storefront is live. Current work is post-launch stability and deliberate iteration: preserve checkout/payment truth, monitor production behavior, make focused improvements on non-production branches, and promote reviewed changes to `main` through pull requests.
 
 ## Mandatory Tiger brand contract
 
@@ -45,10 +46,10 @@ These are implementation requirements, not optional inspiration:
 
 ## Current priorities
 
-1. Preserve the working checkout/payment/order foundation.
-2. Improve product pages with real content, media galleries, and required product options.
-3. Keep admin work minimal until launch-critical customer-facing and SEO work is handled.
-4. Make URL/SEO decisions deliberately before redirects, canonicals, sitemap, robots, or DNS changes.
+1. Preserve the live checkout/payment/order foundation.
+2. Fix production regressions before starting broad polish work.
+3. Make customer-facing improvements in focused, reviewable changes.
+4. Keep admin scope intentional and protect staff/customer data.
 5. Keep raw media local; use Cloudinary as the asset store.
 
 ## Build-control workflow
@@ -56,6 +57,9 @@ These are implementation requirements, not optional inspiration:
 - This repo uses the master build-control chat to choose one task at a time.
 - `goals.md` is the current version source of truth.
 - `docs/agent/current-task.md` is the current task source of truth.
+- `develop` is the shared post-launch integration branch. Every task gets its own branch created from current `develop`; do not implement directly on `develop`.
+- Task branches merge only into `develop` through pull requests. They must never push or open pull requests directly to `main`.
+- Production `main` is updated only by an approved pull request whose source is `develop`. No other branch may update `main`.
 - Codex executes only the selected task card. Side chats may recommend work, but they do not choose tasks.
 - Side quests, useful ideas, and not-now work go to `docs/agent/parking-lot.md` unless Shawn explicitly selects them.
 - During onboarding, do not make runtime, deployment, schema, migration, dependency, env, hosting, payment, or app behavior changes.
@@ -68,8 +72,7 @@ These are implementation requirements, not optional inspiration:
 - Do not replace hosted Stripe Checkout with a custom payment form.
 - Do not build a full BigCommerce clone admin before launch.
 - Do not build automated shipment emails before launch; manual tracking emails are acceptable for V1.
-- Do not change DNS or perform domain cutover.
-- Do not implement URL redirects, canonicals, sitemap, or robots before the URL structure is reviewed.
+- Do not change production DNS, canonical hosts, redirects, sitemap, or robots without an explicitly selected and reviewed task.
 - Do not commit raw `images/` assets, secrets, `.env` files, or Cloudinary credentials.
 
 ## Repository map
@@ -140,7 +143,7 @@ pnpm --filter @tigerpingpong/db import:tiger:dev
 pnpm --filter @tigerpingpong/shared build
 ```
 
-## Core launch guardrails
+## Core production guardrails
 
 These are locked unless Shawn explicitly approves a change:
 
@@ -163,7 +166,7 @@ V1 shipping rule:
 - Orders `$100 CAD` or under get `$15 CAD` flat-rate shipping.
 - Exactly `$100.00 CAD` still gets `$15 CAD` flat-rate shipping.
 
-Do not invent product-specific shipping promises. Table checkout/free shipping needs explicit business sign-off before custom-domain launch.
+Do not invent product-specific shipping promises. Any additional checkout/free-shipping exception needs explicit business sign-off before deployment.
 
 ## Product/content rules
 
@@ -258,10 +261,16 @@ Payment code is high risk. Be conservative.
 
 ## Git and PR workflow
 
-- Work on a branch, not directly on `main`.
+- Start each task by updating `develop` with `git pull --ff-only origin develop`, then create a dedicated branch from it.
+- Use `feature/`, `fix/`, `docs/`, or `chore/` branches according to the task. Codex-created branches retain the required `codex/` prefix.
+- Open task-branch pull requests against `develop`, never `main`.
+- Do not commit feature work directly on `develop`; it is an integration and approval branch.
+- Only an approved `develop` pull request may target and update production `main`.
+- Approval means Shawn explicitly authorizes the `develop`-to-`main` merge; never merge or enable auto-merge without that authorization.
+- Keep both `develop` and `main` free of force pushes and direct pushes.
 - Keep PRs focused and boring.
 - Do not mix feature work with broad cleanup.
-- Do not merge unrelated launch steps into the same PR.
+- Do not merge unrelated work into the same PR.
 - Use descriptive branch names such as:
   - `feature/044-product-media-gallery-options-v1`
   - `docs/047-url-structure-footer-planning`

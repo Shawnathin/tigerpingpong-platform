@@ -119,7 +119,23 @@ function productSummary(slug: string): CatalogProductSummary {
 
 beforeEach(() => {
   getProductsMock.mockReset();
-  getProductsMock.mockResolvedValue(PUBLIC_PRODUCT_SLUGS.map(productSummary));
+  getProductsMock.mockResolvedValue([
+    ...PUBLIC_PRODUCT_SLUGS.map(productSummary),
+    {
+      ...productSummary("tiger-pingpong-replacement-part-40"),
+      category: {
+        key: "replacement-parts",
+        name: "Replacement Parts",
+        slug: "replacement-parts"
+      },
+      family: {
+        key: "table-opening-parts",
+        name: "Table-Opening Parts",
+        slug: "table-opening-parts"
+      },
+      productKind: "replacement_part"
+    }
+  ]);
 });
 
 describe("approved legacy redirect contract", () => {
@@ -174,6 +190,7 @@ describe("canonical sitemap contract", () => {
 
     expect(entries).toHaveLength(34);
     expect(new Set(paths).size).toBe(34);
+    expect(paths).not.toContain("/catalog/products/tiger-pingpong-replacement-part-40");
     expect(paths).toEqual([
       ...EXPECTED_STATIC_SITEMAP_PATHS,
       ...expectedArticlePaths,

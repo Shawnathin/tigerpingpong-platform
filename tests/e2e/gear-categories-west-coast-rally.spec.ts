@@ -285,7 +285,7 @@ test.describe("Tiger gear categories", () => {
     await expect(netHeroFigure.getByRole("img")).toHaveCSS("object-fit", "contain");
   });
 
-  test("Replacement Parts stays human and support-only", async ({ page }) => {
+  test("Replacement Parts stays human while Part 40 uses the shared cart", async ({ page }) => {
     const response = await page.goto(routes.parts.path);
 
     expect(response?.status()).toBe(200);
@@ -317,7 +317,9 @@ test.describe("Tiger gear categories", () => {
       "href",
       /mailto:info@tigerpingpong\.com/
     );
-    await expect(page.getByRole("button", { name: /add to cart/i })).toHaveCount(0);
+    await expect(page.getByTestId("part-40-live-price")).toHaveText("$7.00 CAD");
+    await expect(page.getByRole("button", { name: "Add to Cart" })).toHaveCount(1);
+    await expect(page.locator("main select, main input, main form")).toHaveCount(0);
   });
 
   test("every route stays accessible and overflow-free at the promised widths", async ({

@@ -6,6 +6,11 @@
   "engines": {
     "node": ">=20.11.0"
   },
+  "pnpm": {
+    "overrides": {
+      "sharp": "0.35.3"
+    }
+  },
   "scripts": {
     "dev": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build && pnpm --parallel --filter @tigerpingpong/api --filter @tigerpingpong/web dev",
     "dev:api": "pnpm --filter @tigerpingpong/api dev",

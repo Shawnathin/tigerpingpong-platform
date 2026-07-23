@@ -111,7 +111,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong white balls 6 pack",
       caption: "White 6 pack balls",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/125/images/687/Asset_33__87672.1650713962_600x600__66303.1659982572.386.513.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303660/tigerpingpong/products/tiger-premium-balls-6-white/01-main.jpg",
       title: "White ping pong balls"
     }
   ],

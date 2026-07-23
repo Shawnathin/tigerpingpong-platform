@@ -1,7 +1,7 @@
 # Tiger Brand Change Control
 
-Version: 2.1
-Effective: 2026-07-21
+Version: 2.2
+Effective: 2026-07-23
 Approver: Shawn Cleve
 
 The brand system should evolve when Tiger learns something—not every time a contributor finds a different adjective.
@@ -53,6 +53,20 @@ Update version headers in every materially affected brand file. `docs/brand/READ
 Deeper individual product stories remain to be completed. Vice and ball stories are provisional. Aqua and Portland Outdoor still have factual questions listed in `docs/brand/FACTS-AND-CLAIMS.md` and `docs/planning/tiger-storytelling-content-map-v1.md`.
 
 ## Decision history
+
+## 2026-07-23 — Clarify table contents and approve the accessory offer
+
+Owner decision: Current Tiger PingPong tables do not include paddles or balls. When a table is added to the cart, offer one of three play sets—Aqua two paddles with three balls, Aqua four paddles with three balls, or four Vice paddles with six white balls—plus an independently optional compatible Tiger Table Cover. Each table quantity unlocks one play set and one compatible cover at 30% off; excess quantities remain at regular live price. Plaza Outdoor does not receive the cover offer.
+
+Reason: A customer could not tell whether a table included paddles or balls. The purchase rail now needs to answer that question before add-to-cart, while the follow-up offer makes the missing gear easy to add without implying it is included.
+
+Evidence or source: Shawn's explicit written direction and implementation approval on 2026-07-23. Existing owner-confirmed Aqua package contents and the sourced Plaza cover incompatibility remain controlling facts. Live catalog data remains price and availability truth.
+
+Implementation footprint: Brand facts register, brand system version, Vice catalog package records, table purchasing rail and add-to-cart dialog, cart pricing, checkout/order snapshots, protected order presentation, and focused commerce tests across two sequential PRs.
+
+Copy or claim replaced: The storefront previously left table package contents implicit. The new approved purchase-critical line is “Paddles and balls are sold separately.” The existing provisional Vice product story remains provisional.
+
+Follow-up: Operations must provide the exact new Vice bundle SKU before its catalog record can be completed or written. Apply the reviewed catalog update and database migration in staging before any production promotion.
 
 ## 2026-07-21 — Approve Part 40 as Tiger's first online replacement part
 

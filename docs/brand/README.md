@@ -1,7 +1,7 @@
 # Tiger PingPong Brand Operating System
 
-Version: 2.1
-Effective: 2026-07-21
+Version: 2.2
+Effective: 2026-07-23
 Brand owner: Shawn Cleve
 Status: Canonical after merge
 

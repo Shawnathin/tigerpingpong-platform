@@ -11,8 +11,10 @@ import {
 } from "../../../../lib/cart";
 import { getV1ShippingMessage } from "../../../../lib/shipping";
 import { useCart } from "../../../../lib/use-cart";
+import { VICE_PRODUCT_SLUG } from "../../../../lib/vice-package";
 
 import { AquaProductVisual } from "./AquaProductVisual";
+import { VicePackageVisual } from "./VicePackageVisual";
 import styles from "./page.module.css";
 
 const AQUA_PRODUCT_SLUG = "tiger-aqua-outdoor-indoor-paddle";
@@ -65,6 +67,12 @@ function ProductThumb({ product }: { product: CartProductInput }) {
   if (product.productSlug === AQUA_PRODUCT_SLUG) {
     return (
       <AquaProductVisual altText={product.name} compact variantKey={product.selectedVariantKey} />
+    );
+  }
+
+  if (product.productSlug === VICE_PRODUCT_SLUG) {
+    return (
+      <VicePackageVisual altText={product.name} compact variantKey={product.selectedVariantKey} />
     );
   }
 
@@ -390,6 +398,12 @@ export function CheckoutButton({
                                 compact
                                 variantKey={optionValue.variantKey}
                               />
+                            ) : product.productSlug === VICE_PRODUCT_SLUG ? (
+                              <VicePackageVisual
+                                altText={optionValue.thumbnailAlt ?? shopperLabel}
+                                compact
+                                variantKey={optionValue.variantKey}
+                              />
                             ) : optionValue.thumbnailSrc ? (
                               <img
                                 alt={optionValue.thumbnailAlt ?? shopperLabel}
@@ -481,7 +495,13 @@ export function CheckoutButton({
                     {productOptions.map((optionGroup, groupIndex) => (
                       <fieldset className={styles.optionSelector} key={optionGroup.name}>
                         <legend>{getOptionLegend(optionGroup)}</legend>
-                        <div className={styles.optionChoices}>
+                        <div
+                          className={`${styles.optionChoices} ${
+                            product.productSlug === VICE_PRODUCT_SLUG
+                              ? styles.viceOptionChoices
+                              : ""
+                          }`.trim()}
+                        >
                           {optionGroup.values.map((optionValue, optionIndex) => {
                             const inputId =
                               `${product.productSlug}-${optionGroup.name}-${optionValue.value}`
@@ -489,11 +509,19 @@ export function CheckoutButton({
                                 .replace(/[^a-z0-9]+/g, "-");
                             const isSelected =
                               selectedOptionValues[optionGroup.name] === optionValue.value;
-                            const optionTone = getOptionTone(optionValue);
+                            const isVicePackageOption =
+                              product.productSlug === VICE_PRODUCT_SLUG &&
+                              Boolean(optionValue.variantKey);
+                            const optionTone = isVicePackageOption
+                              ? null
+                              : getOptionTone(optionValue);
+                            const shopperLabel = optionValue.shopperLabel ?? optionValue.label;
 
                             return (
                               <label
-                                className={styles.optionChoice}
+                                className={`${styles.optionChoice} ${
+                                  isVicePackageOption ? styles.viceOptionChoice : ""
+                                }`.trim()}
                                 data-option-tone={optionTone ?? undefined}
                                 htmlFor={inputId}
                                 key={optionValue.value}
@@ -514,12 +542,21 @@ export function CheckoutButton({
                                   type="radio"
                                   value={optionValue.value}
                                 />
-                                <span
-                                  className={getOptionSwatchClassName(optionTone)}
-                                  aria-hidden="true"
-                                />
+                                {isVicePackageOption ? (
+                                  <span className={styles.viceOptionMedia}>
+                                    <VicePackageVisual
+                                      decorative
+                                      variantKey={optionValue.variantKey}
+                                    />
+                                  </span>
+                                ) : (
+                                  <span
+                                    className={getOptionSwatchClassName(optionTone)}
+                                    aria-hidden="true"
+                                  />
+                                )}
                                 <span className={styles.optionChoiceText}>
-                                  <strong>{optionValue.label}</strong>
+                                  <strong>{shopperLabel}</strong>
                                   {optionValue.priceCents ? (
                                     <small>
                                       {formatCartMoney(

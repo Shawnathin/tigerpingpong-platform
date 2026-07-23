@@ -1,3 +1,5 @@
+import type { CatalogVariantPricingSource } from "@tigerpingpong/shared";
+
 export interface CatalogCounts {
   brands: number;
   categories: number;
@@ -71,6 +73,7 @@ export interface CatalogProductVariantSummary {
   name: string | null;
   priceCents: number | null;
   currency: string;
+  pricingSource?: CatalogVariantPricingSource;
   purchaseModeOverride: string | null;
   isActive: boolean;
   options: CatalogProductVariantOption[];

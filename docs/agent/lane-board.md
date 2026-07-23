@@ -2,10 +2,11 @@
 
 ## In Progress
 
-- `codex/feature/stripe-order-alerts-phone-collection` — Stripe successful-payment owner email is enabled; required hosted-Checkout phone collection and its paid-order storage proof are complete locally and await review/PR/deployment.
+- `codex/feature/vice-bundle-catalog-foundation` — PR 1 of the table accessory offer is implemented and locally verified; the bundle remains inactive and deployment-blocked pending its exact operations-assigned SKU.
 
 ## Done
 
+- PR #130 merged Stripe successful-payment owner alerts and required hosted-Checkout phone collection into `develop`.
 - PR #128 merged the Part 40 commerce and replacement-parts foundation into `develop`; production catalog write and deployment remain separately approval-gated.
 - PR #127 merged the branch-policy enforcement task into `develop`; only a later explicitly approved `develop` pull request may promote it to `main`.
 - Created the dedicated `codex/enforce-development-branch-flow` branch from current `develop`; documented and automated the required `task branch -> develop -> main` promotion path.

@@ -9,8 +9,14 @@ import {
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
 import {
   calculateCanadaShippingCents,
+  calculateViceBundleRegularPrice,
   CURRENT_CANADA_SHIPPING_RULE,
-  CURRENT_CANADA_SHIPPING_RULE_VERSION
+  CURRENT_CANADA_SHIPPING_RULE_VERSION,
+  PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+  VICE_BUNDLE_VARIANT_KEY,
+  VICE_PACKAGE_OPTION_NAME,
+  VICE_PADDLE_PRODUCT_KEY,
+  VICE_SINGLE_VARIANT_KEY
 } from "@tigerpingpong/shared";
 import Stripe from "stripe";
 
@@ -683,7 +689,7 @@ export class CheckoutService implements OnModuleDestroy {
     items: CheckoutRequestItem[]
   ): Promise<Map<string, CheckoutProductRecord>> {
     try {
-      const products = await prisma.product.findMany({
+      const products: CheckoutProductRecord[] = await prisma.product.findMany({
         where: {
           slug: {
             in: items.map((item) => item.productSlug)
@@ -691,6 +697,22 @@ export class CheckoutService implements OnModuleDestroy {
         },
         select: checkoutProductSelect
       });
+
+      if (
+        products.some((product) => product.key === VICE_PADDLE_PRODUCT_KEY) &&
+        !products.some((product) => product.key === PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY)
+      ) {
+        const componentProducts: CheckoutProductRecord[] = await prisma.product.findMany({
+          where: {
+            key: {
+              in: [PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY]
+            }
+          },
+          select: checkoutProductSelect
+        });
+
+        products.push(...componentProducts);
+      }
 
       return new Map(products.map((product) => [product.slug, product]));
     } catch {
@@ -705,6 +727,7 @@ export class CheckoutService implements OnModuleDestroy {
     productsBySlug: Map<string, CheckoutProductRecord>
   ): SnapshotLineItem[] {
     const snapshotItems: SnapshotLineItem[] = [];
+    const canonicalLineKeys = new Set<string>();
     const cartChanges: Array<{
       cartLineId: string;
       currency?: string;
@@ -727,9 +750,10 @@ export class CheckoutService implements OnModuleDestroy {
         });
       }
 
+      const normalizedItem = this.withLegacyViceSingleSelection(item, product);
       let optionValidation: ValidatedLineItemOptions;
       try {
-        optionValidation = this.validateLineItemOptions(item, product);
+        optionValidation = this.validateLineItemOptions(normalizedItem, product);
       } catch (error) {
         if (item.expectedUnitPriceCents !== null && error instanceof BadRequestException) {
           cartChanges.push({ cartLineId, status: "unavailable" });
@@ -737,7 +761,21 @@ export class CheckoutService implements OnModuleDestroy {
         }
         throw error;
       }
-      const unitPriceCents = this.resolveUnitPriceCents(product, optionValidation.variant);
+
+      const canonicalLineKey = `${product.id}:${optionValidation.variant?.id ?? "base"}`;
+
+      if (canonicalLineKeys.has(canonicalLineKey)) {
+        throw new BadRequestException({
+          message: "Duplicate cart lines are not supported for V1 checkout."
+        });
+      }
+
+      canonicalLineKeys.add(canonicalLineKey);
+      const unitPriceCents = this.resolveUnitPriceCents(
+        product,
+        optionValidation.variant,
+        productsBySlug
+      );
 
       if (
         typeof unitPriceCents !== "number" ||
@@ -792,6 +830,43 @@ export class CheckoutService implements OnModuleDestroy {
     }
 
     return snapshotItems;
+  }
+
+  private withLegacyViceSingleSelection(
+    item: CheckoutRequestItem,
+    product: CheckoutProductRecord
+  ): CheckoutRequestItem {
+    if (
+      product.key !== VICE_PADDLE_PRODUCT_KEY ||
+      item.selectedOptions.length > 0 ||
+      item.selectedVariantKey
+    ) {
+      return item;
+    }
+
+    const singleVariant = product.variants.find(
+      (variant) => variant.key === VICE_SINGLE_VARIANT_KEY && this.isVariantCheckoutable(variant)
+    );
+    const packageOption = singleVariant?.optionValues.find(
+      ({ productOptionValue }) =>
+        this.normalizeOptionKey(productOptionValue.option.name) ===
+        this.normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
+    )?.productOptionValue;
+
+    if (!singleVariant || !packageOption) {
+      return item;
+    }
+
+    return {
+      ...item,
+      selectedVariantKey: singleVariant.key,
+      selectedOptions: [
+        {
+          name: packageOption.option.name,
+          value: packageOption.value
+        }
+      ]
+    };
   }
 
   private validateLineItemOptions(
@@ -941,7 +1016,7 @@ export class CheckoutService implements OnModuleDestroy {
       .filter(
         (option) =>
           option.variantCount === checkoutableVariants.length &&
-          option.values.size > 1 &&
+          (option.values.size > 1 || this.isVicePackageOption(product, option.name)) &&
           this.isRequiredCheckoutOption(product, checkoutableVariants, option)
       )
       .sort((left, right) => left.sortOrder - right.sortOrder)
@@ -962,6 +1037,11 @@ export class CheckoutService implements OnModuleDestroy {
       return true;
     }
 
+    if (this.isVicePackageOption(product, option.name)) {
+      const variantKeys = new Set(variants.map((variant) => variant.key));
+      return variantKeys.has(VICE_SINGLE_VARIANT_KEY);
+    }
+
     const distinctPrices = new Set<number>();
 
     for (const variant of variants) {
@@ -980,6 +1060,13 @@ export class CheckoutService implements OnModuleDestroy {
     }
 
     return distinctPrices.size > 1;
+  }
+
+  private isVicePackageOption(product: CheckoutProductRecord, optionName: string): boolean {
+    return (
+      product.key === VICE_PADDLE_PRODUCT_KEY &&
+      this.normalizeOptionKey(optionName) === this.normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
+    );
   }
 
   private isValidPriceCents(value: unknown): value is number {
@@ -1022,7 +1109,8 @@ export class CheckoutService implements OnModuleDestroy {
 
   private resolveUnitPriceCents(
     product: CheckoutProductRecord,
-    variant: CheckoutProductVariantRecord | null
+    variant: CheckoutProductVariantRecord | null,
+    productsBySlug?: Map<string, CheckoutProductRecord>
   ): number | null {
     if (!variant) {
       return product.priceCents;
@@ -1032,6 +1120,39 @@ export class CheckoutService implements OnModuleDestroy {
 
     if (currency !== V1_CURRENCY) {
       return null;
+    }
+
+    if (product.key === VICE_PADDLE_PRODUCT_KEY && variant.key === VICE_BUNDLE_VARIANT_KEY) {
+      const whiteBalls = [...(productsBySlug?.values() ?? [])].find(
+        (candidate) => candidate.key === PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY
+      );
+      const singleVariant = product.variants.find(
+        (candidate) =>
+          candidate.key === VICE_SINGLE_VARIANT_KEY && this.isVariantCheckoutable(candidate)
+      );
+
+      if (!variant.sku?.trim() || !whiteBalls || !this.isProductCheckoutable(whiteBalls)) {
+        return null;
+      }
+
+      return (
+        calculateViceBundleRegularPrice({
+          viceSingle: singleVariant
+            ? {
+                priceCents: singleVariant.priceCents,
+                currency: singleVariant.currency
+              }
+            : null,
+          legacyViceBase: {
+            priceCents: product.priceCents,
+            currency: product.currency
+          },
+          whiteBallsSixPack: {
+            priceCents: whiteBalls.priceCents,
+            currency: whiteBalls.currency
+          }
+        })?.priceCents ?? null
+      );
     }
 
     if (this.isValidPriceCents(variant.priceCents)) {
@@ -1051,8 +1172,15 @@ export class CheckoutService implements OnModuleDestroy {
 
   private isProductCheckoutable(product: CheckoutProductRecord): boolean {
     const currency = product.currency.trim().toLowerCase();
+    const hasInvalidPartialViceVariantModel =
+      product.key === VICE_PADDLE_PRODUCT_KEY &&
+      product.variants.length > 0 &&
+      !product.variants.some(
+        (variant) => variant.key === VICE_SINGLE_VARIANT_KEY && this.isVariantCheckoutable(variant)
+      );
 
     return (
+      !hasInvalidPartialViceVariantModel &&
       product.status === "active" &&
       product.v1PublicNavigation &&
       product.v1CheckoutScope &&

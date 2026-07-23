@@ -6,6 +6,14 @@ import homepageSummerImageMapData from "../../../../data/media/homepage-summer-i
 import tablesCategoryImageMapData from "../../../../data/media/tables-category-image-map-v1.json";
 import tableProductGalleryManifestData from "../../../../data/media/table-product-gallery-manifest-v1.json";
 
+import {
+  getVicePackageVisualAltText,
+  VICE_BUNDLE_SHOPPER_LABEL,
+  VICE_BUNDLE_VARIANT_KEY,
+  VICE_SINGLE_SHOPPER_LABEL,
+  VICE_SINGLE_VARIANT_KEY
+} from "./vice-package";
+
 export interface TigerStoryImage {
   altText: string;
   assetId: string;
@@ -175,6 +183,13 @@ export interface TigerAquaProductMedia {
 
 export interface TigerAquaPurchaseOptionStory extends TigerAquaProductMedia {
   accent: "canada-red" | "ocean-blue" | "pack";
+  shopperLabel: string;
+  variantKey: string;
+}
+
+export interface TigerVicePurchaseOptionStory {
+  accent: "pack";
+  altText: string;
   shopperLabel: string;
   variantKey: string;
 }
@@ -910,6 +925,33 @@ export function getTigerAquaPurchaseOptionStory(
     string,
     TigerAquaPurchaseOptionStory
   >;
+
+  return options[variantKey] ?? null;
+}
+
+export const tigerVicePackageOptions = {
+  [VICE_SINGLE_VARIANT_KEY]: {
+    accent: "pack",
+    altText: getVicePackageVisualAltText(VICE_SINGLE_VARIANT_KEY),
+    shopperLabel: VICE_SINGLE_SHOPPER_LABEL,
+    variantKey: VICE_SINGLE_VARIANT_KEY
+  },
+  [VICE_BUNDLE_VARIANT_KEY]: {
+    accent: "pack",
+    altText: getVicePackageVisualAltText(VICE_BUNDLE_VARIANT_KEY),
+    shopperLabel: VICE_BUNDLE_SHOPPER_LABEL,
+    variantKey: VICE_BUNDLE_VARIANT_KEY
+  }
+} satisfies Record<string, TigerVicePurchaseOptionStory>;
+
+export function getTigerVicePurchaseOptionStory(
+  variantKey: string | null | undefined
+): TigerVicePurchaseOptionStory | null {
+  if (!variantKey) {
+    return null;
+  }
+
+  const options = tigerVicePackageOptions as Record<string, TigerVicePurchaseOptionStory>;
 
   return options[variantKey] ?? null;
 }

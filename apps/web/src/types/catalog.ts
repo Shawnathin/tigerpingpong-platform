@@ -121,3 +121,41 @@ export interface CatalogProductsResponse {
 export interface CatalogProductResponse {
   product: CatalogProductDetail;
 }
+
+export interface CatalogTableAccessoryOfferOption {
+  label: string;
+  name: string;
+  value: string;
+}
+
+export interface CatalogTableAccessoryOfferItem {
+  currency: string;
+  image: {
+    alt: string;
+    url: string | null;
+  };
+  priceCents: number;
+  pricingSource: "catalog_product" | "catalog_variant" | "component_derived";
+  productKey: string;
+  productName: string;
+  productSlug: string;
+  role: "cover" | "play_set";
+  selectedOptions: CatalogTableAccessoryOfferOption[];
+  variantKey: string | null;
+}
+
+export interface CatalogTableAccessoryOffer {
+  coverCompatibility: {
+    isCompatible: boolean;
+    reason: "not_compatible_with_plaza" | null;
+  };
+  discountPercent: 30;
+  pricingRuleVersion: string;
+  selectableItems: CatalogTableAccessoryOfferItem[];
+  tableProductKey: string;
+  tableSlug: string;
+}
+
+export interface CatalogTableAccessoryOfferResponse {
+  offer: CatalogTableAccessoryOffer;
+}

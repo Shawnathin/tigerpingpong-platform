@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import type { CartProductInput } from "../../../../lib/cart";
+import type { CatalogTableAccessoryOffer } from "../../../../types/catalog";
 
 import {
   CheckoutButton,
@@ -30,6 +31,7 @@ interface ProductHeroPurchaseProps {
   sectionId?: string;
   shippingLines: string[];
   shippingLinesAreFixed: boolean;
+  tableAccessoryOffer: CatalogTableAccessoryOffer | null;
 }
 
 export function ProductHeroPurchase({
@@ -49,7 +51,8 @@ export function ProductHeroPurchase({
   productSlug,
   sectionId,
   shippingLines,
-  shippingLinesAreFixed
+  shippingLinesAreFixed,
+  tableAccessoryOffer
 }: ProductHeroPurchaseProps) {
   const [selectedVariantKey, setSelectedVariantKey] = useState<string | null>(null);
 
@@ -86,6 +89,7 @@ export function ProductHeroPurchase({
           productOptions={productOptions}
           shippingLines={shippingLines}
           shippingLinesAreFixed={shippingLinesAreFixed}
+          tableAccessoryOffer={tableAccessoryOffer}
         />
       </aside>
     </section>

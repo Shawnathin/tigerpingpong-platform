@@ -1,5 +1,6 @@
 "use client";
 
+import { TABLE_ACCESSORIES_PRICING_RULE_VERSION } from "@tigerpingpong/shared";
 import { useState } from "react";
 
 import { CheckoutApiError, createCheckoutSession } from "../../lib/checkout-api";
@@ -35,8 +36,11 @@ function getCartItemHref(item: CartItem): string {
 
 export function CartPageClient() {
   const {
+    discountCents,
     itemCount,
     items,
+    listSubtotalCents,
+    pricingAllocations,
     removeItem,
     reconcileItems,
     shippingCents,
@@ -67,7 +71,8 @@ export function CartPageClient() {
             name: option.name,
             value: option.value
           }))
-        }))
+        })),
+        pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION
       });
 
       window.location.href = session.checkoutUrl;
@@ -113,62 +118,100 @@ export function CartPageClient() {
 
       <section className={styles.cartLayout} aria-label="Cart review">
         <div className={styles.cartItems} aria-label={`${itemCount} cart items`}>
-          {items.map((item) => (
-            <article className={styles.cartItem} key={item.cartLineId}>
-              <a
-                className={styles.itemImage}
-                href={getCartItemHref(item)}
-                aria-label={`View ${item.name}`}
-              >
-                <CartThumbnail item={item} />
-              </a>
+          {items.map((item) => {
+            const pricing = pricingAllocations.find(
+              (allocation) => allocation.lineId === item.cartLineId
+            );
 
-              <div className={styles.itemInfo}>
-                <p>{item.categoryName ?? "Tiger Ping Pong"}</p>
-                <h2>
-                  <a href={getCartItemHref(item)}>{item.name}</a>
-                </h2>
-                {item.selectedOptions.length > 0 ? (
-                  <em>{formatCartItemOptions(item.selectedOptions)}</em>
-                ) : null}
-                <span>{formatCartMoney(item.unitPriceCents, item.currency)} each</span>
-              </div>
-
-              <div className={styles.quantityControls} aria-label={`Quantity for ${item.name}`}>
-                <button
-                  aria-label={`Decrease quantity for ${item.name}`}
-                  disabled={item.quantity <= 1}
-                  onClick={() => updateQuantity(item.cartLineId, item.quantity - 1)}
-                  type="button"
+            return (
+              <article className={styles.cartItem} key={item.cartLineId}>
+                <a
+                  className={styles.itemImage}
+                  href={getCartItemHref(item)}
+                  aria-label={`View ${item.name}`}
                 >
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button
-                  aria-label={`Increase quantity for ${item.name}`}
-                  disabled={item.quantity >= MAX_CART_QUANTITY_PER_LINE}
-                  onClick={() => updateQuantity(item.cartLineId, item.quantity + 1)}
-                  type="button"
-                >
-                  +
-                </button>
-              </div>
+                  <CartThumbnail item={item} />
+                </a>
 
-              <div className={styles.itemTotal}>
-                <strong>
-                  {formatCartMoney(item.unitPriceCents * item.quantity, item.currency)}
-                </strong>
-                <button onClick={() => removeItem(item.cartLineId)} type="button">
-                  Remove
-                </button>
-              </div>
-            </article>
-          ))}
+                <div className={styles.itemInfo}>
+                  <p>{item.categoryName ?? "Tiger Ping Pong"}</p>
+                  <h2>
+                    <a href={getCartItemHref(item)}>{item.name}</a>
+                  </h2>
+                  {item.selectedOptions.length > 0 ? (
+                    <em>{formatCartItemOptions(item.selectedOptions)}</em>
+                  ) : null}
+                  <span>
+                    Regular price {formatCartMoney(item.unitPriceCents, item.currency)} each
+                  </span>
+                  {pricing && pricing.discountedQuantity > 0 ? (
+                    <strong className={styles.offerLabel}>
+                      30% off {pricing.discountedQuantity}
+                      {pricing.discountedQuantity === item.quantity
+                        ? ""
+                        : ` of ${item.quantity}`}{" "}
+                      with your table
+                    </strong>
+                  ) : null}
+                </div>
+
+                <div className={styles.quantityControls} aria-label={`Quantity for ${item.name}`}>
+                  <button
+                    aria-label={`Decrease quantity for ${item.name}`}
+                    disabled={item.quantity <= 1}
+                    onClick={() => updateQuantity(item.cartLineId, item.quantity - 1)}
+                    type="button"
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button
+                    aria-label={`Increase quantity for ${item.name}`}
+                    disabled={item.quantity >= MAX_CART_QUANTITY_PER_LINE}
+                    onClick={() => updateQuantity(item.cartLineId, item.quantity + 1)}
+                    type="button"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div className={styles.itemTotal}>
+                  {pricing && pricing.discountCents > 0 ? (
+                    <del>{formatCartMoney(pricing.listLineTotalCents, item.currency)}</del>
+                  ) : null}
+                  <strong>
+                    {formatCartMoney(
+                      pricing?.netLineTotalCents ?? item.unitPriceCents * item.quantity,
+                      item.currency
+                    )}
+                  </strong>
+                  {pricing && pricing.discountCents > 0 ? (
+                    <span>You save {formatCartMoney(pricing.discountCents, item.currency)}</span>
+                  ) : null}
+                  <button onClick={() => removeItem(item.cartLineId)} type="button">
+                    Remove
+                  </button>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         <aside className={styles.summary} aria-labelledby="cart-summary-title">
           <h2 id="cart-summary-title">Order summary</h2>
           <dl className={styles.summaryList}>
+            {discountCents > 0 ? (
+              <>
+                <div>
+                  <dt>Regular subtotal</dt>
+                  <dd>{formatCartMoney(listSubtotalCents, currency)}</dd>
+                </div>
+                <div className={styles.savingsRow}>
+                  <dt>Table accessory savings</dt>
+                  <dd>-{formatCartMoney(discountCents, currency)}</dd>
+                </div>
+              </>
+            ) : null}
             <div>
               <dt>Subtotal</dt>
               <dd>{formatCartMoney(subtotalCents, currency)}</dd>

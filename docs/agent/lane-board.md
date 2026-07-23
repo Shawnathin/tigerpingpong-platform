@@ -3,6 +3,7 @@
 ## In Progress
 
 - `codex/feature/vice-bundle-catalog-foundation` — PR 1 of the table accessory offer is implemented and locally verified; the bundle remains inactive and deployment-blocked pending its exact operations-assigned SKU.
+- `codex/feature/table-accessory-offer-30-percent` — PR 2 is implemented and locally verified with exact live offer data, cart/dialog work, server-authoritative pricing snapshots, webhook revalidation, and protected savings presentation. Migration, targeted catalog write, Stripe test-mode proof, deployment, and promotion remain gated by the exact Vice bundle SKU and normal review. Current `develop` has no order-received email flow; email presentation is a conditional future follow-up, not part of this branch.
 
 ## Done
 

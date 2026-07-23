@@ -9,9 +9,12 @@ export interface InternalOrderListItem {
   customerEmail: string | null;
   customerPhone: string | null;
   currency: string;
+  listSubtotalCents: number;
+  discountCents: number;
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  pricingRuleVersion: string | null;
   taxAmountCents: number | null;
   itemCount: number;
   stripeCheckoutSessionId: string | null;
@@ -46,9 +49,14 @@ export interface InternalOrderItem {
   sku: string | null;
   name: string;
   currency: string;
+  listUnitPriceCents: number;
+  discountUnitCents: number;
   unitPriceCents: number;
   quantity: number;
+  listLineTotalCents: number;
+  discountCents: number;
   lineTotalCents: number;
+  promotionKey: string | null;
   createdAt: string | null;
 }
 
@@ -78,9 +86,12 @@ export interface InternalOrderDetail {
   shippingPhone: string | null;
   shippingAddress: InternalShippingAddress | null;
   currency: string;
+  listSubtotalCents: number;
+  discountCents: number;
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  pricingRuleVersion: string | null;
   taxAmountCents: number | null;
   shippingRule: string;
   checkoutSource: string;

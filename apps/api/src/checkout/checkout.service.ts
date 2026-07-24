@@ -9,8 +9,16 @@ import {
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
 import {
   calculateCanadaShippingCents,
+  calculateTableAccessoryPricing,
+  calculateViceBundleRegularPrice,
   CURRENT_CANADA_SHIPPING_RULE,
-  CURRENT_CANADA_SHIPPING_RULE_VERSION
+  CURRENT_CANADA_SHIPPING_RULE_VERSION,
+  PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+  TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+  VICE_BUNDLE_VARIANT_KEY,
+  VICE_PACKAGE_OPTION_NAME,
+  VICE_PADDLE_PRODUCT_KEY,
+  VICE_SINGLE_VARIANT_KEY
 } from "@tigerpingpong/shared";
 import Stripe from "stripe";
 
@@ -41,16 +49,22 @@ interface CheckoutRequestItem {
 interface ValidatedCheckoutRequest {
   customerEmail?: string;
   items: CheckoutRequestItem[];
+  pricingRuleVersion: typeof TABLE_ACCESSORIES_PRICING_RULE_VERSION;
 }
 
 interface SnapshotLineItem {
   currency: string;
+  discountUnitCents: number;
   imageUrl: string | null;
   lineTotalCents: number;
+  listUnitPriceCents: number;
   name: string;
+  pricingLineId: string;
   productId: string;
   productKey: string;
+  productKind: string;
   productSlug: string;
+  promotionKey: string | null;
   quantity: number;
   sku: string | null;
   unitPriceCents: number;
@@ -66,6 +80,8 @@ interface ValidatedLineItemOption {
 }
 
 interface CheckoutTotals {
+  discountCents: number;
+  listSubtotalCents: number;
   shippingCents: number;
   shippingLabel: string;
   subtotalCents: number;
@@ -76,6 +92,8 @@ interface CheckoutSessionResponse {
   checkoutSessionId: string;
   checkoutUrl: string;
   currency: string;
+  discountCents: number;
+  listSubtotalCents: number;
   orderId: string;
   publicReference: string;
   shippingCents: number;
@@ -98,6 +116,8 @@ interface CheckoutSessionStatusResponse {
   status: CheckoutSessionPublicStatus;
   publicReference?: string;
   currency?: string;
+  listSubtotalCents?: number;
+  discountCents?: number;
   subtotalCents?: number;
   shippingCents?: number;
   totalCents?: number;
@@ -121,6 +141,9 @@ const checkoutStatusOrderSelect = {
   status: true,
   publicReference: true,
   currency: true,
+  listSubtotalCents: true,
+  discountCents: true,
+  pricingRuleVersion: true,
   subtotalCents: true,
   shippingCents: true,
   totalCents: true,
@@ -268,7 +291,8 @@ export class CheckoutService implements OnModuleDestroy {
       prisma,
       snapshotItems,
       totals,
-      request.customerEmail
+      request.customerEmail,
+      request.pricingRuleVersion
     );
 
     try {
@@ -296,6 +320,8 @@ export class CheckoutService implements OnModuleDestroy {
         checkoutSessionId: session.id,
         checkoutUrl: session.url,
         currency: V1_CURRENCY,
+        listSubtotalCents: order.listSubtotalCents,
+        discountCents: order.discountCents,
         subtotalCents: order.subtotalCents,
         shippingCents: order.shippingCents,
         totalCents: order.totalCents,
@@ -435,8 +461,22 @@ export class CheckoutService implements OnModuleDestroy {
 
     return {
       customerEmail: this.validateCustomerEmail(body.customerEmail),
-      items
+      items,
+      pricingRuleVersion: this.validatePricingRuleVersion(body.pricingRuleVersion)
     };
+  }
+
+  private validatePricingRuleVersion(
+    value: unknown
+  ): typeof TABLE_ACCESSORIES_PRICING_RULE_VERSION {
+    if (value === undefined || value === TABLE_ACCESSORIES_PRICING_RULE_VERSION) {
+      return TABLE_ACCESSORIES_PRICING_RULE_VERSION;
+    }
+
+    throw new BadRequestException({
+      code: "pricing_rule_version_mismatch",
+      message: "The requested pricing rule version is not supported."
+    });
   }
 
   private validateExpectedUnitPriceCents(value: unknown, itemIndex: number): number | null {
@@ -625,12 +665,20 @@ export class CheckoutService implements OnModuleDestroy {
     order: CheckoutStatusOrder
   ): CheckoutSessionStatusResponse {
     const status = this.toPublicOrderStatus(order.status);
+    const listSubtotalCents =
+      order.pricingRuleVersion === null &&
+      order.discountCents === 0 &&
+      order.listSubtotalCents === 0
+        ? order.subtotalCents
+        : order.listSubtotalCents;
 
     return {
       found: true,
       status,
       publicReference: order.publicReference,
       currency: order.currency.trim().toLowerCase(),
+      listSubtotalCents,
+      discountCents: order.discountCents,
       subtotalCents: order.subtotalCents,
       shippingCents: order.shippingCents,
       totalCents: order.totalCents,
@@ -683,7 +731,7 @@ export class CheckoutService implements OnModuleDestroy {
     items: CheckoutRequestItem[]
   ): Promise<Map<string, CheckoutProductRecord>> {
     try {
-      const products = await prisma.product.findMany({
+      const products: CheckoutProductRecord[] = await prisma.product.findMany({
         where: {
           slug: {
             in: items.map((item) => item.productSlug)
@@ -691,6 +739,22 @@ export class CheckoutService implements OnModuleDestroy {
         },
         select: checkoutProductSelect
       });
+
+      if (
+        products.some((product) => product.key === VICE_PADDLE_PRODUCT_KEY) &&
+        !products.some((product) => product.key === PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY)
+      ) {
+        const componentProducts: CheckoutProductRecord[] = await prisma.product.findMany({
+          where: {
+            key: {
+              in: [PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY]
+            }
+          },
+          select: checkoutProductSelect
+        });
+
+        products.push(...componentProducts);
+      }
 
       return new Map(products.map((product) => [product.slug, product]));
     } catch {
@@ -705,6 +769,7 @@ export class CheckoutService implements OnModuleDestroy {
     productsBySlug: Map<string, CheckoutProductRecord>
   ): SnapshotLineItem[] {
     const snapshotItems: SnapshotLineItem[] = [];
+    const canonicalLineKeys = new Set<string>();
     const cartChanges: Array<{
       cartLineId: string;
       currency?: string;
@@ -727,9 +792,10 @@ export class CheckoutService implements OnModuleDestroy {
         });
       }
 
+      const normalizedItem = this.withLegacyViceSingleSelection(item, product);
       let optionValidation: ValidatedLineItemOptions;
       try {
-        optionValidation = this.validateLineItemOptions(item, product);
+        optionValidation = this.validateLineItemOptions(normalizedItem, product);
       } catch (error) {
         if (item.expectedUnitPriceCents !== null && error instanceof BadRequestException) {
           cartChanges.push({ cartLineId, status: "unavailable" });
@@ -737,7 +803,21 @@ export class CheckoutService implements OnModuleDestroy {
         }
         throw error;
       }
-      const unitPriceCents = this.resolveUnitPriceCents(product, optionValidation.variant);
+
+      const canonicalLineKey = `${product.id}:${optionValidation.variant?.id ?? "base"}`;
+
+      if (canonicalLineKeys.has(canonicalLineKey)) {
+        throw new BadRequestException({
+          message: "Duplicate cart lines are not supported for V1 checkout."
+        });
+      }
+
+      canonicalLineKeys.add(canonicalLineKey);
+      const unitPriceCents = this.resolveUnitPriceCents(
+        product,
+        optionValidation.variant,
+        productsBySlug
+      );
 
       if (
         typeof unitPriceCents !== "number" ||
@@ -768,15 +848,20 @@ export class CheckoutService implements OnModuleDestroy {
       }
 
       snapshotItems.push({
+        pricingLineId: canonicalLineKey,
         productId: product.id,
         variantId: optionValidation.variant?.id ?? null,
         productKey: product.key,
+        productKind: product.productKind,
         productSlug: product.slug,
         variantKey: optionValidation.variant?.key ?? null,
         sku: optionValidation.variant?.sku ?? product.sku,
         name: displayName,
         imageUrl: this.getProductImageUrl(product),
+        listUnitPriceCents: unitPriceCents,
+        discountUnitCents: 0,
         unitPriceCents,
+        promotionKey: null,
         quantity: item.quantity,
         lineTotalCents,
         currency: "CAD"
@@ -791,7 +876,96 @@ export class CheckoutService implements OnModuleDestroy {
       });
     }
 
-    return snapshotItems;
+    return this.applyTableAccessoryPricing(snapshotItems);
+  }
+
+  private applyTableAccessoryPricing(items: SnapshotLineItem[]): SnapshotLineItem[] {
+    const pricing = calculateTableAccessoryPricing(
+      items.map((item) => ({
+        lineId: item.pricingLineId,
+        listUnitPriceCents: item.listUnitPriceCents,
+        productKey: item.productKey,
+        productKind: item.productKind,
+        quantity: item.quantity,
+        variantKey: item.variantKey
+      }))
+    );
+    const allocationByLineId = new Map(
+      pricing.allocations.map((allocation) => [allocation.lineId, allocation])
+    );
+
+    return items.flatMap((item) => {
+      const allocation = allocationByLineId.get(item.pricingLineId);
+
+      if (!allocation) {
+        throw new InternalServerErrorException({
+          message: "Checkout pricing could not be calculated."
+        });
+      }
+
+      const pricedItems: SnapshotLineItem[] = [];
+
+      if (allocation.discountedQuantity > 0) {
+        pricedItems.push({
+          ...item,
+          discountUnitCents: allocation.discountUnitCents,
+          lineTotalCents: allocation.discountedUnitPriceCents * allocation.discountedQuantity,
+          promotionKey: allocation.promotionKey,
+          quantity: allocation.discountedQuantity,
+          unitPriceCents: allocation.discountedUnitPriceCents
+        });
+      }
+
+      if (allocation.fullPriceQuantity > 0) {
+        pricedItems.push({
+          ...item,
+          discountUnitCents: 0,
+          lineTotalCents: item.listUnitPriceCents * allocation.fullPriceQuantity,
+          promotionKey: null,
+          quantity: allocation.fullPriceQuantity,
+          unitPriceCents: item.listUnitPriceCents
+        });
+      }
+
+      return pricedItems;
+    });
+  }
+
+  private withLegacyViceSingleSelection(
+    item: CheckoutRequestItem,
+    product: CheckoutProductRecord
+  ): CheckoutRequestItem {
+    if (
+      product.key !== VICE_PADDLE_PRODUCT_KEY ||
+      item.selectedOptions.length > 0 ||
+      item.selectedVariantKey
+    ) {
+      return item;
+    }
+
+    const singleVariant = product.variants.find(
+      (variant) => variant.key === VICE_SINGLE_VARIANT_KEY && this.isVariantCheckoutable(variant)
+    );
+    const packageOption = singleVariant?.optionValues.find(
+      ({ productOptionValue }) =>
+        this.normalizeOptionKey(productOptionValue.option.name) ===
+        this.normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
+    )?.productOptionValue;
+
+    if (!singleVariant || !packageOption) {
+      return item;
+    }
+
+    return {
+      ...item,
+      selectedVariantKey: singleVariant.key,
+      selectedOptions: [
+        {
+          name: packageOption.option.name,
+          value: packageOption.value
+        }
+      ]
+    };
   }
 
   private validateLineItemOptions(
@@ -941,7 +1115,7 @@ export class CheckoutService implements OnModuleDestroy {
       .filter(
         (option) =>
           option.variantCount === checkoutableVariants.length &&
-          option.values.size > 1 &&
+          (option.values.size > 1 || this.isVicePackageOption(product, option.name)) &&
           this.isRequiredCheckoutOption(product, checkoutableVariants, option)
       )
       .sort((left, right) => left.sortOrder - right.sortOrder)
@@ -962,6 +1136,11 @@ export class CheckoutService implements OnModuleDestroy {
       return true;
     }
 
+    if (this.isVicePackageOption(product, option.name)) {
+      const variantKeys = new Set(variants.map((variant) => variant.key));
+      return variantKeys.has(VICE_SINGLE_VARIANT_KEY);
+    }
+
     const distinctPrices = new Set<number>();
 
     for (const variant of variants) {
@@ -980,6 +1159,13 @@ export class CheckoutService implements OnModuleDestroy {
     }
 
     return distinctPrices.size > 1;
+  }
+
+  private isVicePackageOption(product: CheckoutProductRecord, optionName: string): boolean {
+    return (
+      product.key === VICE_PADDLE_PRODUCT_KEY &&
+      this.normalizeOptionKey(optionName) === this.normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
+    );
   }
 
   private isValidPriceCents(value: unknown): value is number {
@@ -1022,7 +1208,8 @@ export class CheckoutService implements OnModuleDestroy {
 
   private resolveUnitPriceCents(
     product: CheckoutProductRecord,
-    variant: CheckoutProductVariantRecord | null
+    variant: CheckoutProductVariantRecord | null,
+    productsBySlug?: Map<string, CheckoutProductRecord>
   ): number | null {
     if (!variant) {
       return product.priceCents;
@@ -1032,6 +1219,39 @@ export class CheckoutService implements OnModuleDestroy {
 
     if (currency !== V1_CURRENCY) {
       return null;
+    }
+
+    if (product.key === VICE_PADDLE_PRODUCT_KEY && variant.key === VICE_BUNDLE_VARIANT_KEY) {
+      const whiteBalls = [...(productsBySlug?.values() ?? [])].find(
+        (candidate) => candidate.key === PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY
+      );
+      const singleVariant = product.variants.find(
+        (candidate) =>
+          candidate.key === VICE_SINGLE_VARIANT_KEY && this.isVariantCheckoutable(candidate)
+      );
+
+      if (!variant.sku?.trim() || !whiteBalls || !this.isProductCheckoutable(whiteBalls)) {
+        return null;
+      }
+
+      return (
+        calculateViceBundleRegularPrice({
+          viceSingle: singleVariant
+            ? {
+                priceCents: singleVariant.priceCents,
+                currency: singleVariant.currency
+              }
+            : null,
+          legacyViceBase: {
+            priceCents: product.priceCents,
+            currency: product.currency
+          },
+          whiteBallsSixPack: {
+            priceCents: whiteBalls.priceCents,
+            currency: whiteBalls.currency
+          }
+        })?.priceCents ?? null
+      );
     }
 
     if (this.isValidPriceCents(variant.priceCents)) {
@@ -1051,8 +1271,15 @@ export class CheckoutService implements OnModuleDestroy {
 
   private isProductCheckoutable(product: CheckoutProductRecord): boolean {
     const currency = product.currency.trim().toLowerCase();
+    const hasInvalidPartialViceVariantModel =
+      product.key === VICE_PADDLE_PRODUCT_KEY &&
+      product.variants.length > 0 &&
+      !product.variants.some(
+        (variant) => variant.key === VICE_SINGLE_VARIANT_KEY && this.isVariantCheckoutable(variant)
+      );
 
     return (
+      !hasInvalidPartialViceVariantModel &&
       product.status === "active" &&
       product.v1PublicNavigation &&
       product.v1CheckoutScope &&
@@ -1077,10 +1304,20 @@ export class CheckoutService implements OnModuleDestroy {
   }
 
   private calculateTotals(items: SnapshotLineItem[]): CheckoutTotals {
+    const listSubtotalCents = items.reduce(
+      (subtotal, item) => subtotal + item.listUnitPriceCents * item.quantity,
+      0
+    );
+    const discountCents = items.reduce(
+      (discount, item) => discount + item.discountUnitCents * item.quantity,
+      0
+    );
     const subtotalCents = items.reduce((subtotal, item) => subtotal + item.lineTotalCents, 0);
     const shippingCents = calculateCanadaShippingCents(subtotalCents, items);
 
     return {
+      listSubtotalCents,
+      discountCents,
       subtotalCents,
       shippingCents,
       totalCents: subtotalCents + shippingCents,
@@ -1093,7 +1330,8 @@ export class CheckoutService implements OnModuleDestroy {
     prisma: PrismaClient,
     items: SnapshotLineItem[],
     totals: CheckoutTotals,
-    customerEmail: string | undefined
+    customerEmail: string | undefined,
+    pricingRuleVersion: typeof TABLE_ACCESSORIES_PRICING_RULE_VERSION
   ): Promise<CreatedCheckoutOrder> {
     try {
       return await prisma.$transaction((transaction) =>
@@ -1101,9 +1339,12 @@ export class CheckoutService implements OnModuleDestroy {
           data: {
             status: "checkout_pending",
             currency: "CAD",
+            listSubtotalCents: totals.listSubtotalCents,
+            discountCents: totals.discountCents,
             subtotalCents: totals.subtotalCents,
             shippingCents: totals.shippingCents,
             totalCents: totals.totalCents,
+            pricingRuleVersion,
             shippingRule: CURRENT_CANADA_SHIPPING_RULE,
             checkoutSource: STRIPE_CHECKOUT_SOURCE,
             customerEmail,
@@ -1129,9 +1370,12 @@ export class CheckoutService implements OnModuleDestroy {
                 sku: item.sku,
                 name: item.name,
                 imageUrl: item.imageUrl,
+                listUnitPriceCents: item.listUnitPriceCents,
+                discountUnitCents: item.discountUnitCents,
                 unitPriceCents: item.unitPriceCents,
                 quantity: item.quantity,
                 lineTotalCents: item.lineTotalCents,
+                promotionKey: item.promotionKey,
                 currency: item.currency
               }))
             }
@@ -1153,6 +1397,7 @@ export class CheckoutService implements OnModuleDestroy {
     const metadata = this.createOrderMetadata(config, order);
     const sessionParams = {
       mode: "payment" as const,
+      allow_promotion_codes: false,
       ...(config.stripeTaxEnabled
         ? {
             automatic_tax: {
@@ -1246,6 +1491,9 @@ export class CheckoutService implements OnModuleDestroy {
       website: "tigerpingpong",
       environment: config.appEnv,
       shippingRuleVersion: CURRENT_CANADA_SHIPPING_RULE_VERSION,
+      pricingRuleVersion: order.pricingRuleVersion ?? TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+      listSubtotalCents: String(order.listSubtotalCents),
+      discountCents: String(order.discountCents),
       subtotalCents: String(order.subtotalCents),
       shippingCents: String(order.shippingCents),
       totalCents: String(order.totalCents),

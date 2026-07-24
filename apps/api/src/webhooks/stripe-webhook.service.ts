@@ -6,7 +6,13 @@ import {
   ServiceUnavailableException
 } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
-import { calculateCanadaShippingCents, isCanadaShippingRule } from "@tigerpingpong/shared";
+import {
+  calculateCanadaShippingCents,
+  calculateTableAccessoryPricing,
+  isCanadaShippingRule,
+  TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+  TABLE_ACCESSORIES_PROMOTION_KEY
+} from "@tigerpingpong/shared";
 import StripeConstructor from "stripe";
 
 import { StripeWebhookConfig, getStripeWebhookConfig } from "../config";
@@ -396,6 +402,12 @@ export class StripeWebhookService implements OnModuleDestroy {
       return "order_item_subtotal_mismatch";
     }
 
+    const pricingSnapshotIssue = this.validateOrderPricingSnapshot(order);
+
+    if (pricingSnapshotIssue) {
+      return pricingSnapshotIssue;
+    }
+
     if (order.items.some((item) => item.currency.trim().toLowerCase() !== V1_CURRENCY)) {
       return "order_item_currency_mismatch";
     }
@@ -421,6 +433,143 @@ export class StripeWebhookService implements OnModuleDestroy {
 
       if (session.livemode !== config.expectedLivemode) {
         return "checkout_session_livemode_mismatch";
+      }
+    }
+
+    return null;
+  }
+
+  private validateOrderPricingSnapshot(order: CheckoutOrder): string | null {
+    const isNullRuleWithoutPromotion =
+      order.pricingRuleVersion === null &&
+      order.discountCents === 0 &&
+      order.items.every((item) => item.discountUnitCents === 0 && item.promotionKey === null);
+    const isZeroSnapshotLegacyOrder =
+      isNullRuleWithoutPromotion &&
+      order.listSubtotalCents === 0 &&
+      order.items.every((item) => item.listUnitPriceCents === 0);
+
+    if (isZeroSnapshotLegacyOrder) {
+      return order.items.every(
+        (item) =>
+          item.quantity >= 1 &&
+          item.unitPriceCents >= 1 &&
+          item.unitPriceCents * item.quantity === item.lineTotalCents
+      )
+        ? null
+        : "order_item_pricing_snapshot_mismatch";
+    }
+
+    const listSubtotalCents = order.items.reduce(
+      (subtotal, item) => subtotal + item.listUnitPriceCents * item.quantity,
+      0
+    );
+    const discountCents = order.items.reduce(
+      (discount, item) => discount + item.discountUnitCents * item.quantity,
+      0
+    );
+
+    if (listSubtotalCents !== order.listSubtotalCents) {
+      return "order_item_list_subtotal_mismatch";
+    }
+
+    if (discountCents !== order.discountCents) {
+      return "order_item_discount_total_mismatch";
+    }
+
+    if (order.listSubtotalCents - order.discountCents !== order.subtotalCents) {
+      return "order_pricing_total_mismatch";
+    }
+
+    for (const item of order.items) {
+      if (
+        item.quantity < 1 ||
+        item.listUnitPriceCents < 1 ||
+        item.discountUnitCents < 0 ||
+        item.unitPriceCents < 1 ||
+        item.listUnitPriceCents - item.discountUnitCents !== item.unitPriceCents ||
+        item.unitPriceCents * item.quantity !== item.lineTotalCents
+      ) {
+        return "order_item_pricing_snapshot_mismatch";
+      }
+
+      if (
+        item.discountUnitCents > 0
+          ? item.promotionKey !== TABLE_ACCESSORIES_PROMOTION_KEY
+          : item.promotionKey !== null
+      ) {
+        return "order_item_promotion_mismatch";
+      }
+    }
+
+    if (order.pricingRuleVersion === null) {
+      return order.discountCents === 0 ? null : "order_legacy_pricing_discount_mismatch";
+    }
+
+    if (order.pricingRuleVersion !== TABLE_ACCESSORIES_PRICING_RULE_VERSION) {
+      return "order_pricing_rule_version_mismatch";
+    }
+
+    const groupedItems = new Map<
+      string,
+      {
+        discountedQuantity: number;
+        items: CheckoutOrder["items"];
+        listUnitPriceCents: number;
+        productKey: string;
+        quantity: number;
+        variantKey: string | null;
+      }
+    >();
+
+    for (const item of order.items) {
+      const groupKey = `${item.productKey}:${item.variantKey ?? "base"}:${item.listUnitPriceCents}`;
+      const group = groupedItems.get(groupKey) ?? {
+        discountedQuantity: 0,
+        items: [],
+        listUnitPriceCents: item.listUnitPriceCents,
+        productKey: item.productKey,
+        quantity: 0,
+        variantKey: item.variantKey
+      };
+
+      group.quantity += item.quantity;
+      group.discountedQuantity += item.discountUnitCents > 0 ? item.quantity : 0;
+      group.items.push(item);
+      groupedItems.set(groupKey, group);
+    }
+
+    const expectedPricing = calculateTableAccessoryPricing(
+      [...groupedItems.entries()].map(([lineId, group]) => ({
+        lineId,
+        listUnitPriceCents: group.listUnitPriceCents,
+        productKey: group.productKey,
+        quantity: group.quantity,
+        variantKey: group.variantKey
+      }))
+    );
+
+    if (
+      expectedPricing.listSubtotalCents !== order.listSubtotalCents ||
+      expectedPricing.discountCents !== order.discountCents ||
+      expectedPricing.netSubtotalCents !== order.subtotalCents
+    ) {
+      return "order_promotion_total_mismatch";
+    }
+
+    for (const expectedAllocation of expectedPricing.allocations) {
+      const group = groupedItems.get(expectedAllocation.lineId);
+
+      if (
+        !group ||
+        group.discountedQuantity !== expectedAllocation.discountedQuantity ||
+        group.items.some((item) =>
+          item.discountUnitCents > 0
+            ? item.unitPriceCents !== expectedAllocation.discountedUnitPriceCents
+            : item.unitPriceCents !== item.listUnitPriceCents
+        )
+      ) {
+        return "order_promotion_allocation_mismatch";
       }
     }
 

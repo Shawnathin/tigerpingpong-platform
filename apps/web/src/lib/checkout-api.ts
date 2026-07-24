@@ -1,3 +1,5 @@
+import type { TABLE_ACCESSORIES_PRICING_RULE_VERSION } from "@tigerpingpong/shared";
+
 const DEFAULT_API_BASE_URL = "http://localhost:3001";
 
 export interface CheckoutSessionItemInput {
@@ -23,12 +25,15 @@ export interface CheckoutSessionItemOptionInput {
 
 export interface CreateCheckoutSessionInput {
   items: CheckoutSessionItemInput[];
+  pricingRuleVersion?: typeof TABLE_ACCESSORIES_PRICING_RULE_VERSION;
 }
 
 export interface CheckoutSessionSummary {
   checkoutSessionId: string;
   checkoutUrl: string;
   currency: string;
+  discountCents: number;
+  listSubtotalCents: number;
   orderId: string;
   publicReference: string;
   shippingCents: number;
@@ -51,6 +56,8 @@ export interface CheckoutSessionStatus {
   status: CheckoutSessionPublicStatus;
   publicReference?: string;
   currency?: string;
+  discountCents?: number;
+  listSubtotalCents?: number;
   subtotalCents?: number;
   shippingCents?: number;
   totalCents?: number;
@@ -216,6 +223,8 @@ function parseCheckoutSessionSummary(value: unknown, url: string): CheckoutSessi
     checkoutSessionId: getString(value, "checkoutSessionId"),
     checkoutUrl: getString(value, "checkoutUrl"),
     currency: getString(value, "currency"),
+    discountCents: getNumber(value, "discountCents"),
+    listSubtotalCents: getNumber(value, "listSubtotalCents"),
     orderId: getString(value, "orderId"),
     publicReference: getString(value, "publicReference"),
     shippingCents: getNumber(value, "shippingCents"),
@@ -242,6 +251,8 @@ function parseCheckoutSessionSummary(value: unknown, url: string): CheckoutSessi
     checkoutSessionId: summary.checkoutSessionId,
     checkoutUrl: summary.checkoutUrl,
     currency: summary.currency,
+    discountCents: summary.discountCents ?? 0,
+    listSubtotalCents: summary.listSubtotalCents ?? summary.subtotalCents,
     orderId: summary.orderId,
     publicReference: summary.publicReference,
     shippingCents: summary.shippingCents,

@@ -1,22 +1,39 @@
 "use client";
 
+import {
+  AQUA_FOUR_PACK_VARIANT_KEY,
+  AQUA_TWO_PACK_VARIANT_KEY,
+  TABLE_ACCESSORIES_DISCOUNT_PERCENT,
+  TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+  TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS,
+  VICE_BUNDLE_VARIANT_KEY
+} from "@tigerpingpong/shared";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import {
   formatCartItemOptions,
   formatCartMoney,
+  getCartPricingDelta,
+  type CartItem,
   type CartItemOption,
   type CartProductInput
 } from "../../../../lib/cart";
 import { getV1ShippingMessage } from "../../../../lib/shipping";
 import { useCart } from "../../../../lib/use-cart";
+import { VICE_PRODUCT_SLUG } from "../../../../lib/vice-package";
+import type {
+  CatalogTableAccessoryOffer,
+  CatalogTableAccessoryOfferItem
+} from "../../../../types/catalog";
 
 import { AquaProductVisual } from "./AquaProductVisual";
+import { VicePackageVisual } from "./VicePackageVisual";
 import styles from "./page.module.css";
 
 const AQUA_PRODUCT_SLUG = "tiger-aqua-outdoor-indoor-paddle";
 const PLAZA_PRODUCT_SLUG = "tiger-plaza-outdoor-table-grey";
+const TABLE_PACKAGE_NOTICE = "Now pick the paddles and balls that fit your game.";
 
 export interface ProductOptionGroup {
   displayName: string;
@@ -59,12 +76,19 @@ interface CheckoutButtonProps {
   productOptions: ProductOptionGroup[];
   shippingLines: string[];
   shippingLinesAreFixed: boolean;
+  tableAccessoryOffer: CatalogTableAccessoryOffer | null;
 }
 
 function ProductThumb({ product }: { product: CartProductInput }) {
   if (product.productSlug === AQUA_PRODUCT_SLUG) {
     return (
       <AquaProductVisual altText={product.name} compact variantKey={product.selectedVariantKey} />
+    );
+  }
+
+  if (product.productSlug === VICE_PRODUCT_SLUG) {
+    return (
+      <VicePackageVisual altText={product.name} compact variantKey={product.selectedVariantKey} />
     );
   }
 
@@ -223,6 +247,335 @@ function AddToCartModal({ onClose, product }: { onClose: () => void; product: Ca
   return createPortal(modal, document.body);
 }
 
+function TableAddToCartModal({
+  isOfferEligible,
+  cartItems,
+  offer,
+  onAddSelectedExtras,
+  onClose,
+  product
+}: {
+  isOfferEligible: boolean;
+  cartItems: CartItem[];
+  offer: CatalogTableAccessoryOffer | null;
+  onAddSelectedExtras: (items: CatalogTableAccessoryOfferItem[]) => void;
+  onClose: () => void;
+  product: CartProductInput;
+}) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  const [selectedPlaySetKey, setSelectedPlaySetKey] = useState<string | null>(null);
+  const [isCoverSelected, setIsCoverSelected] = useState(false);
+  const usableOffer =
+    offer?.pricingRuleVersion === TABLE_ACCESSORIES_PRICING_RULE_VERSION &&
+    offer.discountPercent === TABLE_ACCESSORIES_DISCOUNT_PERCENT &&
+    offer.tableProductKey === product.productKey &&
+    offer.tableSlug === product.productSlug
+      ? offer
+      : null;
+  const playSets = usableOffer?.selectableItems.filter((item) => item.role === "play_set") ?? [];
+  const cover = usableOffer?.selectableItems.find((item) => item.role === "cover") ?? null;
+  const selectedPlaySet =
+    playSets.find((item) => getTableAccessoryOfferItemKey(item) === selectedPlaySetKey) ?? null;
+  const selectedItems = [
+    ...(selectedPlaySet ? [selectedPlaySet] : []),
+    ...(isCoverSelected && cover ? [cover] : [])
+  ];
+  const selectedPricing = getCartPricingDelta(
+    cartItems,
+    selectedItems.map(toTableAccessoryCartProduct)
+  );
+  const coverPriceDelta = cover
+    ? getCartPricingDelta(cartItems, [toTableAccessoryCartProduct(cover)])
+    : null;
+  const coverFullOfferSavings = cover
+    ? cover.priceCents - getDiscountedOfferPriceCents(cover.priceCents)
+    : 0;
+  const selectedSavings = Math.max(0, selectedPricing.additionalDiscountCents);
+  const selectedExtrasTotal = selectedPricing.additionalNetSubtotalCents;
+
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+  }, []);
+
+  function handleDialogKeyDown(event: React.KeyboardEvent<HTMLElement>): void {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose();
+      return;
+    }
+
+    if (event.key !== "Tab") {
+      return;
+    }
+
+    const focusableElements = Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ) ?? []
+    );
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+
+  const modal = (
+    <div className={styles.cartModalOverlay} onClick={onClose} role="presentation">
+      <section
+        aria-labelledby="table-added-to-cart-title"
+        aria-modal="true"
+        className={`${styles.cartModal} ${styles.tableAccessoryModal}`}
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleDialogKeyDown}
+        ref={dialogRef}
+        role="dialog"
+      >
+        <button
+          aria-label="Close added to cart dialog"
+          className={styles.cartModalClose}
+          onClick={onClose}
+          ref={closeButtonRef}
+          type="button"
+        >
+          &times;
+        </button>
+
+        <div className={styles.tableAccessoryIntro}>
+          <header className={styles.tableAccessoryIntroCopy}>
+            <p className={styles.tableAccessoryEyebrow}>Table added</p>
+            <h2 id="table-added-to-cart-title">{getTableModalProductName(product.name)} is in.</h2>
+            <p className={styles.tablePackageNotice}>{TABLE_PACKAGE_NOTICE}</p>
+          </header>
+
+          <div className={styles.tableAddedProduct}>
+            <div className={styles.tableAddedProductImage}>
+              <ProductThumb product={product} />
+            </div>
+            <div className={styles.tableAddedProductMeta}>
+              {product.selectedOptions && product.selectedOptions.length > 0 ? (
+                <span>{formatCartItemOptions(product.selectedOptions)}</span>
+              ) : (
+                <span>{product.categoryName ?? "Tiger PingPong"}</span>
+              )}
+              <strong>{formatCartMoney(product.unitPriceCents, product.currency)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.tableAccessoryPanel}>
+          {usableOffer ? (
+            <div className={styles.tableAccessoryOffer}>
+              <header className={styles.tableAccessoryOfferHeader}>
+                <p className={styles.tableAccessoryEyebrow}>30% off with your table</p>
+                <h3>Now bring the rally.</h3>
+              </header>
+
+              {playSets.length > 0 ? (
+                <fieldset className={styles.tableAccessoryFieldset}>
+                  <legend>Pick a play set</legend>
+                  <div className={styles.tableAccessoryChoices}>
+                    {playSets.map((item) => {
+                      const itemKey = getTableAccessoryOfferItemKey(item);
+                      const presentation = getTableAccessoryOfferItemPresentation(item);
+                      const priceDelta = getCartPricingDelta(cartItems, [
+                        toTableAccessoryCartProduct(item)
+                      ]);
+                      const fullOfferSavings =
+                        item.priceCents - getDiscountedOfferPriceCents(item.priceCents);
+                      const receivesFullOffer =
+                        priceDelta.additionalDiscountCents === fullOfferSavings;
+
+                      return (
+                        <label className={styles.tableAccessoryChoice} key={itemKey}>
+                          <span className={styles.tableAccessoryImage}>
+                            <ProductThumb product={toTableAccessoryCartProduct(item)} />
+                          </span>
+                          <span className={styles.tableAccessoryChoiceBody}>
+                            <strong>{presentation.title}</strong>
+                            {presentation.detail ? (
+                              <small className={styles.tableAccessoryDetail}>
+                                {presentation.detail}
+                              </small>
+                            ) : null}
+                            <span className={styles.tableAccessoryPriceLine}>
+                              {receivesFullOffer ? (
+                                <>
+                                  <del
+                                    aria-label={`Regular ${formatCartMoney(
+                                      item.priceCents,
+                                      item.currency
+                                    )}`}
+                                  >
+                                    {formatCartMoney(item.priceCents, item.currency)}
+                                  </del>
+                                  <em>
+                                    {formatCartMoney(
+                                      priceDelta.additionalNetSubtotalCents,
+                                      item.currency
+                                    )}{" "}
+                                    with your table
+                                  </em>
+                                </>
+                              ) : (
+                                <>
+                                  <em>
+                                    Cart price ·{" "}
+                                    {formatCartMoney(
+                                      priceDelta.additionalNetSubtotalCents,
+                                      item.currency
+                                    )}
+                                  </em>
+                                  <small>Offer already used in your cart.</small>
+                                </>
+                              )}
+                            </span>
+                          </span>
+                          <input
+                            aria-label={getTableAccessoryOfferItemLabel(item)}
+                            checked={selectedPlaySetKey === itemKey}
+                            name={`${product.productSlug}-play-set`}
+                            onChange={() => setSelectedPlaySetKey(itemKey)}
+                            type="radio"
+                            value={itemKey}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              ) : (
+                <p className={styles.tableAccessoryStatus}>
+                  Play sets are temporarily unavailable. Your table is still in your cart.
+                </p>
+              )}
+
+              {usableOffer.coverCompatibility.isCompatible && cover ? (
+                <fieldset
+                  className={`${styles.tableAccessoryFieldset} ${styles.tableAccessoryCoverFieldset}`}
+                >
+                  <legend>Keep it covered.</legend>
+                  <label className={styles.tableAccessoryChoice}>
+                    <span className={styles.tableAccessoryImage}>
+                      <ProductThumb product={toTableAccessoryCartProduct(cover)} />
+                    </span>
+                    <span className={styles.tableAccessoryChoiceBody}>
+                      <strong>Tiger Table Cover</strong>
+                      <small className={styles.tableAccessoryDetail}>
+                        Outdoor fabric · Snug fit
+                      </small>
+                      <span className={styles.tableAccessoryPriceLine}>
+                        {coverPriceDelta?.additionalDiscountCents === coverFullOfferSavings ? (
+                          <>
+                            <del
+                              aria-label={`Regular ${formatCartMoney(
+                                cover.priceCents,
+                                cover.currency
+                              )}`}
+                            >
+                              {formatCartMoney(cover.priceCents, cover.currency)}
+                            </del>
+                            <em>
+                              {formatCartMoney(
+                                coverPriceDelta.additionalNetSubtotalCents,
+                                cover.currency
+                              )}{" "}
+                              with your table
+                            </em>
+                          </>
+                        ) : (
+                          <>
+                            <em>
+                              Cart price ·{" "}
+                              {formatCartMoney(
+                                coverPriceDelta?.additionalNetSubtotalCents ?? cover.priceCents,
+                                cover.currency
+                              )}
+                            </em>
+                            <small>Offer already used in your cart.</small>
+                          </>
+                        )}
+                      </span>
+                    </span>
+                    <input
+                      aria-label="Tiger Table Cover"
+                      checked={isCoverSelected}
+                      onChange={(event) => setIsCoverSelected(event.currentTarget.checked)}
+                      type="checkbox"
+                    />
+                  </label>
+                </fieldset>
+              ) : usableOffer.coverCompatibility.reason === "not_compatible_with_plaza" ? (
+                <p className={styles.tableAccessoryStatus}>
+                  The current Tiger Table Cover is not compatible with Plaza.
+                </p>
+              ) : (
+                <p className={styles.tableAccessoryStatus}>
+                  A compatible table cover is not available to add right now.
+                </p>
+              )}
+
+              {selectedItems.length > 0 ? (
+                <div className={styles.tableAccessorySummary} aria-live="polite">
+                  <dl className={styles.tableAccessoryTotals}>
+                    <div className={styles.tableAccessoryTotalPrimary}>
+                      <dt>Your extras</dt>
+                      <dd>{formatCartMoney(selectedExtrasTotal, product.currency)}</dd>
+                    </div>
+                    {selectedSavings > 0 ? (
+                      <div className={styles.tableAccessoryTotalSavings}>
+                        <dt>You save</dt>
+                        <dd>{formatCartMoney(selectedSavings, product.currency)}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                </div>
+              ) : null}
+            </div>
+          ) : isOfferEligible ? (
+            <p className={styles.tableAccessoryStatus} role="status">
+              Accessory choices are temporarily unavailable. Your table is still in your cart.
+            </p>
+          ) : null}
+
+          <div className={styles.tableAccessoryModalActions}>
+            {usableOffer ? (
+              <button
+                className={styles.addSelectedExtrasButton}
+                disabled={selectedItems.length === 0}
+                onClick={() => onAddSelectedExtras(selectedItems)}
+                type="button"
+              >
+                Add selected extras
+              </button>
+            ) : null}
+            <a className={styles.viewCartButton} href="/cart">
+              Go to cart
+            </a>
+            <button className={styles.quietKeepShoppingButton} onClick={onClose} type="button">
+              Keep shopping
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+
+  return createPortal(modal, document.body);
+}
+
 export function CheckoutButton({
   availabilityMessage,
   basePriceLabel,
@@ -233,9 +586,10 @@ export function CheckoutButton({
   product,
   productOptions,
   shippingLines,
-  shippingLinesAreFixed
+  shippingLinesAreFixed,
+  tableAccessoryOffer
 }: CheckoutButtonProps) {
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const addToCartButtonRef = useRef<HTMLButtonElement>(null);
   const firstOptionRef = useRef<HTMLInputElement>(null);
   const [addedProduct, setAddedProduct] = useState<CartProductInput | null>(null);
@@ -273,6 +627,10 @@ export function CheckoutButton({
           })
         ]
       : shippingLines;
+  const isTable = product.productKind?.trim().toLowerCase() === "table";
+  const isOfferEligibleTable = (
+    TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS as readonly string[]
+  ).includes(product.productKey);
 
   useEffect(() => {
     onVariantChange?.(selectedOptionPrice?.variantKey ?? null);
@@ -308,6 +666,15 @@ export function CheckoutButton({
   function handleCloseModal(): void {
     setIsModalOpen(false);
     window.requestAnimationFrame(() => addToCartButtonRef.current?.focus());
+  }
+
+  function handleAddSelectedExtras(items: CatalogTableAccessoryOfferItem[]): void {
+    for (const item of items) {
+      addItem(toTableAccessoryCartProduct(item));
+    }
+
+    setIsModalOpen(false);
+    window.location.href = "/cart";
   }
 
   function handleOptionChange(optionName: string, optionValue: string): void {
@@ -390,6 +757,12 @@ export function CheckoutButton({
                                 compact
                                 variantKey={optionValue.variantKey}
                               />
+                            ) : product.productSlug === VICE_PRODUCT_SLUG ? (
+                              <VicePackageVisual
+                                altText={optionValue.thumbnailAlt ?? shopperLabel}
+                                compact
+                                variantKey={optionValue.variantKey}
+                              />
                             ) : optionValue.thumbnailSrc ? (
                               <img
                                 alt={optionValue.thumbnailAlt ?? shopperLabel}
@@ -428,6 +801,7 @@ export function CheckoutButton({
                   {displayedShippingLines.map((line) => (
                     <span key={line}>{line}</span>
                   ))}
+                  {isTable ? <span>{TABLE_PACKAGE_NOTICE}</span> : null}
                 </div>
               </div>
 
@@ -471,6 +845,7 @@ export function CheckoutButton({
             {displayedShippingLines.map((line) => (
               <span key={line}>{line}</span>
             ))}
+            {isTable ? <span>{TABLE_PACKAGE_NOTICE}</span> : null}
           </div>
 
           <div className={styles.checkoutPanel}>
@@ -481,7 +856,13 @@ export function CheckoutButton({
                     {productOptions.map((optionGroup, groupIndex) => (
                       <fieldset className={styles.optionSelector} key={optionGroup.name}>
                         <legend>{getOptionLegend(optionGroup)}</legend>
-                        <div className={styles.optionChoices}>
+                        <div
+                          className={`${styles.optionChoices} ${
+                            product.productSlug === VICE_PRODUCT_SLUG
+                              ? styles.viceOptionChoices
+                              : ""
+                          }`.trim()}
+                        >
                           {optionGroup.values.map((optionValue, optionIndex) => {
                             const inputId =
                               `${product.productSlug}-${optionGroup.name}-${optionValue.value}`
@@ -489,11 +870,19 @@ export function CheckoutButton({
                                 .replace(/[^a-z0-9]+/g, "-");
                             const isSelected =
                               selectedOptionValues[optionGroup.name] === optionValue.value;
-                            const optionTone = getOptionTone(optionValue);
+                            const isVicePackageOption =
+                              product.productSlug === VICE_PRODUCT_SLUG &&
+                              Boolean(optionValue.variantKey);
+                            const optionTone = isVicePackageOption
+                              ? null
+                              : getOptionTone(optionValue);
+                            const shopperLabel = optionValue.shopperLabel ?? optionValue.label;
 
                             return (
                               <label
-                                className={styles.optionChoice}
+                                className={`${styles.optionChoice} ${
+                                  isVicePackageOption ? styles.viceOptionChoice : ""
+                                }`.trim()}
                                 data-option-tone={optionTone ?? undefined}
                                 htmlFor={inputId}
                                 key={optionValue.value}
@@ -514,12 +903,21 @@ export function CheckoutButton({
                                   type="radio"
                                   value={optionValue.value}
                                 />
-                                <span
-                                  className={getOptionSwatchClassName(optionTone)}
-                                  aria-hidden="true"
-                                />
+                                {isVicePackageOption ? (
+                                  <span className={styles.viceOptionMedia}>
+                                    <VicePackageVisual
+                                      decorative
+                                      variantKey={optionValue.variantKey}
+                                    />
+                                  </span>
+                                ) : (
+                                  <span
+                                    className={getOptionSwatchClassName(optionTone)}
+                                    aria-hidden="true"
+                                  />
+                                )}
                                 <span className={styles.optionChoiceText}>
-                                  <strong>{optionValue.label}</strong>
+                                  <strong>{shopperLabel}</strong>
                                   {optionValue.priceCents ? (
                                     <small>
                                       {formatCartMoney(
@@ -564,10 +962,100 @@ export function CheckoutButton({
       )}
 
       {isModalOpen ? (
-        <AddToCartModal onClose={handleCloseModal} product={addedProduct ?? product} />
+        isTable ? (
+          <TableAddToCartModal
+            cartItems={items}
+            isOfferEligible={isOfferEligibleTable}
+            offer={tableAccessoryOffer}
+            onAddSelectedExtras={handleAddSelectedExtras}
+            onClose={handleCloseModal}
+            product={addedProduct ?? product}
+          />
+        ) : (
+          <AddToCartModal onClose={handleCloseModal} product={addedProduct ?? product} />
+        )
       ) : null}
     </>
   );
+}
+
+function getTableAccessoryOfferItemKey(item: CatalogTableAccessoryOfferItem): string {
+  return `${item.productKey}:${item.variantKey ?? "base"}`;
+}
+
+function getTableModalProductName(productName: string): string {
+  return productName.replace(/^Tiger\s+/i, "").replace(/\s+Table$/i, "");
+}
+
+function getTableAccessoryOfferItemLabel(item: CatalogTableAccessoryOfferItem): string {
+  if (item.variantKey === AQUA_TWO_PACK_VARIANT_KEY) {
+    return "Aqua — 2 paddles + 3 balls";
+  }
+
+  if (item.variantKey === AQUA_FOUR_PACK_VARIANT_KEY) {
+    return "Aqua — 4 paddles + 3 balls";
+  }
+
+  if (item.variantKey === VICE_BUNDLE_VARIANT_KEY) {
+    return "Vice — 4 paddles + 6 white balls";
+  }
+
+  return item.selectedOptions.map((option) => option.label).join(" · ") || item.productName;
+}
+
+function getTableAccessoryOfferItemPresentation(item: CatalogTableAccessoryOfferItem): {
+  detail: string | null;
+  title: string;
+} {
+  if (item.variantKey === AQUA_TWO_PACK_VARIANT_KEY) {
+    return {
+      detail: "Outdoor + indoor · 2 paddles + 3 balls",
+      title: "Aqua"
+    };
+  }
+
+  if (item.variantKey === AQUA_FOUR_PACK_VARIANT_KEY) {
+    return {
+      detail: "Outdoor + indoor · 4 paddles + 3 balls",
+      title: "Aqua"
+    };
+  }
+
+  if (item.variantKey === VICE_BUNDLE_VARIANT_KEY) {
+    return {
+      detail: "4 paddles + 6 white balls",
+      title: "Vice"
+    };
+  }
+
+  return {
+    detail: null,
+    title: item.productName
+  };
+}
+
+function getDiscountedOfferPriceCents(listPriceCents: number): number {
+  return Math.round(listPriceCents * ((100 - TABLE_ACCESSORIES_DISCOUNT_PERCENT) / 100));
+}
+
+function toTableAccessoryCartProduct(item: CatalogTableAccessoryOfferItem): CartProductInput {
+  return {
+    categoryName: item.role === "cover" ? "Accessories" : "Paddles",
+    currency: item.currency,
+    imageUrl: item.image.url,
+    name: item.productName,
+    productKey: item.productKey,
+    productKind: item.role === "cover" ? "cover" : "paddle",
+    productSlug: item.productSlug,
+    selectedOptions: item.selectedOptions.map((option) => ({
+      displayName: option.name,
+      label: option.label,
+      name: option.name,
+      value: option.value
+    })),
+    selectedVariantKey: item.variantKey ?? undefined,
+    unitPriceCents: item.priceCents
+  };
 }
 
 function getInitialOptionValues(

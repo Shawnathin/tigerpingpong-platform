@@ -229,33 +229,78 @@ const part40Product = {
   media: [],
   variants: []
 };
+const viceSinglePriceCents = 1500;
+const whiteBallSixPackPriceCents = 800;
+const viceBundlePriceCents = viceSinglePriceCents * 4 + whiteBallSixPackPriceCents;
+const viceProduct = {
+  key: "tiger-vice-paddle",
+  slug: "tiger-vice-paddle",
+  name: "Tiger PingPong Vice Ping Pong Paddle",
+  productKind: "paddle",
+  purchaseMode: "online_checkout",
+  priceCents: viceSinglePriceCents,
+  currency: "CAD",
+  v1PublicNavigation: true,
+  v1CheckoutScope: true,
+  shippingReviewRequired: false,
+  family: { key: "vice-paddle", slug: "vice-paddle", name: "Vice Paddle" },
+  category: { key: "paddles", slug: "paddles", name: "Paddles" },
+  primaryMedia: {
+    mediaKey: "vice-primary",
+    role: "primary",
+    cloudinarySecureUrl:
+      "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
+    altText: "Tiger PingPong Vice paddle in pink with a white ball.",
+    title: "Tiger PingPong Vice paddle",
+    caption: null,
+    sortOrder: 1,
+    isPrimary: true
+  },
+  media: [],
+  variants: [
+    {
+      id: "vice-package-single",
+      key: "tiger-vice-package-single",
+      name: "Single Vice Paddle",
+      priceCents: viceSinglePriceCents,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package Options",
+          displayName: "Package Options",
+          value: "single-vice-paddle",
+          label: "Single Vice Paddle",
+          sortOrder: 1,
+          optionSortOrder: 1
+        }
+      ]
+    },
+    {
+      id: "vice-package-4-pack-6-white-balls",
+      key: "tiger-vice-package-4-pack-6-white-balls",
+      name: "4 Vice paddles + 6 white balls",
+      priceCents: viceBundlePriceCents,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package Options",
+          displayName: "Package Options",
+          value: "4-vice-paddles-6-white-balls",
+          label: "4 Vice paddles + 6 white balls",
+          sortOrder: 2,
+          optionSortOrder: 1
+        }
+      ]
+    }
+  ]
+};
 const accessoryProducts = [
   aquaProduct,
-  {
-    key: "tiger-vice-paddle",
-    slug: "tiger-vice-paddle",
-    name: "Tiger PingPong Vice Ping Pong Paddle",
-    productKind: "paddle",
-    purchaseMode: "online_checkout",
-    priceCents: 5000,
-    currency: "CAD",
-    v1PublicNavigation: true,
-    v1CheckoutScope: true,
-    shippingReviewRequired: false,
-    family: { key: "vice-paddle", slug: "vice-paddle", name: "Vice Paddle" },
-    category: { key: "paddles", slug: "paddles", name: "Paddles" },
-    primaryMedia: {
-      mediaKey: "vice-primary",
-      role: "primary",
-      cloudinarySecureUrl:
-        "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
-      altText: "Tiger PingPong Vice paddle in pink with a white ball.",
-      title: "Tiger PingPong Vice paddle",
-      caption: null,
-      sortOrder: 1,
-      isPrimary: true
-    }
-  },
+  viceProduct,
   {
     key: "tiger-premium-balls-6-white",
     slug: "tiger-premium-balls-6-white",
@@ -309,7 +354,17 @@ const accessoryProducts = [
     shippingReviewRequired: false,
     family: { key: "table-covers", slug: "table-covers", name: "Table Covers" },
     category: { key: "covers", slug: "covers", name: "Covers" },
-    primaryMedia: null
+    primaryMedia: {
+      mediaKey: "cover-primary",
+      role: "primary",
+      cloudinarySecureUrl:
+        "https://res.cloudinary.com/djfcisldm/image/upload/v1781303672/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg",
+      altText: "Black Tiger PingPong cover shown straight on over a folded table.",
+      title: "Tiger PingPong Table Cover",
+      caption: null,
+      sortOrder: 1,
+      isPrimary: true
+    }
   },
   {
     key: "tiger-net-post-set",
@@ -451,7 +506,87 @@ const tableDetailProducts = tableProducts.map((tableProduct) => {
     variants: tableVariantFixtures[tableProduct.slug]
   };
 });
+const failedTableAccessoryOfferSlugs = new Set();
 let adminProductUpdatedAt = "2026-07-16T12:00:00.000Z";
+
+function getTableAccessoryOffer(tableProduct) {
+  const aquaTwoPack = aquaProduct.variants.find(
+    (variant) => variant.key === "tiger-aqua-package-2-pack-3-balls"
+  );
+  const aquaFourPack = aquaProduct.variants.find(
+    (variant) => variant.key === "tiger-aqua-package-4-pack-3-balls"
+  );
+  const viceBundle = viceProduct.variants.find(
+    (variant) => variant.key === "tiger-vice-package-4-pack-6-white-balls"
+  );
+  const coverProduct = accessoryProducts.find(
+    (candidate) => candidate.key === "tiger-table-cover-black-polyester"
+  );
+  const isPlaza = tableProduct.key === "tiger-plaza-outdoor-table-grey";
+  const selectableItems = [
+    toOfferVariantItem(aquaProduct, aquaTwoPack, "catalog_variant"),
+    toOfferVariantItem(aquaProduct, aquaFourPack, "catalog_variant"),
+    toOfferVariantItem(viceProduct, viceBundle, "component_derived")
+  ];
+
+  if (!isPlaza && coverProduct) {
+    selectableItems.push({
+      currency: coverProduct.currency,
+      image: {
+        alt: coverProduct.primaryMedia?.altText ?? coverProduct.name,
+        url: coverProduct.primaryMedia?.cloudinarySecureUrl ?? null
+      },
+      priceCents: coverProduct.priceCents,
+      pricingSource: "catalog_product",
+      productKey: coverProduct.key,
+      productName: coverProduct.name,
+      productSlug: coverProduct.slug,
+      role: "cover",
+      selectedOptions: [],
+      variantKey: null
+    });
+  }
+
+  return {
+    offer: {
+      coverCompatibility: {
+        isCompatible: !isPlaza,
+        reason: isPlaza ? "not_compatible_with_plaza" : null
+      },
+      discountPercent: 30,
+      pricingRuleVersion: "table_accessories_30_v1",
+      selectableItems,
+      tableProductKey: tableProduct.key,
+      tableSlug: tableProduct.slug
+    }
+  };
+}
+
+function toOfferVariantItem(productFixture, variant, pricingSource) {
+  if (!variant) {
+    throw new Error(`Missing offer variant fixture for ${productFixture.slug}.`);
+  }
+
+  return {
+    currency: variant.currency,
+    image: {
+      alt: productFixture.primaryMedia?.altText ?? productFixture.name,
+      url: productFixture.primaryMedia?.cloudinarySecureUrl ?? null
+    },
+    priceCents: variant.priceCents,
+    pricingSource,
+    productKey: productFixture.key,
+    productName: productFixture.name,
+    productSlug: productFixture.slug,
+    role: "play_set",
+    selectedOptions: variant.options.map((option) => ({
+      label: option.label ?? option.value,
+      name: option.name,
+      value: option.value
+    })),
+    variantKey: variant.key
+  };
+}
 
 function getAdminProduct() {
   return {
@@ -515,12 +650,15 @@ const internalOrder = {
     state: "BC"
   },
   currency: "CAD",
+  discountCents: 0,
+  listSubtotalCents: 800,
   subtotalCents: 800,
   shippingCents: 1500,
   totalCents: 2300,
   taxAmountCents: 0,
   shippingRule: "flat_rate",
   checkoutSource: "local_browser_fixture",
+  pricingRuleVersion: null,
   stripeCheckoutSessionId: null,
   stripePaymentIntentId: null,
   stripeCustomerId: null,
@@ -545,9 +683,14 @@ const internalOrder = {
       sku: "LOCAL-TEST-SKU",
       name: product.name,
       currency: "CAD",
+      discountCents: 0,
+      discountUnitCents: 0,
+      listLineTotalCents: 800,
+      listUnitPriceCents: 800,
       unitPriceCents: 800,
       quantity: 1,
       lineTotalCents: 800,
+      promotionKey: null,
       createdAt: "2026-07-16T10:00:00.000Z"
     }
   ]
@@ -594,6 +737,40 @@ const server = createServer(async (request, response) => {
     return;
   }
 
+  if (request.url === "/__test/table-accessory-offer-failure" && request.method === "POST") {
+    const body = await readJsonBody(request);
+
+    if (body.fail === false) {
+      failedTableAccessoryOfferSlugs.delete(body.slug);
+    } else {
+      failedTableAccessoryOfferSlugs.add(body.slug);
+    }
+
+    response.end(JSON.stringify({ ok: true }));
+    return;
+  }
+
+  const tableAccessoryOfferPrefix = "/catalog/table-accessory-offer/";
+  if (request.url?.startsWith(tableAccessoryOfferPrefix) && request.method === "GET") {
+    const tableSlug = decodeURIComponent(request.url.slice(tableAccessoryOfferPrefix.length));
+    const tableProduct = tableDetailProducts.find((candidate) => candidate.slug === tableSlug);
+
+    if (!tableProduct) {
+      response.statusCode = 404;
+      response.end(JSON.stringify({ message: "Table accessory offer not found." }));
+      return;
+    }
+
+    if (failedTableAccessoryOfferSlugs.has(tableSlug)) {
+      response.statusCode = 503;
+      response.end(JSON.stringify({ message: "Table accessory offer temporarily unavailable." }));
+      return;
+    }
+
+    response.end(JSON.stringify(getTableAccessoryOffer(tableProduct)));
+    return;
+  }
+
   if (request.url === `/catalog/products/${product.slug}`) {
     response.end(JSON.stringify({ product }));
     return;
@@ -626,9 +803,9 @@ const server = createServer(async (request, response) => {
         product: {
           ...simpleProduct,
           description: "Local catalog fixture for browser tests.",
-          media: [],
+          media: simpleProduct.media ?? [],
           shortDescription: `${simpleProduct.name} local browser fixture.`,
-          variants: []
+          variants: simpleProduct.variants ?? []
         }
       })
     );
@@ -689,10 +866,13 @@ const server = createServer(async (request, response) => {
     const changes = [];
     let subtotalCents = 0;
     for (const item of body.items ?? []) {
-      const catalogProduct = [product, aquaProduct, part40Product, ...tableDetailProducts].find(
-        (candidate) => candidate.slug === item.productSlug
-      );
-      const variant = catalogProduct?.variants.find(
+      const catalogProduct = [
+        product,
+        part40Product,
+        ...accessoryProducts,
+        ...tableDetailProducts
+      ].find((candidate) => candidate.slug === item.productSlug);
+      const variant = catalogProduct?.variants?.find(
         (candidate) => candidate.key === item.selectedVariantKey
       );
       const currentPrice = variant?.priceCents ?? catalogProduct?.priceCents ?? 0;

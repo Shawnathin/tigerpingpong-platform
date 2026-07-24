@@ -63,6 +63,10 @@ function formatMoney(cents: number, currency: string): string {
   }).format(cents / 100);
 }
 
+function formatSavings(cents: number, currency: string): string {
+  return cents > 0 ? `−${formatMoney(cents, currency)}` : formatMoney(0, currency);
+}
+
 function formatDateTime(value: string | null): string {
   if (!value) {
     return "Not set";
@@ -156,6 +160,8 @@ export default async function StaffOrdersListPage({
                   <th>Paid</th>
                   <th>Reference</th>
                   <th>Customer</th>
+                  <th>Regular subtotal</th>
+                  <th>Savings</th>
                   <th>Total</th>
                   <th>Status</th>
                   <th>Items</th>
@@ -179,6 +185,8 @@ export default async function StaffOrdersListPage({
                       <div>{getCustomerLabel(order)}</div>
                       <div className={styles.muted}>{formatNullable(order.customerEmail)}</div>
                     </td>
+                    <td>{formatMoney(order.listSubtotalCents, order.currency)}</td>
+                    <td>{formatSavings(order.discountCents, order.currency)}</td>
                     <td>{formatMoney(order.totalCents, order.currency)}</td>
                     <td>{formatStatus(order.status)}</td>
                     <td>{order.itemCount}</td>

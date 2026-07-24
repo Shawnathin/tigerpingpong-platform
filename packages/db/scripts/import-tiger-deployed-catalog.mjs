@@ -8,7 +8,9 @@ import { fileURLToPath } from "node:url";
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_DIR = path.resolve(SCRIPT_DIR, "..");
 const REPO_ROOT = path.resolve(PACKAGE_DIR, "../..");
-const INPUT_DIR = path.join(REPO_ROOT, "data/import-review/tigerpingpong/v1");
+const INPUT_DIR = process.env.TIGER_IMPORT_INPUT_DIR
+  ? path.resolve(process.env.TIGER_IMPORT_INPUT_DIR)
+  : path.join(REPO_ROOT, "data/import-review/tigerpingpong/v1");
 
 const CONFIRM_FLAG = "--confirm-deployed-import";
 const DRY_RUN_FLAG = "--dry-run";
@@ -17,7 +19,21 @@ const HELP_FLAG = "--help";
 const TARGET_PREFIX = "--target=";
 const SCOPE_PREFIX = "--scope=";
 const ALLOWED_TARGETS = new Set(["staging", "production"]);
-const ALLOWED_SCOPES = new Set(["all", "replacement-parts"]);
+const ALLOWED_SCOPES = new Set(["all", "replacement-parts", "vice-bundle"]);
+
+const VICE_PACKAGE_CONFIG = {
+  brandKey: "tiger-pingpong",
+  categoryKeys: new Set(["accessories", "paddles"]),
+  familyKey: "vice-paddle",
+  productKey: "tiger-vice-paddle",
+  singleVariantKey: "tiger-vice-package-single",
+  bundleVariantKey: "tiger-vice-package-4-pack-6-white-balls",
+  bundleLabel: "4 Vice paddles + 6 white balls",
+  viceQuantity: 4,
+  whiteBallsProductKey: "tiger-premium-balls-6-white",
+  whiteBallsQuantity: 1,
+  blockerFlag: "owner_sku_required"
+};
 
 const FILE_CONFIGS = [
   {
@@ -107,13 +123,21 @@ async function main() {
     return;
   }
 
-  const importData = applyImportScope(fullImportData, safety.scope);
-  const plan = createPlan(importData, safety.scope);
+  const viceBundlePlan = createViceBundlePlan(fullImportData);
+  const preparedImportData = applyDerivedCatalogValues(fullImportData, viceBundlePlan);
+  const importData = applyImportScope(preparedImportData, safety.scope);
+  const plan = createPlan(importData, safety.scope, viceBundlePlan);
   printPlan(plan);
 
   if (safety.dryRun) {
     console.log("");
     console.log("Dry run complete. No database connection was opened and no rows were written.");
+    return;
+  }
+
+  if (plan.blockers.length > 0) {
+    printWriteBlockers(plan.blockers);
+    process.exitCode = 1;
     return;
   }
 
@@ -170,7 +194,9 @@ function validateSafety(args) {
   }
 
   if (scopes.length === 1 && !ALLOWED_SCOPES.has(scopes[0])) {
-    issues.push(`Unsupported deployed import scope: ${scopes[0]}. Use all or replacement-parts.`);
+    issues.push(
+      `Unsupported deployed import scope: ${scopes[0]}. Use all, replacement-parts, or vice-bundle.`
+    );
   }
 
   if (dryRun && write) {
@@ -252,9 +278,131 @@ function loadImportData() {
   return { files, issues };
 }
 
+function createViceBundlePlan(importData) {
+  const products = rows(importData, "products");
+  const variants = rows(importData, "variants");
+  const flags = rows(importData, "flags");
+  const viceProduct = products.find(
+    (row) => value(row, "product_key") === VICE_PACKAGE_CONFIG.productKey
+  );
+  const whiteBallsProduct = products.find(
+    (row) => value(row, "product_key") === VICE_PACKAGE_CONFIG.whiteBallsProductKey
+  );
+  const singleVariant = variants.find(
+    (row) => value(row, "variant_key") === VICE_PACKAGE_CONFIG.singleVariantKey
+  );
+  const bundleVariant = variants.find(
+    (row) => value(row, "variant_key") === VICE_PACKAGE_CONFIG.bundleVariantKey
+  );
+  const bundleSkuFlag = flags.find(
+    (row) =>
+      value(row, "entity_type") === "variant" &&
+      value(row, "entity_key") === VICE_PACKAGE_CONFIG.bundleVariantKey &&
+      value(row, "flag") === VICE_PACKAGE_CONFIG.blockerFlag
+  );
+  const viceBasePriceCents = optionalInteger(viceProduct ?? {}, "price_cents");
+  const viceSinglePriceCents = optionalInteger(singleVariant ?? {}, "price_cents");
+  const whiteBallsPriceCents = optionalInteger(whiteBallsProduct ?? {}, "price_cents");
+  const derivedRegularPriceCents =
+    Number.isInteger(viceSinglePriceCents) && Number.isInteger(whiteBallsPriceCents)
+      ? VICE_PACKAGE_CONFIG.viceQuantity * viceSinglePriceCents +
+        VICE_PACKAGE_CONFIG.whiteBallsQuantity * whiteBallsPriceCents
+      : null;
+  const bundleSku = value(bundleVariant ?? {}, "sku");
+  const blockers = [];
+
+  if (bundleSku === "") {
+    blockers.push(
+      `Owner-assigned SKU required for ${VICE_PACKAGE_CONFIG.bundleVariantKey} (${VICE_PACKAGE_CONFIG.bundleLabel}); no placeholder is permitted.`
+    );
+  }
+
+  return {
+    product: {
+      key: value(viceProduct ?? {}, "product_key"),
+      sku: value(viceProduct ?? {}, "sku"),
+      priceCents: viceBasePriceCents
+    },
+    single: {
+      key: value(singleVariant ?? {}, "variant_key"),
+      label: value(singleVariant ?? {}, "name"),
+      optionName: value(singleVariant ?? {}, "option_1_name"),
+      optionValue: value(singleVariant ?? {}, "option_1_value"),
+      sku: value(singleVariant ?? {}, "sku"),
+      priceCents: optionalInteger(singleVariant ?? {}, "price_cents"),
+      isActive: value(singleVariant ?? {}, "is_active")
+    },
+    bundle: {
+      key: value(bundleVariant ?? {}, "variant_key"),
+      label: value(bundleVariant ?? {}, "name"),
+      optionName: value(bundleVariant ?? {}, "option_1_name"),
+      optionValue: value(bundleVariant ?? {}, "option_1_value"),
+      sku: bundleSku,
+      durablePriceCents: optionalInteger(bundleVariant ?? {}, "price_cents"),
+      derivedRegularPriceCents,
+      isActive: value(bundleVariant ?? {}, "is_active"),
+      purchaseModeOverride: value(bundleVariant ?? {}, "purchase_mode_override")
+    },
+    components: [
+      {
+        key: value(viceProduct ?? {}, "product_key"),
+        sku: value(singleVariant ?? {}, "sku"),
+        quantity: VICE_PACKAGE_CONFIG.viceQuantity,
+        unitPriceCents: viceSinglePriceCents
+      },
+      {
+        key: value(whiteBallsProduct ?? {}, "product_key"),
+        sku: value(whiteBallsProduct ?? {}, "sku"),
+        quantity: VICE_PACKAGE_CONFIG.whiteBallsQuantity,
+        unitPriceCents: whiteBallsPriceCents
+      }
+    ],
+    blockerFlag: {
+      flag: value(bundleSkuFlag ?? {}, "flag"),
+      severity: value(bundleSkuFlag ?? {}, "severity"),
+      resolutionOwner: value(bundleSkuFlag ?? {}, "resolution_owner"),
+      resolutionStatus: value(bundleSkuFlag ?? {}, "resolution_status")
+    },
+    blockers
+  };
+}
+
+function applyDerivedCatalogValues(importData, viceBundlePlan) {
+  const files = new Map(
+    Array.from(importData.files.entries()).map(([fileId, fileInfo]) => {
+      if (fileId !== "variants") {
+        return [fileId, fileInfo];
+      }
+
+      return [
+        fileId,
+        {
+          ...fileInfo,
+          rows: fileInfo.rows.map((row) =>
+            value(row, "variant_key") === VICE_PACKAGE_CONFIG.bundleVariantKey
+              ? {
+                  ...row,
+                  price_cents: Number.isInteger(viceBundlePlan.bundle.derivedRegularPriceCents)
+                    ? String(viceBundlePlan.bundle.derivedRegularPriceCents)
+                    : value(row, "price_cents")
+                }
+              : row
+          )
+        }
+      ];
+    })
+  );
+
+  return { files, issues: importData.issues };
+}
+
 function applyImportScope(importData, scope) {
   if (scope === "all") {
     return importData;
+  }
+
+  if (scope === "vice-bundle") {
+    return applyViceBundleImportScope(importData);
   }
 
   const familyRows = rows(importData, "families");
@@ -328,7 +476,56 @@ function applyImportScope(importData, scope) {
   return { files, issues: [] };
 }
 
-function createPlan(importData, scope) {
+function applyViceBundleImportScope(importData) {
+  const scopedFamilies = rows(importData, "families")
+    .map((row, index) => ({ ...row, __sourceSortOrder: (index + 1) * 10 }))
+    .filter((row) => value(row, "family_key") === VICE_PACKAGE_CONFIG.familyKey);
+  const scopedRows = new Map([
+    [
+      "brands",
+      rows(importData, "brands").filter(
+        (row) => value(row, "brand_key") === VICE_PACKAGE_CONFIG.brandKey
+      )
+    ],
+    [
+      "categories",
+      rows(importData, "categories").filter((row) =>
+        VICE_PACKAGE_CONFIG.categoryKeys.has(value(row, "category_key"))
+      )
+    ],
+    ["families", scopedFamilies],
+    [
+      "products",
+      rows(importData, "products").filter(
+        (row) => value(row, "product_key") === VICE_PACKAGE_CONFIG.productKey
+      )
+    ],
+    [
+      "variants",
+      rows(importData, "variants").filter(
+        (row) =>
+          value(row, "variant_key") === VICE_PACKAGE_CONFIG.singleVariantKey ||
+          value(row, "variant_key") === VICE_PACKAGE_CONFIG.bundleVariantKey
+      )
+    ],
+    ["media", []],
+    ["redirects", []],
+    ["flags", []]
+  ]);
+  const files = new Map(
+    Array.from(importData.files.entries()).map(([fileId, fileInfo]) => [
+      fileId,
+      {
+        ...fileInfo,
+        rows: scopedRows.get(fileId) ?? []
+      }
+    ])
+  );
+
+  return { files, issues: [] };
+}
+
+function createPlan(importData, scope, viceBundlePlan) {
   const products = rows(importData, "products");
   const variants = rows(importData, "variants");
   const media = rows(importData, "media");
@@ -348,6 +545,8 @@ function createPlan(importData, scope) {
 
   return {
     scope,
+    blockers: ["all", "vice-bundle"].includes(scope) ? viceBundlePlan.blockers : [],
+    viceBundle: viceBundlePlan,
     filePlans: FILE_CONFIGS.map((config) => {
       const fileInfo = importData.files.get(config.id);
       return {
@@ -732,13 +931,13 @@ async function importVariants(tx, importData, state, result) {
           }
         },
         update: {
-          label: optionPair.value,
+          label: optionPair.label,
           sortOrder: optionPair.sortOrder
         },
         create: {
           option: { connect: { id: option.id } },
           value: optionPair.value,
-          label: optionPair.value,
+          label: optionPair.label,
           sortOrder: optionPair.sortOrder
         }
       });
@@ -854,6 +1053,9 @@ Dry-run planning command:
 Replacement-parts-only planning command:
   DATABASE_URL=postgresql://... pnpm import:tiger:deployed -- ${CONFIRM_FLAG} --target=staging --scope=replacement-parts ${DRY_RUN_FLAG}
 
+Vice-package-only planning command:
+  DATABASE_URL=postgresql://... pnpm import:tiger:deployed -- ${CONFIRM_FLAG} --target=staging --scope=vice-bundle ${DRY_RUN_FLAG}
+
 Actual write command:
   DATABASE_URL=postgresql://... pnpm import:tiger:deployed -- ${CONFIRM_FLAG} --target=staging ${WRITE_FLAG}
 
@@ -863,6 +1065,7 @@ Targets:
 
 Scopes:
   --scope=replacement-parts
+  --scope=vice-bundle
   --scope=all (default)
 
 Safety:
@@ -873,6 +1076,7 @@ Safety:
   - Requires exactly one mode: ${DRY_RUN_FLAG} or ${WRITE_FLAG}.
   - Runs pnpm validate:tiger-import before planning or writes.
   - Refuses to write when validation fails.
+  - Refuses Vice/all-catalog writes before connecting when the exact bundle SKU is missing.
   - Opens no database connection in dry-run mode.
   - Skips redirect writes until URL structure is explicitly approved.
 `);
@@ -962,31 +1166,107 @@ function printPlan(plan) {
     }
 
     console.log(`- Replacement-part media rows: ${plan.replacementParts.mediaRows}`);
+    printPlanBlockers(plan.blockers);
     return;
   }
 
-  console.log("Aqua planning snapshot:");
-  console.log(
-    `- Parent product: ${plan.aqua.productKey} (${plan.aqua.productSlug}), status=${plan.aqua.status}, purchase_mode=${plan.aqua.purchaseMode}`
-  );
-  console.log(`- Package options: ${plan.aqua.variantCount}`);
-
-  for (const variant of plan.aqua.variants) {
+  if (plan.scope === "all") {
+    console.log("Aqua planning snapshot:");
     console.log(
-      `  - ${variant.label}: ${variant.key}, sku=${variant.sku}, price_cents=${variant.priceCents}`
+      `- Parent product: ${plan.aqua.productKey} (${plan.aqua.productSlug}), status=${plan.aqua.status}, purchase_mode=${plan.aqua.purchaseMode}`
     );
+    console.log(`- Package options: ${plan.aqua.variantCount}`);
+
+    for (const variant of plan.aqua.variants) {
+      console.log(
+        `  - ${variant.label}: ${variant.key}, sku=${variant.sku}, price_cents=${variant.priceCents}`
+      );
+    }
+
+    console.log(
+      `- Archived package product rows preserved for traceability: ${plan.aqua.archivedPackageProductKeys.join(", ")}`
+    );
+    console.log(
+      `- Aqua source-only media rows with no Cloudinary secure URL: ${plan.aqua.sourceMediaRows}`
+    );
+    console.log(
+      `- Draft redirect rows pointing at the Aqua parent product but skipped: ${plan.aqua.draftRedirectRows}`
+    );
+    console.log(`- Open Aqua review flags: ${plan.aqua.openReviewFlags}`);
+    console.log("");
   }
 
+  printViceBundlePlan(plan.viceBundle);
+  printPlanBlockers(plan.blockers);
+}
+
+function printViceBundlePlan(viceBundle) {
+  console.log("Vice package planning snapshot:");
   console.log(
-    `- Archived package product rows preserved for traceability: ${plan.aqua.archivedPackageProductKeys.join(", ")}`
+    `- Parent product: ${viceBundle.product.key}, parent_sku=${formatPlanValue(
+      viceBundle.product.sku
+    )}, base_price_cents=${formatPlanValue(viceBundle.product.priceCents)}`
   );
   console.log(
-    `- Aqua source-only media rows with no Cloudinary secure URL: ${plan.aqua.sourceMediaRows}`
+    `- Single option: ${viceBundle.single.label}, key=${viceBundle.single.key}, option=${viceBundle.single.optionName}, sku=${formatPlanValue(
+      viceBundle.single.sku
+    )}, price_cents=${formatPlanValue(viceBundle.single.priceCents)}, active=${
+      viceBundle.single.isActive
+    }`
   );
   console.log(
-    `- Draft redirect rows pointing at the Aqua parent product but skipped: ${plan.aqua.draftRedirectRows}`
+    `- Bundle option: ${viceBundle.bundle.label}, key=${
+      viceBundle.bundle.key
+    }, option=${viceBundle.bundle.optionName}, sku=${
+      viceBundle.bundle.sku || "PENDING OWNER ASSIGNMENT"
+    }, durable_price_cents=${formatPlanValue(
+      viceBundle.bundle.durablePriceCents
+    )}, derived_regular_price_cents=${formatPlanValue(
+      viceBundle.bundle.derivedRegularPriceCents
+    )}, active=${viceBundle.bundle.isActive}, purchase_mode_override=${
+      viceBundle.bundle.purchaseModeOverride
+    }`
   );
-  console.log(`- Open Aqua review flags: ${plan.aqua.openReviewFlags}`);
+
+  const [viceComponent, whiteBallsComponent] = viceBundle.components;
+  console.log(
+    `- Component derivation: ${viceComponent.quantity} x ${viceComponent.unitPriceCents} (${viceComponent.key}, sku=${viceComponent.sku}) + ${whiteBallsComponent.quantity} x ${whiteBallsComponent.unitPriceCents} (${whiteBallsComponent.key}, sku=${whiteBallsComponent.sku}) = ${viceBundle.bundle.derivedRegularPriceCents} CAD cents`
+  );
+  console.log(
+    `- SKU review flag: ${viceBundle.blockerFlag.flag}, severity=${viceBundle.blockerFlag.severity}, owner=${viceBundle.blockerFlag.resolutionOwner}, status=${viceBundle.blockerFlag.resolutionStatus}`
+  );
+}
+
+function printPlanBlockers(blockers) {
+  console.log("");
+
+  if (blockers.length === 0) {
+    console.log("Blocking catalog gates: none for this scope.");
+    return;
+  }
+
+  console.log("Blocking catalog gates:");
+
+  for (const blocker of blockers) {
+    console.log(`- ${blocker}`);
+  }
+}
+
+function printWriteBlockers(blockers) {
+  console.error("");
+  console.error("Deployed catalog write blocked before database connection.");
+
+  for (const blocker of blockers) {
+    console.error(`- ${blocker}`);
+  }
+
+  console.error("No database connection was opened and no rows were written.");
+}
+
+function formatPlanValue(planValue) {
+  return planValue === "" || planValue === null || planValue === undefined
+    ? "(blank)"
+    : String(planValue);
 }
 
 function printWritePreflight(safety, importData, existing) {
@@ -1067,13 +1347,20 @@ function optionalInteger(row, column) {
 }
 
 function optionPairs(row) {
+  const isVicePackageVariant =
+    value(row, "product_key") === VICE_PACKAGE_CONFIG.productKey &&
+    (value(row, "variant_key") === VICE_PACKAGE_CONFIG.singleVariantKey ||
+      value(row, "variant_key") === VICE_PACKAGE_CONFIG.bundleVariantKey);
+
   return [
     {
+      label: isVicePackageVariant ? value(row, "name") : value(row, "option_1_value"),
       name: value(row, "option_1_name"),
       value: value(row, "option_1_value"),
       sortOrder: 10
     },
     {
+      label: value(row, "option_2_value"),
       name: value(row, "option_2_name"),
       value: value(row, "option_2_value"),
       sortOrder: 20
@@ -1171,8 +1458,16 @@ function pushParsedRow(parsedRows, row) {
   }
 }
 
-main().catch((error) => {
-  console.error("Tiger PingPong deployed catalog import failed.");
-  console.error(error instanceof Error ? error.message : error);
-  process.exitCode = 1;
-});
+const isMainModule =
+  typeof process.argv[1] === "string" &&
+  path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+
+if (isMainModule) {
+  main().catch((error) => {
+    console.error("Tiger PingPong deployed catalog import failed.");
+    console.error(error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  });
+}
+
+export { applyDerivedCatalogValues, applyViceBundleImportScope, createViceBundlePlan };

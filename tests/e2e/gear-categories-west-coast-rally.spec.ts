@@ -205,7 +205,7 @@ test.describe("Tiger gear categories", () => {
     );
 
     const vice = page.locator("#product-tiger-vice-paddle");
-    await expect(vice.getByText("$50.00", { exact: true })).toBeVisible();
+    await expect(vice.getByText("$15.00", { exact: true })).toBeVisible();
     await expect(vice.getByText("Small hands. Big rallies.")).toBeVisible();
     await expect(vice.getByText(/slimmer handle that is easier to hold/)).toBeVisible();
 

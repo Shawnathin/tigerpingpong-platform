@@ -40,7 +40,7 @@ function combinedOutput(result: ReturnType<typeof runImporter>) {
 }
 
 describe("Vice bundle deployed catalog import", () => {
-  it("plans only the Vice package records and derives the blank durable bundle price", () => {
+  it("plans only the Vice package records with the assigned SKU and derives the blank durable bundle price", () => {
     const result = runImporter("vice-bundle", "--dry-run");
     const output = combinedOutput(result);
 
@@ -54,32 +54,65 @@ describe("Vice bundle deployed catalog import", () => {
       "Bundle option: 4 Vice paddles + 6 white balls, key=tiger-vice-package-4-pack-6-white-balls"
     );
     expect(output).toContain(
-      "sku=PENDING OWNER ASSIGNMENT, durable_price_cents=(blank), derived_regular_price_cents=6800"
+      "sku=15488, durable_price_cents=(blank), derived_regular_price_cents=6800"
     );
     expect(output).toContain(
       "4 x 1500 (tiger-vice-paddle, sku=9174) + 1 x 800 (tiger-premium-balls-6-white, sku=9157) = 6800 CAD cents"
     );
     expect(output).toContain(
-      "SKU review flag: owner_sku_required, severity=blocker, owner=business, status=open"
+      "SKU review flag: owner_sku_required, severity=blocker, owner=business, status=resolved"
     );
+    expect(output).toContain("Blocking catalog gates: none for this scope.");
     expect(output).toContain(
       "Dry run complete. No database connection was opened and no rows were written."
+    );
+  });
+
+  it("records the exact owner-assigned SKU and resolves its reviewed catalog flag", () => {
+    const variants = fs.readFileSync(
+      path.join(reviewedInputDir, "product_variants_import_v1.csv"),
+      "utf8"
+    );
+    const flags = fs.readFileSync(
+      path.join(reviewedInputDir, "import_review_flags_v1.csv"),
+      "utf8"
+    );
+
+    expect(variants).toContain(
+      '"tiger-vice-package-4-pack-6-white-balls","tiger-vice-paddle","15488","4 Vice paddles + 6 white balls","Package Options","4-vice-paddles-6-white-balls","","","","CAD","","true"'
+    );
+    expect(flags).toContain(
+      '"variant","tiger-vice-package-4-pack-6-white-balls","https://tigerpingpong.ca/accessories/vice-ping-pong-paddle","owner_sku_required","blocker","business","resolved"'
     );
   });
 
   it.each(["vice-bundle", "all"] as const)(
     "blocks the %s write before connecting while the exact bundle SKU is blank",
     (scope) => {
-      const result = runImporter(scope, "--write");
-      const output = combinedOutput(result);
+      const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), "tiger-vice-unassigned-"));
+      const fixtureInputDir = path.join(fixtureRoot, "input");
+      const fixtureOutputDir = path.join(fixtureRoot, "validation");
 
-      expect(result.status).toBe(1);
-      expect(output).toContain("Deployed catalog write blocked before database connection.");
-      expect(output).toContain(
-        "Owner-assigned SKU required for tiger-vice-package-4-pack-6-white-balls"
-      );
-      expect(output).toContain("No database connection was opened and no rows were written.");
-      expect(output).not.toMatch(/ECONNREFUSED|Can't reach database server/i);
+      try {
+        fs.cpSync(reviewedInputDir, fixtureInputDir, { recursive: true });
+        prepareUnassignedSkuFixture(fixtureInputDir);
+
+        const result = runImporter(scope, "--write", {
+          TIGER_IMPORT_INPUT_DIR: fixtureInputDir,
+          TIGER_IMPORT_OUTPUT_DIR: fixtureOutputDir
+        });
+        const output = combinedOutput(result);
+
+        expect(result.status).toBe(1);
+        expect(output).toContain("Deployed catalog write blocked before database connection.");
+        expect(output).toContain(
+          "Owner-assigned SKU required for tiger-vice-package-4-pack-6-white-balls"
+        );
+        expect(output).toContain("No database connection was opened and no rows were written.");
+        expect(output).not.toMatch(/ECONNREFUSED|Can't reach database server/i);
+      } finally {
+        fs.rmSync(fixtureRoot, { recursive: true, force: true });
+      }
     }
   );
 
@@ -97,58 +130,31 @@ describe("Vice bundle deployed catalog import", () => {
     ]);
     expect(scopedVariants[1]).toMatchObject({
       price_cents: "6800",
-      sku: "99999",
+      sku: "15488",
       purchase_mode_override: "",
       is_active: "true"
     });
   });
-
-  it("validates and plans the assigned-SKU ready state without a database connection", () => {
-    const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), "tiger-vice-ready-"));
-    const fixtureInputDir = path.join(fixtureRoot, "input");
-    const fixtureOutputDir = path.join(fixtureRoot, "validation");
-
-    try {
-      fs.cpSync(reviewedInputDir, fixtureInputDir, { recursive: true });
-      prepareAssignedSkuFixture(fixtureInputDir);
-
-      const result = runImporter("vice-bundle", "--dry-run", {
-        TIGER_IMPORT_INPUT_DIR: fixtureInputDir,
-        TIGER_IMPORT_OUTPUT_DIR: fixtureOutputDir
-      });
-      const output = combinedOutput(result);
-
-      expect(result.status).toBe(0);
-      expect(output).toContain("sku=99999");
-      expect(output).toContain("derived_regular_price_cents=6800");
-      expect(output).toContain("Blocking catalog gates: none for this scope.");
-      expect(output).toContain(
-        "Dry run complete. No database connection was opened and no rows were written."
-      );
-    } finally {
-      fs.rmSync(fixtureRoot, { recursive: true, force: true });
-    }
-  });
 });
 
-function prepareAssignedSkuFixture(inputDir: string): void {
+function prepareUnassignedSkuFixture(inputDir: string): void {
   const variantsPath = path.join(inputDir, "product_variants_import_v1.csv");
   const flagsPath = path.join(inputDir, "import_review_flags_v1.csv");
   const variants = fs.readFileSync(variantsPath, "utf8");
   const flags = fs.readFileSync(flagsPath, "utf8");
+  const assignedVariant =
+    '"tiger-vice-package-4-pack-6-white-balls","tiger-vice-paddle","15488","4 Vice paddles + 6 white balls","Package Options","4-vice-paddles-6-white-balls","","","","CAD","","true"';
   const pendingVariant =
     '"tiger-vice-package-4-pack-6-white-balls","tiger-vice-paddle","","4 Vice paddles + 6 white balls","Package Options","4-vice-paddles-6-white-balls","","","","CAD","deferred_from_v1","false"';
-  const assignedVariant =
-    '"tiger-vice-package-4-pack-6-white-balls","tiger-vice-paddle","99999","4 Vice paddles + 6 white balls","Package Options","4-vice-paddles-6-white-balls","","","","CAD","","true"';
-  const pendingFlag =
-    '"variant","tiger-vice-package-4-pack-6-white-balls","https://tigerpingpong.ca/accessories/vice-ping-pong-paddle","owner_sku_required","blocker","business","open"';
   const resolvedFlag =
     '"variant","tiger-vice-package-4-pack-6-white-balls","https://tigerpingpong.ca/accessories/vice-ping-pong-paddle","owner_sku_required","blocker","business","resolved"';
+  const pendingFlag =
+    '"variant","tiger-vice-package-4-pack-6-white-balls","https://tigerpingpong.ca/accessories/vice-ping-pong-paddle","owner_sku_required","blocker","business","open"';
 
-  expect(variants).toContain(pendingVariant);
-  expect(flags).toContain(pendingFlag);
-  fs.writeFileSync(variantsPath, variants.replace(pendingVariant, assignedVariant));
-  fs.writeFileSync(flagsPath, flags.replace(pendingFlag, resolvedFlag));
+  expect(variants).toContain(assignedVariant);
+  expect(flags).toContain(resolvedFlag);
+  fs.writeFileSync(variantsPath, variants.replace(assignedVariant, pendingVariant));
+  fs.writeFileSync(flagsPath, flags.replace(resolvedFlag, pendingFlag));
 }
 
 function createReadyStateImportData() {
@@ -198,7 +204,7 @@ function createReadyStateImportData() {
             name: "4 Vice paddles + 6 white balls",
             option_1_name: "Package Options",
             option_1_value: "4-vice-paddles-6-white-balls",
-            sku: "99999",
+            sku: "15488",
             price_cents: "",
             purchase_mode_override: "",
             is_active: "true"

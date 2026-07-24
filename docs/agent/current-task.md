@@ -14,7 +14,7 @@ Make table package contents explicit, add a live component-priced Vice package c
 - Preserve hosted Stripe Checkout, webhook-confirmed payment truth, webhook idempotency, Stripe Tax, Canada-only shipping, the `$100` threshold, and the existing Aqua shipping exception.
 - Prices and availability remain live catalog truth. Client prices are reconciliation hints only.
 - Do not use a Stripe coupon. The API computes net eligible line prices and keeps unexpected Stripe discounts unsupported.
-- Do not invent the operations-assigned Vice bundle SKU or publish a placeholder.
+- Use the owner-supplied Vice bundle SKU `15488`; do not substitute a placeholder or alternate value.
 - Do not apply a production catalog write, database migration, deployment, or real payment in this task without separate approval.
 - Preserve the unrelated automated-order-email worktree and branch.
 
@@ -31,4 +31,4 @@ Make table package contents explicit, add a live component-priced Vice package c
 
 ## Status
 
-PR 1 is implemented and locally verified on `codex/feature/vice-bundle-catalog-foundation`. It reconciles the durable Vice single price, defines the required Single and four-paddle/six-white-ball package records, derives the bundle price from live components, adds the narrow guarded import path, preserves legacy cart/checkout compatibility, and uses exact component media. The bundle stays inactive and every deployed write that could include it stays blocked until owner/operations supplies the exact new SKU. PR 2 has not started.
+PR 1 is implemented and locally reverified on `codex/feature/vice-bundle-catalog-foundation`. It reconciles the durable Vice single price, defines the required Single and four-paddle/six-white-ball package records, derives the bundle price from live components, adds the narrow guarded import path, preserves legacy cart/checkout compatibility, and uses exact component media. Shawn supplied exact bundle SKU `15488` on 2026-07-24, so the reviewed bundle row is active and the SKU review flag is resolved. The scoped staging dry run reports no catalog blockers and performs no database write. Staging and production writes remain separately approval-gated. PR 2 has not started.

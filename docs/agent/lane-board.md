@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- `codex/feature/vice-bundle-catalog-foundation` — PR 1 of the table accessory offer is implemented and locally verified; the bundle remains inactive and deployment-blocked pending its exact operations-assigned SKU.
+- `codex/feature/vice-bundle-catalog-foundation` — PR 1 of the table accessory offer now records exact bundle SKU `15488`; the reviewed bundle is active and locally reverified, while staging/production writes remain separately approval-gated.
 
 ## Done
 

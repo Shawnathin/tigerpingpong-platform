@@ -859,7 +859,7 @@
 
 .tableAccessoryChoiceBody {
   display: grid;
-  gap: 7px;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -871,14 +871,21 @@
   line-height: 1.18;
 }
 
+.tableAccessoryDetail {
+  color: #536078;
+  font-size: 0.74rem;
+  font-weight: 820;
+  line-height: 1.25;
+}
+
 .tableAccessoryPriceLine {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 5px 10px;
+  gap: 4px 10px;
 }
 
-.tableAccessoryPriceLine > span,
+.tableAccessoryPriceLine del,
 .tableAccessoryPriceLine small,
 .tableAccessoryPriceLine em {
   color: #687387;
@@ -888,8 +895,8 @@
   line-height: 1.25;
 }
 
-.tableAccessoryPriceLine > span {
-  text-decoration: line-through;
+.tableAccessoryPriceLine del {
+  font-weight: 760;
   text-decoration-thickness: 1px;
 }
 
@@ -933,7 +940,8 @@
 .tableAccessoryTotals {
   display: flex;
   align-items: flex-end;
-  gap: 18px;
+  justify-content: space-between;
+  gap: 24px;
   margin: 0;
 }
 
@@ -955,16 +963,15 @@
   font-weight: 950;
 }
 
-.tableAccessoryTotals div:nth-child(2) dd {
-  color: #16665e;
-}
-
-.tableAccessoryTotals div:last-child {
-  margin-left: auto;
+.tableAccessoryTotalSavings {
   text-align: right;
 }
 
-.tableAccessoryTotals div:last-child dd {
+.tableAccessoryTotalSavings dd {
+  color: #16665e;
+}
+
+.tableAccessoryTotalPrimary dd {
   font-size: 1.18rem;
 }
 
@@ -3237,15 +3244,8 @@
   }
 
   .tableAccessoryTotals {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px 16px;
-  }
-
-  .tableAccessoryTotals div:last-child {
-    grid-column: 1 / -1;
-    margin-left: 0;
-    text-align: left;
+    display: flex;
+    gap: 18px;
   }
 
   .tableAccessoryModalActions {

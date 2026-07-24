@@ -291,7 +291,6 @@ function TableAddToCartModal({
   const coverFullOfferSavings = cover
     ? cover.priceCents - getDiscountedOfferPriceCents(cover.priceCents)
     : 0;
-  const selectedRegularTotal = selectedPricing.addedListSubtotalCents;
   const selectedSavings = Math.max(0, selectedPricing.additionalDiscountCents);
   const selectedExtrasTotal = selectedPricing.additionalNetSubtotalCents;
 
@@ -382,7 +381,7 @@ function TableAddToCartModal({
               <header className={styles.tableAccessoryOfferHeader}>
                 <p className={styles.tableAccessoryEyebrow}>30% off with your table</p>
                 <h3>Now bring the rally.</h3>
-                <p>Pick one play set. Add a cover if you need one.</p>
+                <p>Pick a play set. Add a cover if you need one.</p>
               </header>
 
               {playSets.length > 0 ? (
@@ -391,6 +390,7 @@ function TableAddToCartModal({
                   <div className={styles.tableAccessoryChoices}>
                     {playSets.map((item) => {
                       const itemKey = getTableAccessoryOfferItemKey(item);
+                      const presentation = getTableAccessoryOfferItemPresentation(item);
                       const priceDelta = getCartPricingDelta(cartItems, [
                         toTableAccessoryCartProduct(item)
                       ]);
@@ -405,37 +405,47 @@ function TableAddToCartModal({
                             <ProductThumb product={toTableAccessoryCartProduct(item)} />
                           </span>
                           <span className={styles.tableAccessoryChoiceBody}>
-                            <strong>{getTableAccessoryOfferItemLabel(item)}</strong>
-                            <span className={styles.tableAccessoryPriceLine}>
-                              <span>Regular {formatCartMoney(item.priceCents, item.currency)}</span>
-                              {receivesFullOffer ? (
-                                <em>
-                                  30% off ·{" "}
-                                  {formatCartMoney(
-                                    priceDelta.additionalNetSubtotalCents,
-                                    item.currency
-                                  )}
-                                </em>
-                              ) : (
-                                <em>
-                                  Cart price ·{" "}
-                                  {formatCartMoney(
-                                    priceDelta.additionalNetSubtotalCents,
-                                    item.currency
-                                  )}
-                                </em>
-                              )}
-                              <small>
-                                {priceDelta.additionalDiscountCents > 0
-                                  ? `Save ${formatCartMoney(
-                                      priceDelta.additionalDiscountCents,
-                                      item.currency
-                                    )}`
-                                  : "Offer already used in your cart."}
+                            <strong>{presentation.title}</strong>
+                            {presentation.detail ? (
+                              <small className={styles.tableAccessoryDetail}>
+                                {presentation.detail}
                               </small>
+                            ) : null}
+                            <span className={styles.tableAccessoryPriceLine}>
+                              {receivesFullOffer ? (
+                                <>
+                                  <del
+                                    aria-label={`Regular ${formatCartMoney(
+                                      item.priceCents,
+                                      item.currency
+                                    )}`}
+                                  >
+                                    {formatCartMoney(item.priceCents, item.currency)}
+                                  </del>
+                                  <em>
+                                    {formatCartMoney(
+                                      priceDelta.additionalNetSubtotalCents,
+                                      item.currency
+                                    )}{" "}
+                                    with your table
+                                  </em>
+                                </>
+                              ) : (
+                                <>
+                                  <em>
+                                    Cart price ·{" "}
+                                    {formatCartMoney(
+                                      priceDelta.additionalNetSubtotalCents,
+                                      item.currency
+                                    )}
+                                  </em>
+                                  <small>Offer already used in your cart.</small>
+                                </>
+                              )}
                             </span>
                           </span>
                           <input
+                            aria-label={getTableAccessoryOfferItemLabel(item)}
                             checked={selectedPlaySetKey === itemKey}
                             name={`${product.productSlug}-play-set`}
                             onChange={() => setSelectedPlaySetKey(itemKey)}
@@ -464,29 +474,44 @@ function TableAddToCartModal({
                     </span>
                     <span className={styles.tableAccessoryChoiceBody}>
                       <strong>Tiger Table Cover</strong>
+                      <small className={styles.tableAccessoryDetail}>
+                        Outdoor fabric · Snug fit
+                      </small>
                       <span className={styles.tableAccessoryPriceLine}>
-                        <span>Regular {formatCartMoney(cover.priceCents, cover.currency)}</span>
-                        <em>
-                          {coverPriceDelta?.additionalDiscountCents === coverFullOfferSavings
-                            ? "30% off"
-                            : "Cart price"}{" "}
-                          ·{" "}
-                          {formatCartMoney(
-                            coverPriceDelta?.additionalNetSubtotalCents ?? cover.priceCents,
-                            cover.currency
-                          )}
-                        </em>
-                        <small>
-                          {coverPriceDelta && coverPriceDelta.additionalDiscountCents > 0
-                            ? `Save ${formatCartMoney(
-                                coverPriceDelta.additionalDiscountCents,
+                        {coverPriceDelta?.additionalDiscountCents === coverFullOfferSavings ? (
+                          <>
+                            <del
+                              aria-label={`Regular ${formatCartMoney(
+                                cover.priceCents,
                                 cover.currency
-                              )}`
-                            : "Offer already used in your cart."}
-                        </small>
+                              )}`}
+                            >
+                              {formatCartMoney(cover.priceCents, cover.currency)}
+                            </del>
+                            <em>
+                              {formatCartMoney(
+                                coverPriceDelta.additionalNetSubtotalCents,
+                                cover.currency
+                              )}{" "}
+                              with your table
+                            </em>
+                          </>
+                        ) : (
+                          <>
+                            <em>
+                              Cart price ·{" "}
+                              {formatCartMoney(
+                                coverPriceDelta?.additionalNetSubtotalCents ?? cover.priceCents,
+                                cover.currency
+                              )}
+                            </em>
+                            <small>Offer already used in your cart.</small>
+                          </>
+                        )}
                       </span>
                     </span>
                     <input
+                      aria-label="Tiger Table Cover"
                       checked={isCoverSelected}
                       onChange={(event) => setIsCoverSelected(event.currentTarget.checked)}
                       type="checkbox"
@@ -506,21 +531,16 @@ function TableAddToCartModal({
               {selectedItems.length > 0 ? (
                 <div className={styles.tableAccessorySummary} aria-live="polite">
                   <dl className={styles.tableAccessoryTotals}>
-                    <div>
-                      <dt>Regular</dt>
-                      <dd>{formatCartMoney(selectedRegularTotal, product.currency)}</dd>
-                    </div>
-                    <div>
-                      <dt>You save</dt>
-                      <dd>
-                        {selectedSavings > 0 ? "-" : ""}
-                        {formatCartMoney(selectedSavings, product.currency)}
-                      </dd>
-                    </div>
-                    <div>
+                    <div className={styles.tableAccessoryTotalPrimary}>
                       <dt>Your extras</dt>
                       <dd>{formatCartMoney(selectedExtrasTotal, product.currency)}</dd>
                     </div>
+                    {selectedSavings > 0 ? (
+                      <div className={styles.tableAccessoryTotalSavings}>
+                        <dt>You save</dt>
+                        <dd>{formatCartMoney(selectedSavings, product.currency)}</dd>
+                      </div>
+                    ) : null}
                   </dl>
                 </div>
               ) : null}
@@ -982,6 +1002,37 @@ function getTableAccessoryOfferItemLabel(item: CatalogTableAccessoryOfferItem): 
   }
 
   return item.selectedOptions.map((option) => option.label).join(" · ") || item.productName;
+}
+
+function getTableAccessoryOfferItemPresentation(item: CatalogTableAccessoryOfferItem): {
+  detail: string | null;
+  title: string;
+} {
+  if (item.variantKey === AQUA_TWO_PACK_VARIANT_KEY) {
+    return {
+      detail: "Outdoor + indoor · 2 paddles + 3 balls",
+      title: "Aqua"
+    };
+  }
+
+  if (item.variantKey === AQUA_FOUR_PACK_VARIANT_KEY) {
+    return {
+      detail: "Outdoor + indoor · 4 paddles + 3 balls",
+      title: "Aqua"
+    };
+  }
+
+  if (item.variantKey === VICE_BUNDLE_VARIANT_KEY) {
+    return {
+      detail: "4 paddles + 6 white balls",
+      title: "Vice"
+    };
+  }
+
+  return {
+    detail: null,
+    title: item.productName
+  };
 }
 
 function getDiscountedOfferPriceCents(listPriceCents: number): number {

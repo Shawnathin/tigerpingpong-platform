@@ -4,6 +4,7 @@ const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
 const EXPO_PATH = "/catalog/products/tiger-expo-outdoor-table";
 const PLAZA_PATH = "/catalog/products/tiger-plaza-outdoor-table-grey";
 const TABLE_NOTICE = "Now pick the paddles and balls that fit your game.";
+const TABLE_OFFER_PROMPT = "Pick a play set. Add a cover if you need one.";
 const AQUA_TWO_PACK_VARIANT_KEY = "tiger-aqua-package-2-pack-3-balls";
 const AQUA_FOUR_PACK_VARIANT_KEY = "tiger-aqua-package-4-pack-3-balls";
 const COVER_PRODUCT_KEY = "tiger-table-cover-black-polyester";
@@ -18,9 +19,24 @@ test("table confirmation starts unselected and allows a cover-only offer", async
   const dialog = page.getByRole("dialog", { name: /is in/i });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText(TABLE_NOTICE, { exact: true })).toBeVisible();
-  await expect(dialog.getByText("Aqua — 2 paddles + 3 balls", { exact: true })).toBeVisible();
-  await expect(dialog.getByText("Aqua — 4 paddles + 3 balls", { exact: true })).toBeVisible();
-  await expect(dialog.getByText("Vice — 4 paddles + 6 white balls", { exact: true })).toBeVisible();
+  await expect(dialog.getByText(TABLE_OFFER_PROMPT, { exact: true })).toBeVisible();
+  await expect(
+    dialog.getByRole("radio", { name: "Aqua — 2 paddles + 3 balls", exact: true })
+  ).toBeVisible();
+  await expect(
+    dialog.getByRole("radio", { name: "Aqua — 4 paddles + 3 balls", exact: true })
+  ).toBeVisible();
+  await expect(
+    dialog.getByRole("radio", { name: "Vice — 4 paddles + 6 white balls", exact: true })
+  ).toBeVisible();
+  await expect(
+    dialog.getByText("Outdoor + indoor · 2 paddles + 3 balls", { exact: true })
+  ).toBeVisible();
+  await expect(
+    dialog.getByText("Outdoor + indoor · 4 paddles + 3 balls", { exact: true })
+  ).toBeVisible();
+  await expect(dialog.getByText("4 paddles + 6 white balls", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("Outdoor fabric · Snug fit", { exact: true })).toBeVisible();
   await expect(dialog.locator('[data-vice-package-visual="bundle"]')).toHaveCount(1);
   await expect(dialog.locator('[data-vice-package-visual="bundle"] img')).toHaveCount(5);
 
@@ -38,8 +54,8 @@ test("table confirmation starts unselected and allows a cover-only offer", async
 
   await coverChoice.check();
   const totals = dialog.locator("dl");
-  await expect(totals).toContainText("Regular$55.00");
-  await expect(totals).toContainText("You save-$16.50");
+  await expect(totals).not.toContainText("Regular");
+  await expect(totals).toContainText("You save$16.50");
   await expect(totals).toContainText("Your extras$38.50");
 
   await dialog.getByRole("button", { name: "Add selected extras" }).click();
@@ -51,7 +67,9 @@ test("table confirmation starts unselected and allows a cover-only offer", async
   await expect(page.getByText("You save $16.50", { exact: true })).toBeVisible();
 });
 
-test("each play-set choice shows its exact regular, savings, and net price", async ({ page }) => {
+test("each play-set row keeps the regular price secondary and emphasizes the table price", async ({
+  page
+}) => {
   await page.goto(EXPO_PATH);
   await page.locator('input[value="Blue"]').evaluate((input: HTMLInputElement) => input.click());
   await page.getByRole("button", { name: "Add to cart" }).click();
@@ -61,29 +79,39 @@ test("each play-set choice shows its exact regular, savings, and net price", asy
   const choices = [
     {
       label: "Aqua — 2 paddles + 3 balls",
-      regular: "Regular$45.00",
-      savings: "You save-$13.50",
-      net: "Your extras$31.50"
+      regular: "$45.00",
+      savings: "You save$13.50",
+      tablePrice: "$31.50 with your table",
+      total: "Your extras$31.50",
+      variantKey: AQUA_TWO_PACK_VARIANT_KEY
     },
     {
       label: "Aqua — 4 paddles + 3 balls",
-      regular: "Regular$80.00",
-      savings: "You save-$24.00",
-      net: "Your extras$56.00"
+      regular: "$80.00",
+      savings: "You save$24.00",
+      tablePrice: "$56.00 with your table",
+      total: "Your extras$56.00",
+      variantKey: AQUA_FOUR_PACK_VARIANT_KEY
     },
     {
       label: "Vice — 4 paddles + 6 white balls",
-      regular: "Regular$68.00",
-      savings: "You save-$20.40",
-      net: "Your extras$47.60"
+      regular: "$68.00",
+      savings: "You save$20.40",
+      tablePrice: "$47.60 with your table",
+      total: "Your extras$47.60",
+      variantKey: "tiger-vice-package-4-pack-6-white-balls"
     }
   ];
 
   for (const choice of choices) {
-    await dialog.locator("label").filter({ hasText: choice.label }).getByRole("radio").check();
-    await expect(totals).toContainText(choice.regular);
+    const choiceRow = dialog.locator(`label:has(input[value$="${choice.variantKey}"])`);
+    await expect(choiceRow).toContainText(choice.regular);
+    await expect(choiceRow).toContainText(choice.tablePrice);
+    await expect(choiceRow).not.toContainText("Save");
+    await dialog.getByRole("radio", { name: choice.label, exact: true }).check();
     await expect(totals).toContainText(choice.savings);
-    await expect(totals).toContainText(choice.net);
+    await expect(totals).toContainText(choice.total);
+    await expect(totals).not.toContainText("Regular");
   }
 });
 
@@ -221,8 +249,8 @@ test("existing higher-priced play set prevents an inaccurate new 30%-off promise
   await expect(aquaTwoPackChoice).toContainText("Offer already used in your cart.");
 
   await aquaTwoPackChoice.getByRole("radio").check();
-  await expect(dialog.locator("dl")).toContainText("You save$0.00");
   await expect(dialog.locator("dl")).toContainText("Your extras$45.00");
+  await expect(dialog.locator("dl")).not.toContainText("You save");
 });
 
 test("Plaza omits the cover, and offer failure never blocks the confirmed table", async ({

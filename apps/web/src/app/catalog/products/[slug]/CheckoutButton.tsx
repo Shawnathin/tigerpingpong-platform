@@ -33,7 +33,7 @@ import styles from "./page.module.css";
 
 const AQUA_PRODUCT_SLUG = "tiger-aqua-outdoor-indoor-paddle";
 const PLAZA_PRODUCT_SLUG = "tiger-plaza-outdoor-table-grey";
-const TABLE_PACKAGE_NOTICE = "Paddles and balls are sold separately.";
+const TABLE_PACKAGE_NOTICE = "Now pick the paddles and balls that fit your game.";
 
 export interface ProductOptionGroup {
   displayName: string;
@@ -354,191 +354,201 @@ function TableAddToCartModal({
           &times;
         </button>
 
-        <div className={styles.cartModalHeader}>
-          <span className={styles.cartModalCheck} aria-hidden="true" />
-          <p className={styles.cartModalLabel}>Table added to cart</p>
-          <h2 id="table-added-to-cart-title">{product.name} is in your cart.</h2>
-          <p className={styles.tablePackageNotice}>{TABLE_PACKAGE_NOTICE}</p>
+        <div className={styles.tableAccessoryIntro}>
+          <header className={styles.tableAccessoryIntroCopy}>
+            <p className={styles.tableAccessoryEyebrow}>Table added</p>
+            <h2 id="table-added-to-cart-title">{getTableModalProductName(product.name)} is in.</h2>
+            <p className={styles.tablePackageNotice}>{TABLE_PACKAGE_NOTICE}</p>
+          </header>
+
+          <div className={styles.tableAddedProduct}>
+            <div className={styles.tableAddedProductImage}>
+              <ProductThumb product={product} />
+            </div>
+            <div className={styles.tableAddedProductMeta}>
+              {product.selectedOptions && product.selectedOptions.length > 0 ? (
+                <span>{formatCartItemOptions(product.selectedOptions)}</span>
+              ) : (
+                <span>{product.categoryName ?? "Tiger PingPong"}</span>
+              )}
+              <strong>{formatCartMoney(product.unitPriceCents, product.currency)}</strong>
+            </div>
+          </div>
         </div>
 
-        <div className={styles.addedItemSummary}>
-          <div className={styles.addedItemImage}>
-            <ProductThumb product={product} />
-          </div>
-          <div className={styles.addedItemBody}>
-            <strong>{product.name}</strong>
-            <span>{product.categoryName ?? "Tiger PingPong"}</span>
-            {product.selectedOptions && product.selectedOptions.length > 0 ? (
-              <em>{formatCartItemOptions(product.selectedOptions)}</em>
-            ) : null}
-          </div>
-          <p>{formatCartMoney(product.unitPriceCents, product.currency)}</p>
-        </div>
-
-        {usableOffer ? (
-          <div className={styles.tableAccessoryOffer}>
-            <header className={styles.tableAccessoryOfferHeader}>
-              <p className={styles.cartModalLabel}>Complete your setup</p>
-              <h3>Add table accessories for 30% off.</h3>
-              <p>
-                Choose up to one play set and one compatible cover. Nothing is selected for you.
-              </p>
-            </header>
-
-            {playSets.length > 0 ? (
-              <fieldset className={styles.tableAccessoryFieldset}>
-                <legend>Choose a play set</legend>
-                <div className={styles.tableAccessoryChoices}>
-                  {playSets.map((item) => {
-                    const itemKey = getTableAccessoryOfferItemKey(item);
-                    const priceDelta = getCartPricingDelta(cartItems, [
-                      toTableAccessoryCartProduct(item)
-                    ]);
-                    const fullOfferSavings =
-                      item.priceCents - getDiscountedOfferPriceCents(item.priceCents);
-                    const receivesFullOffer =
-                      priceDelta.additionalDiscountCents === fullOfferSavings;
-
-                    return (
-                      <label className={styles.tableAccessoryChoice} key={itemKey}>
-                        <input
-                          checked={selectedPlaySetKey === itemKey}
-                          name={`${product.productSlug}-play-set`}
-                          onChange={() => setSelectedPlaySetKey(itemKey)}
-                          type="radio"
-                          value={itemKey}
-                        />
-                        <span className={styles.tableAccessoryImage}>
-                          <ProductThumb product={toTableAccessoryCartProduct(item)} />
-                        </span>
-                        <span className={styles.tableAccessoryChoiceBody}>
-                          <strong>{getTableAccessoryOfferItemLabel(item)}</strong>
-                          <small>{item.productName}</small>
-                          <span>Regular {formatCartMoney(item.priceCents, item.currency)}</span>
-                          {receivesFullOffer ? (
-                            <em>
-                              30% off ·{" "}
-                              {formatCartMoney(
-                                priceDelta.additionalNetSubtotalCents,
-                                item.currency
-                              )}
-                            </em>
-                          ) : (
-                            <em>
-                              Cart price ·{" "}
-                              {formatCartMoney(
-                                priceDelta.additionalNetSubtotalCents,
-                                item.currency
-                              )}
-                            </em>
-                          )}
-                          <small>
-                            {priceDelta.additionalDiscountCents > 0
-                              ? `Additional savings ${formatCartMoney(
-                                  priceDelta.additionalDiscountCents,
-                                  item.currency
-                                )}`
-                              : "A play set in your cart already uses this offer."}
-                          </small>
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </fieldset>
-            ) : (
-              <p className={styles.tableAccessoryStatus}>
-                Play sets are temporarily unavailable. Your table is still in your cart.
-              </p>
-            )}
-
-            {usableOffer.coverCompatibility.isCompatible && cover ? (
-              <fieldset className={styles.tableAccessoryFieldset}>
-                <legend>Add a compatible cover</legend>
-                <label className={styles.tableAccessoryChoice}>
-                  <input
-                    checked={isCoverSelected}
-                    onChange={(event) => setIsCoverSelected(event.currentTarget.checked)}
-                    type="checkbox"
-                  />
-                  <span className={styles.tableAccessoryImage}>
-                    <ProductThumb product={toTableAccessoryCartProduct(cover)} />
-                  </span>
-                  <span className={styles.tableAccessoryChoiceBody}>
-                    <strong>{cover.productName}</strong>
-                    <span>Regular {formatCartMoney(cover.priceCents, cover.currency)}</span>
-                    <em>
-                      {coverPriceDelta?.additionalDiscountCents === coverFullOfferSavings
-                        ? "30% off"
-                        : "Cart price"}{" "}
-                      ·{" "}
-                      {formatCartMoney(
-                        coverPriceDelta?.additionalNetSubtotalCents ?? cover.priceCents,
-                        cover.currency
-                      )}
-                    </em>
-                    <small>
-                      {coverPriceDelta && coverPriceDelta.additionalDiscountCents > 0
-                        ? `Additional savings ${formatCartMoney(
-                            coverPriceDelta.additionalDiscountCents,
-                            cover.currency
-                          )}`
-                        : "A cover in your cart already uses this offer."}
-                    </small>
-                  </span>
-                </label>
-              </fieldset>
-            ) : usableOffer.coverCompatibility.reason === "not_compatible_with_plaza" ? (
-              <p className={styles.tableAccessoryStatus}>
-                The current Tiger Table Cover is not compatible with Plaza.
-              </p>
-            ) : (
-              <p className={styles.tableAccessoryStatus}>
-                A compatible table cover is not available to add right now.
-              </p>
-            )}
-
-            <dl className={styles.tableAccessoryTotals} aria-live="polite">
-              <div>
-                <dt>Regular</dt>
-                <dd>{formatCartMoney(selectedRegularTotal, product.currency)}</dd>
-              </div>
-              <div>
-                <dt>30% off savings</dt>
-                <dd>
-                  {selectedSavings > 0 ? "-" : ""}
-                  {formatCartMoney(selectedSavings, product.currency)}
-                </dd>
-              </div>
-              <div>
-                <dt>Selected extras total</dt>
-                <dd>{formatCartMoney(selectedExtrasTotal, product.currency)}</dd>
-              </div>
-            </dl>
-          </div>
-        ) : isOfferEligible ? (
-          <p className={styles.tableAccessoryStatus} role="status">
-            Accessory choices are temporarily unavailable. Your table is still in your cart.
-          </p>
-        ) : null}
-
-        <div className={styles.tableAccessoryModalActions}>
+        <div className={styles.tableAccessoryPanel}>
           {usableOffer ? (
-            <button
-              className={styles.addSelectedExtrasButton}
-              disabled={selectedItems.length === 0}
-              onClick={() => onAddSelectedExtras(selectedItems)}
-              type="button"
-            >
-              Add selected extras
-            </button>
+            <div className={styles.tableAccessoryOffer}>
+              <header className={styles.tableAccessoryOfferHeader}>
+                <p className={styles.tableAccessoryEyebrow}>30% off with your table</p>
+                <h3>Now bring the rally.</h3>
+                <p>Pick one play set. Add a cover if you need one.</p>
+              </header>
+
+              {playSets.length > 0 ? (
+                <fieldset className={styles.tableAccessoryFieldset}>
+                  <legend>Pick a play set</legend>
+                  <div className={styles.tableAccessoryChoices}>
+                    {playSets.map((item) => {
+                      const itemKey = getTableAccessoryOfferItemKey(item);
+                      const priceDelta = getCartPricingDelta(cartItems, [
+                        toTableAccessoryCartProduct(item)
+                      ]);
+                      const fullOfferSavings =
+                        item.priceCents - getDiscountedOfferPriceCents(item.priceCents);
+                      const receivesFullOffer =
+                        priceDelta.additionalDiscountCents === fullOfferSavings;
+
+                      return (
+                        <label className={styles.tableAccessoryChoice} key={itemKey}>
+                          <span className={styles.tableAccessoryImage}>
+                            <ProductThumb product={toTableAccessoryCartProduct(item)} />
+                          </span>
+                          <span className={styles.tableAccessoryChoiceBody}>
+                            <strong>{getTableAccessoryOfferItemLabel(item)}</strong>
+                            <span className={styles.tableAccessoryPriceLine}>
+                              <span>Regular {formatCartMoney(item.priceCents, item.currency)}</span>
+                              {receivesFullOffer ? (
+                                <em>
+                                  30% off ·{" "}
+                                  {formatCartMoney(
+                                    priceDelta.additionalNetSubtotalCents,
+                                    item.currency
+                                  )}
+                                </em>
+                              ) : (
+                                <em>
+                                  Cart price ·{" "}
+                                  {formatCartMoney(
+                                    priceDelta.additionalNetSubtotalCents,
+                                    item.currency
+                                  )}
+                                </em>
+                              )}
+                              <small>
+                                {priceDelta.additionalDiscountCents > 0
+                                  ? `Save ${formatCartMoney(
+                                      priceDelta.additionalDiscountCents,
+                                      item.currency
+                                    )}`
+                                  : "Offer already used in your cart."}
+                              </small>
+                            </span>
+                          </span>
+                          <input
+                            checked={selectedPlaySetKey === itemKey}
+                            name={`${product.productSlug}-play-set`}
+                            onChange={() => setSelectedPlaySetKey(itemKey)}
+                            type="radio"
+                            value={itemKey}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              ) : (
+                <p className={styles.tableAccessoryStatus}>
+                  Play sets are temporarily unavailable. Your table is still in your cart.
+                </p>
+              )}
+
+              {usableOffer.coverCompatibility.isCompatible && cover ? (
+                <fieldset
+                  className={`${styles.tableAccessoryFieldset} ${styles.tableAccessoryCoverFieldset}`}
+                >
+                  <legend>Keep it covered.</legend>
+                  <label className={styles.tableAccessoryChoice}>
+                    <span className={styles.tableAccessoryImage}>
+                      <ProductThumb product={toTableAccessoryCartProduct(cover)} />
+                    </span>
+                    <span className={styles.tableAccessoryChoiceBody}>
+                      <strong>Tiger Table Cover</strong>
+                      <span className={styles.tableAccessoryPriceLine}>
+                        <span>Regular {formatCartMoney(cover.priceCents, cover.currency)}</span>
+                        <em>
+                          {coverPriceDelta?.additionalDiscountCents === coverFullOfferSavings
+                            ? "30% off"
+                            : "Cart price"}{" "}
+                          ·{" "}
+                          {formatCartMoney(
+                            coverPriceDelta?.additionalNetSubtotalCents ?? cover.priceCents,
+                            cover.currency
+                          )}
+                        </em>
+                        <small>
+                          {coverPriceDelta && coverPriceDelta.additionalDiscountCents > 0
+                            ? `Save ${formatCartMoney(
+                                coverPriceDelta.additionalDiscountCents,
+                                cover.currency
+                              )}`
+                            : "Offer already used in your cart."}
+                        </small>
+                      </span>
+                    </span>
+                    <input
+                      checked={isCoverSelected}
+                      onChange={(event) => setIsCoverSelected(event.currentTarget.checked)}
+                      type="checkbox"
+                    />
+                  </label>
+                </fieldset>
+              ) : usableOffer.coverCompatibility.reason === "not_compatible_with_plaza" ? (
+                <p className={styles.tableAccessoryStatus}>
+                  The current Tiger Table Cover is not compatible with Plaza.
+                </p>
+              ) : (
+                <p className={styles.tableAccessoryStatus}>
+                  A compatible table cover is not available to add right now.
+                </p>
+              )}
+
+              {selectedItems.length > 0 ? (
+                <div className={styles.tableAccessorySummary} aria-live="polite">
+                  <dl className={styles.tableAccessoryTotals}>
+                    <div>
+                      <dt>Regular</dt>
+                      <dd>{formatCartMoney(selectedRegularTotal, product.currency)}</dd>
+                    </div>
+                    <div>
+                      <dt>You save</dt>
+                      <dd>
+                        {selectedSavings > 0 ? "-" : ""}
+                        {formatCartMoney(selectedSavings, product.currency)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Your extras</dt>
+                      <dd>{formatCartMoney(selectedExtrasTotal, product.currency)}</dd>
+                    </div>
+                  </dl>
+                </div>
+              ) : null}
+            </div>
+          ) : isOfferEligible ? (
+            <p className={styles.tableAccessoryStatus} role="status">
+              Accessory choices are temporarily unavailable. Your table is still in your cart.
+            </p>
           ) : null}
-          <a className={styles.viewCartButton} href="/cart">
-            View cart without extras
-          </a>
-          <button className={styles.quietKeepShoppingButton} onClick={onClose} type="button">
-            Keep shopping
-          </button>
+
+          <div className={styles.tableAccessoryModalActions}>
+            {usableOffer ? (
+              <button
+                className={styles.addSelectedExtrasButton}
+                disabled={selectedItems.length === 0}
+                onClick={() => onAddSelectedExtras(selectedItems)}
+                type="button"
+              >
+                Add selected extras
+              </button>
+            ) : null}
+            <a className={styles.viewCartButton} href="/cart">
+              Go to cart
+            </a>
+            <button className={styles.quietKeepShoppingButton} onClick={onClose} type="button">
+              Keep shopping
+            </button>
+          </div>
         </div>
       </section>
     </div>
@@ -952,6 +962,10 @@ export function CheckoutButton({
 
 function getTableAccessoryOfferItemKey(item: CatalogTableAccessoryOfferItem): string {
   return `${item.productKey}:${item.variantKey ?? "base"}`;
+}
+
+function getTableModalProductName(productName: string): string {
+  return productName.replace(/^Tiger\s+/i, "").replace(/\s+Table$/i, "");
 }
 
 function getTableAccessoryOfferItemLabel(item: CatalogTableAccessoryOfferItem): string {

@@ -354,7 +354,17 @@ const accessoryProducts = [
     shippingReviewRequired: false,
     family: { key: "table-covers", slug: "table-covers", name: "Table Covers" },
     category: { key: "covers", slug: "covers", name: "Covers" },
-    primaryMedia: null
+    primaryMedia: {
+      mediaKey: "cover-primary",
+      role: "primary",
+      cloudinarySecureUrl:
+        "https://res.cloudinary.com/djfcisldm/image/upload/v1781745082/tigerpingpong/recovered/products/covers/tpp-covers-primary-01.png",
+      altText: "Black Tiger PingPong cover fitted over a folded table.",
+      title: "Tiger PingPong Table Cover",
+      caption: null,
+      sortOrder: 1,
+      isPrimary: true
+    }
   },
   {
     key: "tiger-net-post-set",

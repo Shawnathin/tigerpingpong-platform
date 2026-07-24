@@ -594,31 +594,168 @@
 }
 
 .tableAccessoryModal {
-  width: min(1040px, calc(100vw - 56px));
+  display: grid;
+  width: min(980px, calc(100vw - 56px));
+  height: min(760px, calc(100vh - 56px));
+  grid-template-columns: minmax(250px, 0.72fr) minmax(0, 1.38fr);
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+  background: rgb(248 251 253 / 98%);
+}
+
+.tableAccessoryModal .cartModalClose {
+  z-index: 4;
+  background: rgb(255 255 255 / 82%);
+  box-shadow:
+    inset 0 0 0 1px rgb(23 27 46 / 8%),
+    0 10px 26px rgb(23 27 46 / 10%);
+}
+
+.tableAccessoryIntro {
+  display: grid;
+  min-width: 0;
+  align-content: space-between;
+  gap: 34px;
+  padding: 38px 32px 34px;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 90% 8%, rgb(116 200 242 / 18%), transparent 34%),
+    radial-gradient(circle at 8% 92%, rgb(242 138 46 / 16%), transparent 31%),
+    linear-gradient(145deg, #1c3145, #13283b 62%, #0d1d2b);
+}
+
+.tableAccessoryIntroCopy {
+  display: grid;
+  gap: 15px;
+}
+
+.tableAccessoryEyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--tiger-orange-deep);
+  font-size: 0.74rem;
+  font-weight: 950;
+  letter-spacing: 0.09em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.tableAccessoryEyebrow::before {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 4px rgb(242 138 46 / 14%);
+  content: "";
+}
+
+.tableAccessoryIntro .tableAccessoryEyebrow {
+  color: #ffad5d;
+}
+
+.tableAccessoryIntro h2 {
+  max-width: 320px;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.6rem, 4.4vw, 4.15rem);
+  font-weight: 950;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
+  text-wrap: balance;
 }
 
 .tablePackageNotice {
-  width: fit-content;
   margin: 0;
-  border-radius: 999px;
-  padding: 7px 11px;
-  color: #263049;
-  font-size: 0.86rem;
-  font-weight: 900;
-  background: rgb(255 255 255 / 72%);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 86%);
+  color: rgb(255 255 255 / 82%);
+  font-size: 0.94rem;
+  font-weight: 740;
+  line-height: 1.48;
+}
+
+.tableAddedProduct {
+  display: grid;
+  gap: 24px;
+}
+
+.tableAddedProductImage {
+  display: grid;
+  width: min(100%, 260px);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  place-items: center;
+  border: 8px solid #ffffff;
+  border-radius: 7px;
+  background: #f6fafc;
+  box-shadow:
+    14px 14px 0 rgb(242 138 46 / 88%),
+    0 24px 54px rgb(2 11 20 / 28%);
+}
+
+.tableAddedProductImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+  mix-blend-mode: darken;
+}
+
+.tableAddedProductImage > span {
+  color: var(--tiger-orange-deep);
+  font-size: 2rem;
+  font-weight: 950;
+}
+
+.tableAddedProductMeta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  color: #ffffff;
+}
+
+.tableAddedProductMeta span {
+  color: rgb(255 255 255 / 70%);
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.tableAddedProductMeta strong {
+  flex: 0 0 auto;
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.tableAccessoryPanel {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-content: start;
+  gap: 24px;
+  overflow: hidden;
+  padding: 38px 34px 28px;
+  background:
+    radial-gradient(circle at 96% 4%, rgb(116 200 242 / 14%), transparent 30%),
+    linear-gradient(145deg, rgb(255 255 255 / 98%), rgb(241 248 251 / 94%));
 }
 
 .tableAccessoryOffer {
   display: grid;
-  gap: 18px;
-  border-top: 1px solid rgb(200 214 222 / 74%);
-  padding-top: 20px;
+  min-height: 0;
+  gap: 14px;
+  overflow: hidden auto;
+  padding-right: 5px;
 }
 
 .tableAccessoryOfferHeader {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  padding-right: 40px;
 }
 
 .tableAccessoryOfferHeader h3,
@@ -628,16 +765,20 @@
 
 .tableAccessoryOfferHeader h3 {
   color: var(--tiger-ink);
-  font-size: 1.55rem;
+  font-size: clamp(2.55rem, 4.6vw, 4.25rem);
   font-weight: 950;
-  line-height: 1.08;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
+  text-wrap: balance;
 }
 
 .tableAccessoryOfferHeader > p:last-child {
-  color: #596174;
-  font-size: 0.9rem;
-  font-weight: 740;
-  line-height: 1.45;
+  max-width: 620px;
+  color: #566074;
+  font-size: 0.94rem;
+  font-weight: 720;
+  line-height: 1.4;
+  text-wrap: pretty;
 }
 
 .tableAccessoryFieldset {
@@ -648,75 +789,65 @@
 }
 
 .tableAccessoryFieldset legend {
-  margin-bottom: 10px;
+  margin-bottom: 9px;
   padding: 0;
   color: #263049;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 950;
 }
 
 .tableAccessoryChoices {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  border-top: 1px solid rgb(40 57 77 / 16%);
 }
 
 .tableAccessoryChoice {
   position: relative;
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 62px minmax(0, 1fr) 22px;
+  gap: 14px;
   align-items: center;
   min-width: 0;
-  border: 1px solid rgb(205 218 225 / 84%);
-  border-radius: 18px;
-  padding: 12px;
+  min-height: 70px;
+  border-bottom: 1px solid rgb(40 57 77 / 16%);
+  padding: 5px 4px;
   cursor: pointer;
-  background: rgb(255 255 255 / 72%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 88%);
+  background: transparent;
+  transition: background 160ms ease;
 }
 
 .tableAccessoryChoice:has(input:checked) {
-  border-color: rgb(31 156 143 / 58%);
-  background:
-    linear-gradient(135deg, rgb(255 255 255 / 94%), rgb(255 255 255 / 78%)), rgb(81 210 191 / 14%);
-  box-shadow:
-    inset 0 0 0 2px rgb(31 156 143 / 42%),
-    0 12px 28px rgb(31 156 143 / 10%);
+  background: linear-gradient(90deg, rgb(81 210 191 / 13%), transparent 82%);
 }
 
 .tableAccessoryChoice:has(input:focus-visible) {
-  outline: 3px solid rgb(232 111 24 / 34%);
-  outline-offset: 3px;
+  border-radius: 12px;
+  outline: 3px solid rgb(232 111 24 / 32%);
+  outline-offset: 2px;
 }
 
 .tableAccessoryChoice > input {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   margin: 0;
   accent-color: #1f9c8f;
 }
 
 .tableAccessoryImage {
   display: grid;
-  width: 76px;
+  width: 62px;
   aspect-ratio: 1;
   overflow: hidden;
   place-items: center;
-  border-radius: 14px;
-  background:
-    linear-gradient(135deg, rgb(255 255 255 / 92%), rgb(241 247 249 / 88%)),
-    linear-gradient(120deg, rgb(116 200 242 / 14%), rgb(242 138 46 / 10%));
+  border-radius: 10px;
+  background: transparent;
 }
 
-.tableAccessoryImage img {
+.tableAccessoryImage > img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 8px;
+  padding: 4px;
   mix-blend-mode: darken;
 }
 
@@ -728,71 +859,99 @@
 
 .tableAccessoryChoiceBody {
   display: grid;
-  gap: 3px;
+  gap: 7px;
   min-width: 0;
-  padding-right: 18px;
 }
 
 .tableAccessoryChoiceBody strong {
   color: #20283f;
-  font-size: 0.92rem;
+  font-size: 1rem;
   font-weight: 950;
-  line-height: 1.22;
+  letter-spacing: -0.018em;
+  line-height: 1.18;
 }
 
-.tableAccessoryChoiceBody span,
-.tableAccessoryChoiceBody small,
-.tableAccessoryChoiceBody em {
-  color: #657083;
-  font-size: 0.74rem;
+.tableAccessoryPriceLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px 10px;
+}
+
+.tableAccessoryPriceLine > span,
+.tableAccessoryPriceLine small,
+.tableAccessoryPriceLine em {
+  color: #687387;
+  font-size: 0.75rem;
   font-style: normal;
-  font-weight: 780;
-  line-height: 1.3;
+  font-weight: 760;
+  line-height: 1.25;
 }
 
-.tableAccessoryChoiceBody em {
+.tableAccessoryPriceLine > span {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.tableAccessoryPriceLine em {
   color: #16665e;
-  font-size: 0.8rem;
+  font-size: 0.86rem;
   font-weight: 950;
+}
+
+.tableAccessoryPriceLine small {
+  color: #465368;
+  font-weight: 850;
+}
+
+.tableAccessoryCoverFieldset {
+  margin-top: 2px;
+}
+
+.tableAccessoryCoverFieldset legend {
+  color: var(--tiger-orange-deep);
+  font-size: 1rem;
+  letter-spacing: -0.015em;
 }
 
 .tableAccessoryStatus {
   margin: 0;
-  border-radius: 14px;
-  padding: 12px 14px;
+  border-left: 3px solid var(--tiger-orange);
+  padding: 3px 0 3px 13px;
   color: #4f5c70;
   font-size: 0.88rem;
   font-weight: 820;
   line-height: 1.45;
-  background: rgb(244 248 250 / 84%);
+}
+
+.tableAccessorySummary {
+  border-top: 1px solid rgb(40 57 77 / 16%);
+  border-bottom: 1px solid rgb(40 57 77 / 16%);
+  padding: 14px 0;
 }
 
 .tableAccessoryTotals {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
   margin: 0;
 }
 
 .tableAccessoryTotals div {
   display: grid;
-  gap: 3px;
-  border-radius: 14px;
-  padding: 11px 12px;
-  background: rgb(255 255 255 / 72%);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 86%);
+  gap: 2px;
 }
 
 .tableAccessoryTotals dt {
   color: #657083;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 900;
 }
 
 .tableAccessoryTotals dd {
   margin: 0;
   color: var(--tiger-ink);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 950;
 }
 
@@ -800,26 +959,37 @@
   color: #16665e;
 }
 
+.tableAccessoryTotals div:last-child {
+  margin-left: auto;
+  text-align: right;
+}
+
+.tableAccessoryTotals div:last-child dd {
+  font-size: 1.18rem;
+}
+
 .tableAccessoryModalActions {
-  display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
   align-items: center;
 }
 
 .addSelectedExtrasButton,
-.quietKeepShoppingButton {
+.quietKeepShoppingButton,
+.tableAccessoryModalActions .viewCartButton {
   min-height: 48px;
   border-radius: 999px;
   padding: 0 18px;
-  cursor: pointer;
   font-size: 0.92rem;
   font-weight: 900;
 }
 
 .addSelectedExtrasButton {
+  flex: 1 1 180px;
   border: 0;
   color: #ffffff;
+  cursor: pointer;
   background: linear-gradient(135deg, #ffad5d, var(--tiger-orange-deep));
   box-shadow: 0 16px 30px rgb(232 111 24 / 22%);
 }
@@ -829,9 +999,17 @@
   opacity: 0.52;
 }
 
+.tableAccessoryModalActions .viewCartButton {
+  flex: 1 1 190px;
+  color: #263049;
+  background: rgb(255 255 255 / 54%);
+  box-shadow: inset 0 0 0 1px rgb(40 57 77 / 18%);
+}
+
 .quietKeepShoppingButton {
   border: 0;
   color: #657083;
+  cursor: pointer;
   background: transparent;
 }
 
@@ -2469,6 +2647,46 @@
   .productHero {
     grid-template-columns: 1fr;
   }
+
+  .tableAccessoryModal {
+    height: auto;
+    grid-template-columns: 1fr;
+    overflow: hidden auto;
+  }
+
+  .tableAccessoryIntro {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 0.62fr);
+    min-height: 250px;
+    align-items: center;
+    padding: 32px 34px;
+  }
+
+  .tableAccessoryIntroCopy {
+    align-content: center;
+  }
+
+  .tableAccessoryIntro h2 {
+    max-width: 520px;
+    font-size: clamp(2.7rem, 8vw, 4.2rem);
+  }
+
+  .tableAddedProduct {
+    align-content: center;
+  }
+
+  .tableAddedProductImage {
+    width: min(100%, 210px);
+  }
+
+  .tableAccessoryPanel {
+    grid-template-rows: auto;
+    overflow: visible;
+  }
+
+  .tableAccessoryOffer {
+    overflow: visible;
+    padding-right: 0;
+  }
 }
 
 @media (max-width: 680px) {
@@ -2935,28 +3153,109 @@
 
   .tableAccessoryModal {
     width: min(100%, calc(100vw - 24px));
-  }
-
-  .tablePackageNotice {
-    border-radius: 12px;
-  }
-
-  .tableAccessoryChoices,
-  .tableAccessoryTotals,
-  .tableAccessoryModalActions {
     grid-template-columns: 1fr;
+    overflow: hidden auto;
+    padding: 0;
+  }
+
+  .tableAccessoryModal .cartModalClose {
+    color: #ffffff;
+    background: rgb(255 255 255 / 12%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 28%);
+  }
+
+  .tableAccessoryIntro {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    gap: 22px;
+    padding: 30px 22px 28px;
+  }
+
+  .tableAccessoryIntroCopy {
+    padding-right: 40px;
+  }
+
+  .tableAccessoryIntro h2 {
+    font-size: clamp(2.45rem, 12vw, 3.4rem);
+  }
+
+  .tableAddedProduct {
+    grid-template-columns: 112px minmax(0, 1fr);
+    align-items: end;
+    gap: 22px;
+  }
+
+  .tableAddedProductImage {
+    width: 112px;
+    border-width: 5px;
+    box-shadow:
+      8px 8px 0 rgb(242 138 46 / 88%),
+      0 18px 36px rgb(2 11 20 / 24%);
+  }
+
+  .tableAddedProductImage img {
+    padding: 5px;
+  }
+
+  .tableAddedProductMeta {
+    display: grid;
+    justify-content: start;
+    gap: 6px;
+  }
+
+  .tableAccessoryPanel {
+    gap: 20px;
+    overflow: visible;
+    padding: 28px 18px 20px;
+  }
+
+  .tableAccessoryOfferHeader {
+    padding-right: 0;
+  }
+
+  .tableAccessoryOfferHeader h3 {
+    font-size: clamp(2.55rem, 13vw, 3.45rem);
   }
 
   .tableAccessoryChoice {
-    grid-template-columns: 70px minmax(0, 1fr);
+    grid-template-columns: 76px minmax(0, 1fr) 20px;
+    gap: 11px;
+    min-height: 100px;
+    padding: 10px 2px;
   }
 
   .tableAccessoryImage {
-    width: 70px;
+    width: 76px;
+  }
+
+  .tableAccessoryChoiceBody strong {
+    font-size: 0.91rem;
+  }
+
+  .tableAccessoryPriceLine {
+    gap: 4px 8px;
+  }
+
+  .tableAccessoryTotals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+  }
+
+  .tableAccessoryTotals div:last-child {
+    grid-column: 1 / -1;
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .tableAccessoryModalActions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .addSelectedExtrasButton,
-  .quietKeepShoppingButton {
+  .quietKeepShoppingButton,
+  .tableAccessoryModalActions .viewCartButton {
     width: 100%;
   }
 }
@@ -3233,51 +3532,61 @@
 }
 
 .viceBundleComponents {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
-  gap: 5px;
-  padding: 5px;
-}
-
-.viceBundleComponent {
   position: relative;
-  display: grid;
-  min-width: 0;
-  overflow: hidden;
-  place-items: center;
-  border: 1px solid rgb(213 222 230 / 72%);
-  border-radius: 9px;
-  background: #ffffff;
-}
-
-.viceBundleComponent img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 3px;
-  background: #ffffff;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 22% 18%, rgb(116 200 242 / 22%), transparent 34%),
+    linear-gradient(145deg, #ffffff, #f2f8fb);
 }
 
-.viceBundleComponent strong {
+.viceBundlePaddles {
   position: absolute;
-  right: 4px;
-  bottom: 4px;
-  display: inline-grid;
-  min-width: 0;
-  min-height: 22px;
-  place-items: center;
-  border-radius: 999px;
-  padding: 0 6px;
-  color: #ffffff;
-  font-size: 0.56rem;
-  font-weight: 950;
-  line-height: 1.05;
-  text-align: center;
-  background: var(--tiger-orange-deep);
-  box-shadow: 0 5px 12px rgb(232 111 24 / 24%);
+  inset: 2% 24% 2% -3%;
+}
+
+.viceBundlePaddleImage {
+  position: absolute;
+  top: 7%;
+  left: 2%;
+  width: 84%;
+  height: 86%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 5px rgb(23 27 46 / 10%));
+  transform-origin: 55% 75%;
+}
+
+.viceBundlePaddleImage:nth-child(1) {
+  transform: translateX(-12%) rotate(-17deg);
+}
+
+.viceBundlePaddleImage:nth-child(2) {
+  transform: translateX(-4%) rotate(-8deg);
+}
+
+.viceBundlePaddleImage:nth-child(3) {
+  transform: translateX(5%) rotate(1deg);
+}
+
+.viceBundlePaddleImage:nth-child(4) {
+  transform: translateX(14%) rotate(10deg);
+}
+
+.viceBundleBallsImage {
+  position: absolute;
+  right: 0;
+  bottom: 2%;
+  display: block;
+  width: 42%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 7px 16px rgb(23 27 46 / 18%);
+  transform: rotate(4deg);
 }
 
 .addedItemImage .vicePackageVisual {
@@ -3290,8 +3599,7 @@
 }
 
 .addedItemImage .viceBundleComponents {
-  gap: 3px;
-  padding: 3px;
+  border-radius: 10px;
 }
 
 .vicePackageVisualCompact {

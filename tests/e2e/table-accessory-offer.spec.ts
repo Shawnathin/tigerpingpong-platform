@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
 const EXPO_PATH = "/catalog/products/tiger-expo-outdoor-table";
 const PLAZA_PATH = "/catalog/products/tiger-plaza-outdoor-table-grey";
-const TABLE_NOTICE = "Paddles and balls are sold separately.";
+const TABLE_NOTICE = "Now pick the paddles and balls that fit your game.";
 const AQUA_TWO_PACK_VARIANT_KEY = "tiger-aqua-package-2-pack-3-balls";
 const AQUA_FOUR_PACK_VARIANT_KEY = "tiger-aqua-package-4-pack-3-balls";
 const COVER_PRODUCT_KEY = "tiger-table-cover-black-polyester";
@@ -15,23 +15,14 @@ test("table confirmation starts unselected and allows a cover-only offer", async
   await page.locator('input[value="Blue"]').evaluate((input: HTMLInputElement) => input.click());
   await page.getByRole("button", { name: "Add to cart" }).click();
 
-  const dialog = page.getByRole("dialog", { name: /is in your cart/i });
+  const dialog = page.getByRole("dialog", { name: /is in/i });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText(TABLE_NOTICE, { exact: true })).toBeVisible();
   await expect(dialog.getByText("Aqua — 2 paddles + 3 balls", { exact: true })).toBeVisible();
   await expect(dialog.getByText("Aqua — 4 paddles + 3 balls", { exact: true })).toBeVisible();
   await expect(dialog.getByText("Vice — 4 paddles + 6 white balls", { exact: true })).toBeVisible();
   await expect(dialog.locator('[data-vice-package-visual="bundle"]')).toHaveCount(1);
-  await expect(
-    dialog.locator('[data-vice-package-visual="bundle"]').getByText("4 paddles", {
-      exact: true
-    })
-  ).toBeVisible();
-  await expect(
-    dialog.locator('[data-vice-package-visual="bundle"]').getByText("6 balls", {
-      exact: true
-    })
-  ).toBeVisible();
+  await expect(dialog.locator('[data-vice-package-visual="bundle"] img')).toHaveCount(5);
 
   const playSetChoices = dialog.getByRole("radio");
   await expect(playSetChoices).toHaveCount(3);
@@ -42,14 +33,14 @@ test("table confirmation starts unselected and allows a cover-only offer", async
   const coverChoice = dialog.getByRole("checkbox");
   await expect(coverChoice).not.toBeChecked();
   await expect(dialog.getByRole("button", { name: "Add selected extras" })).toBeDisabled();
-  await expect(dialog.getByRole("link", { name: "View cart without extras" })).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "Go to cart" })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Keep shopping" })).toBeVisible();
 
   await coverChoice.check();
   const totals = dialog.locator("dl");
   await expect(totals).toContainText("Regular$55.00");
-  await expect(totals).toContainText("30% off savings-$16.50");
-  await expect(totals).toContainText("Selected extras total$38.50");
+  await expect(totals).toContainText("You save-$16.50");
+  await expect(totals).toContainText("Your extras$38.50");
 
   await dialog.getByRole("button", { name: "Add selected extras" }).click();
   await expect(page).toHaveURL(/\/cart$/);
@@ -71,20 +62,20 @@ test("each play-set choice shows its exact regular, savings, and net price", asy
     {
       label: "Aqua — 2 paddles + 3 balls",
       regular: "Regular$45.00",
-      savings: "30% off savings-$13.50",
-      net: "Selected extras total$31.50"
+      savings: "You save-$13.50",
+      net: "Your extras$31.50"
     },
     {
       label: "Aqua — 4 paddles + 3 balls",
       regular: "Regular$80.00",
-      savings: "30% off savings-$24.00",
-      net: "Selected extras total$56.00"
+      savings: "You save-$24.00",
+      net: "Your extras$56.00"
     },
     {
       label: "Vice — 4 paddles + 6 white balls",
       regular: "Regular$68.00",
-      savings: "30% off savings-$20.40",
-      net: "Selected extras total$47.60"
+      savings: "You save-$20.40",
+      net: "Your extras$47.60"
     }
   ];
 
@@ -227,11 +218,11 @@ test("existing higher-priced play set prevents an inaccurate new 30%-off promise
     .locator(`label:has(input[value$="${AQUA_TWO_PACK_VARIANT_KEY}"])`)
     .first();
   await expect(aquaTwoPackChoice).toContainText("Cart price · $45.00");
-  await expect(aquaTwoPackChoice).toContainText("A play set in your cart already uses this offer.");
+  await expect(aquaTwoPackChoice).toContainText("Offer already used in your cart.");
 
   await aquaTwoPackChoice.getByRole("radio").check();
-  await expect(dialog.locator("dl")).toContainText("30% off savings$0.00");
-  await expect(dialog.locator("dl")).toContainText("Selected extras total$45.00");
+  await expect(dialog.locator("dl")).toContainText("You save$0.00");
+  await expect(dialog.locator("dl")).toContainText("Your extras$45.00");
 });
 
 test("Plaza omits the cover, and offer failure never blocks the confirmed table", async ({
@@ -269,9 +260,7 @@ test("Plaza omits the cover, and offer failure never blocks the confirmed table"
       )
     ).toBeVisible();
     await expect(failedDialog.getByRole("button", { name: "Add selected extras" })).toHaveCount(0);
-    await expect(
-      failedDialog.getByRole("link", { name: "View cart without extras" })
-    ).toBeVisible();
+    await expect(failedDialog.getByRole("link", { name: "Go to cart" })).toBeVisible();
 
     const storedCart = await page.evaluate((key) => {
       return JSON.parse(window.localStorage.getItem(key) ?? "null");
@@ -310,7 +299,7 @@ test("table offer modal is keyboard-contained, reduced-motion safe, and responsi
     const dialog = page.getByRole("dialog");
     const closeButton = dialog.getByRole("button", { name: "Close added to cart dialog" });
     const keepShoppingButton = dialog.getByRole("button", { name: "Keep shopping" });
-    const viewCartLink = dialog.getByRole("link", { name: "View cart without extras" });
+    const viewCartLink = dialog.getByRole("link", { name: "Go to cart" });
     await expect(closeButton).toBeFocused();
     await viewCartLink.scrollIntoViewIfNeeded();
     await expect(viewCartLink).toBeInViewport();

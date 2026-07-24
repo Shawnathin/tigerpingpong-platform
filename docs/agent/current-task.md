@@ -22,7 +22,8 @@ Make table package contents explicit, add a live component-priced Vice package c
 
 - Vice exposes required Single and four-paddle/six-white-ball package choices, with the bundle regular price derived from live components.
 - Legacy Vice cart lines migrate safely to the Single variant.
-- Every table purchase rail says paddles and balls are sold separately.
+- Every table purchase rail positively prompts customers to pick the paddles and balls that fit
+  their game.
 - The table dialog offers the exact three play sets and a compatible cover without a preselected upsell; Plaza never offers the cover.
 - Cart and API pricing agree on automatic eligibility, per-table limits, highest-price-first allocation, rounding, and reversal when tables are removed.
 - Stripe receives net line prices without coupons, and webhook-confirmed payment truth remains unchanged.

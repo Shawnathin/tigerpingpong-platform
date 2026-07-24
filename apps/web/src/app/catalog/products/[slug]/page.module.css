@@ -772,15 +772,6 @@
   text-wrap: balance;
 }
 
-.tableAccessoryOfferHeader > p:last-child {
-  max-width: 620px;
-  color: #566074;
-  font-size: 0.94rem;
-  font-weight: 720;
-  line-height: 1.4;
-  text-wrap: pretty;
-}
-
 .tableAccessoryFieldset {
   min-width: 0;
   margin: 0;

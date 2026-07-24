@@ -381,7 +381,6 @@ function TableAddToCartModal({
               <header className={styles.tableAccessoryOfferHeader}>
                 <p className={styles.tableAccessoryEyebrow}>30% off with your table</p>
                 <h3>Now bring the rally.</h3>
-                <p>Pick a play set. Add a cover if you need one.</p>
               </header>
 
               {playSets.length > 0 ? (

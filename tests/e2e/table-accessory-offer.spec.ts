@@ -4,7 +4,6 @@ const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
 const EXPO_PATH = "/catalog/products/tiger-expo-outdoor-table";
 const PLAZA_PATH = "/catalog/products/tiger-plaza-outdoor-table-grey";
 const TABLE_NOTICE = "Now pick the paddles and balls that fit your game.";
-const TABLE_OFFER_PROMPT = "Pick a play set. Add a cover if you need one.";
 const AQUA_TWO_PACK_VARIANT_KEY = "tiger-aqua-package-2-pack-3-balls";
 const AQUA_FOUR_PACK_VARIANT_KEY = "tiger-aqua-package-4-pack-3-balls";
 const COVER_PRODUCT_KEY = "tiger-table-cover-black-polyester";
@@ -19,7 +18,9 @@ test("table confirmation starts unselected and allows a cover-only offer", async
   const dialog = page.getByRole("dialog", { name: /is in/i });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText(TABLE_NOTICE, { exact: true })).toBeVisible();
-  await expect(dialog.getByText(TABLE_OFFER_PROMPT, { exact: true })).toBeVisible();
+  await expect(
+    dialog.getByText("Pick a play set. Add a cover if you need one.", { exact: true })
+  ).toHaveCount(0);
   await expect(
     dialog.getByRole("radio", { name: "Aqua — 2 paddles + 3 balls", exact: true })
   ).toBeVisible();

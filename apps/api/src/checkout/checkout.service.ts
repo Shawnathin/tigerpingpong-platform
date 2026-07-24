@@ -9,10 +9,12 @@ import {
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
 import {
   calculateCanadaShippingCents,
+  calculateTableAccessoryPricing,
   calculateViceBundleRegularPrice,
   CURRENT_CANADA_SHIPPING_RULE,
   CURRENT_CANADA_SHIPPING_RULE_VERSION,
   PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+  TABLE_ACCESSORIES_PRICING_RULE_VERSION,
   VICE_BUNDLE_VARIANT_KEY,
   VICE_PACKAGE_OPTION_NAME,
   VICE_PADDLE_PRODUCT_KEY,
@@ -47,16 +49,22 @@ interface CheckoutRequestItem {
 interface ValidatedCheckoutRequest {
   customerEmail?: string;
   items: CheckoutRequestItem[];
+  pricingRuleVersion: typeof TABLE_ACCESSORIES_PRICING_RULE_VERSION;
 }
 
 interface SnapshotLineItem {
   currency: string;
+  discountUnitCents: number;
   imageUrl: string | null;
   lineTotalCents: number;
+  listUnitPriceCents: number;
   name: string;
+  pricingLineId: string;
   productId: string;
   productKey: string;
+  productKind: string;
   productSlug: string;
+  promotionKey: string | null;
   quantity: number;
   sku: string | null;
   unitPriceCents: number;
@@ -72,6 +80,8 @@ interface ValidatedLineItemOption {
 }
 
 interface CheckoutTotals {
+  discountCents: number;
+  listSubtotalCents: number;
   shippingCents: number;
   shippingLabel: string;
   subtotalCents: number;
@@ -82,6 +92,8 @@ interface CheckoutSessionResponse {
   checkoutSessionId: string;
   checkoutUrl: string;
   currency: string;
+  discountCents: number;
+  listSubtotalCents: number;
   orderId: string;
   publicReference: string;
   shippingCents: number;
@@ -104,6 +116,8 @@ interface CheckoutSessionStatusResponse {
   status: CheckoutSessionPublicStatus;
   publicReference?: string;
   currency?: string;
+  listSubtotalCents?: number;
+  discountCents?: number;
   subtotalCents?: number;
   shippingCents?: number;
   totalCents?: number;
@@ -127,6 +141,9 @@ const checkoutStatusOrderSelect = {
   status: true,
   publicReference: true,
   currency: true,
+  listSubtotalCents: true,
+  discountCents: true,
+  pricingRuleVersion: true,
   subtotalCents: true,
   shippingCents: true,
   totalCents: true,
@@ -274,7 +291,8 @@ export class CheckoutService implements OnModuleDestroy {
       prisma,
       snapshotItems,
       totals,
-      request.customerEmail
+      request.customerEmail,
+      request.pricingRuleVersion
     );
 
     try {
@@ -302,6 +320,8 @@ export class CheckoutService implements OnModuleDestroy {
         checkoutSessionId: session.id,
         checkoutUrl: session.url,
         currency: V1_CURRENCY,
+        listSubtotalCents: order.listSubtotalCents,
+        discountCents: order.discountCents,
         subtotalCents: order.subtotalCents,
         shippingCents: order.shippingCents,
         totalCents: order.totalCents,
@@ -441,8 +461,22 @@ export class CheckoutService implements OnModuleDestroy {
 
     return {
       customerEmail: this.validateCustomerEmail(body.customerEmail),
-      items
+      items,
+      pricingRuleVersion: this.validatePricingRuleVersion(body.pricingRuleVersion)
     };
+  }
+
+  private validatePricingRuleVersion(
+    value: unknown
+  ): typeof TABLE_ACCESSORIES_PRICING_RULE_VERSION {
+    if (value === undefined || value === TABLE_ACCESSORIES_PRICING_RULE_VERSION) {
+      return TABLE_ACCESSORIES_PRICING_RULE_VERSION;
+    }
+
+    throw new BadRequestException({
+      code: "pricing_rule_version_mismatch",
+      message: "The requested pricing rule version is not supported."
+    });
   }
 
   private validateExpectedUnitPriceCents(value: unknown, itemIndex: number): number | null {
@@ -631,12 +665,20 @@ export class CheckoutService implements OnModuleDestroy {
     order: CheckoutStatusOrder
   ): CheckoutSessionStatusResponse {
     const status = this.toPublicOrderStatus(order.status);
+    const listSubtotalCents =
+      order.pricingRuleVersion === null &&
+      order.discountCents === 0 &&
+      order.listSubtotalCents === 0
+        ? order.subtotalCents
+        : order.listSubtotalCents;
 
     return {
       found: true,
       status,
       publicReference: order.publicReference,
       currency: order.currency.trim().toLowerCase(),
+      listSubtotalCents,
+      discountCents: order.discountCents,
       subtotalCents: order.subtotalCents,
       shippingCents: order.shippingCents,
       totalCents: order.totalCents,
@@ -806,15 +848,20 @@ export class CheckoutService implements OnModuleDestroy {
       }
 
       snapshotItems.push({
+        pricingLineId: canonicalLineKey,
         productId: product.id,
         variantId: optionValidation.variant?.id ?? null,
         productKey: product.key,
+        productKind: product.productKind,
         productSlug: product.slug,
         variantKey: optionValidation.variant?.key ?? null,
         sku: optionValidation.variant?.sku ?? product.sku,
         name: displayName,
         imageUrl: this.getProductImageUrl(product),
+        listUnitPriceCents: unitPriceCents,
+        discountUnitCents: 0,
         unitPriceCents,
+        promotionKey: null,
         quantity: item.quantity,
         lineTotalCents,
         currency: "CAD"
@@ -829,7 +876,59 @@ export class CheckoutService implements OnModuleDestroy {
       });
     }
 
-    return snapshotItems;
+    return this.applyTableAccessoryPricing(snapshotItems);
+  }
+
+  private applyTableAccessoryPricing(items: SnapshotLineItem[]): SnapshotLineItem[] {
+    const pricing = calculateTableAccessoryPricing(
+      items.map((item) => ({
+        lineId: item.pricingLineId,
+        listUnitPriceCents: item.listUnitPriceCents,
+        productKey: item.productKey,
+        productKind: item.productKind,
+        quantity: item.quantity,
+        variantKey: item.variantKey
+      }))
+    );
+    const allocationByLineId = new Map(
+      pricing.allocations.map((allocation) => [allocation.lineId, allocation])
+    );
+
+    return items.flatMap((item) => {
+      const allocation = allocationByLineId.get(item.pricingLineId);
+
+      if (!allocation) {
+        throw new InternalServerErrorException({
+          message: "Checkout pricing could not be calculated."
+        });
+      }
+
+      const pricedItems: SnapshotLineItem[] = [];
+
+      if (allocation.discountedQuantity > 0) {
+        pricedItems.push({
+          ...item,
+          discountUnitCents: allocation.discountUnitCents,
+          lineTotalCents: allocation.discountedUnitPriceCents * allocation.discountedQuantity,
+          promotionKey: allocation.promotionKey,
+          quantity: allocation.discountedQuantity,
+          unitPriceCents: allocation.discountedUnitPriceCents
+        });
+      }
+
+      if (allocation.fullPriceQuantity > 0) {
+        pricedItems.push({
+          ...item,
+          discountUnitCents: 0,
+          lineTotalCents: item.listUnitPriceCents * allocation.fullPriceQuantity,
+          promotionKey: null,
+          quantity: allocation.fullPriceQuantity,
+          unitPriceCents: item.listUnitPriceCents
+        });
+      }
+
+      return pricedItems;
+    });
   }
 
   private withLegacyViceSingleSelection(
@@ -1205,10 +1304,20 @@ export class CheckoutService implements OnModuleDestroy {
   }
 
   private calculateTotals(items: SnapshotLineItem[]): CheckoutTotals {
+    const listSubtotalCents = items.reduce(
+      (subtotal, item) => subtotal + item.listUnitPriceCents * item.quantity,
+      0
+    );
+    const discountCents = items.reduce(
+      (discount, item) => discount + item.discountUnitCents * item.quantity,
+      0
+    );
     const subtotalCents = items.reduce((subtotal, item) => subtotal + item.lineTotalCents, 0);
     const shippingCents = calculateCanadaShippingCents(subtotalCents, items);
 
     return {
+      listSubtotalCents,
+      discountCents,
       subtotalCents,
       shippingCents,
       totalCents: subtotalCents + shippingCents,
@@ -1221,7 +1330,8 @@ export class CheckoutService implements OnModuleDestroy {
     prisma: PrismaClient,
     items: SnapshotLineItem[],
     totals: CheckoutTotals,
-    customerEmail: string | undefined
+    customerEmail: string | undefined,
+    pricingRuleVersion: typeof TABLE_ACCESSORIES_PRICING_RULE_VERSION
   ): Promise<CreatedCheckoutOrder> {
     try {
       return await prisma.$transaction((transaction) =>
@@ -1229,9 +1339,12 @@ export class CheckoutService implements OnModuleDestroy {
           data: {
             status: "checkout_pending",
             currency: "CAD",
+            listSubtotalCents: totals.listSubtotalCents,
+            discountCents: totals.discountCents,
             subtotalCents: totals.subtotalCents,
             shippingCents: totals.shippingCents,
             totalCents: totals.totalCents,
+            pricingRuleVersion,
             shippingRule: CURRENT_CANADA_SHIPPING_RULE,
             checkoutSource: STRIPE_CHECKOUT_SOURCE,
             customerEmail,
@@ -1257,9 +1370,12 @@ export class CheckoutService implements OnModuleDestroy {
                 sku: item.sku,
                 name: item.name,
                 imageUrl: item.imageUrl,
+                listUnitPriceCents: item.listUnitPriceCents,
+                discountUnitCents: item.discountUnitCents,
                 unitPriceCents: item.unitPriceCents,
                 quantity: item.quantity,
                 lineTotalCents: item.lineTotalCents,
+                promotionKey: item.promotionKey,
                 currency: item.currency
               }))
             }
@@ -1281,6 +1397,7 @@ export class CheckoutService implements OnModuleDestroy {
     const metadata = this.createOrderMetadata(config, order);
     const sessionParams = {
       mode: "payment" as const,
+      allow_promotion_codes: false,
       ...(config.stripeTaxEnabled
         ? {
             automatic_tax: {
@@ -1374,6 +1491,9 @@ export class CheckoutService implements OnModuleDestroy {
       website: "tigerpingpong",
       environment: config.appEnv,
       shippingRuleVersion: CURRENT_CANADA_SHIPPING_RULE_VERSION,
+      pricingRuleVersion: order.pricingRuleVersion ?? TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+      listSubtotalCents: String(order.listSubtotalCents),
+      discountCents: String(order.discountCents),
       subtotalCents: String(order.subtotalCents),
       shippingCents: String(order.shippingCents),
       totalCents: String(order.totalCents),

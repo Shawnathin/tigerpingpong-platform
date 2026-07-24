@@ -23,9 +23,12 @@ export interface AdminOrderListItem {
     phone: string | null;
   };
   currency: string;
+  listSubtotalCents: number;
+  discountCents: number;
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
+  pricingRuleVersion: string | null;
   taxAmountCents: number | null;
   orderStatus: string;
   paymentStatus: string;

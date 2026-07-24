@@ -354,7 +354,17 @@ const accessoryProducts = [
     shippingReviewRequired: false,
     family: { key: "table-covers", slug: "table-covers", name: "Table Covers" },
     category: { key: "covers", slug: "covers", name: "Covers" },
-    primaryMedia: null
+    primaryMedia: {
+      mediaKey: "cover-primary",
+      role: "primary",
+      cloudinarySecureUrl:
+        "https://res.cloudinary.com/djfcisldm/image/upload/v1781303672/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg",
+      altText: "Black Tiger PingPong cover shown straight on over a folded table.",
+      title: "Tiger PingPong Table Cover",
+      caption: null,
+      sortOrder: 1,
+      isPrimary: true
+    }
   },
   {
     key: "tiger-net-post-set",
@@ -496,7 +506,87 @@ const tableDetailProducts = tableProducts.map((tableProduct) => {
     variants: tableVariantFixtures[tableProduct.slug]
   };
 });
+const failedTableAccessoryOfferSlugs = new Set();
 let adminProductUpdatedAt = "2026-07-16T12:00:00.000Z";
+
+function getTableAccessoryOffer(tableProduct) {
+  const aquaTwoPack = aquaProduct.variants.find(
+    (variant) => variant.key === "tiger-aqua-package-2-pack-3-balls"
+  );
+  const aquaFourPack = aquaProduct.variants.find(
+    (variant) => variant.key === "tiger-aqua-package-4-pack-3-balls"
+  );
+  const viceBundle = viceProduct.variants.find(
+    (variant) => variant.key === "tiger-vice-package-4-pack-6-white-balls"
+  );
+  const coverProduct = accessoryProducts.find(
+    (candidate) => candidate.key === "tiger-table-cover-black-polyester"
+  );
+  const isPlaza = tableProduct.key === "tiger-plaza-outdoor-table-grey";
+  const selectableItems = [
+    toOfferVariantItem(aquaProduct, aquaTwoPack, "catalog_variant"),
+    toOfferVariantItem(aquaProduct, aquaFourPack, "catalog_variant"),
+    toOfferVariantItem(viceProduct, viceBundle, "component_derived")
+  ];
+
+  if (!isPlaza && coverProduct) {
+    selectableItems.push({
+      currency: coverProduct.currency,
+      image: {
+        alt: coverProduct.primaryMedia?.altText ?? coverProduct.name,
+        url: coverProduct.primaryMedia?.cloudinarySecureUrl ?? null
+      },
+      priceCents: coverProduct.priceCents,
+      pricingSource: "catalog_product",
+      productKey: coverProduct.key,
+      productName: coverProduct.name,
+      productSlug: coverProduct.slug,
+      role: "cover",
+      selectedOptions: [],
+      variantKey: null
+    });
+  }
+
+  return {
+    offer: {
+      coverCompatibility: {
+        isCompatible: !isPlaza,
+        reason: isPlaza ? "not_compatible_with_plaza" : null
+      },
+      discountPercent: 30,
+      pricingRuleVersion: "table_accessories_30_v1",
+      selectableItems,
+      tableProductKey: tableProduct.key,
+      tableSlug: tableProduct.slug
+    }
+  };
+}
+
+function toOfferVariantItem(productFixture, variant, pricingSource) {
+  if (!variant) {
+    throw new Error(`Missing offer variant fixture for ${productFixture.slug}.`);
+  }
+
+  return {
+    currency: variant.currency,
+    image: {
+      alt: productFixture.primaryMedia?.altText ?? productFixture.name,
+      url: productFixture.primaryMedia?.cloudinarySecureUrl ?? null
+    },
+    priceCents: variant.priceCents,
+    pricingSource,
+    productKey: productFixture.key,
+    productName: productFixture.name,
+    productSlug: productFixture.slug,
+    role: "play_set",
+    selectedOptions: variant.options.map((option) => ({
+      label: option.label ?? option.value,
+      name: option.name,
+      value: option.value
+    })),
+    variantKey: variant.key
+  };
+}
 
 function getAdminProduct() {
   return {
@@ -560,12 +650,15 @@ const internalOrder = {
     state: "BC"
   },
   currency: "CAD",
+  discountCents: 0,
+  listSubtotalCents: 800,
   subtotalCents: 800,
   shippingCents: 1500,
   totalCents: 2300,
   taxAmountCents: 0,
   shippingRule: "flat_rate",
   checkoutSource: "local_browser_fixture",
+  pricingRuleVersion: null,
   stripeCheckoutSessionId: null,
   stripePaymentIntentId: null,
   stripeCustomerId: null,
@@ -590,9 +683,14 @@ const internalOrder = {
       sku: "LOCAL-TEST-SKU",
       name: product.name,
       currency: "CAD",
+      discountCents: 0,
+      discountUnitCents: 0,
+      listLineTotalCents: 800,
+      listUnitPriceCents: 800,
       unitPriceCents: 800,
       quantity: 1,
       lineTotalCents: 800,
+      promotionKey: null,
       createdAt: "2026-07-16T10:00:00.000Z"
     }
   ]
@@ -636,6 +734,40 @@ const server = createServer(async (request, response) => {
     response.end(
       JSON.stringify({ products: [product, part40Product, ...accessoryProducts, ...tableProducts] })
     );
+    return;
+  }
+
+  if (request.url === "/__test/table-accessory-offer-failure" && request.method === "POST") {
+    const body = await readJsonBody(request);
+
+    if (body.fail === false) {
+      failedTableAccessoryOfferSlugs.delete(body.slug);
+    } else {
+      failedTableAccessoryOfferSlugs.add(body.slug);
+    }
+
+    response.end(JSON.stringify({ ok: true }));
+    return;
+  }
+
+  const tableAccessoryOfferPrefix = "/catalog/table-accessory-offer/";
+  if (request.url?.startsWith(tableAccessoryOfferPrefix) && request.method === "GET") {
+    const tableSlug = decodeURIComponent(request.url.slice(tableAccessoryOfferPrefix.length));
+    const tableProduct = tableDetailProducts.find((candidate) => candidate.slug === tableSlug);
+
+    if (!tableProduct) {
+      response.statusCode = 404;
+      response.end(JSON.stringify({ message: "Table accessory offer not found." }));
+      return;
+    }
+
+    if (failedTableAccessoryOfferSlugs.has(tableSlug)) {
+      response.statusCode = 503;
+      response.end(JSON.stringify({ message: "Table accessory offer temporarily unavailable." }));
+      return;
+    }
+
+    response.end(JSON.stringify(getTableAccessoryOffer(tableProduct)));
     return;
   }
 
@@ -736,12 +868,11 @@ const server = createServer(async (request, response) => {
     for (const item of body.items ?? []) {
       const catalogProduct = [
         product,
-        aquaProduct,
-        viceProduct,
         part40Product,
+        ...accessoryProducts,
         ...tableDetailProducts
       ].find((candidate) => candidate.slug === item.productSlug);
-      const variant = catalogProduct?.variants.find(
+      const variant = catalogProduct?.variants?.find(
         (candidate) => candidate.key === item.selectedVariantKey
       );
       const currentPrice = variant?.priceCents ?? catalogProduct?.priceCents ?? 0;

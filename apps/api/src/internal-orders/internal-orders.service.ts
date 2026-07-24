@@ -66,9 +66,12 @@ const internalOrderListSelect = {
   publicReference: true,
   status: true,
   currency: true,
+  listSubtotalCents: true,
+  discountCents: true,
   subtotalCents: true,
   shippingCents: true,
   totalCents: true,
+  pricingRuleVersion: true,
   taxAmountCents: true,
   customerEmail: true,
   customerName: true,
@@ -92,9 +95,12 @@ const internalOrderDetailSelect = {
   publicReference: true,
   status: true,
   currency: true,
+  listSubtotalCents: true,
+  discountCents: true,
   subtotalCents: true,
   shippingCents: true,
   totalCents: true,
+  pricingRuleVersion: true,
   taxAmountCents: true,
   shippingRule: true,
   checkoutSource: true,
@@ -128,9 +134,12 @@ const internalOrderDetailSelect = {
       variantKey: true,
       sku: true,
       name: true,
+      listUnitPriceCents: true,
+      discountUnitCents: true,
       unitPriceCents: true,
       quantity: true,
       lineTotalCents: true,
+      promotionKey: true,
       currency: true,
       createdAt: true
     }
@@ -427,6 +436,11 @@ export class InternalOrdersService implements OnModuleDestroy {
   }
 
   private serializeListOrder(order: InternalOrderListRecord) {
+    const useLegacyPricingFallback =
+      order.pricingRuleVersion === null &&
+      order.discountCents === 0 &&
+      order.listSubtotalCents === 0;
+
     return {
       publicReference: order.publicReference,
       status: order.status,
@@ -434,9 +448,12 @@ export class InternalOrdersService implements OnModuleDestroy {
       customerEmail: order.customerEmail,
       customerPhone: order.customerPhone,
       currency: this.normalizeCurrency(order.currency),
+      listSubtotalCents: useLegacyPricingFallback ? order.subtotalCents : order.listSubtotalCents,
+      discountCents: useLegacyPricingFallback ? 0 : order.discountCents,
       subtotalCents: order.subtotalCents,
       shippingCents: order.shippingCents,
       totalCents: order.totalCents,
+      pricingRuleVersion: order.pricingRuleVersion,
       taxAmountCents: order.taxAmountCents,
       itemCount: order._count.items,
       stripeCheckoutSessionId: order.stripeCheckoutSessionId,
@@ -451,6 +468,11 @@ export class InternalOrdersService implements OnModuleDestroy {
   }
 
   private serializeDetailOrder(order: InternalOrderDetailRecord) {
+    const useLegacyPricingFallback =
+      order.pricingRuleVersion === null &&
+      order.discountCents === 0 &&
+      order.listSubtotalCents === 0;
+
     return {
       publicReference: order.publicReference,
       status: order.status,
@@ -461,9 +483,12 @@ export class InternalOrdersService implements OnModuleDestroy {
       shippingPhone: order.shippingPhone,
       shippingAddress: this.serializeShippingAddress(order.shippingAddressJson),
       currency: this.normalizeCurrency(order.currency),
+      listSubtotalCents: useLegacyPricingFallback ? order.subtotalCents : order.listSubtotalCents,
+      discountCents: useLegacyPricingFallback ? 0 : order.discountCents,
       subtotalCents: order.subtotalCents,
       shippingCents: order.shippingCents,
       totalCents: order.totalCents,
+      pricingRuleVersion: order.pricingRuleVersion,
       taxAmountCents: order.taxAmountCents,
       shippingRule: order.shippingRule,
       checkoutSource: order.checkoutSource,
@@ -483,18 +508,31 @@ export class InternalOrdersService implements OnModuleDestroy {
       paidAt: this.serializeDate(order.paidAt),
       createdAt: this.serializeDate(order.createdAt),
       updatedAt: this.serializeDate(order.updatedAt),
-      items: order.items.map((item) => ({
-        productKey: item.productKey,
-        productSlug: item.productSlug,
-        variantKey: item.variantKey,
-        sku: item.sku,
-        name: item.name,
-        currency: this.normalizeCurrency(item.currency),
-        unitPriceCents: item.unitPriceCents,
-        quantity: item.quantity,
-        lineTotalCents: item.lineTotalCents,
-        createdAt: this.serializeDate(item.createdAt)
-      }))
+      items: order.items.map((item) => {
+        const listUnitPriceCents =
+          useLegacyPricingFallback && item.listUnitPriceCents === 0
+            ? item.unitPriceCents
+            : item.listUnitPriceCents;
+        const discountUnitCents = useLegacyPricingFallback ? 0 : item.discountUnitCents;
+
+        return {
+          productKey: item.productKey,
+          productSlug: item.productSlug,
+          variantKey: item.variantKey,
+          sku: item.sku,
+          name: item.name,
+          currency: this.normalizeCurrency(item.currency),
+          listUnitPriceCents,
+          discountUnitCents,
+          unitPriceCents: item.unitPriceCents,
+          quantity: item.quantity,
+          listLineTotalCents: listUnitPriceCents * item.quantity,
+          discountCents: discountUnitCents * item.quantity,
+          lineTotalCents: item.lineTotalCents,
+          promotionKey: useLegacyPricingFallback ? null : item.promotionKey,
+          createdAt: this.serializeDate(item.createdAt)
+        };
+      })
     };
   }
 

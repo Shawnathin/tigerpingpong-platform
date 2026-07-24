@@ -131,6 +131,13 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       role: "primary",
       src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
       title: "Tiger PingPong Vice paddle"
+    },
+    {
+      alt: "Pink Tiger PingPong Vice paddle on a transparent background.",
+      caption: "Vice paddle",
+      role: "alternate",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781745073/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-02.png",
+      title: "Tiger PingPong Vice paddle cutout"
     }
   ],
   "tiger-aqua-outdoor-indoor-paddle": [

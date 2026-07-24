@@ -78,7 +78,7 @@ Evidence or source: Shawn's explicit written direction and implementation approv
 
 Implementation footprint: Brand facts register, brand system version, Vice catalog package records, table purchasing rail and add-to-cart dialog, cart pricing, checkout/order snapshots, protected order presentation, and focused commerce tests across two sequential PRs.
 
-Copy or claim replaced: The storefront previously left table package contents implicit. The new approved purchase-critical line is “Paddles and balls are sold separately.” The existing provisional Vice product story remains provisional.
+Copy or claim replaced: The storefront previously left table package contents implicit. The approved purchase-critical prompt is “Now pick the paddles and balls that fit your game.” It keeps the next step clear without framing the table around what is missing. The existing provisional Vice product story remains provisional.
 
 Follow-up: SKU `15488` was supplied on 2026-07-24. Apply the reviewed catalog update and database migration in staging before any production promotion.
 

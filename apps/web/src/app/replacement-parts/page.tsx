@@ -106,6 +106,7 @@ export default async function ReplacementPartsPage() {
                   currency: livePart40.product.currency,
                   imageUrl: livePart40.imageUrl,
                   name: livePart40.product.name,
+                  productKey: livePart40.product.key,
                   productKind: livePart40.product.productKind,
                   productSlug: livePart40.product.slug,
                   unitPriceCents: livePart40.product.priceCents

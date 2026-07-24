@@ -12,10 +12,7 @@ function isEnabled(value: string | undefined): boolean {
   return value === "1" || value === "true" || value === "yes";
 }
 
-function getCatalogRequestOptions(
-  query: CatalogQuery,
-  requestToken: AdminAuthHeaderValue
-) {
+function getCatalogRequestOptions(query: CatalogQuery, requestToken: AdminAuthHeaderValue) {
   const includeInternal = isEnabled(query.includeInternal);
   const includeReplacementParts = isEnabled(query.includeReplacementParts);
 
@@ -51,9 +48,7 @@ export class CatalogController {
     @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
     @Query() query: CatalogQuery
   ): Promise<unknown> {
-    return this.catalogService.getProductFamilies(
-      getCatalogRequestOptions(query, requestToken)
-    );
+    return this.catalogService.getProductFamilies(getCatalogRequestOptions(query, requestToken));
   }
 
   @Get("families/:slug")
@@ -62,10 +57,7 @@ export class CatalogController {
     @Param("slug") slug: string,
     @Query() query: CatalogQuery
   ): Promise<unknown> {
-    return this.catalogService.getFamilyBySlug(
-      slug,
-      getCatalogRequestOptions(query, requestToken)
-    );
+    return this.catalogService.getFamilyBySlug(slug, getCatalogRequestOptions(query, requestToken));
   }
 
   @Get("products")
@@ -74,6 +66,11 @@ export class CatalogController {
     @Query() query: CatalogQuery
   ): Promise<unknown> {
     return this.catalogService.getProducts(getCatalogRequestOptions(query, requestToken));
+  }
+
+  @Get("table-accessory-offer/:tableSlug")
+  tableAccessoryOffer(@Param("tableSlug") tableSlug: string): Promise<unknown> {
+    return this.catalogService.getTableAccessoryOffer(tableSlug);
   }
 
   @Get("products/:slug")

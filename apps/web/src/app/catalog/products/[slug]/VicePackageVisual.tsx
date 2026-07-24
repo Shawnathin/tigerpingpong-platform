@@ -1,10 +1,11 @@
-import { getPrimaryProductMediaFallback } from "../../../../lib/public-storefront-demo";
+import { getProductMediaFallbacks } from "../../../../lib/public-storefront-demo";
 import { getVicePackageVisualAltText, VICE_BUNDLE_VARIANT_KEY } from "../../../../lib/vice-package";
 
 import styles from "./page.module.css";
 
-const viceMedia = requireProductComponentMedia("tiger-vice-paddle");
-const whiteBallsMedia = requireProductComponentMedia("tiger-premium-balls-6-white");
+const viceMedia = requireProductComponentMedia("tiger-vice-paddle", 0);
+const viceBundlePaddleMedia = requireProductComponentMedia("tiger-vice-paddle", 1);
+const whiteBallsMedia = requireProductComponentMedia("tiger-premium-balls-6-white", 0);
 
 interface VicePackageVisualProps {
   altText?: string;
@@ -31,14 +32,17 @@ export function VicePackageVisual({
     >
       {isBundle ? (
         <span className={styles.viceBundleComponents} aria-hidden="true">
-          <span className={styles.viceBundleComponent}>
-            <img alt="" src={viceMedia.src} />
-            <strong>4 paddles</strong>
+          <span className={styles.viceBundlePaddles}>
+            {Array.from({ length: 4 }, (_, index) => (
+              <img
+                alt=""
+                className={styles.viceBundlePaddleImage}
+                key={index}
+                src={viceBundlePaddleMedia.src}
+              />
+            ))}
           </span>
-          <span className={styles.viceBundleComponent}>
-            <img alt="" src={whiteBallsMedia.src} />
-            <strong>6 balls</strong>
-          </span>
+          <img alt="" className={styles.viceBundleBallsImage} src={whiteBallsMedia.src} />
         </span>
       ) : (
         <img alt="" aria-hidden="true" className={styles.viceSingleImage} src={viceMedia.src} />
@@ -47,11 +51,11 @@ export function VicePackageVisual({
   );
 }
 
-function requireProductComponentMedia(slug: string): { src: string } {
-  const media = getPrimaryProductMediaFallback(slug);
+function requireProductComponentMedia(slug: string, index: number): { src: string } {
+  const media = getProductMediaFallbacks(slug)[index];
 
   if (!media) {
-    throw new Error(`Required Vice package component media is missing: ${slug}`);
+    throw new Error(`Required Vice package component media is missing: ${slug} at index ${index}`);
   }
 
   return media;

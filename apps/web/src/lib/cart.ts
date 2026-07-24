@@ -1,9 +1,11 @@
 import {
   calculateCanadaShippingCents,
+  calculateTableAccessoryPricing,
   CANADA_FLAT_RATE_SHIPPING_CENTS,
   CANADA_FREE_SHIPPING_THRESHOLD_CENTS,
   isAquaFourPackShippingItem,
-  type CanadaShippingItem
+  type CanadaShippingItem,
+  type TableAccessoryPricingResult
 } from "@tigerpingpong/shared";
 
 import {
@@ -34,6 +36,7 @@ export interface CartItem {
   currency: string;
   imageUrl: string | null;
   name: string;
+  productKey: string;
   productKind?: string;
   productSlug: string;
   quantity: number;
@@ -47,6 +50,7 @@ export interface CartProductInput {
   currency: string;
   imageUrl: string | null;
   name: string;
+  productKey: string;
   productKind?: string;
   productSlug: string;
   selectedVariantKey?: string;
@@ -67,6 +71,13 @@ export interface CartReconciliationItem {
   name?: string;
   status: "price_changed" | "unavailable";
   unitPriceCents?: number;
+}
+
+export interface CartPricingDelta {
+  addedListSubtotalCents: number;
+  additionalDiscountCents: number;
+  additionalNetSubtotalCents: number;
+  projectedPricing: TableAccessoryPricingResult;
 }
 
 interface StoredCart {
@@ -140,6 +151,7 @@ export function addCartItem(product: CartProductInput, quantity = 1): CartItem[]
       currency: normalizeCurrency(product.currency),
       imageUrl: normalizeImageUrl(product.imageUrl),
       name: product.name.trim() || existingItem.name,
+      productKey: normalizeProductKey(product.productKey, productSlug),
       productKind: product.productKind,
       quantity: Math.min(existingItem.quantity + nextQuantity, MAX_CART_QUANTITY_PER_LINE),
       selectedVariantKey: normalizeOptionalText(product.selectedVariantKey),
@@ -153,6 +165,7 @@ export function addCartItem(product: CartProductInput, quantity = 1): CartItem[]
       currency: normalizeCurrency(product.currency),
       imageUrl: normalizeImageUrl(product.imageUrl),
       name: product.name.trim(),
+      productKey: normalizeProductKey(product.productKey, productSlug),
       productKind: product.productKind,
       productSlug,
       quantity: nextQuantity,
@@ -226,6 +239,80 @@ export function getCartItemCount(items: CartItem[]): number {
 
 export function getCartSubtotalCents(items: CartItem[]): number {
   return items.reduce((subtotal, item) => subtotal + item.unitPriceCents * item.quantity, 0);
+}
+
+export function getCartPricing(items: readonly CartItem[]): TableAccessoryPricingResult {
+  return calculateTableAccessoryPricing(
+    items.map((item) => ({
+      lineId: item.cartLineId,
+      listUnitPriceCents: item.unitPriceCents,
+      productKey: item.productKey,
+      productKind: item.productKind,
+      quantity: item.quantity,
+      variantKey: item.selectedVariantKey
+    }))
+  );
+}
+
+export function getCartPricingDelta(
+  items: readonly CartItem[],
+  additions: readonly CartProductInput[]
+): CartPricingDelta {
+  const projectedItems = items.map((item) => ({ ...item }));
+  let addedListSubtotalCents = 0;
+
+  for (const addition of additions) {
+    const selectedOptions = sanitizeCartItemOptions(addition.selectedOptions);
+    const cartLineId = getCartLineId(addition.productSlug, selectedOptions);
+    const existingItem = projectedItems.find((item) => item.cartLineId === cartLineId);
+    const liveUnitPriceCents = normalizePrice(addition.unitPriceCents);
+
+    if (existingItem) {
+      existingItem.categoryName = addition.categoryName;
+      existingItem.currency = normalizeCurrency(addition.currency);
+      existingItem.imageUrl = normalizeImageUrl(addition.imageUrl);
+      existingItem.name = addition.name.trim() || existingItem.name;
+      existingItem.productKey = normalizeProductKey(addition.productKey, addition.productSlug);
+      existingItem.productKind = addition.productKind;
+      existingItem.selectedOptions = selectedOptions;
+      existingItem.selectedVariantKey = normalizeOptionalText(addition.selectedVariantKey);
+      existingItem.unitPriceCents = liveUnitPriceCents;
+
+      if (existingItem.quantity >= MAX_CART_QUANTITY_PER_LINE) {
+        continue;
+      }
+
+      existingItem.quantity += 1;
+      addedListSubtotalCents += liveUnitPriceCents;
+      continue;
+    }
+
+    projectedItems.push({
+      cartLineId,
+      categoryName: addition.categoryName,
+      currency: normalizeCurrency(addition.currency),
+      imageUrl: normalizeImageUrl(addition.imageUrl),
+      name: addition.name,
+      productKey: normalizeProductKey(addition.productKey, addition.productSlug),
+      productKind: addition.productKind,
+      productSlug: addition.productSlug.trim().toLowerCase(),
+      quantity: 1,
+      selectedOptions,
+      selectedVariantKey: normalizeOptionalText(addition.selectedVariantKey),
+      unitPriceCents: liveUnitPriceCents
+    });
+    addedListSubtotalCents += liveUnitPriceCents;
+  }
+
+  const currentPricing = getCartPricing(items);
+  const projectedPricing = getCartPricing(projectedItems);
+
+  return {
+    addedListSubtotalCents,
+    additionalDiscountCents: projectedPricing.discountCents - currentPricing.discountCents,
+    additionalNetSubtotalCents: projectedPricing.netSubtotalCents - currentPricing.netSubtotalCents,
+    projectedPricing
+  };
 }
 
 export function getCartShippingCents(
@@ -381,6 +468,7 @@ function sanitizeCartItems(value: unknown): CartItem[] {
       currency: normalizeCurrency(item.currency),
       imageUrl: normalizeImageUrl(item.imageUrl),
       name,
+      productKey: normalizeProductKey(item.productKey, productSlug),
       productKind: typeof item.productKind === "string" ? item.productKind : undefined,
       productSlug,
       quantity,
@@ -470,6 +558,10 @@ function normalizeCurrency(value: unknown): string {
 
 function normalizeOptionalText(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function normalizeProductKey(value: unknown, fallbackSlug: string): string {
+  return typeof value === "string" && value.trim() ? value.trim() : fallbackSlug;
 }
 
 function normalizeCartLineId(value: string): string {

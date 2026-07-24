@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS } from "@tigerpingpong/shared";
+
 import { PublicStorefrontFooter } from "../../../PublicStorefrontFooter";
 import { PublicStorefrontNav, type PublicStorefrontNavItem } from "../../../PublicStorefrontNav";
-import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
+import {
+  CatalogApiError,
+  getProductBySlug,
+  getProducts,
+  getTableAccessoryOffer
+} from "../../../../lib/catalog-api";
 import type { CartProductInput } from "../../../../lib/cart";
 import { normalizeMediaSrc, resolveProductMediaUrl } from "../../../../lib/product-media";
 import { getProductMediaFallbacks } from "../../../../lib/public-storefront-demo";
@@ -28,7 +35,8 @@ import type {
   CatalogProductDetail,
   CatalogProductSummary,
   CatalogProductVariantSummary,
-  CatalogSummary
+  CatalogSummary,
+  CatalogTableAccessoryOffer
 } from "../../../../types/catalog";
 
 import {
@@ -700,6 +708,7 @@ function toCartProductInput(product: CatalogProductDetail): CartProductInput {
     currency: product.currency,
     imageUrl: getCartImage(product),
     name: product.name,
+    productKey: product.key,
     productKind: product.productKind,
     productSlug: product.slug,
     unitPriceCents: getCartProductPriceCents(product)
@@ -717,6 +726,22 @@ async function loadCatalogProductSummaries(): Promise<CatalogProductSummary[]> {
     return getProducts();
   } catch {
     return [];
+  }
+}
+
+async function loadTableAccessoryOffer(
+  product: CatalogProductDetail
+): Promise<CatalogTableAccessoryOffer | null> {
+  const eligibleProductKeys = TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS as readonly string[];
+
+  if (!eligibleProductKeys.includes(product.key)) {
+    return null;
+  }
+
+  try {
+    return await getTableAccessoryOffer(product.slug);
+  } catch {
+    return null;
   }
 }
 
@@ -944,7 +969,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   );
   const isCheckoutEligible = isProductCheckoutEligible(product, checkoutOptionGroups);
   const normalizedContent = getProductContentBySlug(product.slug);
-  const catalogProducts = await loadCatalogProductSummaries();
+  const [catalogProducts, tableAccessoryOffer] = await Promise.all([
+    loadCatalogProductSummaries(),
+    loadTableAccessoryOffer(product)
+  ]);
   const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
   const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
   const heroDisplayTitle = getHeroDisplayTitle(product);
@@ -1034,6 +1062,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 : getPurchaseShippingLines(product)
           }
           shippingLinesAreFixed={isTable}
+          tableAccessoryOffer={tableAccessoryOffer}
         />
 
         {isAqua ? (

@@ -3,8 +3,11 @@ import { describe, expect, it, vi } from "vitest";
 import {
   AQUA_FOUR_PACK_PRODUCT_SLUG,
   AQUA_FOUR_PACK_VARIANT_KEY,
+  AQUA_PADDLE_PRODUCT_KEY,
   CURRENT_CANADA_SHIPPING_RULE,
   PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+  TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+  TABLE_ACCESSORIES_PROMOTION_KEY,
   VICE_BUNDLE_OPTION_VALUE,
   VICE_BUNDLE_PUBLIC_LABEL,
   VICE_BUNDLE_VARIANT_KEY,
@@ -46,8 +49,11 @@ describe("server-authoritative checkout", () => {
       validateRequest(body: unknown): { items: Array<Record<string, unknown>> };
     };
     const result = service.validateRequest({
+      discountCents: 99_999,
+      pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION,
       items: [
         {
+          discountUnitCents: 99_999,
           productSlug: "tiger-test-product",
           quantity: 1,
           selectedOptions: [],
@@ -58,7 +64,21 @@ describe("server-authoritative checkout", () => {
     });
 
     expect(result.items[0]).not.toHaveProperty("unitPriceCents");
+    expect(result.items[0]).not.toHaveProperty("discountUnitCents");
+    expect(result).not.toHaveProperty("discountCents");
     expect(result.items[0]).toHaveProperty("expectedUnitPriceCents", 800);
+    expect(result).toHaveProperty("pricingRuleVersion", TABLE_ACCESSORIES_PRICING_RULE_VERSION);
+    expect(
+      service.validateRequest({
+        items: [{ productSlug: "tiger-test-product", quantity: 1, selectedOptions: [] }]
+      })
+    ).toHaveProperty("pricingRuleVersion", TABLE_ACCESSORIES_PRICING_RULE_VERSION);
+    expect(() =>
+      service.validateRequest({
+        pricingRuleVersion: "some_other_rule",
+        items: [{ productSlug: "tiger-test-product", quantity: 1, selectedOptions: [] }]
+      })
+    ).toThrow("requested pricing rule version is not supported");
     expect(() =>
       service.validateRequest({
         items: [{ productSlug: "tiger-test-product", quantity: 11, selectedOptions: [] }]
@@ -294,6 +314,7 @@ describe("server-authoritative checkout", () => {
 
     expect(createSession).toHaveBeenCalledWith(
       expect.objectContaining({
+        allow_promotion_codes: false,
         mode: "payment",
         phone_number_collection: {
           enabled: true
@@ -306,6 +327,242 @@ describe("server-authoritative checkout", () => {
         idempotencyKey: "checkout_session_create:order_phone"
       }
     );
+  });
+
+  it("splits a partial accessory quantity into persisted and Stripe net-price lines", async () => {
+    const service = new CheckoutService() as unknown as {
+      calculateTotals(items: unknown[]): Record<string, number | string>;
+      createPendingOrder(
+        prisma: unknown,
+        items: unknown[],
+        totals: unknown,
+        customerEmail: string | undefined,
+        pricingRuleVersion: string
+      ): Promise<Record<string, unknown>>;
+      createSnapshotItems(items: unknown[], products: Map<string, unknown>): unknown[];
+      createStripeSession(config: unknown, order: unknown): Promise<unknown>;
+      getStripe: () => {
+        checkout: {
+          sessions: {
+            create: ReturnType<typeof vi.fn>;
+          };
+        };
+      };
+    };
+    const table = {
+      ...checkoutProduct,
+      id: "expo-table",
+      key: "tiger-expo-outdoor-table",
+      slug: "tiger-expo-outdoor-table",
+      name: "Expo Outdoor Table",
+      sku: "EXPO",
+      productKind: "table",
+      priceCents: 100_000
+    };
+    const aqua = createAquaCheckoutProduct();
+    const snapshotItems = service.createSnapshotItems(
+      [
+        {
+          expectedUnitPriceCents: 100_000,
+          productSlug: table.slug,
+          quantity: 1,
+          selectedVariantKey: null,
+          selectedOptions: []
+        },
+        {
+          expectedUnitPriceCents: 8_000,
+          productSlug: aqua.slug,
+          quantity: 2,
+          selectedVariantKey: AQUA_FOUR_PACK_VARIANT_KEY,
+          selectedOptions: [
+            {
+              name: "Package Options",
+              value: "4-Pack w/ 3 Balls"
+            }
+          ]
+        }
+      ],
+      new Map([
+        [table.slug, table],
+        [aqua.slug, aqua]
+      ])
+    );
+    const aquaSnapshotItems = snapshotItems.filter(
+      (item) => (item as { productKey?: string }).productKey === AQUA_PADDLE_PRODUCT_KEY
+    ) as Array<Record<string, unknown>>;
+
+    expect(aquaSnapshotItems).toEqual([
+      expect.objectContaining({
+        discountUnitCents: 2_400,
+        listUnitPriceCents: 8_000,
+        promotionKey: TABLE_ACCESSORIES_PROMOTION_KEY,
+        quantity: 1,
+        unitPriceCents: 5_600
+      }),
+      expect.objectContaining({
+        discountUnitCents: 0,
+        listUnitPriceCents: 8_000,
+        promotionKey: null,
+        quantity: 1,
+        unitPriceCents: 8_000
+      })
+    ]);
+
+    const totals = service.calculateTotals(snapshotItems);
+    expect(totals).toMatchObject({
+      discountCents: 2_400,
+      listSubtotalCents: 116_000,
+      shippingCents: 0,
+      subtotalCents: 113_600,
+      totalCents: 113_600
+    });
+
+    const createOrder = vi.fn(async ({ data }: { data: Record<string, unknown> }) => ({
+      ...data,
+      customerEmail: null,
+      id: "order-partial-discount",
+      items: snapshotItems,
+      publicReference: "partial-discount-reference"
+    }));
+    const order = await service.createPendingOrder(
+      {
+        $transaction: (callback: (transaction: unknown) => unknown) =>
+          callback({
+            order: {
+              create: createOrder
+            }
+          })
+      },
+      snapshotItems,
+      totals,
+      undefined,
+      TABLE_ACCESSORIES_PRICING_RULE_VERSION
+    );
+    const persistedItems = (
+      createOrder.mock.calls[0]?.[0] as {
+        data: { items: { create: Array<Record<string, unknown>> } };
+      }
+    ).data.items.create.filter((item) => item.productKey === AQUA_PADDLE_PRODUCT_KEY);
+
+    expect(persistedItems).toEqual([
+      expect.objectContaining({
+        discountUnitCents: 2_400,
+        listUnitPriceCents: 8_000,
+        promotionKey: TABLE_ACCESSORIES_PROMOTION_KEY,
+        quantity: 1,
+        unitPriceCents: 5_600
+      }),
+      expect.objectContaining({
+        discountUnitCents: 0,
+        listUnitPriceCents: 8_000,
+        promotionKey: null,
+        quantity: 1,
+        unitPriceCents: 8_000
+      })
+    ]);
+
+    const createSession = vi.fn().mockResolvedValue({
+      id: "cs_test_partial_discount",
+      url: "https://checkout.stripe.com/test"
+    });
+    service.getStripe = () => ({
+      checkout: {
+        sessions: {
+          create: createSession
+        }
+      }
+    });
+
+    await service.createStripeSession(
+      {
+        appEnv: "test",
+        cancelUrl: "https://example.com/checkout/cancel",
+        stripeSecretKey: "sk_test_local_only",
+        stripeTaxEnabled: true,
+        successUrl: "https://example.com/checkout/success"
+      },
+      order
+    );
+
+    const stripeParams = createSession.mock.calls[0]?.[0] as {
+      allow_promotion_codes: boolean;
+      automatic_tax?: { enabled: boolean };
+      discounts?: unknown;
+      line_items: Array<{
+        price_data: { tax_behavior?: string; unit_amount: number };
+        quantity: number;
+      }>;
+    };
+    expect(stripeParams.allow_promotion_codes).toBe(false);
+    expect(stripeParams.automatic_tax).toEqual({ enabled: true });
+    expect(stripeParams).not.toHaveProperty("discounts");
+    expect(
+      stripeParams.line_items.map((line) => ({
+        quantity: line.quantity,
+        taxBehavior: line.price_data.tax_behavior,
+        unitAmount: line.price_data.unit_amount
+      }))
+    ).toEqual([
+      { quantity: 1, taxBehavior: "exclusive", unitAmount: 100_000 },
+      { quantity: 1, taxBehavior: "exclusive", unitAmount: 5_600 },
+      { quantity: 1, taxBehavior: "exclusive", unitAmount: 8_000 }
+    ]);
+  });
+
+  it("returns list subtotal and savings in checkout status responses", () => {
+    const service = new CheckoutService() as unknown as {
+      toCheckoutSessionStatusResponse(order: unknown): Record<string, unknown>;
+    };
+
+    expect(
+      service.toCheckoutSessionStatusResponse({
+        createdAt: new Date("2026-07-23T12:00:00.000Z"),
+        currency: "CAD",
+        customerEmail: null,
+        discountCents: 2_400,
+        listSubtotalCents: 116_000,
+        paidAt: null,
+        pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+        publicReference: "status-reference",
+        shippingCents: 0,
+        status: "checkout_pending",
+        stripeAmountTaxCents: null,
+        stripeAmountTotalCents: null,
+        stripeAutomaticTaxStatus: null,
+        subtotalCents: 113_600,
+        taxAmountCents: null,
+        totalCents: 113_600
+      })
+    ).toMatchObject({
+      discountCents: 2_400,
+      listSubtotalCents: 116_000,
+      subtotalCents: 113_600
+    });
+
+    expect(
+      service.toCheckoutSessionStatusResponse({
+        createdAt: new Date("2026-07-23T12:00:00.000Z"),
+        currency: "CAD",
+        customerEmail: null,
+        discountCents: 0,
+        listSubtotalCents: 0,
+        paidAt: null,
+        pricingRuleVersion: null,
+        publicReference: "legacy-status-reference",
+        shippingCents: 1_500,
+        status: "checkout_pending",
+        stripeAmountTaxCents: null,
+        stripeAmountTotalCents: null,
+        stripeAutomaticTaxStatus: null,
+        subtotalCents: 800,
+        taxAmountCents: null,
+        totalCents: 2_300
+      })
+    ).toMatchObject({
+      discountCents: 0,
+      listSubtotalCents: 800,
+      subtotalCents: 800
+    });
   });
 
   it("rejects missing and invalid required product options against catalog variants", () => {
@@ -632,6 +889,60 @@ function createViceCheckoutProduct() {
   };
 }
 
+function createAquaCheckoutProduct() {
+  const option = {
+    displayName: "Package Options",
+    name: "Package Options",
+    sortOrder: 0
+  };
+  const variant = (key: string, value: string, priceCents: number) => ({
+    currency: "CAD",
+    id: key,
+    isActive: true,
+    key,
+    name: value,
+    optionValues: [
+      {
+        productOptionValue: {
+          label: value,
+          option,
+          sortOrder: 0,
+          value
+        }
+      }
+    ],
+    priceCents,
+    purchaseModeOverride: null,
+    sku: key
+  });
+
+  return {
+    currency: "CAD",
+    family: { isActive: true, isPublic: true },
+    id: "aqua-product",
+    key: AQUA_PADDLE_PRODUCT_KEY,
+    media: [],
+    name: "Aqua Outdoor / Indoor Paddle",
+    priceCents: 2_500,
+    primaryCategory: {
+      isActive: true,
+      v1CheckoutScope: true,
+      v1PublicNavigation: true
+    },
+    productKind: "paddle",
+    purchaseMode: "online_checkout",
+    sku: null,
+    slug: AQUA_PADDLE_PRODUCT_KEY,
+    status: "active",
+    v1CheckoutScope: true,
+    v1PublicNavigation: true,
+    variants: [
+      variant("tiger-aqua-package-2-pack-3-balls", "2-Pack w/ 3 Balls", 4_500),
+      variant(AQUA_FOUR_PACK_VARIANT_KEY, "4-Pack w/ 3 Balls", 8_000)
+    ]
+  };
+}
+
 describe("Stripe webhook safety checks with local fakes", () => {
   const baseOrder = {
     id: "order_1",
@@ -639,14 +950,23 @@ describe("Stripe webhook safety checks with local fakes", () => {
     stripeCheckoutSessionId: "cs_test_1",
     stripePaymentIntentId: null,
     currency: "CAD",
+    listSubtotalCents: 800,
+    discountCents: 0,
     subtotalCents: 800,
     shippingCents: 1_500,
     totalCents: 2_300,
     shippingRule: "canada_free_over_100_flat_15",
+    pricingRuleVersion: null,
     items: [
       {
+        listUnitPriceCents: 800,
+        discountUnitCents: 0,
+        unitPriceCents: 800,
+        quantity: 1,
         lineTotalCents: 800,
+        promotionKey: null,
         currency: "CAD",
+        productKey: "product-one",
         productSlug: "product-one",
         variantKey: null
       }
@@ -682,7 +1002,8 @@ describe("Stripe webhook safety checks with local fakes", () => {
   function validate(
     overrides: Record<string, unknown> = {},
     eventLivemode = false,
-    orderOverrides: Record<string, unknown> = {}
+    orderOverrides: Record<string, unknown> = {},
+    stripeTaxEnabled = false
   ) {
     const service = new StripeWebhookService() as unknown as {
       validateSessionForOrder(
@@ -697,12 +1018,198 @@ describe("Stripe webhook safety checks with local fakes", () => {
       { ...baseEvent, livemode: eventLivemode, data: { object: session } },
       session,
       { ...baseOrder, ...orderOverrides },
-      { expectedLivemode: false, stripeTaxEnabled: false, stripeWebhookSecret: "unused" }
+      { expectedLivemode: false, stripeTaxEnabled, stripeWebhookSecret: "unused" }
     );
   }
 
-  it("accepts matching paid Canadian totals", () => {
+  it("accepts matching paid Canadian totals for a backfilled legacy null-rule order", () => {
     expect(validate()).toBeNull();
+  });
+
+  it("accepts only null-rule, no-discount legacy orders with all-zero new snapshots", () => {
+    const zeroSnapshotItem = {
+      ...baseOrder.items[0],
+      listUnitPriceCents: 0
+    };
+
+    expect(
+      validate({}, false, {
+        items: [zeroSnapshotItem],
+        listSubtotalCents: 0
+      })
+    ).toBeNull();
+    expect(
+      validate({}, false, {
+        items: [zeroSnapshotItem],
+        listSubtotalCents: 0,
+        pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION
+      })
+    ).toBe("order_pricing_total_mismatch");
+  });
+
+  it("accepts internally discounted net totals with no Stripe coupon discount", () => {
+    expect(
+      validate(
+        {
+          amount_subtotal: 105_600,
+          amount_total: 105_600,
+          shipping_cost: { amount_total: 0 },
+          total_details: { amount_discount: 0, amount_shipping: 0, amount_tax: 0 }
+        },
+        false,
+        {
+          discountCents: 2_400,
+          items: [
+            {
+              currency: "CAD",
+              discountUnitCents: 0,
+              lineTotalCents: 100_000,
+              listUnitPriceCents: 100_000,
+              productKey: "tiger-expo-outdoor-table",
+              productSlug: "tiger-expo-outdoor-table",
+              promotionKey: null,
+              quantity: 1,
+              unitPriceCents: 100_000,
+              variantKey: null
+            },
+            {
+              currency: "CAD",
+              discountUnitCents: 2_400,
+              lineTotalCents: 5_600,
+              listUnitPriceCents: 8_000,
+              productKey: AQUA_PADDLE_PRODUCT_KEY,
+              productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+              promotionKey: TABLE_ACCESSORIES_PROMOTION_KEY,
+              quantity: 1,
+              unitPriceCents: 5_600,
+              variantKey: AQUA_FOUR_PACK_VARIANT_KEY
+            }
+          ],
+          listSubtotalCents: 108_000,
+          pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+          shippingCents: 0,
+          shippingRule: CURRENT_CANADA_SHIPPING_RULE,
+          subtotalCents: 105_600,
+          totalCents: 105_600
+        }
+      )
+    ).toBeNull();
+  });
+
+  it("accepts Stripe automatic tax calculated on discounted net line prices", () => {
+    expect(
+      validate(
+        {
+          amount_subtotal: 105_600,
+          amount_total: 118_272,
+          automatic_tax: { status: "complete" },
+          shipping_cost: { amount_total: 0 },
+          total_details: {
+            amount_discount: 0,
+            amount_shipping: 0,
+            amount_tax: 12_672
+          }
+        },
+        false,
+        {
+          discountCents: 2_400,
+          items: [
+            {
+              currency: "CAD",
+              discountUnitCents: 0,
+              lineTotalCents: 100_000,
+              listUnitPriceCents: 100_000,
+              productKey: "tiger-expo-outdoor-table",
+              productSlug: "tiger-expo-outdoor-table",
+              promotionKey: null,
+              quantity: 1,
+              unitPriceCents: 100_000,
+              variantKey: null
+            },
+            {
+              currency: "CAD",
+              discountUnitCents: 2_400,
+              lineTotalCents: 5_600,
+              listUnitPriceCents: 8_000,
+              productKey: AQUA_PADDLE_PRODUCT_KEY,
+              productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+              promotionKey: TABLE_ACCESSORIES_PROMOTION_KEY,
+              quantity: 1,
+              unitPriceCents: 5_600,
+              variantKey: AQUA_FOUR_PACK_VARIANT_KEY
+            }
+          ],
+          listSubtotalCents: 108_000,
+          pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+          shippingCents: 0,
+          shippingRule: CURRENT_CANADA_SHIPPING_RULE,
+          subtotalCents: 105_600,
+          totalCents: 105_600
+        },
+        true
+      )
+    ).toBeNull();
+  });
+
+  it("rejects a valid-total discount allocated to the wrong equal-price play set", () => {
+    expect(
+      validate(
+        {
+          amount_subtotal: 111_560,
+          amount_total: 111_560,
+          shipping_cost: { amount_total: 0 },
+          total_details: { amount_discount: 0, amount_shipping: 0, amount_tax: 0 }
+        },
+        false,
+        {
+          discountCents: 2_040,
+          items: [
+            {
+              currency: "CAD",
+              discountUnitCents: 0,
+              lineTotalCents: 100_000,
+              listUnitPriceCents: 100_000,
+              productKey: "tiger-expo-outdoor-table",
+              productSlug: "tiger-expo-outdoor-table",
+              promotionKey: null,
+              quantity: 1,
+              unitPriceCents: 100_000,
+              variantKey: null
+            },
+            {
+              currency: "CAD",
+              discountUnitCents: 0,
+              lineTotalCents: 6_800,
+              listUnitPriceCents: 6_800,
+              productKey: AQUA_PADDLE_PRODUCT_KEY,
+              productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+              promotionKey: null,
+              quantity: 1,
+              unitPriceCents: 6_800,
+              variantKey: AQUA_FOUR_PACK_VARIANT_KEY
+            },
+            {
+              currency: "CAD",
+              discountUnitCents: 2_040,
+              lineTotalCents: 4_760,
+              listUnitPriceCents: 6_800,
+              productKey: VICE_PADDLE_PRODUCT_KEY,
+              productSlug: VICE_PADDLE_PRODUCT_KEY,
+              promotionKey: TABLE_ACCESSORIES_PROMOTION_KEY,
+              quantity: 1,
+              unitPriceCents: 4_760,
+              variantKey: VICE_BUNDLE_VARIANT_KEY
+            }
+          ],
+          listSubtotalCents: 113_600,
+          pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+          shippingCents: 0,
+          shippingRule: CURRENT_CANADA_SHIPPING_RULE,
+          subtotalCents: 111_560,
+          totalCents: 111_560
+        }
+      )
+    ).toBe("order_promotion_allocation_mismatch");
   });
 
   it("stores the phone number collected by Stripe on the paid order", () => {
@@ -738,8 +1245,13 @@ describe("Stripe webhook safety checks with local fakes", () => {
   it("accepts the exact Aqua 4-pack exception and still validates legacy pending orders", () => {
     const aquaItem = {
       currency: "CAD",
+      discountUnitCents: 0,
       lineTotalCents: 8_000,
+      listUnitPriceCents: 8_000,
       productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+      promotionKey: null,
+      quantity: 1,
+      unitPriceCents: 8_000,
       variantKey: AQUA_FOUR_PACK_VARIANT_KEY
     };
 
@@ -754,6 +1266,8 @@ describe("Stripe webhook safety checks with local fakes", () => {
         false,
         {
           items: [aquaItem],
+          listSubtotalCents: 8_000,
+          discountCents: 0,
           shippingCents: 0,
           shippingRule: CURRENT_CANADA_SHIPPING_RULE,
           subtotalCents: 8_000,
@@ -773,6 +1287,8 @@ describe("Stripe webhook safety checks with local fakes", () => {
         false,
         {
           items: [aquaItem],
+          listSubtotalCents: 8_000,
+          discountCents: 0,
           shippingCents: 1_500,
           subtotalCents: 8_000,
           totalCents: 9_500
@@ -795,17 +1311,29 @@ describe("Stripe webhook safety checks with local fakes", () => {
           items: [
             {
               currency: "CAD",
+              discountUnitCents: 0,
               lineTotalCents: 8_000,
+              listUnitPriceCents: 8_000,
               productSlug: AQUA_FOUR_PACK_PRODUCT_SLUG,
+              promotionKey: null,
+              quantity: 1,
+              unitPriceCents: 8_000,
               variantKey: AQUA_FOUR_PACK_VARIANT_KEY
             },
             {
               currency: "CAD",
+              discountUnitCents: 0,
               lineTotalCents: 800,
+              listUnitPriceCents: 800,
               productSlug: "product-one",
+              promotionKey: null,
+              quantity: 1,
+              unitPriceCents: 800,
               variantKey: null
             }
           ],
+          listSubtotalCents: 8_800,
+          discountCents: 0,
           shippingCents: 0,
           shippingRule: CURRENT_CANADA_SHIPPING_RULE,
           subtotalCents: 8_800,
@@ -817,6 +1345,15 @@ describe("Stripe webhook safety checks with local fakes", () => {
 
   it("routes amount, country, and livemode mismatches to manual review reasons", () => {
     expect(validate({ amount_total: 2_299 })).toBe("checkout_session_total_mismatch");
+    expect(
+      validate({
+        total_details: {
+          amount_discount: 1,
+          amount_shipping: 1_500,
+          amount_tax: 0
+        }
+      })
+    ).toBe("checkout_session_discount_not_supported");
     expect(
       validate({
         collected_information: {

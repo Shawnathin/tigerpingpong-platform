@@ -358,8 +358,8 @@ const accessoryProducts = [
       mediaKey: "cover-primary",
       role: "primary",
       cloudinarySecureUrl:
-        "https://res.cloudinary.com/djfcisldm/image/upload/v1781745082/tigerpingpong/recovered/products/covers/tpp-covers-primary-01.png",
-      altText: "Black Tiger PingPong cover fitted over a folded table.",
+        "https://res.cloudinary.com/djfcisldm/image/upload/v1781303672/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg",
+      altText: "Black Tiger PingPong cover shown straight on over a folded table.",
       title: "Tiger PingPong Table Cover",
       caption: null,
       sortOrder: 1,

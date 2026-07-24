@@ -33,4 +33,5 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
       - run: pnpm security:secrets
-      - run: pnpm security:audit
+      - name: Audit production dependencies (block high and critical only)
+        run: pnpm audit --prod --audit-level high

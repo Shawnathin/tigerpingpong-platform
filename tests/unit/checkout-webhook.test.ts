@@ -3,7 +3,16 @@ import { describe, expect, it, vi } from "vitest";
 import {
   AQUA_FOUR_PACK_PRODUCT_SLUG,
   AQUA_FOUR_PACK_VARIANT_KEY,
-  CURRENT_CANADA_SHIPPING_RULE
+  CURRENT_CANADA_SHIPPING_RULE,
+  PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+  VICE_BUNDLE_OPTION_VALUE,
+  VICE_BUNDLE_PUBLIC_LABEL,
+  VICE_BUNDLE_VARIANT_KEY,
+  VICE_PACKAGE_OPTION_NAME,
+  VICE_PADDLE_PRODUCT_KEY,
+  VICE_SINGLE_OPTION_VALUE,
+  VICE_SINGLE_PUBLIC_LABEL,
+  VICE_SINGLE_VARIANT_KEY
 } from "../../packages/shared/src";
 
 import { CheckoutService } from "../../apps/api/src/checkout/checkout.service";
@@ -55,6 +64,39 @@ describe("server-authoritative checkout", () => {
         items: [{ productSlug: "tiger-test-product", quantity: 11, selectedOptions: [] }]
       })
     ).toThrow("quantity cannot be greater than 10");
+  });
+
+  it("accepts the canonical Vice bundle option value through request validation", () => {
+    const service = new CheckoutService() as unknown as {
+      validateRequest(body: unknown): { items: Array<Record<string, unknown>> };
+    };
+
+    const result = service.validateRequest({
+      items: [
+        {
+          expectedUnitPriceCents: 6_800,
+          productSlug: VICE_PADDLE_PRODUCT_KEY,
+          quantity: 1,
+          selectedOptions: [
+            {
+              name: VICE_PACKAGE_OPTION_NAME,
+              value: VICE_BUNDLE_OPTION_VALUE
+            }
+          ],
+          selectedVariantKey: VICE_BUNDLE_VARIANT_KEY
+        }
+      ]
+    });
+
+    expect(result.items[0]).toMatchObject({
+      selectedOptions: [
+        {
+          name: VICE_PACKAGE_OPTION_NAME,
+          value: VICE_BUNDLE_OPTION_VALUE
+        }
+      ],
+      selectedVariantKey: VICE_BUNDLE_VARIANT_KEY
+    });
   });
 
   it("calculates the approved shipping boundary on the server", () => {
@@ -305,7 +347,290 @@ describe("server-authoritative checkout", () => {
       )
     ).toThrow("A selected product option value is invalid.");
   });
+
+  it("defaults legacy optionless Vice requests to the Single variant", () => {
+    const service = new CheckoutService() as unknown as {
+      createSnapshotItems(
+        items: unknown[],
+        products: Map<string, unknown>
+      ): Array<{
+        sku: string | null;
+        unitPriceCents: number;
+        variantKey: string | null;
+      }>;
+    };
+    const vice = createViceCheckoutProduct();
+
+    expect(
+      service.createSnapshotItems(
+        [
+          {
+            expectedUnitPriceCents: 1_500,
+            productSlug: VICE_PADDLE_PRODUCT_KEY,
+            quantity: 1,
+            selectedVariantKey: null,
+            selectedOptions: []
+          }
+        ],
+        new Map([[VICE_PADDLE_PRODUCT_KEY, vice]])
+      )
+    ).toEqual([
+      expect.objectContaining({
+        sku: "9174",
+        unitPriceCents: 1_500,
+        variantKey: VICE_SINGLE_VARIANT_KEY
+      })
+    ]);
+  });
+
+  it("keeps the Single Vice option required while the bundle remains inactive", () => {
+    const service = new CheckoutService() as unknown as {
+      createSnapshotItems(
+        items: unknown[],
+        products: Map<string, unknown>
+      ): Array<{
+        sku: string | null;
+        unitPriceCents: number;
+        variantKey: string | null;
+      }>;
+    };
+    const vice = createViceCheckoutProduct();
+    vice.variants = vice.variants.filter((variant) => variant.key === VICE_SINGLE_VARIANT_KEY);
+
+    expect(
+      service.createSnapshotItems(
+        [
+          {
+            expectedUnitPriceCents: 1_500,
+            productSlug: VICE_PADDLE_PRODUCT_KEY,
+            quantity: 1,
+            selectedVariantKey: null,
+            selectedOptions: []
+          }
+        ],
+        new Map([[VICE_PADDLE_PRODUCT_KEY, vice]])
+      )
+    ).toEqual([
+      expect.objectContaining({
+        sku: "9174",
+        unitPriceCents: 1_500,
+        variantKey: VICE_SINGLE_VARIANT_KEY
+      })
+    ]);
+  });
+
+  it("loads the white six-ball component alongside requested Vice lines", async () => {
+    const vice = createViceCheckoutProduct();
+    const whiteBalls = {
+      ...checkoutProduct,
+      id: "white-balls",
+      key: PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+      slug: PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY
+    };
+    const findMany = vi.fn().mockResolvedValueOnce([vice]).mockResolvedValueOnce([whiteBalls]);
+    const service = new CheckoutService() as unknown as {
+      loadCheckoutProducts(prisma: unknown, items: unknown[]): Promise<Map<string, unknown>>;
+    };
+
+    await service.loadCheckoutProducts(
+      {
+        product: {
+          findMany
+        }
+      },
+      [
+        {
+          expectedUnitPriceCents: 1_500,
+          productSlug: VICE_PADDLE_PRODUCT_KEY,
+          quantity: 1,
+          selectedVariantKey: VICE_SINGLE_VARIANT_KEY,
+          selectedOptions: []
+        }
+      ]
+    );
+
+    expect(findMany).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        where: {
+          slug: {
+            in: [VICE_PADDLE_PRODUCT_KEY]
+          }
+        }
+      })
+    );
+    expect(findMany).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: {
+          key: {
+            in: [PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY]
+          }
+        }
+      })
+    );
+  });
+
+  it("uses live components for the Vice bundle and refuses an unassigned bundle SKU", () => {
+    const service = new CheckoutService() as unknown as {
+      createSnapshotItems(
+        items: unknown[],
+        products: Map<string, unknown>
+      ): Array<{
+        sku: string | null;
+        unitPriceCents: number;
+        variantKey: string | null;
+      }>;
+    };
+    const vice = createViceCheckoutProduct();
+    const whiteBalls = {
+      ...checkoutProduct,
+      id: "white-balls",
+      key: PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+      slug: PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+      priceCents: 800
+    };
+    const requestItem = {
+      expectedUnitPriceCents: 6_800,
+      productSlug: VICE_PADDLE_PRODUCT_KEY,
+      quantity: 1,
+      selectedVariantKey: VICE_BUNDLE_VARIANT_KEY,
+      selectedOptions: [
+        {
+          name: VICE_PACKAGE_OPTION_NAME,
+          value: VICE_BUNDLE_OPTION_VALUE
+        }
+      ]
+    };
+    const products = new Map<string, unknown>([
+      [VICE_PADDLE_PRODUCT_KEY, vice],
+      [PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY, whiteBalls]
+    ]);
+
+    expect(service.createSnapshotItems([requestItem], products)).toEqual([
+      expect.objectContaining({
+        sku: "VICE-BUNDLE-SKU",
+        unitPriceCents: 6_800,
+        variantKey: VICE_BUNDLE_VARIANT_KEY
+      })
+    ]);
+
+    const bundle = vice.variants.find((variant) => variant.key === VICE_BUNDLE_VARIANT_KEY);
+    if (bundle) {
+      bundle.sku = null;
+    }
+
+    expect(() => service.createSnapshotItems([requestItem], products)).toThrow(
+      "Your cart changed. Review the updated items before checking out."
+    );
+  });
+
+  it("rejects duplicate canonical Single lines after legacy normalization", () => {
+    const service = new CheckoutService() as unknown as {
+      createSnapshotItems(items: unknown[], products: Map<string, unknown>): unknown[];
+    };
+    const vice = createViceCheckoutProduct();
+
+    expect(() =>
+      service.createSnapshotItems(
+        [
+          {
+            expectedUnitPriceCents: 1_500,
+            productSlug: VICE_PADDLE_PRODUCT_KEY,
+            quantity: 10,
+            selectedVariantKey: null,
+            selectedOptions: []
+          },
+          {
+            expectedUnitPriceCents: 1_500,
+            productSlug: VICE_PADDLE_PRODUCT_KEY,
+            quantity: 10,
+            selectedVariantKey: VICE_SINGLE_VARIANT_KEY,
+            selectedOptions: [
+              {
+                name: VICE_PACKAGE_OPTION_NAME,
+                value: VICE_SINGLE_OPTION_VALUE
+              }
+            ]
+          }
+        ],
+        new Map([[VICE_PADDLE_PRODUCT_KEY, vice]])
+      )
+    ).toThrow("Duplicate cart lines are not supported for V1 checkout.");
+  });
 });
+
+function createViceCheckoutProduct() {
+  const option = {
+    displayName: VICE_PACKAGE_OPTION_NAME,
+    name: VICE_PACKAGE_OPTION_NAME,
+    sortOrder: 0
+  };
+  const variant = (
+    key: string,
+    optionValue: string,
+    label: string,
+    priceCents: number | null,
+    sku: string | null
+  ) => ({
+    id: key,
+    isActive: true,
+    key,
+    sku,
+    name: label,
+    priceCents,
+    currency: "CAD",
+    purchaseModeOverride: null,
+    optionValues: [
+      {
+        productOptionValue: {
+          label,
+          option,
+          sortOrder: 0,
+          value: optionValue
+        }
+      }
+    ]
+  });
+
+  return {
+    id: "vice-product",
+    key: VICE_PADDLE_PRODUCT_KEY,
+    slug: VICE_PADDLE_PRODUCT_KEY,
+    name: "Tiger PingPong Vice Ping Pong Paddle",
+    sku: null,
+    productKind: "paddle",
+    status: "active",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    purchaseMode: "online_checkout",
+    priceCents: 1_500,
+    currency: "CAD",
+    family: { isActive: true, isPublic: true },
+    primaryCategory: {
+      isActive: true,
+      v1PublicNavigation: true,
+      v1CheckoutScope: true
+    },
+    media: [],
+    variants: [
+      variant(
+        VICE_SINGLE_VARIANT_KEY,
+        VICE_SINGLE_OPTION_VALUE,
+        VICE_SINGLE_PUBLIC_LABEL,
+        1_500,
+        "9174"
+      ),
+      variant(
+        VICE_BUNDLE_VARIANT_KEY,
+        VICE_BUNDLE_OPTION_VALUE,
+        VICE_BUNDLE_PUBLIC_LABEL,
+        null,
+        "VICE-BUNDLE-SKU"
+      )
+    ]
+  };
+}
 
 describe("Stripe webhook safety checks with local fakes", () => {
   const baseOrder = {

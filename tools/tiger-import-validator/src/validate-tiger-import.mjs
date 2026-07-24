@@ -6,8 +6,12 @@ import { fileURLToPath } from "node:url";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "../../..");
-const INPUT_DIR = path.join(REPO_ROOT, "data/import-review/tigerpingpong/v1");
-const OUTPUT_DIR = path.join(REPO_ROOT, "var/import-validation/tigerpingpong/latest");
+const INPUT_DIR = process.env.TIGER_IMPORT_INPUT_DIR
+  ? path.resolve(process.env.TIGER_IMPORT_INPUT_DIR)
+  : path.join(REPO_ROOT, "data/import-review/tigerpingpong/v1");
+const OUTPUT_DIR = process.env.TIGER_IMPORT_OUTPUT_DIR
+  ? path.resolve(process.env.TIGER_IMPORT_OUTPUT_DIR)
+  : path.join(REPO_ROOT, "var/import-validation/tigerpingpong/latest");
 const SCHEMA_PATH = path.join(REPO_ROOT, "packages/db/prisma/schema.prisma");
 const TIGER_BRAND_KEY = "tiger-pingpong";
 const CLOUDINARY_DELIVERY_HOST = "res.cloudinary.com";
@@ -295,6 +299,32 @@ const CONFIRMED_PRODUCT_VALUES = new Map([
   ]
 ]);
 
+const VICE_PACKAGE_RULES = {
+  productKey: "tiger-vice-paddle",
+  singleVariantKey: "tiger-vice-package-single",
+  singleLabel: "Single Vice Paddle",
+  singleOptionValue: "single-vice-paddle",
+  bundleVariantKey: "tiger-vice-package-4-pack-6-white-balls",
+  bundleLabel: "4 Vice paddles + 6 white balls",
+  bundleOptionValue: "4-vice-paddles-6-white-balls",
+  optionName: "Package Options",
+  whiteBallsProductKey: "tiger-premium-balls-6-white",
+  whiteBallsSku: "9157",
+  blockerFlag: "owner_sku_required"
+};
+const FORBIDDEN_OPERATIONAL_SKUS = new Set([
+  "N/A",
+  "NA",
+  "NONE",
+  "PENDING",
+  "PLACEHOLDER",
+  "TBD",
+  "TEMP",
+  "TEST",
+  "TODO",
+  "UNKNOWN"
+]);
+
 const SCHEMA_ENUMS = {
   ProductKind: "product_kind",
   ProductStatus: "status",
@@ -545,6 +575,7 @@ function validateFilesAndRows(schemaEnums) {
   validateTableRules();
   validateMediaRules();
   validateConfirmedBusinessUpdates();
+  validateVicePackageRules();
   validateRedirectRules();
   validateReviewFlags();
 }
@@ -1517,6 +1548,353 @@ function validateConfirmedBusinessUpdates() {
       });
     }
   }
+}
+
+function validateVicePackageRules() {
+  const productFile = csvFiles.get("products");
+  const variantFile = csvFiles.get("variants");
+  const flagFile = csvFiles.get("flags");
+  const products = indexes.get("products") ?? new Map();
+  const variants = indexes.get("variants") ?? new Map();
+  const viceProduct = products.get(VICE_PACKAGE_RULES.productKey);
+  const whiteBallsProduct = products.get(VICE_PACKAGE_RULES.whiteBallsProductKey);
+  const singleVariant = variants.get(VICE_PACKAGE_RULES.singleVariantKey);
+  const bundleVariant = variants.get(VICE_PACKAGE_RULES.bundleVariantKey);
+  const bundleSkuFlags = (flagFile?.rows ?? []).filter(
+    (row) =>
+      value(row, "entity_type") === "variant" &&
+      value(row, "entity_key") === VICE_PACKAGE_RULES.bundleVariantKey &&
+      value(row, "flag") === VICE_PACKAGE_RULES.blockerFlag
+  );
+  const bundleSkuFlag = bundleSkuFlags[0];
+
+  if (!viceProduct) {
+    addIssue({
+      level: "error",
+      code: "vice_product_missing",
+      file: productFile?.relativePath,
+      entityType: "product",
+      entityKey: VICE_PACKAGE_RULES.productKey,
+      message: "The Vice parent product is missing."
+    });
+  } else {
+    for (const [column, expected] of [
+      ["sku", ""],
+      ["price_cents", "1500"],
+      ["currency", "CAD"]
+    ]) {
+      validateExactReviewedValue({
+        fileInfo: productFile,
+        row: viceProduct,
+        column,
+        expected,
+        code: "vice_product_package_model_mismatch",
+        entityType: "product",
+        entityKey: VICE_PACKAGE_RULES.productKey,
+        message:
+          "The Vice parent must keep a blank SKU and the reconciled base price for its required package-option model."
+      });
+    }
+  }
+
+  if (!whiteBallsProduct) {
+    addIssue({
+      level: "error",
+      code: "vice_bundle_component_missing",
+      file: productFile?.relativePath,
+      entityType: "product",
+      entityKey: VICE_PACKAGE_RULES.whiteBallsProductKey,
+      message: "The Vice bundle white-ball component product is missing."
+    });
+  } else {
+    for (const [column, expected] of [
+      ["sku", VICE_PACKAGE_RULES.whiteBallsSku],
+      ["currency", "CAD"]
+    ]) {
+      validateExactReviewedValue({
+        fileInfo: productFile,
+        row: whiteBallsProduct,
+        column,
+        expected,
+        code: "vice_bundle_component_mismatch",
+        entityType: "product",
+        entityKey: VICE_PACKAGE_RULES.whiteBallsProductKey,
+        message: "The Vice bundle white-ball component does not match the approved input."
+      });
+    }
+
+    const whiteBallsPriceCents = Number.parseInt(value(whiteBallsProduct, "price_cents"), 10);
+
+    if (!Number.isInteger(whiteBallsPriceCents) || whiteBallsPriceCents <= 0) {
+      addIssue({
+        level: "error",
+        code: "vice_bundle_component_price_missing",
+        file: productFile?.relativePath,
+        row: whiteBallsProduct.__rowNumber,
+        entityType: "product",
+        entityKey: VICE_PACKAGE_RULES.whiteBallsProductKey,
+        message: "The white six-ball component needs a positive durable price input."
+      });
+    }
+  }
+
+  if (!singleVariant) {
+    addIssue({
+      level: "error",
+      code: "vice_single_variant_missing",
+      file: variantFile?.relativePath,
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.singleVariantKey,
+      message: "The required Single Vice Paddle package variant is missing."
+    });
+  } else {
+    for (const [column, expected] of [
+      ["product_key", VICE_PACKAGE_RULES.productKey],
+      ["sku", "9174"],
+      ["name", VICE_PACKAGE_RULES.singleLabel],
+      ["option_1_name", VICE_PACKAGE_RULES.optionName],
+      ["option_1_value", VICE_PACKAGE_RULES.singleOptionValue],
+      ["currency", "CAD"],
+      ["purchase_mode_override", ""],
+      ["is_active", "true"]
+    ]) {
+      validateExactReviewedValue({
+        fileInfo: variantFile,
+        row: singleVariant,
+        column,
+        expected,
+        code: "vice_single_variant_mismatch",
+        entityType: "variant",
+        entityKey: VICE_PACKAGE_RULES.singleVariantKey,
+        message: "The Single Vice Paddle package variant does not match the approved model."
+      });
+    }
+
+    if (viceProduct) {
+      validateExactReviewedValue({
+        fileInfo: variantFile,
+        row: singleVariant,
+        column: "price_cents",
+        expected: value(viceProduct, "price_cents"),
+        code: "vice_single_variant_price_mismatch",
+        entityType: "variant",
+        entityKey: VICE_PACKAGE_RULES.singleVariantKey,
+        message: "The Single Vice Paddle variant price must match the durable Vice product price."
+      });
+    }
+  }
+
+  if (!bundleVariant) {
+    addIssue({
+      level: "error",
+      code: "vice_bundle_variant_missing",
+      file: variantFile?.relativePath,
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message: "The approved four-Vice/six-white-ball package variant is missing."
+    });
+    return;
+  }
+
+  for (const [column, expected] of [
+    ["product_key", VICE_PACKAGE_RULES.productKey],
+    ["name", VICE_PACKAGE_RULES.bundleLabel],
+    ["option_1_name", VICE_PACKAGE_RULES.optionName],
+    ["option_1_value", VICE_PACKAGE_RULES.bundleOptionValue],
+    ["currency", "CAD"]
+  ]) {
+    validateExactReviewedValue({
+      fileInfo: variantFile,
+      row: bundleVariant,
+      column,
+      expected,
+      code: "vice_bundle_variant_mismatch",
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message: "The Vice bundle variant does not match the approved package model."
+    });
+  }
+
+  validateExactReviewedValue({
+    fileInfo: variantFile,
+    row: bundleVariant,
+    column: "price_cents",
+    expected: "",
+    code: "vice_bundle_price_must_be_derived",
+    entityType: "variant",
+    entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+    message:
+      "The durable Vice bundle price must remain blank so the importer derives it from live component inputs."
+  });
+
+  const bundleSku = value(bundleVariant, "sku");
+
+  if (bundleSkuFlags.length !== 1) {
+    addIssue({
+      level: "error",
+      code: "vice_bundle_sku_blocker_flag_count_mismatch",
+      file: flagFile?.relativePath,
+      row: bundleSkuFlag?.__rowNumber,
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message: "The Vice bundle requires exactly one owner_sku_required review flag.",
+      details: `found ${bundleSkuFlags.length}`
+    });
+  }
+
+  if (bundleSku === "") {
+    for (const [column, expected] of [
+      ["purchase_mode_override", "deferred_from_v1"],
+      ["is_active", "false"]
+    ]) {
+      validateExactReviewedValue({
+        fileInfo: variantFile,
+        row: bundleVariant,
+        column,
+        expected,
+        code: "vice_bundle_unassigned_sku_not_deferred",
+        entityType: "variant",
+        entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+        message: "The Vice bundle must remain inactive and deferred while its exact SKU is unknown."
+      });
+    }
+
+    if (bundleSkuFlag) {
+      for (const [column, expected] of [
+        ["severity", "blocker"],
+        ["resolution_owner", "business"],
+        ["resolution_status", "open"]
+      ]) {
+        validateExactReviewedValue({
+          fileInfo: flagFile,
+          row: bundleSkuFlag,
+          column,
+          expected,
+          code: "vice_bundle_sku_blocker_flag_mismatch",
+          entityType: "variant",
+          entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+          message: "The missing Vice bundle SKU must remain an owner-facing open blocker."
+        });
+      }
+    }
+
+    addIssue({
+      level: "warning",
+      code: "vice_bundle_sku_required",
+      file: variantFile?.relativePath,
+      row: bundleVariant.__rowNumber,
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message:
+        "Owner or operations must assign the exact Vice bundle SKU before any scoped or all-catalog deployed write can include this variant."
+    });
+    return;
+  }
+
+  const normalizedBundleSku = bundleSku.trim().toUpperCase();
+
+  if (
+    FORBIDDEN_OPERATIONAL_SKUS.has(normalizedBundleSku) ||
+    /^(?:PENDING|PLACEHOLDER|TBD|TEMP|TEST|TODO|UNKNOWN)[-_ ]/u.test(normalizedBundleSku)
+  ) {
+    addIssue({
+      level: "error",
+      code: "vice_bundle_sku_placeholder",
+      file: variantFile?.relativePath,
+      row: bundleVariant.__rowNumber,
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message:
+        "The Vice bundle SKU must be the exact operations-assigned value, not a placeholder.",
+      details: bundleSku
+    });
+  }
+
+  const duplicateSkuEntities = [
+    ...(productFile?.rows ?? []).map((row) => ({
+      entityKey: value(row, "product_key"),
+      entityType: "product",
+      sku: value(row, "sku")
+    })),
+    ...(variantFile?.rows ?? []).map((row) => ({
+      entityKey: value(row, "variant_key"),
+      entityType: "variant",
+      sku: value(row, "sku")
+    }))
+  ].filter(
+    (entity) =>
+      entity.sku === bundleSku &&
+      !(entity.entityType === "variant" && entity.entityKey === VICE_PACKAGE_RULES.bundleVariantKey)
+  );
+
+  if (duplicateSkuEntities.length > 0) {
+    addIssue({
+      level: "error",
+      code: "vice_bundle_sku_duplicate",
+      file: variantFile?.relativePath,
+      row: bundleVariant.__rowNumber,
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message: "The Vice bundle SKU must not duplicate another catalog product or variant SKU.",
+      details: duplicateSkuEntities
+        .map((entity) => `${entity.entityType}:${entity.entityKey}`)
+        .join(", ")
+    });
+  }
+
+  for (const [column, expected] of [
+    ["purchase_mode_override", ""],
+    ["is_active", "true"]
+  ]) {
+    validateExactReviewedValue({
+      fileInfo: variantFile,
+      row: bundleVariant,
+      column,
+      expected,
+      code: "vice_bundle_assigned_sku_not_active",
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message: "A SKU-assigned Vice bundle must be active and use the parent purchase mode."
+    });
+  }
+
+  if (!bundleSkuFlag || value(bundleSkuFlag, "resolution_status") !== "resolved") {
+    addIssue({
+      level: "error",
+      code: "vice_bundle_sku_blocker_not_resolved",
+      file: flagFile?.relativePath,
+      row: bundleSkuFlag?.__rowNumber,
+      entityType: "variant",
+      entityKey: VICE_PACKAGE_RULES.bundleVariantKey,
+      message: "Resolve the owner_sku_required flag after assigning the exact Vice bundle SKU."
+    });
+  }
+}
+
+function validateExactReviewedValue({
+  fileInfo,
+  row,
+  column,
+  expected,
+  code,
+  entityType,
+  entityKey,
+  message
+}) {
+  if (value(row, column) === expected) {
+    return;
+  }
+
+  addIssue({
+    level: "error",
+    code,
+    file: fileInfo?.relativePath,
+    row: row?.__rowNumber,
+    entityType,
+    entityKey,
+    message,
+    details: `${column}: expected ${expected || "(blank)"}; found ${value(row, column) || "(blank)"}.`
+  });
 }
 
 function validateConfirmedCheckoutReadyProduct(productFile, product, productKey) {

@@ -11,6 +11,16 @@ import {
   V1_FLAT_RATE_SHIPPING_COPY,
   V1_FREE_SHIPPING_COPY
 } from "./shipping";
+import {
+  getVicePackageShopperLabel,
+  VICE_BUNDLE_OPTION_VALUE,
+  VICE_BUNDLE_SHOPPER_LABEL,
+  VICE_PACKAGE_OPTION_NAME,
+  VICE_PRODUCT_SLUG,
+  VICE_SINGLE_OPTION_VALUE,
+  VICE_SINGLE_SHOPPER_LABEL,
+  VICE_SINGLE_VARIANT_KEY
+} from "./vice-package";
 
 export const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
 export const CART_CHANGE_EVENT = "tigerpingpong:cart-change";
@@ -306,7 +316,7 @@ function sanitizeCartItems(value: unknown): CartItem[] {
   }
 
   const items: CartItem[] = [];
-  const seenCartLineIds = new Set<string>();
+  const cartLinesById = new Map<string, { index: number; wasLegacyViceLine: boolean }>();
 
   for (const item of value) {
     if (!isRecord(item)) {
@@ -318,20 +328,54 @@ function sanitizeCartItems(value: unknown): CartItem[] {
     const name = typeof item.name === "string" ? item.name.trim() : "";
     const unitPriceCents = normalizePrice(item.unitPriceCents);
     const quantity = normalizeQuantity(item.quantity);
-    const selectedOptions = sanitizeCartItemOptions(item.selectedOptions);
+    let selectedOptions = sanitizeCartItemOptions(
+      productSlug === VICE_PRODUCT_SLUG
+        ? canonicalizeStoredVicePackageOptions(item.selectedOptions)
+        : item.selectedOptions
+    );
+    let selectedVariantKey = normalizeOptionalText(item.selectedVariantKey);
+    const wasLegacyViceLine =
+      productSlug === VICE_PRODUCT_SLUG &&
+      !selectedOptions.some(
+        (option) => normalizeOptionKey(option.name) === normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
+      );
+
+    if (wasLegacyViceLine) {
+      selectedOptions = sanitizeCartItemOptions([
+        ...selectedOptions,
+        {
+          displayName: VICE_PACKAGE_OPTION_NAME,
+          label: VICE_SINGLE_SHOPPER_LABEL,
+          name: VICE_PACKAGE_OPTION_NAME,
+          value: VICE_SINGLE_OPTION_VALUE
+        }
+      ]);
+      selectedVariantKey = VICE_SINGLE_VARIANT_KEY;
+    }
+
+    const vicePackageShopperLabel =
+      productSlug === VICE_PRODUCT_SLUG ? getVicePackageShopperLabel(selectedVariantKey) : null;
+
+    if (vicePackageShopperLabel) {
+      selectedOptions = selectedOptions.map((option) =>
+        normalizeOptionKey(option.name) === normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
+          ? {
+              ...option,
+              displayName: VICE_PACKAGE_OPTION_NAME,
+              label: vicePackageShopperLabel,
+              name: VICE_PACKAGE_OPTION_NAME
+            }
+          : option
+      );
+    }
+
     const cartLineId = getCartLineId(productSlug, selectedOptions);
 
-    if (
-      !isValidSlug(productSlug) ||
-      !name ||
-      unitPriceCents <= 0 ||
-      seenCartLineIds.has(cartLineId)
-    ) {
+    if (!isValidSlug(productSlug) || !name || unitPriceCents <= 0) {
       continue;
     }
 
-    seenCartLineIds.add(cartLineId);
-    items.push({
+    const sanitizedItem: CartItem = {
       cartLineId,
       categoryName: typeof item.categoryName === "string" ? item.categoryName : undefined,
       currency: normalizeCurrency(item.currency),
@@ -340,13 +384,72 @@ function sanitizeCartItems(value: unknown): CartItem[] {
       productKind: typeof item.productKind === "string" ? item.productKind : undefined,
       productSlug,
       quantity,
-      selectedVariantKey: normalizeOptionalText(item.selectedVariantKey),
+      selectedVariantKey,
       selectedOptions,
       unitPriceCents
+    };
+    const existingLine = cartLinesById.get(cartLineId);
+
+    if (existingLine) {
+      const existingItem = items[existingLine.index];
+      const preferredItem =
+        existingLine.wasLegacyViceLine && !wasLegacyViceLine ? sanitizedItem : existingItem;
+
+      items[existingLine.index] = {
+        ...preferredItem,
+        quantity: Math.min(
+          existingItem.quantity + sanitizedItem.quantity,
+          MAX_CART_QUANTITY_PER_LINE
+        )
+      };
+      cartLinesById.set(cartLineId, {
+        index: existingLine.index,
+        wasLegacyViceLine: existingLine.wasLegacyViceLine && wasLegacyViceLine
+      });
+      continue;
+    }
+
+    cartLinesById.set(cartLineId, {
+      index: items.length,
+      wasLegacyViceLine
     });
+    items.push(sanitizedItem);
   }
 
   return items;
+}
+
+function canonicalizeStoredVicePackageOptions(value: unknown): unknown {
+  if (!Array.isArray(value)) {
+    return value;
+  }
+
+  return value.map((option) => {
+    if (
+      !isRecord(option) ||
+      normalizeOptionKey(String(option.name ?? "")) !== normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
+    ) {
+      return option;
+    }
+
+    const optionValue = typeof option.value === "string" ? option.value.trim() : "";
+
+    if (optionValue === VICE_SINGLE_SHOPPER_LABEL) {
+      return {
+        ...option,
+        value: VICE_SINGLE_OPTION_VALUE
+      };
+    }
+
+    if (optionValue === VICE_BUNDLE_SHOPPER_LABEL) {
+      return {
+        ...option,
+        value: VICE_BUNDLE_OPTION_VALUE
+      };
+    }
+
+    return option;
+  });
 }
 
 function normalizeQuantity(value: unknown): number {

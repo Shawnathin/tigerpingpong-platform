@@ -229,33 +229,78 @@ const part40Product = {
   media: [],
   variants: []
 };
+const viceSinglePriceCents = 1500;
+const whiteBallSixPackPriceCents = 800;
+const viceBundlePriceCents = viceSinglePriceCents * 4 + whiteBallSixPackPriceCents;
+const viceProduct = {
+  key: "tiger-vice-paddle",
+  slug: "tiger-vice-paddle",
+  name: "Tiger PingPong Vice Ping Pong Paddle",
+  productKind: "paddle",
+  purchaseMode: "online_checkout",
+  priceCents: viceSinglePriceCents,
+  currency: "CAD",
+  v1PublicNavigation: true,
+  v1CheckoutScope: true,
+  shippingReviewRequired: false,
+  family: { key: "vice-paddle", slug: "vice-paddle", name: "Vice Paddle" },
+  category: { key: "paddles", slug: "paddles", name: "Paddles" },
+  primaryMedia: {
+    mediaKey: "vice-primary",
+    role: "primary",
+    cloudinarySecureUrl:
+      "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
+    altText: "Tiger PingPong Vice paddle in pink with a white ball.",
+    title: "Tiger PingPong Vice paddle",
+    caption: null,
+    sortOrder: 1,
+    isPrimary: true
+  },
+  media: [],
+  variants: [
+    {
+      id: "vice-package-single",
+      key: "tiger-vice-package-single",
+      name: "Single Vice Paddle",
+      priceCents: viceSinglePriceCents,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package Options",
+          displayName: "Package Options",
+          value: "single-vice-paddle",
+          label: "Single Vice Paddle",
+          sortOrder: 1,
+          optionSortOrder: 1
+        }
+      ]
+    },
+    {
+      id: "vice-package-4-pack-6-white-balls",
+      key: "tiger-vice-package-4-pack-6-white-balls",
+      name: "4 Vice paddles + 6 white balls",
+      priceCents: viceBundlePriceCents,
+      currency: "CAD",
+      purchaseModeOverride: null,
+      isActive: true,
+      options: [
+        {
+          name: "Package Options",
+          displayName: "Package Options",
+          value: "4-vice-paddles-6-white-balls",
+          label: "4 Vice paddles + 6 white balls",
+          sortOrder: 2,
+          optionSortOrder: 1
+        }
+      ]
+    }
+  ]
+};
 const accessoryProducts = [
   aquaProduct,
-  {
-    key: "tiger-vice-paddle",
-    slug: "tiger-vice-paddle",
-    name: "Tiger PingPong Vice Ping Pong Paddle",
-    productKind: "paddle",
-    purchaseMode: "online_checkout",
-    priceCents: 5000,
-    currency: "CAD",
-    v1PublicNavigation: true,
-    v1CheckoutScope: true,
-    shippingReviewRequired: false,
-    family: { key: "vice-paddle", slug: "vice-paddle", name: "Vice Paddle" },
-    category: { key: "paddles", slug: "paddles", name: "Paddles" },
-    primaryMedia: {
-      mediaKey: "vice-primary",
-      role: "primary",
-      cloudinarySecureUrl:
-        "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
-      altText: "Tiger PingPong Vice paddle in pink with a white ball.",
-      title: "Tiger PingPong Vice paddle",
-      caption: null,
-      sortOrder: 1,
-      isPrimary: true
-    }
-  },
+  viceProduct,
   {
     key: "tiger-premium-balls-6-white",
     slug: "tiger-premium-balls-6-white",
@@ -626,9 +671,9 @@ const server = createServer(async (request, response) => {
         product: {
           ...simpleProduct,
           description: "Local catalog fixture for browser tests.",
-          media: [],
+          media: simpleProduct.media ?? [],
           shortDescription: `${simpleProduct.name} local browser fixture.`,
-          variants: []
+          variants: simpleProduct.variants ?? []
         }
       })
     );
@@ -689,9 +734,13 @@ const server = createServer(async (request, response) => {
     const changes = [];
     let subtotalCents = 0;
     for (const item of body.items ?? []) {
-      const catalogProduct = [product, aquaProduct, part40Product, ...tableDetailProducts].find(
-        (candidate) => candidate.slug === item.productSlug
-      );
+      const catalogProduct = [
+        product,
+        aquaProduct,
+        viceProduct,
+        part40Product,
+        ...tableDetailProducts
+      ].find((candidate) => candidate.slug === item.productSlug);
       const variant = catalogProduct?.variants.find(
         (candidate) => candidate.key === item.selectedVariantKey
       );

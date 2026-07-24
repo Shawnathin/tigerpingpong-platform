@@ -1,5 +1,19 @@
-import { Injectable, NotFoundException, OnModuleDestroy, ServiceUnavailableException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  OnModuleDestroy,
+  ServiceUnavailableException
+} from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
+import {
+  calculateViceBundleRegularPrice,
+  PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+  VICE_BUNDLE_PUBLIC_LABEL,
+  VICE_BUNDLE_VARIANT_KEY,
+  VICE_PADDLE_PRODUCT_KEY,
+  VICE_SINGLE_VARIANT_KEY,
+  type ComponentDerivedCatalogPrice
+} from "@tigerpingpong/shared";
 
 interface CatalogRequestOptions {
   includeInternal: boolean;
@@ -144,6 +158,16 @@ interface ProductDetailRecord extends ProductListRecord {
   targetRelationships: IncomingRelationshipRecord[];
 }
 
+interface ComponentDerivedVariantPricing extends ComponentDerivedCatalogPrice {
+  name: string;
+  variantKey: string;
+}
+
+interface ProductPriceRecord {
+  currency: string;
+  priceCents: number | null;
+}
+
 const categorySelect = {
   id: true,
   key: true,
@@ -233,15 +257,14 @@ export class CatalogService implements OnModuleDestroy {
   async getHealth(): Promise<unknown> {
     try {
       const prisma = this.getPrisma();
-      const [brands, categories, productFamilies, products, variants, media] =
-        await Promise.all([
-          prisma.brand.count(),
-          prisma.category.count(),
-          prisma.productFamily.count(),
-          prisma.product.count(),
-          prisma.productVariant.count(),
-          prisma.productMedia.count()
-        ]);
+      const [brands, categories, productFamilies, products, variants, media] = await Promise.all([
+        prisma.brand.count(),
+        prisma.category.count(),
+        prisma.productFamily.count(),
+        prisma.product.count(),
+        prisma.productVariant.count(),
+        prisma.productMedia.count()
+      ]);
 
       return {
         status: "ok",
@@ -351,10 +374,7 @@ export class CatalogService implements OnModuleDestroy {
     };
   }
 
-  async getFamilyBySlug(
-    slug: string,
-    options: CatalogRequestOptions
-  ): Promise<unknown> {
+  async getFamilyBySlug(slug: string, options: CatalogRequestOptions): Promise<unknown> {
     const family = await this.getPrisma().productFamily.findFirst({
       where: {
         slug,
@@ -475,10 +495,7 @@ export class CatalogService implements OnModuleDestroy {
     };
   }
 
-  async getProductBySlug(
-    slug: string,
-    options: CatalogRequestOptions
-  ): Promise<unknown> {
+  async getProductBySlug(slug: string, options: CatalogRequestOptions): Promise<unknown> {
     const product: ProductDetailRecord | null = await this.getPrisma().product.findFirst({
       where: {
         slug,
@@ -638,8 +655,14 @@ export class CatalogService implements OnModuleDestroy {
       throw new NotFoundException(`Product not found: ${slug}`);
     }
 
+    const componentDerivedVariantPricing = await this.getViceBundleComponentDerivedPricing(product);
+
     return {
-      product: this.serializeProductDetail(product, options.includeInternal)
+      product: this.serializeProductDetail(
+        product,
+        options.includeInternal,
+        componentDerivedVariantPricing
+      )
     };
   }
 
@@ -737,9 +760,7 @@ export class CatalogService implements OnModuleDestroy {
             parentId: node.parentId
           }
         : {}),
-      children: node.children.map((child) =>
-        this.serializeCategoryNode(child, includeInternal)
-      )
+      children: node.children.map((child) => this.serializeCategoryNode(child, includeInternal))
     };
   }
 
@@ -763,10 +784,7 @@ export class CatalogService implements OnModuleDestroy {
     };
   }
 
-  private serializeProductListItem(
-    product: ProductListRecord,
-    includeInternal: boolean
-  ) {
+  private serializeProductListItem(product: ProductListRecord, includeInternal: boolean) {
     const primaryMedia = product.media[0] ?? null;
 
     return {
@@ -782,9 +800,7 @@ export class CatalogService implements OnModuleDestroy {
       shippingReviewRequired: product.shippingReviewRequired,
       family: product.family,
       category: product.primaryCategory,
-      primaryMedia: primaryMedia
-        ? this.serializeMedia(primaryMedia, includeInternal)
-        : null,
+      primaryMedia: primaryMedia ? this.serializeMedia(primaryMedia, includeInternal) : null,
       ...(includeInternal
         ? {
             sku: product.sku,
@@ -797,7 +813,8 @@ export class CatalogService implements OnModuleDestroy {
 
   private serializeProductDetail(
     product: ProductDetailRecord,
-    includeInternal: boolean
+    includeInternal: boolean,
+    componentDerivedVariantPricing: ComponentDerivedVariantPricing | null = null
   ) {
     return {
       key: product.key,
@@ -814,33 +831,46 @@ export class CatalogService implements OnModuleDestroy {
       description: product.description,
       family: product.family,
       category: product.primaryCategory,
-      variants: product.variants.map((variant) => ({
-        key: variant.key,
-        sku: includeInternal ? variant.sku : undefined,
-        name: variant.name,
-        priceCents: variant.priceCents,
-        currency: variant.currency,
-        purchaseModeOverride: variant.purchaseModeOverride,
-        isActive: variant.isActive,
-        options: variant.optionValues
-          .map(({ productOptionValue }) => ({
-            name: productOptionValue.option.name,
-            displayName: productOptionValue.option.displayName,
-            value: productOptionValue.value,
-            label: productOptionValue.label,
-            sortOrder: productOptionValue.sortOrder,
-            optionSortOrder: productOptionValue.option.sortOrder
-          }))
-          .sort((left, right) => left.optionSortOrder - right.optionSortOrder),
-        ...(includeInternal
-          ? {
-              sourceUrl: variant.sourceUrl
-            }
-          : {})
-      })),
-      media: product.media.map((media) =>
-        this.serializeMedia(media, includeInternal)
-      ),
+      variants: product.variants.map((variant) => {
+        const isComponentDerivedVariant = variant.key === VICE_BUNDLE_VARIANT_KEY;
+        const derivedPricing =
+          componentDerivedVariantPricing?.variantKey === variant.key
+            ? componentDerivedVariantPricing
+            : null;
+
+        return {
+          key: variant.key,
+          sku: includeInternal ? variant.sku : undefined,
+          name: derivedPricing?.name ?? variant.name,
+          priceCents: isComponentDerivedVariant
+            ? (derivedPricing?.priceCents ?? null)
+            : variant.priceCents,
+          currency: derivedPricing?.currency ?? variant.currency,
+          ...(derivedPricing
+            ? {
+                pricingSource: derivedPricing.pricingSource
+              }
+            : {}),
+          purchaseModeOverride: variant.purchaseModeOverride,
+          isActive: variant.isActive,
+          options: variant.optionValues
+            .map(({ productOptionValue }) => ({
+              name: productOptionValue.option.name,
+              displayName: productOptionValue.option.displayName,
+              value: productOptionValue.value,
+              label: productOptionValue.label,
+              sortOrder: productOptionValue.sortOrder,
+              optionSortOrder: productOptionValue.option.sortOrder
+            }))
+            .sort((left, right) => left.optionSortOrder - right.optionSortOrder),
+          ...(includeInternal
+            ? {
+                sourceUrl: variant.sourceUrl
+              }
+            : {})
+        };
+      }),
+      media: product.media.map((media) => this.serializeMedia(media, includeInternal)),
       contentSections: product.contentSections.map((section) => ({
         sectionType: section.sectionType,
         eyebrow: section.eyebrow,
@@ -877,6 +907,80 @@ export class CatalogService implements OnModuleDestroy {
             importReviewStatus: product.importReviewStatus
           }
         : {})
+    };
+  }
+
+  private async getViceBundleComponentDerivedPricing(
+    product: ProductDetailRecord
+  ): Promise<ComponentDerivedVariantPricing | null> {
+    if (product.key !== VICE_PADDLE_PRODUCT_KEY) {
+      return null;
+    }
+
+    const bundleVariant = product.variants.find(
+      (variant) =>
+        variant.key === VICE_BUNDLE_VARIANT_KEY && variant.isActive && Boolean(variant.sku?.trim())
+    );
+
+    if (!bundleVariant) {
+      return null;
+    }
+
+    const singleVariant = product.variants.find(
+      (variant) => variant.key === VICE_SINGLE_VARIANT_KEY && variant.isActive
+    );
+    const whiteBalls: ProductPriceRecord | null = await this.getPrisma().product.findFirst({
+      where: {
+        key: PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+        status: "active",
+        v1PublicNavigation: true,
+        v1CheckoutScope: true,
+        purchaseMode: {
+          in: ["online_checkout", "online_checkout_candidate"]
+        },
+        currency: "CAD",
+        family: {
+          is: {
+            isActive: true,
+            isPublic: true
+          }
+        },
+        primaryCategory: {
+          is: {
+            isActive: true,
+            v1PublicNavigation: true,
+            v1CheckoutScope: true
+          }
+        }
+      },
+      select: {
+        priceCents: true,
+        currency: true
+      }
+    });
+
+    const componentDerivedPrice = calculateViceBundleRegularPrice({
+      viceSingle: singleVariant
+        ? {
+            priceCents: singleVariant.priceCents,
+            currency: singleVariant.currency
+          }
+        : null,
+      legacyViceBase: {
+        priceCents: product.priceCents,
+        currency: product.currency
+      },
+      whiteBallsSixPack: whiteBalls
+    });
+
+    if (!componentDerivedPrice) {
+      return null;
+    }
+
+    return {
+      variantKey: VICE_BUNDLE_VARIANT_KEY,
+      name: VICE_BUNDLE_PUBLIC_LABEL,
+      ...componentDerivedPrice
     };
   }
 

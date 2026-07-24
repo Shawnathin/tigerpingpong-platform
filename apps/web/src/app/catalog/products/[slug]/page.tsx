@@ -18,10 +18,12 @@ import {
   getTigerAquaPurchaseOptionStory,
   getTigerTableGalleryMedia,
   getTigerTableVariantSelectorMedia,
+  getTigerVicePurchaseOptionStory,
   tigerAquaProductStory,
   tigerTablePurchaseStory,
   tigerTablesProductStories
 } from "../../../../lib/tiger-story";
+import { VICE_PACKAGE_OPTION_NAME, VICE_PRODUCT_SLUG } from "../../../../lib/vice-package";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
@@ -547,6 +549,33 @@ function getAquaCheckoutOptionGroups(
   }));
 }
 
+function getViceCheckoutOptionGroups(
+  product: CatalogProductDetail,
+  optionGroups: CheckoutOptionGroup[]
+): CheckoutOptionGroup[] {
+  if (product.slug !== VICE_PRODUCT_SLUG) {
+    return optionGroups;
+  }
+
+  return optionGroups.map((optionGroup) => ({
+    ...optionGroup,
+    values: optionGroup.values.map((optionValue) => {
+      const story = getTigerVicePurchaseOptionStory(optionValue.variantKey);
+
+      if (!story) {
+        return optionValue;
+      }
+
+      return {
+        ...optionValue,
+        accent: story.accent,
+        shopperLabel: story.shopperLabel,
+        thumbnailAlt: story.altText
+      };
+    })
+  }));
+}
+
 function getTableOptionAccent(label: string): CheckoutOptionValue["accent"] {
   const normalizedLabel = normalizeOptionKey(label);
 
@@ -603,6 +632,13 @@ function isRequiredCheckoutOptionGroup(
   if (
     normalizeOptionKey(product.productKind) === "table" &&
     normalizeOptionKey(optionGroup.name) === "color"
+  ) {
+    return true;
+  }
+
+  if (
+    product.slug === VICE_PRODUCT_SLUG &&
+    normalizeOptionKey(optionGroup.name) === normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
   ) {
     return true;
   }
@@ -900,7 +936,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const mediaItems = getMediaItems(product);
   const checkoutOptionGroups = getTableCheckoutOptionGroups(
     product,
-    getAquaCheckoutOptionGroups(product, getCheckoutOptionGroups(product)),
+    getViceCheckoutOptionGroups(
+      product,
+      getAquaCheckoutOptionGroups(product, getCheckoutOptionGroups(product))
+    ),
     mediaItems
   );
   const isCheckoutEligible = isProductCheckoutEligible(product, checkoutOptionGroups);

@@ -22,7 +22,7 @@ export default defineConfig({
         "pnpm --filter @tigerpingpong/api build && PORT=3102 CORS_ORIGIN=http://127.0.0.1:3100 DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/not_used INTERNAL_ORDERS_API_TOKEN=local-test-token STRIPE_WEBHOOK_SECRET=whsec_local_test STRIPE_EXPECTED_LIVEMODE=false pnpm --filter @tigerpingpong/api start",
       port: 3102,
       reuseExistingServer: false,
-      timeout: 30_000
+      timeout: 120_000
     },
     {
       command:

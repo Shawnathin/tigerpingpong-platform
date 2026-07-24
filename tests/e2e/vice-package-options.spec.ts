@@ -23,22 +23,12 @@ test("Vice keeps the legacy rail while preserving its exact package choice", asy
       'label:has(input[value="4-vice-paddles-6-white-balls"]) [data-vice-package-visual="bundle"]'
     )
   ).toHaveCount(1);
-  await expect(
-    page
-      .locator('[data-vice-package-visual="bundle"]')
-      .first()
-      .getByText("4 paddles", { exact: true })
-  ).toBeVisible();
-  await expect(
-    page
-      .locator('[data-vice-package-visual="bundle"]')
-      .first()
-      .getByText("6 balls", { exact: true })
-  ).toBeVisible();
-  await expect(page.locator('[data-vice-package-visual="bundle"] img').nth(1)).toHaveAttribute(
-    "src",
-    /res\.cloudinary\.com/
+  await expect(bundleChoice).toHaveAccessibleName("4 Vice paddles + 6 white balls $68.00");
+  const bundleVisual = page.locator(
+    'label:has(input[value="4-vice-paddles-6-white-balls"]) [data-vice-package-visual="bundle"]'
   );
+  await expect(bundleVisual.locator("img")).toHaveCount(5);
+  await expect(bundleVisual.locator("img").nth(1)).toHaveAttribute("src", /res\.cloudinary\.com/);
 
   await page.getByRole("button", { name: "Add to cart" }).click();
   await expect(

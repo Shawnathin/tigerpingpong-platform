@@ -174,6 +174,13 @@ test("cart pricing is automatic, reversible, and checkout sends list-price hints
   await expect(summary).toContainText("Table accessory savings-$16.50");
   await expect(summary).toContainText("Subtotal$1,338.50");
 
+  await page.route("**/checkout/sessions", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "Checkout unavailable in this browser test." })
+    });
+  });
   const checkoutRequest = page.waitForRequest("**/checkout/sessions");
   await page.getByRole("button", { name: "Checkout" }).click();
   const checkoutBody = (await checkoutRequest).postDataJSON();
@@ -191,7 +198,9 @@ test("cart pricing is automatic, reversible, and checkout sends list-price hints
     ])
   );
 
-  await page.goto("/cart");
+  await expect(page.getByRole("status")).toHaveText(
+    "Checkout could not be started. Please try again or contact us."
+  );
   const tableLine = page.locator("article").filter({ hasText: "Tiger Expo Outdoor Table" });
   await tableLine.getByRole("button", { name: "Remove" }).click();
   await expect(page.getByText("You save $16.50", { exact: true })).toHaveCount(0);

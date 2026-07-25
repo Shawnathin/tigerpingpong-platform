@@ -8,7 +8,9 @@ import type {
   CatalogProductDetail,
   CatalogProductResponse,
   CatalogProductsResponse,
-  CatalogProductSummary
+  CatalogProductSummary,
+  CatalogTableAccessoryOffer,
+  CatalogTableAccessoryOfferResponse
 } from "../types/catalog";
 
 const DEFAULT_API_BASE_URL = "http://localhost:3001";
@@ -92,6 +94,15 @@ export async function getProductBySlug(slug: string): Promise<CatalogProductDeta
     `/catalog/products/${encodeURIComponent(slug)}`
   );
   return response.product;
+}
+
+export async function getTableAccessoryOffer(
+  tableSlug: string
+): Promise<CatalogTableAccessoryOffer> {
+  const response = await fetchCatalog<CatalogTableAccessoryOfferResponse>(
+    `/catalog/table-accessory-offer/${encodeURIComponent(tableSlug)}`
+  );
+  return response.offer;
 }
 
 export async function getFamilyBySlug(slug: string): Promise<CatalogFamily> {

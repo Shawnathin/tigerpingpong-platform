@@ -1,5 +1,27 @@
-import { Injectable, NotFoundException, OnModuleDestroy, ServiceUnavailableException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  OnModuleDestroy,
+  ServiceUnavailableException
+} from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
+import {
+  AQUA_FOUR_PACK_VARIANT_KEY,
+  AQUA_PADDLE_PRODUCT_KEY,
+  AQUA_TWO_PACK_VARIANT_KEY,
+  calculateViceBundleRegularPrice,
+  PLAZA_OUTDOOR_TABLE_PRODUCT_KEY,
+  PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+  TABLE_ACCESSORIES_DISCOUNT_PERCENT,
+  TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+  TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS,
+  TABLE_COVER_PRODUCT_KEY,
+  VICE_BUNDLE_PUBLIC_LABEL,
+  VICE_BUNDLE_VARIANT_KEY,
+  VICE_PADDLE_PRODUCT_KEY,
+  VICE_SINGLE_VARIANT_KEY,
+  type ComponentDerivedCatalogPrice
+} from "@tigerpingpong/shared";
 
 interface CatalogRequestOptions {
   includeInternal: boolean;
@@ -144,6 +166,35 @@ interface ProductDetailRecord extends ProductListRecord {
   targetRelationships: IncomingRelationshipRecord[];
 }
 
+interface ComponentDerivedVariantPricing extends ComponentDerivedCatalogPrice {
+  name: string;
+  variantKey: string;
+}
+
+interface ProductPriceRecord {
+  currency: string;
+  priceCents: number | null;
+}
+
+type TableAccessoryOfferProductRecord = Prisma.ProductGetPayload<{
+  select: typeof tableAccessoryOfferProductSelect;
+}>;
+
+type TableAccessoryOfferVariantRecord = TableAccessoryOfferProductRecord["variants"][number];
+
+const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
+const NON_CHECKOUT_VARIANT_PURCHASE_MODES = new Set(["deferred_from_v1", "disabled"]);
+const TABLE_ACCESSORY_OFFER_PRODUCT_KEYS = [
+  AQUA_PADDLE_PRODUCT_KEY,
+  VICE_PADDLE_PRODUCT_KEY,
+  TABLE_COVER_PRODUCT_KEY,
+  PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY
+] as const;
+const TABLE_ACCESSORY_PLAY_SET_VARIANT_KEYS = [
+  AQUA_TWO_PACK_VARIANT_KEY,
+  AQUA_FOUR_PACK_VARIANT_KEY
+] as const;
+
 const categorySelect = {
   id: true,
   key: true,
@@ -220,6 +271,95 @@ const productSummarySelect = {
   shippingReviewRequired: true
 } satisfies Prisma.ProductSelect;
 
+const tableAccessoryOfferProductSelect = {
+  key: true,
+  slug: true,
+  name: true,
+  sku: true,
+  productKind: true,
+  status: true,
+  v1PublicNavigation: true,
+  v1CheckoutScope: true,
+  purchaseMode: true,
+  priceCents: true,
+  currency: true,
+  family: {
+    select: {
+      isActive: true,
+      isPublic: true
+    }
+  },
+  primaryCategory: {
+    select: {
+      isActive: true,
+      v1PublicNavigation: true,
+      v1CheckoutScope: true
+    }
+  },
+  media: {
+    where: {
+      isActive: true,
+      isPublic: true
+    },
+    orderBy: [
+      {
+        isPrimary: "desc"
+      },
+      {
+        sortOrder: "asc"
+      }
+    ],
+    select: {
+      cloudinarySecureUrl: true,
+      altText: true,
+      variant: {
+        select: {
+          key: true
+        }
+      }
+    }
+  },
+  variants: {
+    where: {
+      isActive: true
+    },
+    orderBy: [
+      {
+        name: "asc"
+      },
+      {
+        key: "asc"
+      }
+    ],
+    select: {
+      key: true,
+      sku: true,
+      name: true,
+      priceCents: true,
+      currency: true,
+      purchaseModeOverride: true,
+      isActive: true,
+      optionValues: {
+        select: {
+          productOptionValue: {
+            select: {
+              value: true,
+              label: true,
+              sortOrder: true,
+              option: {
+                select: {
+                  name: true,
+                  sortOrder: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+} satisfies Prisma.ProductSelect;
+
 @Injectable()
 export class CatalogService implements OnModuleDestroy {
   private prisma: PrismaClient | null = null;
@@ -233,15 +373,14 @@ export class CatalogService implements OnModuleDestroy {
   async getHealth(): Promise<unknown> {
     try {
       const prisma = this.getPrisma();
-      const [brands, categories, productFamilies, products, variants, media] =
-        await Promise.all([
-          prisma.brand.count(),
-          prisma.category.count(),
-          prisma.productFamily.count(),
-          prisma.product.count(),
-          prisma.productVariant.count(),
-          prisma.productMedia.count()
-        ]);
+      const [brands, categories, productFamilies, products, variants, media] = await Promise.all([
+        prisma.brand.count(),
+        prisma.category.count(),
+        prisma.productFamily.count(),
+        prisma.product.count(),
+        prisma.productVariant.count(),
+        prisma.productMedia.count()
+      ]);
 
       return {
         status: "ok",
@@ -351,10 +490,7 @@ export class CatalogService implements OnModuleDestroy {
     };
   }
 
-  async getFamilyBySlug(
-    slug: string,
-    options: CatalogRequestOptions
-  ): Promise<unknown> {
+  async getFamilyBySlug(slug: string, options: CatalogRequestOptions): Promise<unknown> {
     const family = await this.getPrisma().productFamily.findFirst({
       where: {
         slug,
@@ -475,10 +611,7 @@ export class CatalogService implements OnModuleDestroy {
     };
   }
 
-  async getProductBySlug(
-    slug: string,
-    options: CatalogRequestOptions
-  ): Promise<unknown> {
+  async getProductBySlug(slug: string, options: CatalogRequestOptions): Promise<unknown> {
     const product: ProductDetailRecord | null = await this.getPrisma().product.findFirst({
       where: {
         slug,
@@ -638,8 +771,79 @@ export class CatalogService implements OnModuleDestroy {
       throw new NotFoundException(`Product not found: ${slug}`);
     }
 
+    const componentDerivedVariantPricing = await this.getViceBundleComponentDerivedPricing(product);
+
     return {
-      product: this.serializeProductDetail(product, options.includeInternal)
+      product: this.serializeProductDetail(
+        product,
+        options.includeInternal,
+        componentDerivedVariantPricing
+      )
+    };
+  }
+
+  async getTableAccessoryOffer(tableSlug: string): Promise<unknown> {
+    const prisma = this.getPrisma();
+    const [table, offerProducts] = await Promise.all([
+      prisma.product.findFirst({
+        where: {
+          slug: tableSlug,
+          key: {
+            in: [...TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS]
+          },
+          productKind: "table"
+        },
+        select: tableAccessoryOfferProductSelect
+      }),
+      prisma.product.findMany({
+        where: {
+          key: {
+            in: [...TABLE_ACCESSORY_OFFER_PRODUCT_KEYS]
+          }
+        },
+        select: tableAccessoryOfferProductSelect
+      })
+    ]);
+
+    if (
+      !table ||
+      !this.isTableAccessoryEligibleTable(table) ||
+      !this.isCheckoutableOfferProduct(table)
+    ) {
+      throw new NotFoundException(`Table accessory offer not found: ${tableSlug}`);
+    }
+
+    const productsByKey = new Map(offerProducts.map((product) => [product.key, product]));
+    const selectableItems = [
+      ...this.getAquaOfferItems(productsByKey.get(AQUA_PADDLE_PRODUCT_KEY)),
+      ...this.getViceOfferItems(
+        productsByKey.get(VICE_PADDLE_PRODUCT_KEY),
+        productsByKey.get(PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY)
+      )
+    ];
+    const coverIsCompatible = table.key !== PLAZA_OUTDOOR_TABLE_PRODUCT_KEY;
+    const cover = productsByKey.get(TABLE_COVER_PRODUCT_KEY);
+
+    if (coverIsCompatible) {
+      const coverItem = this.getCoverOfferItem(cover);
+
+      if (coverItem) {
+        selectableItems.push(coverItem);
+      }
+    }
+
+    return {
+      offer: {
+        tableSlug: table.slug,
+        tableProductKey: table.key,
+        discountPercent: TABLE_ACCESSORIES_DISCOUNT_PERCENT,
+        pricingRuleVersion: TABLE_ACCESSORIES_PRICING_RULE_VERSION,
+        selectableItems,
+        coverCompatibility: {
+          isCompatible: coverIsCompatible,
+          reason: coverIsCompatible ? null : "not_compatible_with_plaza"
+        }
+      }
     };
   }
 
@@ -737,9 +941,7 @@ export class CatalogService implements OnModuleDestroy {
             parentId: node.parentId
           }
         : {}),
-      children: node.children.map((child) =>
-        this.serializeCategoryNode(child, includeInternal)
-      )
+      children: node.children.map((child) => this.serializeCategoryNode(child, includeInternal))
     };
   }
 
@@ -763,10 +965,7 @@ export class CatalogService implements OnModuleDestroy {
     };
   }
 
-  private serializeProductListItem(
-    product: ProductListRecord,
-    includeInternal: boolean
-  ) {
+  private serializeProductListItem(product: ProductListRecord, includeInternal: boolean) {
     const primaryMedia = product.media[0] ?? null;
 
     return {
@@ -782,9 +981,7 @@ export class CatalogService implements OnModuleDestroy {
       shippingReviewRequired: product.shippingReviewRequired,
       family: product.family,
       category: product.primaryCategory,
-      primaryMedia: primaryMedia
-        ? this.serializeMedia(primaryMedia, includeInternal)
-        : null,
+      primaryMedia: primaryMedia ? this.serializeMedia(primaryMedia, includeInternal) : null,
       ...(includeInternal
         ? {
             sku: product.sku,
@@ -797,7 +994,8 @@ export class CatalogService implements OnModuleDestroy {
 
   private serializeProductDetail(
     product: ProductDetailRecord,
-    includeInternal: boolean
+    includeInternal: boolean,
+    componentDerivedVariantPricing: ComponentDerivedVariantPricing | null = null
   ) {
     return {
       key: product.key,
@@ -814,33 +1012,46 @@ export class CatalogService implements OnModuleDestroy {
       description: product.description,
       family: product.family,
       category: product.primaryCategory,
-      variants: product.variants.map((variant) => ({
-        key: variant.key,
-        sku: includeInternal ? variant.sku : undefined,
-        name: variant.name,
-        priceCents: variant.priceCents,
-        currency: variant.currency,
-        purchaseModeOverride: variant.purchaseModeOverride,
-        isActive: variant.isActive,
-        options: variant.optionValues
-          .map(({ productOptionValue }) => ({
-            name: productOptionValue.option.name,
-            displayName: productOptionValue.option.displayName,
-            value: productOptionValue.value,
-            label: productOptionValue.label,
-            sortOrder: productOptionValue.sortOrder,
-            optionSortOrder: productOptionValue.option.sortOrder
-          }))
-          .sort((left, right) => left.optionSortOrder - right.optionSortOrder),
-        ...(includeInternal
-          ? {
-              sourceUrl: variant.sourceUrl
-            }
-          : {})
-      })),
-      media: product.media.map((media) =>
-        this.serializeMedia(media, includeInternal)
-      ),
+      variants: product.variants.map((variant) => {
+        const isComponentDerivedVariant = variant.key === VICE_BUNDLE_VARIANT_KEY;
+        const derivedPricing =
+          componentDerivedVariantPricing?.variantKey === variant.key
+            ? componentDerivedVariantPricing
+            : null;
+
+        return {
+          key: variant.key,
+          sku: includeInternal ? variant.sku : undefined,
+          name: derivedPricing?.name ?? variant.name,
+          priceCents: isComponentDerivedVariant
+            ? (derivedPricing?.priceCents ?? null)
+            : variant.priceCents,
+          currency: derivedPricing?.currency ?? variant.currency,
+          ...(derivedPricing
+            ? {
+                pricingSource: derivedPricing.pricingSource
+              }
+            : {}),
+          purchaseModeOverride: variant.purchaseModeOverride,
+          isActive: variant.isActive,
+          options: variant.optionValues
+            .map(({ productOptionValue }) => ({
+              name: productOptionValue.option.name,
+              displayName: productOptionValue.option.displayName,
+              value: productOptionValue.value,
+              label: productOptionValue.label,
+              sortOrder: productOptionValue.sortOrder,
+              optionSortOrder: productOptionValue.option.sortOrder
+            }))
+            .sort((left, right) => left.optionSortOrder - right.optionSortOrder),
+          ...(includeInternal
+            ? {
+                sourceUrl: variant.sourceUrl
+              }
+            : {})
+        };
+      }),
+      media: product.media.map((media) => this.serializeMedia(media, includeInternal)),
       contentSections: product.contentSections.map((section) => ({
         sectionType: section.sectionType,
         eyebrow: section.eyebrow,
@@ -878,6 +1089,313 @@ export class CatalogService implements OnModuleDestroy {
           }
         : {})
     };
+  }
+
+  private async getViceBundleComponentDerivedPricing(
+    product: ProductDetailRecord
+  ): Promise<ComponentDerivedVariantPricing | null> {
+    if (product.key !== VICE_PADDLE_PRODUCT_KEY) {
+      return null;
+    }
+
+    const bundleVariant = product.variants.find(
+      (variant) =>
+        variant.key === VICE_BUNDLE_VARIANT_KEY && variant.isActive && Boolean(variant.sku?.trim())
+    );
+
+    if (!bundleVariant) {
+      return null;
+    }
+
+    const singleVariant = product.variants.find(
+      (variant) => variant.key === VICE_SINGLE_VARIANT_KEY && variant.isActive
+    );
+    const whiteBalls: ProductPriceRecord | null = await this.getPrisma().product.findFirst({
+      where: {
+        key: PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
+        status: "active",
+        v1PublicNavigation: true,
+        v1CheckoutScope: true,
+        purchaseMode: {
+          in: ["online_checkout", "online_checkout_candidate"]
+        },
+        currency: "CAD",
+        family: {
+          is: {
+            isActive: true,
+            isPublic: true
+          }
+        },
+        primaryCategory: {
+          is: {
+            isActive: true,
+            v1PublicNavigation: true,
+            v1CheckoutScope: true
+          }
+        }
+      },
+      select: {
+        priceCents: true,
+        currency: true
+      }
+    });
+
+    const componentDerivedPrice = calculateViceBundleRegularPrice({
+      viceSingle: singleVariant
+        ? {
+            priceCents: singleVariant.priceCents,
+            currency: singleVariant.currency
+          }
+        : null,
+      legacyViceBase: {
+        priceCents: product.priceCents,
+        currency: product.currency
+      },
+      whiteBallsSixPack: whiteBalls
+    });
+
+    if (!componentDerivedPrice) {
+      return null;
+    }
+
+    return {
+      variantKey: VICE_BUNDLE_VARIANT_KEY,
+      name: VICE_BUNDLE_PUBLIC_LABEL,
+      ...componentDerivedPrice
+    };
+  }
+
+  private getAquaOfferItems(product: TableAccessoryOfferProductRecord | undefined) {
+    if (!product || !this.isCheckoutableOfferProduct(product)) {
+      return [];
+    }
+
+    return TABLE_ACCESSORY_PLAY_SET_VARIANT_KEYS.flatMap((variantKey) => {
+      const variant = product.variants.find((candidate) => candidate.key === variantKey);
+
+      if (!variant || !this.isCheckoutableOfferVariant(variant)) {
+        return [];
+      }
+
+      const selectedOptions = this.serializeOfferSelectedOptions(variant);
+
+      if (selectedOptions.length === 0 || !this.isValidOfferPrice(variant.priceCents)) {
+        return [];
+      }
+
+      return [
+        this.serializeTableAccessoryOfferItem({
+          product,
+          variant,
+          role: "play_set",
+          priceCents: variant.priceCents,
+          currency: variant.currency,
+          pricingSource: "catalog_variant",
+          selectedOptions
+        })
+      ];
+    });
+  }
+
+  private getViceOfferItems(
+    product: TableAccessoryOfferProductRecord | undefined,
+    whiteBalls: TableAccessoryOfferProductRecord | undefined
+  ) {
+    if (
+      !product ||
+      !whiteBalls ||
+      !this.isCheckoutableOfferProduct(product) ||
+      !this.isCheckoutableOfferProduct(whiteBalls)
+    ) {
+      return [];
+    }
+
+    const bundleVariant = product.variants.find(
+      (variant) => variant.key === VICE_BUNDLE_VARIANT_KEY
+    );
+    const singleVariant = product.variants.find(
+      (variant) => variant.key === VICE_SINGLE_VARIANT_KEY
+    );
+
+    if (
+      !bundleVariant ||
+      !singleVariant ||
+      !bundleVariant.sku?.trim() ||
+      !this.isCheckoutableOfferVariant(bundleVariant) ||
+      !this.isCheckoutableOfferVariant(singleVariant)
+    ) {
+      return [];
+    }
+
+    const selectedOptions = this.serializeOfferSelectedOptions(bundleVariant);
+    const derivedPrice = calculateViceBundleRegularPrice({
+      viceSingle: {
+        priceCents: singleVariant.priceCents,
+        currency: singleVariant.currency
+      },
+      legacyViceBase: {
+        priceCents: product.priceCents,
+        currency: product.currency
+      },
+      whiteBallsSixPack: {
+        priceCents: whiteBalls.priceCents,
+        currency: whiteBalls.currency
+      }
+    });
+
+    if (
+      selectedOptions.length === 0 ||
+      !derivedPrice ||
+      derivedPrice.currency.trim().toLowerCase() !== "cad"
+    ) {
+      return [];
+    }
+
+    return [
+      this.serializeTableAccessoryOfferItem({
+        product,
+        variant: bundleVariant,
+        role: "play_set",
+        priceCents: derivedPrice.priceCents,
+        currency: derivedPrice.currency,
+        pricingSource: derivedPrice.pricingSource,
+        selectedOptions
+      })
+    ];
+  }
+
+  private getCoverOfferItem(product: TableAccessoryOfferProductRecord | undefined) {
+    if (
+      !product ||
+      !this.isCheckoutableOfferProduct(product) ||
+      !this.isValidOfferPrice(product.priceCents)
+    ) {
+      return null;
+    }
+
+    return this.serializeTableAccessoryOfferItem({
+      product,
+      variant: null,
+      role: "cover",
+      priceCents: product.priceCents,
+      currency: product.currency,
+      pricingSource: "catalog_product",
+      selectedOptions: []
+    });
+  }
+
+  private serializeTableAccessoryOfferItem(input: {
+    currency: string;
+    priceCents: number;
+    pricingSource: "catalog_product" | "catalog_variant" | "component_derived";
+    product: TableAccessoryOfferProductRecord;
+    role: "cover" | "play_set";
+    selectedOptions: Array<{ label: string; name: string; value: string }>;
+    variant: TableAccessoryOfferVariantRecord | null;
+  }) {
+    const image = this.getTableAccessoryOfferImage(input.product, input.variant?.key ?? null);
+
+    return {
+      role: input.role,
+      productKey: input.product.key,
+      productSlug: input.product.slug,
+      productName: input.product.name,
+      variantKey: input.variant?.key ?? null,
+      selectedOptions: input.selectedOptions,
+      priceCents: input.priceCents,
+      currency: input.currency,
+      pricingSource: input.pricingSource,
+      image
+    };
+  }
+
+  private serializeOfferSelectedOptions(variant: TableAccessoryOfferVariantRecord) {
+    return variant.optionValues
+      .map(({ productOptionValue }) => ({
+        name: productOptionValue.option.name,
+        value: productOptionValue.value,
+        label: productOptionValue.label?.trim() || productOptionValue.value,
+        optionSortOrder: productOptionValue.option.sortOrder,
+        valueSortOrder: productOptionValue.sortOrder
+      }))
+      .sort(
+        (left, right) =>
+          left.optionSortOrder - right.optionSortOrder || left.valueSortOrder - right.valueSortOrder
+      )
+      .map(({ name, value, label }) => ({
+        name,
+        value,
+        label
+      }));
+  }
+
+  private getTableAccessoryOfferImage(
+    product: TableAccessoryOfferProductRecord,
+    variantKey: string | null
+  ) {
+    const variantMedia = variantKey
+      ? product.media.find(
+          (media) => media.variant?.key === variantKey && media.cloudinarySecureUrl
+        )
+      : null;
+    const productMedia =
+      product.media.find((candidate) => !candidate.variant && candidate.cloudinarySecureUrl) ??
+      null;
+    const media =
+      variantMedia ??
+      productMedia ??
+      (variantKey
+        ? null
+        : (product.media.find((candidate) => candidate.cloudinarySecureUrl) ?? null));
+
+    return {
+      url: media?.cloudinarySecureUrl ?? null,
+      alt: media?.altText?.trim() || product.name
+    };
+  }
+
+  private isTableAccessoryEligibleTable(product: TableAccessoryOfferProductRecord): boolean {
+    return (
+      product.productKind === "table" &&
+      (TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS as readonly string[]).includes(product.key)
+    );
+  }
+
+  private isCheckoutableOfferProduct(product: TableAccessoryOfferProductRecord): boolean {
+    const hasInvalidPartialViceVariantModel =
+      product.key === VICE_PADDLE_PRODUCT_KEY &&
+      product.variants.length > 0 &&
+      !product.variants.some(
+        (variant) =>
+          variant.key === VICE_SINGLE_VARIANT_KEY && this.isCheckoutableOfferVariant(variant)
+      );
+
+    return (
+      !hasInvalidPartialViceVariantModel &&
+      product.status === "active" &&
+      product.v1PublicNavigation &&
+      product.v1CheckoutScope &&
+      CHECKOUT_PURCHASE_MODES.has(product.purchaseMode) &&
+      product.family.isActive &&
+      product.family.isPublic &&
+      product.primaryCategory.isActive &&
+      product.primaryCategory.v1PublicNavigation &&
+      product.primaryCategory.v1CheckoutScope &&
+      product.currency.trim().toLowerCase() === "cad"
+    );
+  }
+
+  private isCheckoutableOfferVariant(variant: TableAccessoryOfferVariantRecord): boolean {
+    return (
+      variant.isActive &&
+      variant.currency.trim().toLowerCase() === "cad" &&
+      (variant.purchaseModeOverride === null ||
+        !NON_CHECKOUT_VARIANT_PURCHASE_MODES.has(variant.purchaseModeOverride))
+    );
+  }
+
+  private isValidOfferPrice(value: unknown): value is number {
+    return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
   }
 
   private serializeMedia(media: MediaRecord, includeInternal: boolean) {

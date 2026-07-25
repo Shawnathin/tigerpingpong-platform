@@ -182,6 +182,16 @@
   font-weight: 840;
 }
 
+.itemInfo .offerLabel {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: #16665e;
+  font-size: 0.78rem;
+  font-weight: 950;
+  background: rgb(81 210 191 / 16%);
+}
+
 .quantityControls {
   display: grid;
   grid-template-columns: 38px 34px 38px;
@@ -229,6 +239,18 @@
   font-size: 1rem;
   font-weight: 950;
   white-space: nowrap;
+}
+
+.itemTotal del,
+.itemTotal span {
+  color: #657083;
+  font-size: 0.78rem;
+  font-weight: 820;
+  white-space: nowrap;
+}
+
+.itemTotal span {
+  color: #16665e;
 }
 
 .itemTotal button {
@@ -297,6 +319,11 @@
 
 .summaryList .taxRow {
   margin-top: -4px;
+}
+
+.summaryList .savingsRow dt,
+.summaryList .savingsRow dd {
+  color: #16665e;
 }
 
 .taxRow dt,

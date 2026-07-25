@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS } from "@tigerpingpong/shared";
+
 import { PublicStorefrontFooter } from "../../../PublicStorefrontFooter";
 import { PublicStorefrontNav, type PublicStorefrontNavItem } from "../../../PublicStorefrontNav";
-import { CatalogApiError, getProductBySlug, getProducts } from "../../../../lib/catalog-api";
+import {
+  CatalogApiError,
+  getProductBySlug,
+  getProducts,
+  getTableAccessoryOffer
+} from "../../../../lib/catalog-api";
 import type { CartProductInput } from "../../../../lib/cart";
 import { normalizeMediaSrc, resolveProductMediaUrl } from "../../../../lib/product-media";
 import { getProductMediaFallbacks } from "../../../../lib/public-storefront-demo";
@@ -18,15 +25,18 @@ import {
   getTigerAquaPurchaseOptionStory,
   getTigerTableGalleryMedia,
   getTigerTableVariantSelectorMedia,
+  getTigerVicePurchaseOptionStory,
   tigerAquaProductStory,
   tigerTablePurchaseStory,
   tigerTablesProductStories
 } from "../../../../lib/tiger-story";
+import { VICE_PACKAGE_OPTION_NAME, VICE_PRODUCT_SLUG } from "../../../../lib/vice-package";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
   CatalogProductVariantSummary,
-  CatalogSummary
+  CatalogSummary,
+  CatalogTableAccessoryOffer
 } from "../../../../types/catalog";
 
 import {
@@ -547,6 +557,33 @@ function getAquaCheckoutOptionGroups(
   }));
 }
 
+function getViceCheckoutOptionGroups(
+  product: CatalogProductDetail,
+  optionGroups: CheckoutOptionGroup[]
+): CheckoutOptionGroup[] {
+  if (product.slug !== VICE_PRODUCT_SLUG) {
+    return optionGroups;
+  }
+
+  return optionGroups.map((optionGroup) => ({
+    ...optionGroup,
+    values: optionGroup.values.map((optionValue) => {
+      const story = getTigerVicePurchaseOptionStory(optionValue.variantKey);
+
+      if (!story) {
+        return optionValue;
+      }
+
+      return {
+        ...optionValue,
+        accent: story.accent,
+        shopperLabel: story.shopperLabel,
+        thumbnailAlt: story.altText
+      };
+    })
+  }));
+}
+
 function getTableOptionAccent(label: string): CheckoutOptionValue["accent"] {
   const normalizedLabel = normalizeOptionKey(label);
 
@@ -603,6 +640,13 @@ function isRequiredCheckoutOptionGroup(
   if (
     normalizeOptionKey(product.productKind) === "table" &&
     normalizeOptionKey(optionGroup.name) === "color"
+  ) {
+    return true;
+  }
+
+  if (
+    product.slug === VICE_PRODUCT_SLUG &&
+    normalizeOptionKey(optionGroup.name) === normalizeOptionKey(VICE_PACKAGE_OPTION_NAME)
   ) {
     return true;
   }
@@ -664,6 +708,7 @@ function toCartProductInput(product: CatalogProductDetail): CartProductInput {
     currency: product.currency,
     imageUrl: getCartImage(product),
     name: product.name,
+    productKey: product.key,
     productKind: product.productKind,
     productSlug: product.slug,
     unitPriceCents: getCartProductPriceCents(product)
@@ -681,6 +726,22 @@ async function loadCatalogProductSummaries(): Promise<CatalogProductSummary[]> {
     return getProducts();
   } catch {
     return [];
+  }
+}
+
+async function loadTableAccessoryOffer(
+  product: CatalogProductDetail
+): Promise<CatalogTableAccessoryOffer | null> {
+  const eligibleProductKeys = TABLE_ACCESSORY_ELIGIBLE_TABLE_PRODUCT_KEYS as readonly string[];
+
+  if (!eligibleProductKeys.includes(product.key)) {
+    return null;
+  }
+
+  try {
+    return await getTableAccessoryOffer(product.slug);
+  } catch {
+    return null;
   }
 }
 
@@ -900,12 +961,18 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const mediaItems = getMediaItems(product);
   const checkoutOptionGroups = getTableCheckoutOptionGroups(
     product,
-    getAquaCheckoutOptionGroups(product, getCheckoutOptionGroups(product)),
+    getViceCheckoutOptionGroups(
+      product,
+      getAquaCheckoutOptionGroups(product, getCheckoutOptionGroups(product))
+    ),
     mediaItems
   );
   const isCheckoutEligible = isProductCheckoutEligible(product, checkoutOptionGroups);
   const normalizedContent = getProductContentBySlug(product.slug);
-  const catalogProducts = await loadCatalogProductSummaries();
+  const [catalogProducts, tableAccessoryOffer] = await Promise.all([
+    loadCatalogProductSummaries(),
+    loadTableAccessoryOffer(product)
+  ]);
   const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
   const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
   const heroDisplayTitle = getHeroDisplayTitle(product);
@@ -995,6 +1062,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 : getPurchaseShippingLines(product)
           }
           shippingLinesAreFixed={isTable}
+          tableAccessoryOffer={tableAccessoryOffer}
         />
 
         {isAqua ? (

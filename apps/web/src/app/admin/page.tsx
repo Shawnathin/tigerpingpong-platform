@@ -61,6 +61,10 @@ function getRecentOrders(summary: AdminDashboardSummary): AdminOrderListItem[] {
   return summary.orders.recent.slice(0, 5);
 }
 
+function formatSavings(cents: number, currency: string): string {
+  return cents > 0 ? `−${formatMoney(cents, currency)}` : formatMoney(0, currency);
+}
+
 function renderRecentOrders(summary: AdminDashboardSummary) {
   const orders = getRecentOrders(summary);
 
@@ -75,6 +79,8 @@ function renderRecentOrders(summary: AdminDashboardSummary) {
           <tr>
             <th>Reference</th>
             <th>Customer</th>
+            <th>Regular subtotal</th>
+            <th>Savings</th>
             <th>Total</th>
             <th>Status</th>
             <th>Paid</th>
@@ -93,6 +99,8 @@ function renderRecentOrders(summary: AdminDashboardSummary) {
                 <div>{order.customer.name || order.customer.email || "Not set"}</div>
                 <div className={styles.muted}>{order.customer.email || "Not set"}</div>
               </td>
+              <td>{formatMoney(order.listSubtotalCents, order.currency)}</td>
+              <td>{formatSavings(order.discountCents, order.currency)}</td>
               <td>{formatMoney(order.totalCents, order.currency)}</td>
               <td>{formatStatus(order.orderStatus)}</td>
               <td>{formatDateTime(order.paidAt)}</td>
@@ -248,7 +256,7 @@ export default async function AdminDashboardPage() {
               <p className={styles.statusText}>
                 {(summary.auditLog?.status ?? "not_configured") === "not_configured"
                   ? "Not configured yet"
-                  : summary.auditLog?.message ?? "Audit log status is unavailable."}
+                  : (summary.auditLog?.message ?? "Audit log status is unavailable.")}
               </p>
             </div>
           </section>

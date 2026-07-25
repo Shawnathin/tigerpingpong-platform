@@ -49,6 +49,10 @@ function formatNullableMoney(cents: number | null | undefined, currency: string)
   return typeof cents === "number" ? formatMoney(cents, currency) : "Not set";
 }
 
+function formatSavings(cents: number, currency: string): string {
+  return cents > 0 ? `−${formatMoney(cents, currency)}` : formatMoney(0, currency);
+}
+
 function formatDateTime(value: string | null): string {
   if (!value) {
     return "Not set";
@@ -312,7 +316,15 @@ export default async function StaffOrderDetailPage({
           <h2 id="staff-order-totals-title">Totals</h2>
           <dl className={styles.definitionList}>
             <div>
-              <dt>Subtotal</dt>
+              <dt>Regular subtotal</dt>
+              <dd>{formatMoney(order.listSubtotalCents, order.currency)}</dd>
+            </div>
+            <div>
+              <dt>Table accessory savings</dt>
+              <dd>{formatSavings(order.discountCents, order.currency)}</dd>
+            </div>
+            <div>
+              <dt>Net subtotal</dt>
               <dd>{formatMoney(order.subtotalCents, order.currency)}</dd>
             </div>
             <div>
@@ -340,6 +352,10 @@ export default async function StaffOrderDetailPage({
               <dd className={styles.mono}>{order.shippingRule}</dd>
             </div>
             <div>
+              <dt>Pricing rule</dt>
+              <dd className={styles.mono}>{formatNullable(order.pricingRuleVersion)}</dd>
+            </div>
+            <div>
               <dt>Checkout source</dt>
               <dd className={styles.mono}>{order.checkoutSource}</dd>
             </div>
@@ -364,9 +380,14 @@ export default async function StaffOrderDetailPage({
                 <th>SKU</th>
                 <th>Product slug</th>
                 <th>Variant</th>
-                <th>Unit</th>
+                <th>Regular unit</th>
+                <th>Savings / unit</th>
+                <th>Net unit</th>
                 <th>Qty</th>
-                <th>Line total</th>
+                <th>Regular line</th>
+                <th>Line savings</th>
+                <th>Net line</th>
+                <th>Promotion</th>
               </tr>
             </thead>
             <tbody>
@@ -376,9 +397,14 @@ export default async function StaffOrderDetailPage({
                   <td className={styles.mono}>{formatNullable(item.sku)}</td>
                   <td className={styles.mono}>{item.productSlug}</td>
                   <td className={styles.mono}>{formatNullable(item.variantKey)}</td>
+                  <td>{formatMoney(item.listUnitPriceCents, item.currency)}</td>
+                  <td>{formatSavings(item.discountUnitCents, item.currency)}</td>
                   <td>{formatMoney(item.unitPriceCents, item.currency)}</td>
                   <td>{item.quantity}</td>
+                  <td>{formatMoney(item.listLineTotalCents, item.currency)}</td>
+                  <td>{formatSavings(item.discountCents, item.currency)}</td>
                   <td>{formatMoney(item.lineTotalCents, item.currency)}</td>
+                  <td className={styles.mono}>{formatNullable(item.promotionKey)}</td>
                 </tr>
               ))}
             </tbody>

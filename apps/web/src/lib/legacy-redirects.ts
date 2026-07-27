@@ -56,8 +56,11 @@ export const LEGACY_PATH_REDIRECTS = [
   ],
   ["/tables/expo-indoor-ping-pong-table-grey-green-blue", "/tables/indoor-tables"],
   ["/replacement-parts/tiger-pingpong-replacement-part-40", "/replacement-parts#part-40"],
-  ["/accessories/replacement-net", "/accessories/nets"],
-  ["/accessories/tiger-pingpong-table-net-replacement-set", "/accessories/nets"],
+  ["/accessories/replacement-net", "/replacement-parts#standard-replacement-net"],
+  [
+    "/accessories/tiger-pingpong-table-net-replacement-set",
+    "/replacement-parts#expo-portland-net-upgrade"
+  ],
   ["/accessories/ping-pong-paddle-case", "/accessories/paddles"],
   ["/accessories/newgy-table-tennis-balls-orange", "/accessories/ping-pong-balls"],
   ["/brands", "/catalog"],

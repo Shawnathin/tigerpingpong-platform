@@ -24,7 +24,8 @@
   admin proof remain pending.
 
 - Post-launch replacement-parts experience:
-  - Add any replacement part beyond Part 40 only after its catalog data, media, compatibility copy, availability, and curated rank are approved.
+  - Add any replacement part beyond Part 40, the Standard Replacement Net, and the Expo & Portland Net Upgrade System only after its catalog data, media, compatibility copy, availability, and curated rank are approved.
+  - Add a Whistler-specific net system only after its SKU, price, included items, exact compatibility copy, media, availability, and curated rank are owner-approved. Do not imply that the Expo and Portland system fits Whistler.
   - Link manuals and setup videos from each applicable product page.
   - Add a general table/part finder plus a dedicated parts page for each table.
   - Put each table's five most-requested parts first instead of exposing one giant grid.

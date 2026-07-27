@@ -7,9 +7,11 @@ import os from "node:os";
 import path from "node:path";
 
 const REPO_ROOT = path.resolve(import.meta.dirname, "../..");
-const MANIFEST_PATH = path.join(REPO_ROOT, "data/media/replacement-parts-launch-media-v1.json");
-const RESULTS_DIR = path.join(REPO_ROOT, "exports/replacement-parts-launch-media");
-const RESULTS_PATH = path.join(RESULTS_DIR, "upload-results.json");
+const DEFAULT_MANIFEST_PATH = path.join(
+  REPO_ROOT,
+  "data/media/replacement-parts-launch-media-v1.json"
+);
+const RESULTS_ROOT = path.join(REPO_ROOT, "exports/replacement-parts-launch-media");
 const REQUIRED_ENV = ["CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"];
 
 main().catch((error) => {
@@ -25,10 +27,12 @@ async function main() {
     return;
   }
 
-  const manifest = readManifest();
+  const manifestPath = resolveManifestPath(args.manifestPath);
+  const resultsPath = resolveResultsPath(manifestPath);
+  const manifest = readManifest(manifestPath);
 
   if (args.verify) {
-    await verifyManifestDeliveries(manifest);
+    await verifyManifestDeliveries(manifest, manifestPath, resultsPath);
     return;
   }
 
@@ -39,6 +43,7 @@ async function main() {
     JSON.stringify(
       {
         mode: args.commit ? "commit" : "dry-run",
+        manifestPath: path.relative(REPO_ROOT, manifestPath),
         sourceRoot,
         uploadCount: planned.length,
         entries: planned.map(({ entry, sourceBuffer }) => ({
@@ -106,7 +111,7 @@ async function main() {
       console.log(`Uploaded ${index + 1}/${planned.length}: ${result.publicId}`);
     }
   } catch (error) {
-    await writeResults({
+    await writeResults(resultsPath, {
       error: error instanceof Error ? error.message : "Unknown upload failure.",
       failedAt: new Date().toISOString(),
       results,
@@ -137,10 +142,10 @@ async function main() {
     })
   };
 
-  await writeManifest(uploadedManifest);
-  await writeResults({ completedAt: uploadedAt, results, status: "uploaded" });
+  await writeManifest(manifestPath, uploadedManifest);
+  await writeResults(resultsPath, { completedAt: uploadedAt, results, status: "uploaded" });
 
-  await verifyManifestDeliveries(uploadedManifest);
+  await verifyManifestDeliveries(uploadedManifest, manifestPath, resultsPath);
 }
 
 function parseArgs(argv) {
@@ -148,6 +153,7 @@ function parseArgs(argv) {
     commit: false,
     envFiles: [],
     help: false,
+    manifestPath: DEFAULT_MANIFEST_PATH,
     sourceRoot: path.join(os.homedir(), "Downloads"),
     verify: false
   };
@@ -170,12 +176,13 @@ function parseArgs(argv) {
       continue;
     }
 
-    if (arg === "--source-root" || arg === "--env-file") {
+    if (arg === "--source-root" || arg === "--env-file" || arg === "--manifest") {
       const value = argv[index + 1];
       if (!value) throw new Error(`${arg} requires a path.`);
 
       if (arg === "--source-root") parsed.sourceRoot = value;
       if (arg === "--env-file") parsed.envFiles.push(value);
+      if (arg === "--manifest") parsed.manifestPath = value;
       index += 1;
       continue;
     }
@@ -187,6 +194,11 @@ function parseArgs(argv) {
 
     if (arg.startsWith("--env-file=")) {
       parsed.envFiles.push(arg.slice("--env-file=".length));
+      continue;
+    }
+
+    if (arg.startsWith("--manifest=")) {
+      parsed.manifestPath = arg.slice("--manifest=".length);
       continue;
     }
 
@@ -213,6 +225,7 @@ Verify uploaded delivery URLs:
   node scripts/media/upload-replacement-parts-launch-media.mjs --verify
 
 Options:
+  --manifest <path>     Repository media manifest to use.
   --source-root <path>  Root containing the approved source-relative files.
   --env-file <path>     Optional local env file. May be supplied more than once.
   --commit              Upload after hash and collision preflight.
@@ -228,8 +241,32 @@ Safety:
 `);
 }
 
-function readManifest() {
-  return JSON.parse(readFileSync(MANIFEST_PATH, "utf8"));
+function resolveManifestPath(manifestPath) {
+  const resolved = path.resolve(manifestPath);
+  const relative = path.relative(REPO_ROOT, resolved);
+
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    throw new Error("Manifest path must stay inside the repository.");
+  }
+
+  if (!existsSync(resolved)) {
+    throw new Error(`Manifest does not exist: ${relative}`);
+  }
+
+  return resolved;
+}
+
+function resolveResultsPath(manifestPath) {
+  if (manifestPath === DEFAULT_MANIFEST_PATH) {
+    return path.join(RESULTS_ROOT, "upload-results.json");
+  }
+
+  const manifestName = path.basename(manifestPath, path.extname(manifestPath));
+  return path.join(RESULTS_ROOT, manifestName, "upload-results.json");
+}
+
+function readManifest(manifestPath) {
+  return JSON.parse(readFileSync(manifestPath, "utf8"));
 }
 
 async function prepareEntries(manifest, sourceRoot) {
@@ -395,7 +432,7 @@ function signParams(params, apiSecret) {
   return crypto.createHash("sha1").update(`${serialized}${apiSecret}`).digest("hex");
 }
 
-async function verifyManifestDeliveries(manifest) {
+async function verifyManifestDeliveries(manifest, manifestPath, resultsPath) {
   const deliverableEntries = manifest.entries.filter((entry) => entry.finalUrl);
 
   if (deliverableEntries.length !== manifest.entries.length) {
@@ -448,8 +485,12 @@ async function verifyManifestDeliveries(manifest) {
     }))
   };
 
-  await writeManifest(verifiedManifest);
-  await writeResults({ completedAt: verifiedAt, results: verification, status: "implemented" });
+  await writeManifest(manifestPath, verifiedManifest);
+  await writeResults(resultsPath, {
+    completedAt: verifiedAt,
+    results: verification,
+    status: "implemented"
+  });
 
   console.log(
     JSON.stringify(
@@ -494,11 +535,11 @@ async function safeJson(response) {
   }
 }
 
-async function writeManifest(manifest) {
-  await writeFile(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+async function writeManifest(manifestPath, manifest) {
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 }
 
-async function writeResults(payload) {
-  await mkdir(RESULTS_DIR, { recursive: true });
-  await writeFile(RESULTS_PATH, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+async function writeResults(resultsPath, payload) {
+  await mkdir(path.dirname(resultsPath), { recursive: true });
+  await writeFile(resultsPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
 }

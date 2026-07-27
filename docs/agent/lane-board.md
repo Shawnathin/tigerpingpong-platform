@@ -2,10 +2,12 @@
 
 ## In Progress
 
-- `codex/feature/table-accessory-offer-30-percent` — PR 2 is implemented and locally verified with exact live offer data, cart/dialog work, server-authoritative pricing snapshots, webhook revalidation, and protected savings presentation. Migration, targeted catalog write, Stripe test-mode proof, deployment, and promotion remain separately approval-gated. Current `develop` has no order-received email flow; email presentation is a conditional future follow-up, not part of this branch.
+- `codex/feature/replacement-nets-commerce-v1` — local implementation and release proof are complete for the owner-approved standard net and Expo/Portland upgrade. Exact media, live-catalog purchase controls, fit/included-item guidance, cart behavior, fallback help, and responsive QA pass; branch review, its pull request to `develop`, and any deployed catalog write remain separately gated.
 
 ## Done
 
+- PR #138 merged the focused table-accessory checkout browser-test stabilization into `develop`.
+- PR #133 merged the table-triggered 30% accessory offer, server-authoritative pricing snapshots, Stripe net-line handling, and protected savings presentation into `develop`; migration, targeted catalog write, Stripe test-mode proof, deployment, and promotion remain separately approval-gated.
 - PR #132 merged the Vice bundle catalog foundation with exact bundle SKU `15488` into `develop`; staging and production catalog writes remain separately approval-gated.
 - PR #130 merged Stripe successful-payment owner alerts and required hosted-Checkout phone collection into `develop`.
 - PR #128 merged the Part 40 commerce and replacement-parts foundation into `develop`; production catalog write and deployment remain separately approval-gated.

@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "status": "implemented",
+  "updatedAt": "2026-07-27T18:59:31.390Z",
+  "entries": [
+    {
+      "assetId": "tiger-replacement-net-primary-01",
+      "assetType": "image",
+      "role": "product-primary",
+      "title": "Tiger PingPong Standard Replacement Net",
+      "altText": "Folded black standard PingPong replacement net with white top tape",
+      "sourceRelativePath": "tiger-standard-replacement-net-primary-v1-386.jpg",
+      "sourceSha256": "d160c3e7b21508e76a8627d2413dc90e2adc800831c0c0ef3b023c444a1e8409",
+      "sourceBytes": 98826,
+      "sourceDimensions": {
+        "width": 386,
+        "height": 386
+      },
+      "sourceFormat": "jpg",
+      "rightsStatus": "legacy-tiger-owned",
+      "cloudinaryResourceType": "image",
+      "cloudinaryPublicId": "tiger-pingpong/products/replacement-parts/replacement-nets/tiger-replacement-net-primary-01",
+      "downloadFilename": null,
+      "uploadAction": "upload",
+      "deliveryStatus": "implemented",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1785178768/tiger-pingpong/products/replacement-parts/replacement-nets/tiger-replacement-net-primary-01.jpg",
+      "downloadUrl": null,
+      "cloudinaryAssetId": "a17be8e3596517e9abead3b35e0720d5",
+      "uploadedAt": "2026-07-27T18:59:30.965Z",
+      "verifiedAt": "2026-07-27T18:59:31.390Z",
+      "processing": {
+        "metadata": "EXIF removed",
+        "resize": "None; source resolution preserved"
+      }
+    },
+    {
+      "assetId": "tiger-table-net-replacement-set-primary-01",
+      "assetType": "image",
+      "role": "product-primary",
+      "title": "Tiger PingPong Expo & Portland Net Upgrade System",
+      "altText": "Complete Expo and Portland net upgrade system with side panels, supports, net, and hardware on a white background",
+      "sourceRelativePath": "tiger-expo-portland-net-upgrade-system-exact-cutout-rotated-ccw-v2-1600.jpg",
+      "sourceOriginalFilename": "20251231_095906 (1).jpg",
+      "sourceOriginalSha256": "df27b98054f7309971f0d3e1af8c11799d80440f54917abf580dfe91148808cf",
+      "sourceSha256": "5012eb35425deb129dae270789430576e432db01f21ae3f4f6b2933ae1e0ca21",
+      "sourceBytes": 270930,
+      "sourceDimensions": {
+        "width": 1600,
+        "height": 1600
+      },
+      "sourceFormat": "jpg",
+      "rightsStatus": "owner-provided",
+      "cloudinaryResourceType": "image",
+      "cloudinaryPublicId": "tiger-pingpong/products/replacement-parts/replacement-nets/tiger-table-net-replacement-set-primary-01",
+      "downloadFilename": null,
+      "uploadAction": "upload",
+      "deliveryStatus": "implemented",
+      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1785178770/tiger-pingpong/products/replacement-parts/replacement-nets/tiger-table-net-replacement-set-primary-01.jpg",
+      "downloadUrl": null,
+      "cloudinaryAssetId": "0a18fc45ff45cf86bda3bd33c709c6d3",
+      "uploadedAt": "2026-07-27T18:59:30.965Z",
+      "verifiedAt": "2026-07-27T18:59:31.390Z",
+      "processing": {
+        "background": "Original product pixels isolated onto pure white",
+        "metadata": "EXIF and GPS removed",
+        "orientation": "Rotated 90 degrees counter-clockwise",
+        "privacy": "Room, furniture, photographer, and location metadata removed"
+      }
+    }
+  ]
+}

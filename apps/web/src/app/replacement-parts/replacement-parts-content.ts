@@ -150,6 +150,12 @@ if (!part40Configuration) {
   throw new Error("Part 40 configuration is missing.");
 }
 
+const part40Media = requireImplementedMedia(part40Configuration.assetId);
+
+if (part40Media.assetType !== "image" || !part40Media.altText) {
+  throw new Error("Part 40 media is missing its image metadata.");
+}
+
 const replacementNets = curatedReplacementParts
   .filter((part) => part.section === "replacement-nets")
   .map((configuration) => {
@@ -239,6 +245,10 @@ export const replacementPartsContent = {
     compatibility: part40Configuration.compatibility,
     eyebrow: "Most-requested fix",
     heading: part40Configuration.heading,
+    image: {
+      altText: part40Media.altText,
+      finalUrl: part40Media.finalUrl
+    },
     punchline: "Replace the clip—not the whole opening system.",
     slug: part40Configuration.slug,
     supportPrompt: part40Configuration.supportPrompt

@@ -165,6 +165,8 @@ V1 shipping rule:
 - Orders over `$100 CAD` ship free across Canada.
 - Orders `$100 CAD` or under get `$15 CAD` flat-rate shipping.
 - Exactly `$100.00 CAD` still gets `$15 CAD` flat-rate shipping.
+- The Aqua 4-Pack w/ 3 Balls ships free when it is the only cart item.
+- A cart containing at least eight Part 40 clips ships free across Canada.
 
 Do not invent product-specific shipping promises. Any additional checkout/free-shipping exception needs explicit business sign-off before deployment.
 

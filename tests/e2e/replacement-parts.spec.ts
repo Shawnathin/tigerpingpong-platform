@@ -67,6 +67,15 @@ test("replacement-parts page welcomes people into the parts finder before Part 4
       exact: true
     })
   ).toBeVisible();
+  const part40Visual = part40.getByTestId("part-40-visual");
+  await expect(part40Visual.locator("img")).toHaveAttribute(
+    "alt",
+    "Black Tiger Part 40 replacement clip on a white background"
+  );
+  await expect(part40Visual.locator("img")).toHaveAttribute(
+    "src",
+    /v1784409335\/tiger-pingpong\/replacement-parts\/part-40\.jpg/
+  );
   await expect(
     part40.getByText(
       "Part 40 is used on selected Expo Indoor, Expo Outdoor, Portland Indoor, and Portland Outdoor tables.",
@@ -99,7 +108,7 @@ test("Part 40 uses the live catalog price and the existing cart and shipping rul
     })
   ).toBeVisible();
 
-  const addButton = purchase.getByRole("button", { name: "Add to Cart" });
+  const addButton = purchase.getByRole("button", { name: "Add one clip" });
   await addButton.focus();
   await expect(addButton).toBeFocused();
   await page.keyboard.press("Enter");
@@ -107,6 +116,9 @@ test("Part 40 uses the live catalog price and the existing cart and shipping rul
   const confirmation = purchase.getByRole("status");
   await expect(confirmation).toContainText("Part 40 is in your cart.");
   await expect(purchase.locator('a[href^="mailto:"]')).toHaveCount(0);
+  const fullSetButton = purchase.getByRole("button", { name: "Add full set of 8" });
+  await page.keyboard.press("Tab");
+  await expect(fullSetButton).toBeFocused();
   await page.keyboard.press("Tab");
 
   const viewCart = confirmation.getByRole("link", { name: "View Cart" });
@@ -127,6 +139,44 @@ test("Part 40 uses the live catalog price and the existing cart and shipping rul
   await expect(orderSummary).toContainText("Subtotal$7.00");
   await expect(orderSummary).toContainText("Shipping$15.00");
   await expect(orderSummary).toContainText("Total$22.00");
+});
+
+test("Part 40 offers a live-priced full set of eight with free shipping", async ({ page }) => {
+  await page.goto("/replacement-parts/");
+
+  const purchase = page.getByTestId("part-40-purchase");
+  const fullSet = purchase.getByTestId("part-40-full-set-option");
+  await expect(fullSet).toContainText("Full set of 8");
+  await expect(fullSet.getByTestId("part-40-full-set-live-price")).toHaveText("$56.00 CAD");
+  await expect(
+    fullSet.getByText("A full set of 8 Part 40 clips ships free across Canada.", {
+      exact: true
+    })
+  ).toBeVisible();
+
+  const fullSetButton = fullSet.getByRole("button", { name: "Add full set of 8" });
+  await fullSetButton.focus();
+  await expect(fullSetButton).toBeFocused();
+  await page.keyboard.press("Enter");
+
+  const confirmation = purchase.getByRole("status");
+  await expect(confirmation).toContainText("A full set of 8 Part 40 clips is in your cart.");
+  await page.keyboard.press("Tab");
+  const viewCart = confirmation.getByRole("link", { name: "View Cart" });
+  await expect(viewCart).toBeFocused();
+  await viewCart.click();
+
+  await expect(page).toHaveURL(/\/cart\/?$/);
+  const cartItem = page.locator("main article").filter({ hasText: "Tiger PingPong Part 40" });
+  await expect(cartItem).toContainText("Regular price $7.00 each");
+  await expect(
+    cartItem.getByLabel("Quantity for Tiger PingPong Part 40").locator("span")
+  ).toHaveText("8");
+
+  const orderSummary = page.getByRole("complementary", { name: "Order summary" });
+  await expect(orderSummary).toContainText("Subtotal$56.00");
+  await expect(orderSummary).toContainText("ShippingFree");
+  await expect(orderSummary).toContainText("Total$56.00");
 });
 
 test("replacement-net cards distinguish the net-only fix from the complete upgrade", async ({

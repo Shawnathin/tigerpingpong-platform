@@ -1,3 +1,4 @@
+import { PART_40_FULL_SET_QUANTITY } from "@tigerpingpong/shared";
 import Image from "next/image";
 import { headers } from "next/headers";
 
@@ -105,6 +106,20 @@ export default async function ReplacementPartsPage() {
               <ReplacementPartPurchase
                 anchorId={livePart40.configuration.anchorId}
                 confirmationLabel={livePart40.configuration.confirmationLabel}
+                fullSetOption={{
+                  buttonLabel: `Add full set of ${PART_40_FULL_SET_QUANTITY}`,
+                  confirmationLabel: `A full set of ${PART_40_FULL_SET_QUANTITY} Part 40 clips is in your cart.`,
+                  label: `Full set of ${PART_40_FULL_SET_QUANTITY}`,
+                  quantity: PART_40_FULL_SET_QUANTITY,
+                  shippingCopy: getV1ShippingMessage(
+                    livePart40.product.priceCents * PART_40_FULL_SET_QUANTITY,
+                    {
+                      productSlug: livePart40.product.slug,
+                      quantity: PART_40_FULL_SET_QUANTITY
+                    }
+                  )
+                }}
+                priceLabel="One clip"
                 product={{
                   categoryName: livePart40.product.category.name,
                   currency: livePart40.product.currency,
@@ -115,7 +130,11 @@ export default async function ReplacementPartsPage() {
                   productSlug: livePart40.product.slug,
                   unitPriceCents: livePart40.product.priceCents
                 }}
-                shippingCopy={getV1ShippingMessage(livePart40.product.priceCents)}
+                shippingCopy={getV1ShippingMessage(livePart40.product.priceCents, {
+                  productSlug: livePart40.product.slug,
+                  quantity: 1
+                })}
+                singleButtonLabel="Add one clip"
               />
             ) : (
               <a className={styles.darkAction} href={contact.part40EmailHref}>
@@ -123,10 +142,19 @@ export default async function ReplacementPartsPage() {
               </a>
             )}
           </div>
-          <blockquote className={styles.partQuote}>
-            <span aria-hidden="true">40</span>
-            <p>{part40.punchline}</p>
-          </blockquote>
+          <figure className={styles.partVisual} data-testid="part-40-visual">
+            <div className={styles.partVisualFrame}>
+              <Image
+                alt={part40.image.altText}
+                className={styles.partVisualImage}
+                fill
+                sizes="(max-width: 820px) calc(100vw - 104px), 440px"
+                src={livePart40?.imageUrl ?? part40.image.finalUrl}
+                unoptimized
+              />
+            </div>
+            <figcaption>{part40.punchline}</figcaption>
+          </figure>
         </section>
 
         <section

@@ -47,7 +47,7 @@ const routes = {
     activeLabel: "Need a part?",
     description:
       "Shop Tiger PingPong Part 40, a standard replacement net, and the Expo & Portland net upgrade system—or find manuals and real help in Vancouver.",
-    heading: "Keep the rally going.",
+    heading: "Let's find the fix.",
     path: "/replacement-parts/",
     title: "Replacement Parts & Manuals | Tiger PingPong"
   }
@@ -324,7 +324,9 @@ test.describe("Tiger gear categories", () => {
     await expect(page.getByTestId("expo-portland-net-upgrade-live-price")).toHaveText(
       "$149.99 CAD"
     );
-    await expect(page.getByRole("button", { name: "Add to Cart" })).toHaveCount(3);
+    await expect(page.getByRole("button", { name: "Add one clip" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Add full set of 8" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Add to Cart" })).toHaveCount(2);
     await expect(page.locator("main select, main input, main form")).toHaveCount(0);
   });
 

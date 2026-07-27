@@ -1,3 +1,5 @@
+import { PART_40_PRODUCT_SLUG } from "@tigerpingpong/shared";
+
 import type { CatalogProductSummary } from "../types/catalog";
 import { resolveProductMediaUrl } from "./product-media";
 
@@ -42,7 +44,7 @@ export const curatedReplacementParts: readonly CuratedReplacementPart[] = [
     included: ["One Part 40 replacement clip"],
     rank: 1,
     section: "featured-part",
-    slug: "tiger-pingpong-replacement-part-40",
+    slug: PART_40_PRODUCT_SLUG,
     supportEmailKey: "part40",
     supportPrompt: "Need a fit check?"
   },

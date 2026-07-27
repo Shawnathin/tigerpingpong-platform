@@ -631,6 +631,9 @@ test("primary discovery and shipping routes retain factual storefront behavior",
   await expect(
     page.getByText("The Aqua 4-Pack w/ 3 Balls ships free across Canada.")
   ).toBeVisible();
+  await expect(
+    page.getByText("Eight or more Part 40 clips ship free across Canada.")
+  ).toBeVisible();
 
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByRole("link", { name: "Shipping & Returns" }).first()).toBeVisible();

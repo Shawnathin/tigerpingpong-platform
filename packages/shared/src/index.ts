@@ -5,6 +5,8 @@ export const AQUA_PADDLE_PRODUCT_KEY = "tiger-aqua-outdoor-indoor-paddle";
 export const AQUA_FOUR_PACK_PRODUCT_SLUG = AQUA_PADDLE_PRODUCT_KEY;
 export const AQUA_TWO_PACK_VARIANT_KEY = "tiger-aqua-package-2-pack-3-balls";
 export const AQUA_FOUR_PACK_VARIANT_KEY = "tiger-aqua-package-4-pack-3-balls";
+export const PART_40_PRODUCT_SLUG = "tiger-pingpong-replacement-part-40";
+export const PART_40_FULL_SET_QUANTITY = 8;
 export const COMPONENT_DERIVED_PRICING_SOURCE = "component_derived";
 export const TABLE_COVER_PRODUCT_KEY = "tiger-table-cover-black-polyester";
 export const PLAZA_OUTDOOR_TABLE_PRODUCT_KEY = "tiger-plaza-outdoor-table-grey";
@@ -31,8 +33,10 @@ export const PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY = "tiger-premium-balls-6-w
 export const CANADA_FLAT_RATE_SHIPPING_CENTS = 1500;
 export const CANADA_FREE_SHIPPING_THRESHOLD_CENTS = 10000;
 export const LEGACY_CANADA_SHIPPING_RULE = "canada_free_over_100_flat_15";
-export const CURRENT_CANADA_SHIPPING_RULE = "canada_free_over_100_flat_15_aqua_4_pack_free";
-export const CURRENT_CANADA_SHIPPING_RULE_VERSION = "v2";
+export const AQUA_FOUR_PACK_CANADA_SHIPPING_RULE = "canada_free_over_100_flat_15_aqua_4_pack_free";
+export const CURRENT_CANADA_SHIPPING_RULE =
+  "canada_free_over_100_flat_15_aqua_4_pack_part_40_set_free";
+export const CURRENT_CANADA_SHIPPING_RULE_VERSION = "v3";
 
 export type CatalogVariantPricingSource = typeof COMPONENT_DERIVED_PRICING_SOURCE;
 
@@ -55,10 +59,12 @@ export interface ViceBundlePricingComponents {
 
 export type CanadaShippingRule =
   | typeof CURRENT_CANADA_SHIPPING_RULE
+  | typeof AQUA_FOUR_PACK_CANADA_SHIPPING_RULE
   | typeof LEGACY_CANADA_SHIPPING_RULE;
 
 export interface CanadaShippingItem {
   productSlug?: string | null;
+  quantity?: number | null;
   variantKey?: string | null;
 }
 
@@ -114,8 +120,21 @@ export function isAquaFourPackShippingItem(item: CanadaShippingItem): boolean {
   );
 }
 
+export function isPart40FullSetShippingItem(item: CanadaShippingItem): boolean {
+  return (
+    item.productSlug === PART_40_PRODUCT_SLUG &&
+    typeof item.quantity === "number" &&
+    Number.isInteger(item.quantity) &&
+    item.quantity >= PART_40_FULL_SET_QUANTITY
+  );
+}
+
 export function isCanadaShippingRule(value: string): value is CanadaShippingRule {
-  return value === CURRENT_CANADA_SHIPPING_RULE || value === LEGACY_CANADA_SHIPPING_RULE;
+  return (
+    value === CURRENT_CANADA_SHIPPING_RULE ||
+    value === AQUA_FOUR_PACK_CANADA_SHIPPING_RULE ||
+    value === LEGACY_CANADA_SHIPPING_RULE
+  );
 }
 
 export function calculateViceBundleRegularPrice(
@@ -158,12 +177,13 @@ export function calculateCanadaShippingCents(
     return 0;
   }
 
+  const supportsAquaFourPackException = rule !== LEGACY_CANADA_SHIPPING_RULE;
   const isAquaFourPackOnlyOrder =
-    rule === CURRENT_CANADA_SHIPPING_RULE &&
-    items.length > 0 &&
-    items.every(isAquaFourPackShippingItem);
+    supportsAquaFourPackException && items.length > 0 && items.every(isAquaFourPackShippingItem);
+  const hasPart40FullSet =
+    rule === CURRENT_CANADA_SHIPPING_RULE && items.some(isPart40FullSetShippingItem);
 
-  return isAquaFourPackOnlyOrder ? 0 : CANADA_FLAT_RATE_SHIPPING_CENTS;
+  return isAquaFourPackOnlyOrder || hasPart40FullSet ? 0 : CANADA_FLAT_RATE_SHIPPING_CENTS;
 }
 
 export function calculateTableAccessoryPricing(

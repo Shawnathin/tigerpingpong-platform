@@ -101,7 +101,7 @@ test("Part 40 uses the live catalog price and the existing cart and shipping rul
   await page.goto("/replacement-parts/");
 
   const purchase = page.getByTestId("part-40-purchase");
-  await expect(purchase.getByTestId("part-40-live-price")).toHaveText("$7.00 CAD");
+  await expect(purchase.getByTestId("part-40-live-price")).toHaveText("$7.00");
   await expect(
     purchase.getByText("Orders $100 CAD or under use $15 CAD flat-rate shipping.", {
       exact: true
@@ -147,7 +147,7 @@ test("Part 40 offers a live-priced full set of eight with free shipping", async 
   const purchase = page.getByTestId("part-40-purchase");
   const fullSet = purchase.getByTestId("part-40-full-set-option");
   await expect(fullSet).toContainText("Full set of 8");
-  await expect(fullSet.getByTestId("part-40-full-set-live-price")).toHaveText("$56.00 CAD");
+  await expect(fullSet.getByTestId("part-40-full-set-live-price")).toHaveText("$56.00");
   await expect(
     fullSet.getByText("A full set of 8 Part 40 clips ships free across Canada.", {
       exact: true
@@ -261,9 +261,7 @@ test("Standard Replacement Net uses its live price and flat-rate cart total", as
   await page.goto("/replacement-parts/");
 
   const purchase = page.getByTestId("standard-replacement-net-purchase");
-  await expect(purchase.getByTestId("standard-replacement-net-live-price")).toHaveText(
-    "$20.00 CAD"
-  );
+  await expect(purchase.getByTestId("standard-replacement-net-live-price")).toHaveText("$20.00");
   await expect(
     purchase.getByText("Orders $100 CAD or under use $15 CAD flat-rate shipping.", {
       exact: true
@@ -296,9 +294,7 @@ test("Expo and Portland upgrade uses its live price and free-shipping cart total
   await page.goto("/replacement-parts/");
 
   const purchase = page.getByTestId("expo-portland-net-upgrade-purchase");
-  await expect(purchase.getByTestId("expo-portland-net-upgrade-live-price")).toHaveText(
-    "$149.99 CAD"
-  );
+  await expect(purchase.getByTestId("expo-portland-net-upgrade-live-price")).toHaveText("$149.99");
   await expect(
     purchase.getByText("Orders over $100 CAD ship free across Canada.", {
       exact: true

@@ -54,7 +54,7 @@ export function ReplacementPartPurchase({
       <p className={styles.partPrice} id={priceId}>
         <span>{priceLabel}</span>
         <strong data-testid={`${anchorId}-live-price`}>
-          {formatCartMoney(product.unitPriceCents, product.currency)} CAD
+          {formatCartMoney(product.unitPriceCents, product.currency)}
         </strong>
       </p>
       <p className={styles.purchaseShipping} id={shippingId}>
@@ -80,8 +80,7 @@ export function ReplacementPartPurchase({
           <p className={styles.fullSetPrice} id={fullSetPriceId}>
             <span>{fullSetOption.label}</span>
             <strong data-testid={`${anchorId}-full-set-live-price`}>
-              {formatCartMoney(product.unitPriceCents * fullSetOption.quantity, product.currency)}{" "}
-              CAD
+              {formatCartMoney(product.unitPriceCents * fullSetOption.quantity, product.currency)}
             </strong>
           </p>
           <p className={styles.fullSetShipping} id={fullSetShippingId}>

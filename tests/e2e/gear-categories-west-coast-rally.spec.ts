@@ -319,11 +319,9 @@ test.describe("Tiger gear categories", () => {
       "href",
       /mailto:info@tigerpingpong\.com/
     );
-    await expect(page.getByTestId("part-40-live-price")).toHaveText("$7.00 CAD");
-    await expect(page.getByTestId("standard-replacement-net-live-price")).toHaveText("$20.00 CAD");
-    await expect(page.getByTestId("expo-portland-net-upgrade-live-price")).toHaveText(
-      "$149.99 CAD"
-    );
+    await expect(page.getByTestId("part-40-live-price")).toHaveText("$7.00");
+    await expect(page.getByTestId("standard-replacement-net-live-price")).toHaveText("$20.00");
+    await expect(page.getByTestId("expo-portland-net-upgrade-live-price")).toHaveText("$149.99");
     await expect(page.getByRole("button", { name: "Add one clip" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Add full set of 8" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Add to Cart" })).toHaveCount(2);

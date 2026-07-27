@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, and regression proof are complete for the Tiger-styled cart empty state. The task branch is ready for draft review; any pull request must target `develop`.
+- Draft PR #142 / `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, and regression proof are complete for the Tiger-styled cart empty state. Review remains pending against `develop`.
 
 ## Awaiting Review
 

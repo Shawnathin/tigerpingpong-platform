@@ -11,7 +11,6 @@ export interface CuratedReplacementPart {
   descriptor: string;
   featured: boolean;
   heading: string;
-  humanNote?: string;
   included: readonly string[];
   legacyNote?: string;
   notIncluded?: string;
@@ -76,7 +75,6 @@ export const curatedReplacementParts: readonly CuratedReplacementPart[] = [
     descriptor: "Replace the whole net setup.",
     featured: false,
     heading: "Expo & Portland Net Upgrade System",
-    humanNote: "We know that's more than a little fix.",
     included: [
       "Replacement net",
       "Two triangular support pieces",

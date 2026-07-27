@@ -720,14 +720,6 @@
   line-height: 1.45;
 }
 
-.netHumanNote {
-  margin: 0;
-  color: var(--tiger-ink);
-  font-size: 1rem;
-  font-weight: 880;
-  line-height: 1.5;
-}
-
 .netIncluded li {
   position: relative;
   padding-left: 18px;

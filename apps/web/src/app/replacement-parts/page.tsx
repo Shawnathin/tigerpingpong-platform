@@ -199,10 +199,6 @@ export default async function ReplacementPartsPage() {
                       </div>
                     ) : null}
 
-                    {configuration.humanNote ? (
-                      <p className={styles.netHumanNote}>{configuration.humanNote}</p>
-                    ) : null}
-
                     {livePart ? (
                       <ReplacementPartPurchase
                         anchorId={configuration.anchorId}

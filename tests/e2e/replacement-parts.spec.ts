@@ -188,7 +188,6 @@ test("replacement-net cards distinguish the net-only fix from the complete upgra
   await expect(upgrade).toContainText(
     "If anything from the older setup is missing, this complete kit moves the table to the current system."
   );
-  await expect(upgrade).toContainText("We know that's more than a little fix.");
   await expect(upgrade.locator("img")).toHaveAttribute(
     "alt",
     "Complete Expo and Portland net upgrade system with side panels, supports, net, and hardware on a white background"

@@ -1,5 +1,9 @@
 import mediaManifestData from "../../../../../data/media/replacement-parts-launch-media-v1.json";
-import { curatedReplacementParts } from "../../lib/curated-replacement-parts";
+import replacementNetsMediaManifestData from "../../../../../data/media/replacement-nets-commerce-media-v1.json";
+import {
+  curatedReplacementParts,
+  type CuratedReplacementPart
+} from "../../lib/curated-replacement-parts";
 
 interface ReplacementPartsMediaEntry {
   altText?: string;
@@ -25,9 +29,13 @@ export interface ReplacementManual {
   videoUrl?: string;
 }
 
-const mediaManifest = mediaManifestData as ReplacementPartsMediaManifest;
+const launchMediaManifest = mediaManifestData as ReplacementPartsMediaManifest;
+const replacementNetsMediaManifest =
+  replacementNetsMediaManifestData as ReplacementPartsMediaManifest;
 const mediaByAssetId = new Map(
-  mediaManifest.entries.map((entry) => [entry.assetId, entry] as const)
+  [...launchMediaManifest.entries, ...replacementNetsMediaManifest.entries].map(
+    (entry) => [entry.assetId, entry] as const
+  )
 );
 
 function requireImplementedMedia(
@@ -99,14 +107,68 @@ Order number (if available):
 I'll attach a photo of the part and the table label.`
 );
 
+const replacementNetEmailHref = createEmailHref(
+  "Standard replacement net help",
+  `Hi Tiger,
+
+I think I need the standard replacement net.
+
+Table brand and model:
+Are the existing posts and mounting hardware still in place?
+What happened:
+Order number (if available):
+
+I'll attach a photo of the current net setup.`
+);
+
+const netUpgradeEmailHref = createEmailHref(
+  "Expo & Portland net upgrade help",
+  `Hi Tiger,
+
+I think I need the Expo & Portland net upgrade system.
+
+Table model:
+Indoor or outdoor:
+Approximate purchase year:
+Which pieces are missing:
+Order number (if available):
+
+I'll attach a photo of the current net setup and the table label.`
+);
+
+const supportEmailHrefByKey = {
+  expoPortlandNetUpgrade: netUpgradeEmailHref,
+  part40: part40EmailHref,
+  standardReplacementNet: replacementNetEmailHref
+} satisfies Record<CuratedReplacementPart["supportEmailKey"], string>;
+
 const part40Media = requireImplementedMedia("replacement-part-40-primary");
 const part40Configuration = curatedReplacementParts.find(
-  (part) => part.slug === "tiger-pingpong-replacement-part-40"
+  (part) => part.section === "featured-part"
 );
 
 if (part40Media.assetType !== "image" || !part40Media.altText || !part40Configuration) {
   throw new Error("Part 40 media is missing its image metadata.");
 }
+
+const replacementNets = curatedReplacementParts
+  .filter((part) => part.section === "replacement-nets")
+  .map((configuration) => {
+    const media = requireImplementedMedia(configuration.assetId);
+
+    if (media.assetType !== "image" || !media.altText) {
+      throw new Error(`Replacement-net media is missing its image metadata: ${media.assetId}`);
+    }
+
+    return {
+      configuration,
+      image: {
+        altText: media.altText,
+        finalUrl: media.finalUrl
+      },
+      supportHref: supportEmailHrefByKey[configuration.supportEmailKey]
+    };
+  });
 
 export const replacementPartsContent = {
   contact: {
@@ -151,6 +213,12 @@ export const replacementPartsContent = {
     requireManual("manual-whistler-indoor", "https://www.youtube.com/watch?v=tuvacihKUCk"),
     requireManual("manual-plaza-outdoor")
   ] satisfies ReplacementManual[],
+  replacementNets: {
+    body: "Keep what still works, or update the whole table-side system. These are two different fixes, so start with what is actually missing.",
+    eyebrow: "Net help",
+    heading: "What needs replacing?",
+    items: replacementNets
+  },
   part40: {
     body: part40Configuration.body,
     compatibility: part40Configuration.compatibility,

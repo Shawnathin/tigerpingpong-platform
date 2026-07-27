@@ -1,7 +1,7 @@
 # Tiger Brand Change Control
 
-Version: 2.2.1
-Effective: 2026-07-24
+Version: 2.3.0
+Effective: 2026-07-27
 Approver: Shawn Cleve
 
 The brand system should evolve when Tiger learns something—not every time a contributor finds a different adjective.
@@ -53,6 +53,20 @@ Update version headers in every materially affected brand file. `docs/brand/READ
 Deeper individual product stories remain to be completed. Vice and ball stories are provisional. Aqua and Portland Outdoor still have factual questions listed in `docs/brand/FACTS-AND-CLAIMS.md` and `docs/planning/tiger-storytelling-content-map-v1.md`.
 
 ## Decision history
+
+## 2026-07-27 — Approve the standard net and Expo and Portland net upgrade
+
+Owner decision: Sell a net-only Standard Replacement Net for any standard PingPong table at the current catalog seed of `$20 CAD`. Sell the complete Expo & Portland Net Upgrade System at the current catalog seed of `$149.99 CAD`; it fits every Expo and Portland table, indoor or outdoor, and does not fit Whistler or Plaza. The complete upgrade includes the replacement net, two triangular support pieces, the net-support assembly, all installation hardware, and two new side panels.
+
+Reason: Customers need a clear choice between replacing only a standard fabric net and replacing missing Expo or Portland net hardware. Older Expo and Portland tables used removable metal uprights that were easy to misplace. The earlier and current hardware do not interchange piece by piece, so a customer missing anything from the older setup needs the complete upgrade.
+
+Evidence or source: Shawn's explicit written compatibility, included-item, history, availability, and price decisions on 2026-07-27; reviewed legacy SKUs `8367` and `15875`; verified exact product media recorded in `data/media/replacement-nets-commerce-media-v1.json`. Live catalog data remains price and availability truth.
+
+Files updated: Brand facts and version, product story brief, reviewed product/family/media/review-flag CSVs, replacement-parts workflow records, and the verified Cloudinary media manifest.
+
+Copy or claim replaced: The two products were previously draft and deferred with legacy `$28` and `$140` values and unqualified compatibility copy. Public guidance now distinguishes the net-only choice from the complete current Expo and Portland system, names Whistler and Plaza as exclusions from the upgrade, and keeps supplier and reordering details out of customer copy.
+
+Follow-up: Review the implemented support-hub cards and focused commerce proof through the feature-branch pull request. Any deployed catalog write or production promotion remains separately approval-gated. A Whistler-specific system needs its own SKU, price, included items, compatibility copy, media, and approval.
 
 ## 2026-07-24 — Assign the Vice bundle SKU
 

@@ -2,38 +2,39 @@
 
 ## Active task
 
-Vice bundle catalog foundation, followed by the table-triggered 30% accessory offer.
+Standard Replacement Net and Expo & Portland Net Upgrade System commerce.
 
 ## Selected task card
 
-Make table package contents explicit, add a live component-priced Vice package containing four paddles and six white balls, and offer eligible play sets plus a compatible table cover at 30% off when a table is in the cart.
+Add the two owner-approved net choices to the dedicated Replacement Parts support hub: a `$20 CAD` live-catalog seed for the net-only standard replacement and a `$149.99 CAD` live-catalog seed for the complete Expo and Portland upgrade.
 
 ## Boundaries
 
-- Deliver two focused branches/PRs from current `develop`: the Vice catalog foundation first, then the table accessory offer. Both target `develop`, never `main`.
-- Preserve hosted Stripe Checkout, webhook-confirmed payment truth, webhook idempotency, Stripe Tax, Canada-only shipping, the `$100` threshold, and the existing Aqua shipping exception.
-- Prices and availability remain live catalog truth. Client prices are reconciliation hints only.
-- Do not use a Stripe coupon. The API computes net eligible line prices and keeps unexpected Stripe discounts unsupported.
-- Use the owner-supplied Vice bundle SKU `15488`; do not substitute a placeholder or alternate value.
-- Do not apply a production catalog write, database migration, deployment, or real payment in this task without separate approval.
-- Preserve the unrelated automated-order-email worktree and branch.
+- Work only on `codex/feature/replacement-nets-commerce-v1` created from current `develop`; target its pull request to `develop`, never `main`.
+- Preserve Part 40, manuals, setup videos, navigation, footer, generic-catalog/PDP/sitemap exclusions, hosted Stripe Checkout, webhook payment truth, Canada-only shipping, and the existing shipping calculator.
+- Prices and availability remain live catalog truth. The reviewed CSV values are activation seeds, not hardcoded storefront copy or trusted client totals.
+- Keep internal SKUs `8367` and `15875` out of public copy.
+- State fit and included items exactly: the standard product is net-only for any standard PingPong table; the complete upgrade fits every indoor/outdoor Expo and Portland and does not fit Whistler or Plaza.
+- Keep supplier and reordering history out of customer copy. Do not imply planned obsolescence.
+- Do not add a fit selector, new schema, migration, payment rule, shipping exception, generic replacement-parts catalogue, or production catalog write.
 
 ## Required proof
 
-- Vice exposes required Single and four-paddle/six-white-ball package choices, with the bundle regular price derived from live components.
-- Legacy Vice cart lines migrate safely to the Single variant.
-- Every table purchase rail positively prompts customers to pick the paddles and balls that fit
-  their game.
-- The table dialog offers the exact three play sets and a compatible cover without a preselected upsell; Plaza never offers the cover.
-- Cart and API pricing agree on automatic eligibility, per-table limits, highest-price-first allocation, rounding, and reversal when tables are removed.
-- Stripe receives net line prices without coupons, and webhook-confirmed payment truth remains unchanged.
-- Order snapshots preserve list, discount, net, and promotion audit values; legacy orders backfill safely.
-- Prisma generation/validation, focused tests, lint, typecheck, production build, browser coverage, and secret scanning pass.
+- The reviewed import accepts both active replacement parts only with exact SKU, positive CAD price, approved primary Cloudinary media, public/checkout flags, and `online_checkout`.
+- The page uses live price and availability, adds each product through the existing cart, and falls back to photo help without exposing stale prices when catalog data is unavailable.
+- Standard-net cart math is `$20` subtotal, `$15` shipping, and `$35` pre-tax total.
+- Expo and Portland upgrade cart math is `$149.99` subtotal, free shipping under the existing over-`$100` rule, and `$149.99` pre-tax total.
+- Compatibility, included items, older-system guidance, Whistler/Plaza exclusions, image alternatives, focus behaviour, and generic-discovery exclusions have focused coverage.
+- Cloudinary delivery verification, import validation, scoped dry-run, lint, typecheck, unit tests, focused browser tests, production build, and secret scanning pass.
 
 ## Status
 
-PR 1 merged into `develop` through PR #132. It reconciles the durable Vice single price, defines the required Single and four-paddle/six-white-ball package records, derives the bundle price from live components, adds the narrow guarded import path, preserves legacy cart/checkout compatibility, and uses exact component media. Shawn supplied exact bundle SKU `15488` on 2026-07-24, so the reviewed bundle row is active and the SKU review flag is resolved. The scoped staging dry run reports no catalog blockers and performs no database write.
+PR #133 and the follow-up browser-test stabilization in PR #138 are merged into `develop`; the table accessory offer is no longer the active lane.
 
-PR 2 is implemented and locally verified on `codex/feature/table-accessory-offer-30-percent`. Exact eligible tables now get the positive paddle-and-ball prompt and accessible, unselected accessory offer; Plaza cover incompatibility and offer-data failure are handled without blocking the confirmed table. Shared cart/API pricing applies the versioned 30% rule automatically, Stripe receives net line prices without coupons, forward-only order snapshots preserve list/discount/net truth, legacy orders remain valid, and protected order presentation shows savings. Prisma generation/validation, lint, typecheck, all 113 unit tests, the production build, seven focused responsive/keyboard browser tests, targeted formatting, and tracked-secret scanning passed.
+Shawn approved the two replacement-net products, their compatibility, included items, current availability, and catalog seed prices on 2026-07-27. The exact product images are processed, stripped of sensitive metadata, uploaded to Cloudinary, and verified in `data/media/replacement-nets-commerce-media-v1.json`.
 
-Rollout remains gated: do not apply the migration, targeted catalog write, staging Stripe proof, deployment, or production promotion until the normal review path separately approves those steps. Current `develop` has no application-owned order-received email implementation; matching email savings presentation remains conditional follow-up only if that separate feature is approved and merged.
+The local branch implementation and proof are complete. The dedicated support hub now distinguishes the net-only choice from the complete Expo/Portland upgrade, reads live catalog price and availability, uses the shared cart and exact shipping rule, links cart lines back to the right card, and falls back to photo help without showing stale prices.
+
+Import validation and the connectionless replacement-parts staging dry-run pass with no blocking gates. Lint, typecheck, 124 unit tests, the production build, tracked-secret scan, high-severity dependency gate, 10 focused browser tests, all 86 active browser tests, and responsive visual review pass. The two delivered Cloudinary files return exact hash-matching JPEG bytes.
+
+No database write, deployment, Stripe payment, production catalog activation, merge, or production promotion has occurred. The next step is branch review and a pull request to `develop`; any catalog write remains separately approval-gated.

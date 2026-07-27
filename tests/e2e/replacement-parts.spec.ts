@@ -3,6 +3,19 @@ import path from "node:path";
 
 import { expect, test } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    const resetMarker = "tigerpingpong.playwright.cart-reset";
+
+    if (window.sessionStorage.getItem(resetMarker) === "done") {
+      return;
+    }
+
+    window.localStorage.removeItem("tigerpingpong.cart.v1");
+    window.sessionStorage.setItem(resetMarker, "done");
+  });
+});
+
 test("replacement-parts page makes Part 40 and real help the clear starting points", async ({
   page
 }) => {
@@ -13,7 +26,7 @@ test("replacement-parts page makes Part 40 and real help the clear starting poin
   await expect(page).toHaveTitle("Replacement Parts & Manuals | Tiger PingPong");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    "Find Tiger PingPong Part 40, download table manuals, watch setup videos, or send our Vancouver team a photo for replacement-part help."
+    "Shop Tiger PingPong Part 40, a standard replacement net, and the Expo & Portland net upgrade system—or find manuals and real help in Vancouver."
   );
 
   await expect(
@@ -120,6 +133,141 @@ test("Part 40 uses the live catalog price and the existing cart and shipping rul
   await expect(orderSummary).toContainText("Total$22.00");
 });
 
+test("replacement-net cards distinguish the net-only fix from the complete upgrade", async ({
+  page
+}) => {
+  await page.goto("/replacement-parts/");
+
+  await expect(
+    page.getByRole("heading", { level: 2, name: "What needs replacing?" })
+  ).toBeVisible();
+
+  const standardNet = page.locator("#standard-replacement-net");
+  await expect(standardNet).toBeVisible();
+  await expect(standardNet).toContainText("Keep the posts. Replace the net.");
+  await expect(standardNet).toContainText(
+    "A standard replacement net for any standard PingPong table—Tiger or otherwise."
+  );
+  await expect(standardNet.locator("li").filter({ hasText: "One replacement net" })).toBeVisible();
+  await expect(
+    standardNet.getByText("Posts and mounting hardware are not included.", { exact: true })
+  ).toBeVisible();
+  await expect(standardNet.locator("img")).toHaveAttribute(
+    "alt",
+    "Folded black standard PingPong replacement net with white top tape"
+  );
+  await expect(standardNet.locator("img")).toHaveAttribute(
+    "src",
+    /v1785178768\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-replacement-net-primary-01\.jpg/
+  );
+
+  const upgrade = page.locator("#expo-portland-net-upgrade");
+  await expect(upgrade).toBeVisible();
+  await expect(upgrade).toContainText("Everything needed to update the table-side system.");
+  await expect(upgrade).toContainText(
+    "Fits every Tiger PingPong Expo and Portland table, indoor or outdoor."
+  );
+  await expect(upgrade).toContainText("It does not fit Whistler or Plaza.");
+  for (const includedItem of [
+    "Replacement net",
+    "Two triangular support pieces",
+    "Net-support assembly",
+    "All installation hardware",
+    "Two new side panels"
+  ]) {
+    await expect(upgrade.locator("li").filter({ hasText: includedItem })).toBeVisible();
+  }
+  await expect(upgrade).toContainText(
+    "Older Expo and Portland tables used removable metal uprights, and those pieces were easy to misplace."
+  );
+  await expect(upgrade).toContainText(
+    "The earlier and current hardware do not interchange piece by piece."
+  );
+  await expect(upgrade).toContainText(
+    "If anything from the older setup is missing, this complete kit moves the table to the current system."
+  );
+  await expect(upgrade).toContainText("We know that's more than a little fix.");
+  await expect(upgrade.locator("img")).toHaveAttribute(
+    "alt",
+    "Complete Expo and Portland net upgrade system with side panels, supports, net, and hardware on a white background"
+  );
+  await expect(upgrade.locator("img")).toHaveAttribute(
+    "src",
+    /v1785178770\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-table-net-replacement-set-primary-01\.jpg/
+  );
+
+  await expect(standardNet.locator("form, input, select, fieldset")).toHaveCount(0);
+  await expect(upgrade.locator("form, input, select, fieldset")).toHaveCount(0);
+});
+
+test("Standard Replacement Net uses its live price and flat-rate cart total", async ({ page }) => {
+  await page.goto("/replacement-parts/");
+
+  const purchase = page.getByTestId("standard-replacement-net-purchase");
+  await expect(purchase.getByTestId("standard-replacement-net-live-price")).toHaveText(
+    "$20.00 CAD"
+  );
+  await expect(
+    purchase.getByText("Orders $100 CAD or under use $15 CAD flat-rate shipping.", {
+      exact: true
+    })
+  ).toBeVisible();
+
+  await purchase.getByRole("button", { name: "Add to Cart" }).click();
+  const confirmation = purchase.getByRole("status");
+  await expect(confirmation).toBeVisible();
+  await confirmation.getByRole("link", { name: "View Cart" }).click();
+
+  await expect(page).toHaveURL(/\/cart\/?$/);
+  const cartItem = page
+    .locator("main article")
+    .filter({ hasText: "Tiger PingPong Standard Replacement Net" });
+  await expect(cartItem).toContainText("Regular price $20.00 each");
+
+  const orderSummary = page.getByRole("complementary", { name: "Order summary" });
+  await expect(orderSummary).toContainText("Subtotal$20.00");
+  await expect(orderSummary).toContainText("Shipping$15.00");
+  await expect(orderSummary).toContainText("Total$35.00");
+
+  await cartItem.getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("heading", { name: "Your cart is empty." })).toBeVisible();
+});
+
+test("Expo and Portland upgrade uses its live price and free-shipping cart total", async ({
+  page
+}) => {
+  await page.goto("/replacement-parts/");
+
+  const purchase = page.getByTestId("expo-portland-net-upgrade-purchase");
+  await expect(purchase.getByTestId("expo-portland-net-upgrade-live-price")).toHaveText(
+    "$149.99 CAD"
+  );
+  await expect(
+    purchase.getByText("Orders over $100 CAD ship free across Canada.", {
+      exact: true
+    })
+  ).toBeVisible();
+
+  await purchase.getByRole("button", { name: "Add to Cart" }).click();
+  const confirmation = purchase.getByRole("status");
+  await expect(confirmation).toBeVisible();
+  await confirmation.getByRole("link", { name: "View Cart" }).click();
+
+  await expect(page).toHaveURL(/\/cart\/?$/);
+  const cartItem = page
+    .locator("main article")
+    .filter({ hasText: "Tiger PingPong Expo & Portland Net Upgrade System" });
+  await expect(cartItem).toContainText("Regular price $149.99 each");
+
+  const orderSummary = page.getByRole("complementary", { name: "Order summary" });
+  await expect(orderSummary).toContainText("Subtotal$149.99");
+  await expect(orderSummary).toContainText("ShippingFree");
+  await expect(orderSummary).toContainText("Total$149.99");
+
+  await cartItem.getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("heading", { name: "Your cart is empty." })).toBeVisible();
+});
+
 test("Part 40 falls back to photo help when live catalog data is unavailable", async ({ page }) => {
   await page.setExtraHTTPHeaders({ "x-tiger-test-catalog-mode": "unavailable" });
   await page.goto("/replacement-parts/");
@@ -134,19 +282,52 @@ test("Part 40 falls back to photo help when live catalog data is unavailable", a
   await expect(part40.getByRole("button", { name: /add to cart/i })).toHaveCount(0);
 });
 
-test("Part 40 stays on the dedicated support hub instead of generic discovery", async ({
+test("replacement parts fall back to photo help when live catalog data is unavailable", async ({
+  page
+}) => {
+  await page.setExtraHTTPHeaders({ "x-tiger-test-catalog-mode": "unavailable" });
+  await page.goto("/replacement-parts/");
+
+  const standardNet = page.locator("#standard-replacement-net");
+  const upgrade = page.locator("#expo-portland-net-upgrade");
+
+  await expect(standardNet.getByTestId("standard-replacement-net-purchase")).toHaveCount(0);
+  await expect(upgrade.getByTestId("expo-portland-net-upgrade-purchase")).toHaveCount(0);
+  await expect(standardNet).not.toContainText("$20.00");
+  await expect(upgrade).not.toContainText("$149.99");
+  await expect(standardNet.getByRole("button", { name: /add to cart/i })).toHaveCount(0);
+  await expect(upgrade.getByRole("button", { name: /add to cart/i })).toHaveCount(0);
+  await expect(standardNet.locator('a[href^="mailto:"]')).toHaveCount(1);
+  await expect(upgrade.locator('a[href^="mailto:"]')).toHaveCount(1);
+});
+
+test("replacement parts stay on the dedicated support hub instead of generic discovery", async ({
   request
 }) => {
-  const genericProductPage = await request.get(
-    "/catalog/products/tiger-pingpong-replacement-part-40"
-  );
-  expect(genericProductPage.status()).toBe(404);
+  const replacementParts = [
+    {
+      name: "Tiger PingPong Part 40",
+      slug: "tiger-pingpong-replacement-part-40"
+    },
+    {
+      name: "Tiger PingPong Standard Replacement Net",
+      slug: "tiger-replacement-net"
+    },
+    {
+      name: "Tiger PingPong Expo & Portland Net Upgrade System",
+      slug: "tiger-table-net-replacement-set"
+    }
+  ];
 
   const genericCatalog = await (await request.get("/catalog")).text();
-  expect(genericCatalog).not.toContain("Tiger PingPong Part 40");
-
   const sitemap = await (await request.get("/sitemap.xml")).text();
-  expect(sitemap).not.toContain("/catalog/products/tiger-pingpong-replacement-part-40");
+
+  for (const replacementPart of replacementParts) {
+    const genericProductPage = await request.get(`/catalog/products/${replacementPart.slug}`);
+    expect(genericProductPage.status(), replacementPart.slug).toBe(404);
+    expect(genericCatalog).not.toContain(replacementPart.name);
+    expect(sitemap).not.toContain(`/catalog/products/${replacementPart.slug}`);
+  }
 });
 
 test("manual shelf exposes five downloads, four setup videos, and no dead controls", async ({

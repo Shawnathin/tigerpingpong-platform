@@ -8,6 +8,35 @@ const repoRoot = path.resolve(import.meta.dirname, "../..");
 const tableGalleryManifest = JSON.parse(
   readFileSync(path.join(repoRoot, "data/media/table-product-gallery-manifest-v1.json"), "utf8")
 );
+const replacementNetsMediaManifest = JSON.parse(
+  readFileSync(path.join(repoRoot, "data/media/replacement-nets-commerce-media-v1.json"), "utf8")
+);
+
+function getReplacementNetPrimaryMedia(assetId) {
+  const asset = replacementNetsMediaManifest.entries.find((entry) => entry.assetId === assetId);
+
+  if (
+    !asset ||
+    asset.deliveryStatus !== "implemented" ||
+    !asset.cloudinaryPublicId ||
+    !asset.finalUrl ||
+    !asset.altText
+  ) {
+    throw new Error(`Missing implemented replacement-net media fixture: ${assetId}`);
+  }
+
+  return {
+    mediaKey: asset.assetId,
+    role: "primary",
+    cloudinaryPublicId: asset.cloudinaryPublicId,
+    cloudinarySecureUrl: asset.finalUrl,
+    altText: asset.altText,
+    title: asset.title,
+    caption: null,
+    sortOrder: 1,
+    isPrimary: true
+  };
+}
 
 const port = Number(process.env.MOCK_CATALOG_PORT ?? 3101);
 const product = {
@@ -229,6 +258,71 @@ const part40Product = {
   media: [],
   variants: []
 };
+const standardReplacementNetPrimaryMedia = getReplacementNetPrimaryMedia(
+  "tiger-replacement-net-primary-01"
+);
+const expoPortlandNetUpgradePrimaryMedia = getReplacementNetPrimaryMedia(
+  "tiger-table-net-replacement-set-primary-01"
+);
+const replacementNetProducts = [
+  {
+    key: "tiger-replacement-net",
+    slug: "tiger-replacement-net",
+    name: "Tiger PingPong Standard Replacement Net",
+    productKind: "replacement_part",
+    purchaseMode: "online_checkout",
+    priceCents: 2000,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: {
+      key: "replacement-nets",
+      slug: "replacement-nets",
+      name: "Replacement Nets"
+    },
+    category: {
+      key: "replacement-parts",
+      slug: "replacement-parts",
+      name: "Replacement Parts"
+    },
+    primaryMedia: standardReplacementNetPrimaryMedia,
+    shortDescription: "A standard replacement net for any standard PingPong table.",
+    description:
+      "A standard replacement net for any standard PingPong table—Tiger or otherwise. Includes one replacement net. Posts and mounting hardware are not included.",
+    media: [standardReplacementNetPrimaryMedia],
+    variants: []
+  },
+  {
+    key: "tiger-table-net-replacement-set",
+    slug: "tiger-table-net-replacement-set",
+    name: "Tiger PingPong Expo & Portland Net Upgrade System",
+    productKind: "replacement_part",
+    purchaseMode: "online_checkout",
+    priceCents: 14999,
+    currency: "CAD",
+    v1PublicNavigation: true,
+    v1CheckoutScope: true,
+    shippingReviewRequired: false,
+    family: {
+      key: "replacement-nets",
+      slug: "replacement-nets",
+      name: "Replacement Nets"
+    },
+    category: {
+      key: "replacement-parts",
+      slug: "replacement-parts",
+      name: "Replacement Parts"
+    },
+    primaryMedia: expoPortlandNetUpgradePrimaryMedia,
+    shortDescription:
+      "Complete current net-system upgrade for every Tiger Expo and Portland table.",
+    description:
+      "Fits every Tiger PingPong Expo and Portland table, indoor or outdoor. It does not fit Whistler or Plaza. Includes the replacement net, two triangular support pieces, the net-support assembly, all installation hardware, and two new side panels. The earlier removable-upright hardware and current hardware do not interchange piece by piece; if anything from the older setup is missing, use the complete upgrade.",
+    media: [expoPortlandNetUpgradePrimaryMedia],
+    variants: []
+  }
+];
 const viceSinglePriceCents = 1500;
 const whiteBallSixPackPriceCents = 800;
 const viceBundlePriceCents = viceSinglePriceCents * 4 + whiteBallSixPackPriceCents;
@@ -721,7 +815,7 @@ const server = createServer(async (request, response) => {
           brands: 1,
           categories: 5,
           productFamilies: 12,
-          products: 13,
+          products: 15,
           variants: 0,
           media: 0
         }
@@ -732,7 +826,15 @@ const server = createServer(async (request, response) => {
 
   if (request.url === "/catalog/products") {
     response.end(
-      JSON.stringify({ products: [product, part40Product, ...accessoryProducts, ...tableProducts] })
+      JSON.stringify({
+        products: [
+          product,
+          part40Product,
+          ...replacementNetProducts,
+          ...accessoryProducts,
+          ...tableProducts
+        ]
+      })
     );
     return;
   }
@@ -783,6 +885,14 @@ const server = createServer(async (request, response) => {
 
   if (request.url === `/catalog/products/${part40Product.slug}`) {
     response.end(JSON.stringify({ product: part40Product }));
+    return;
+  }
+
+  const replacementNetProduct = replacementNetProducts.find(
+    (candidate) => request.url === `/catalog/products/${candidate.slug}`
+  );
+  if (replacementNetProduct) {
+    response.end(JSON.stringify({ product: replacementNetProduct }));
     return;
   }
 
@@ -869,6 +979,7 @@ const server = createServer(async (request, response) => {
       const catalogProduct = [
         product,
         part40Product,
+        ...replacementNetProducts,
         ...accessoryProducts,
         ...tableDetailProducts
       ].find((candidate) => candidate.slug === item.productSlug);

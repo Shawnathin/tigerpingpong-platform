@@ -51,6 +51,35 @@ describe("V1 Canada shipping boundary", () => {
     expect(700 + getCartShippingCents(700, [part40])).toBe(2_200);
     expect(getCartShippingCopy(700, [part40])).toBe(V1_FLAT_RATE_SHIPPING_COPY);
   });
+
+  it("applies the same Canada-wide rule to both approved replacement-net products", () => {
+    const standardNet = {
+      cartLineId: "tiger-replacement-net",
+      categoryName: "Replacement Parts",
+      currency: "CAD",
+      imageUrl: null,
+      name: "Tiger PingPong Standard Replacement Net",
+      productKind: "replacement_part",
+      productSlug: "tiger-replacement-net",
+      quantity: 1,
+      selectedOptions: [],
+      unitPriceCents: 2_000
+    } satisfies CartItem;
+    const upgradeSystem = {
+      ...standardNet,
+      cartLineId: "tiger-table-net-replacement-set",
+      name: "Tiger PingPong Expo & Portland Net Upgrade System",
+      productSlug: "tiger-table-net-replacement-set",
+      unitPriceCents: 14_999
+    } satisfies CartItem;
+
+    expect(getCartShippingCents(2_000, [standardNet])).toBe(1_500);
+    expect(2_000 + getCartShippingCents(2_000, [standardNet])).toBe(3_500);
+    expect(getCartShippingCopy(2_000, [standardNet])).toBe(V1_FLAT_RATE_SHIPPING_COPY);
+
+    expect(getCartShippingCents(14_999, [upgradeSystem])).toBe(0);
+    expect(getCartShippingCopy(14_999, [upgradeSystem])).toBe(V1_FREE_SHIPPING_COPY);
+  });
 });
 
 describe("Aqua 4-pack Canada-wide free shipping", () => {

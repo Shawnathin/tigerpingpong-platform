@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { getProducts } from "../../lib/catalog-api";
 import { resolveLiveCuratedReplacementParts } from "../../lib/curated-replacement-parts";
 import { getPathMetadata } from "../../lib/seo";
-import { V1_FLAT_RATE_SHIPPING_COPY } from "../../lib/shipping";
+import { getV1ShippingMessage } from "../../lib/shipping";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { ReplacementPartPurchase } from "./ReplacementPartPurchase";
@@ -15,7 +15,7 @@ export const metadata = getPathMetadata({
   pathname: "/replacement-parts",
   title: "Replacement Parts & Manuals | Tiger PingPong",
   description:
-    "Find Tiger PingPong Part 40, download table manuals, watch setup videos, or send our Vancouver team a photo for replacement-part help."
+    "Shop Tiger PingPong Part 40, a standard replacement net, and the Expo & Portland net upgrade system—or find manuals and real help in Vancouver."
 });
 
 async function loadLiveReplacementParts() {
@@ -37,9 +37,13 @@ async function loadLiveReplacementParts() {
 }
 
 export default async function ReplacementPartsPage() {
-  const { contact, hero, identification, manuals, part40 } = replacementPartsContent;
+  const { contact, hero, identification, manuals, part40, replacementNets } =
+    replacementPartsContent;
   const liveReplacementParts = await loadLiveReplacementParts();
-  const livePart40 = liveReplacementParts.find((part) => part.configuration.slug === part40.slug);
+  const liveReplacementPartsBySlug = new Map(
+    liveReplacementParts.map((part) => [part.configuration.slug, part] as const)
+  );
+  const livePart40 = liveReplacementPartsBySlug.get(part40.slug);
 
   return (
     <>
@@ -101,6 +105,8 @@ export default async function ReplacementPartsPage() {
             </p>
             {livePart40 ? (
               <ReplacementPartPurchase
+                anchorId={livePart40.configuration.anchorId}
+                confirmationLabel={livePart40.configuration.confirmationLabel}
                 product={{
                   categoryName: livePart40.product.category.name,
                   currency: livePart40.product.currency,
@@ -111,7 +117,7 @@ export default async function ReplacementPartsPage() {
                   productSlug: livePart40.product.slug,
                   unitPriceCents: livePart40.product.priceCents
                 }}
-                shippingCopy={V1_FLAT_RATE_SHIPPING_COPY}
+                shippingCopy={getV1ShippingMessage(livePart40.product.priceCents)}
                 supportHref={contact.part40EmailHref}
                 supportPrompt={part40.supportPrompt}
               />
@@ -125,6 +131,120 @@ export default async function ReplacementPartsPage() {
             <span aria-hidden="true">40</span>
             <p>{part40.punchline}</p>
           </blockquote>
+        </section>
+
+        <section
+          aria-labelledby="replacement-nets-title"
+          className={styles.netFinder}
+          data-testid="replacement-nets-section"
+          id="replacement-nets"
+        >
+          <header className={styles.netFinderHeader}>
+            <p className={styles.orangeEyebrow}>{replacementNets.eyebrow}</p>
+            <div>
+              <h2 id="replacement-nets-title">{replacementNets.heading}</h2>
+              <p>{replacementNets.body}</p>
+            </div>
+          </header>
+
+          <div className={styles.netGrid}>
+            {replacementNets.items.map(({ configuration, image, supportHref }, index) => {
+              const livePart = liveReplacementPartsBySlug.get(configuration.slug);
+              const titleId = `${configuration.anchorId}-title`;
+
+              return (
+                <article
+                  aria-labelledby={titleId}
+                  className={styles.netCard}
+                  data-testid="replacement-net-card"
+                  data-tone={String(index)}
+                  id={configuration.anchorId}
+                  key={configuration.slug}
+                >
+                  <div className={styles.netImagePanel}>
+                    <span>{configuration.cardLabel}</span>
+                    <div className={styles.netImageFrame}>
+                      <Image
+                        alt={image.altText}
+                        className={styles.netImage}
+                        fill
+                        sizes="(max-width: 820px) calc(100vw - 76px), 540px"
+                        src={livePart?.imageUrl ?? image.finalUrl}
+                        unoptimized
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.netCardCopy}>
+                    <p className={styles.netDescriptor}>{configuration.descriptor}</p>
+                    <h3 id={titleId}>{configuration.heading}</h3>
+                    <p className={styles.netBody}>{configuration.body}</p>
+
+                    <div className={styles.netDetail}>
+                      <strong>
+                        {configuration.slug === "tiger-replacement-net" ? "Best when" : "Fits"}
+                      </strong>
+                      <p>{configuration.compatibility}</p>
+                    </div>
+
+                    <div className={styles.netIncluded}>
+                      <strong>What&apos;s included</strong>
+                      <ul>
+                        {configuration.included.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                      {configuration.notIncluded ? <p>{configuration.notIncluded}</p> : null}
+                    </div>
+
+                    {configuration.legacyNote ? (
+                      <div className={styles.netLegacyNote}>
+                        <strong>Replacing the older system?</strong>
+                        <p>{configuration.legacyNote}</p>
+                      </div>
+                    ) : null}
+
+                    {configuration.humanNote ? (
+                      <p className={styles.netHumanNote}>{configuration.humanNote}</p>
+                    ) : null}
+
+                    {livePart ? (
+                      <ReplacementPartPurchase
+                        anchorId={configuration.anchorId}
+                        confirmationLabel={configuration.confirmationLabel}
+                        product={{
+                          categoryName: livePart.product.category.name,
+                          currency: livePart.product.currency,
+                          imageUrl: livePart.imageUrl,
+                          name: livePart.product.name,
+                          productKey: livePart.product.key,
+                          productKind: livePart.product.productKind,
+                          productSlug: livePart.product.slug,
+                          unitPriceCents: livePart.product.priceCents
+                        }}
+                        shippingCopy={getV1ShippingMessage(livePart.product.priceCents)}
+                        supportHref={supportHref}
+                        supportPrompt={configuration.supportPrompt}
+                      />
+                    ) : (
+                      <a className={styles.netSupportAction} href={supportHref}>
+                        {configuration.slug === "tiger-replacement-net"
+                          ? "Ask about the replacement net"
+                          : "Ask about the upgrade system"}
+                      </a>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <p className={styles.netClarification}>
+            Starting with a bare tabletop?{" "}
+            <a href="/catalog/products/tiger-net-post-set">
+              The Net &amp; Post Set is a different product.
+            </a>
+          </p>
         </section>
 
         <section

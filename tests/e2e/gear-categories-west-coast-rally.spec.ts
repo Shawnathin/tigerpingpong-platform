@@ -46,7 +46,7 @@ const routes = {
   parts: {
     activeLabel: "Need a part?",
     description:
-      "Find Tiger PingPong Part 40, download table manuals, watch setup videos, or send our Vancouver team a photo for replacement-part help.",
+      "Shop Tiger PingPong Part 40, a standard replacement net, and the Expo & Portland net upgrade system—or find manuals and real help in Vancouver.",
     heading: "Keep the rally going.",
     path: "/replacement-parts/",
     title: "Replacement Parts & Manuals | Tiger PingPong"
@@ -285,7 +285,9 @@ test.describe("Tiger gear categories", () => {
     await expect(netHeroFigure.getByRole("img")).toHaveCSS("object-fit", "contain");
   });
 
-  test("Replacement Parts stays human while Part 40 uses the shared cart", async ({ page }) => {
+  test("Replacement Parts stays human while approved common parts use the shared cart", async ({
+    page
+  }) => {
     const response = await page.goto(routes.parts.path);
 
     expect(response?.status()).toBe(200);
@@ -318,7 +320,11 @@ test.describe("Tiger gear categories", () => {
       /mailto:info@tigerpingpong\.com/
     );
     await expect(page.getByTestId("part-40-live-price")).toHaveText("$7.00 CAD");
-    await expect(page.getByRole("button", { name: "Add to Cart" })).toHaveCount(1);
+    await expect(page.getByTestId("standard-replacement-net-live-price")).toHaveText("$20.00 CAD");
+    await expect(page.getByTestId("expo-portland-net-upgrade-live-price")).toHaveText(
+      "$149.99 CAD"
+    );
+    await expect(page.getByRole("button", { name: "Add to Cart" })).toHaveCount(3);
     await expect(page.locator("main select, main input, main form")).toHaveCount(0);
   });
 

@@ -7,6 +7,8 @@ import { useCart } from "../../lib/use-cart";
 import styles from "./page.module.css";
 
 interface ReplacementPartPurchaseProps {
+  anchorId: string;
+  confirmationLabel: string;
   product: CartProductInput;
   shippingCopy: string;
   supportHref: string;
@@ -14,6 +16,8 @@ interface ReplacementPartPurchaseProps {
 }
 
 export function ReplacementPartPurchase({
+  anchorId,
+  confirmationLabel,
   product,
   shippingCopy,
   supportHref,
@@ -30,10 +34,10 @@ export function ReplacementPartPurchase({
   }
 
   return (
-    <div className={styles.purchasePanel} data-testid="part-40-purchase">
+    <div className={styles.purchasePanel} data-testid={`${anchorId}-purchase`}>
       <p className={styles.partPrice} id={priceId}>
         <span>Current price</span>
-        <strong data-testid="part-40-live-price">
+        <strong data-testid={`${anchorId}-live-price`}>
           {formatCartMoney(product.unitPriceCents, product.currency)} CAD
         </strong>
       </p>
@@ -55,7 +59,7 @@ export function ReplacementPartPurchase({
       </div>
       {hasAdded ? (
         <div aria-live="polite" className={styles.purchaseConfirmation} role="status">
-          <span>Part 40 is in your cart.</span>
+          <span>{confirmationLabel}</span>
           <a href="/cart/">View Cart</a>
         </div>
       ) : null}

@@ -230,10 +230,26 @@ describe("server-authoritative checkout", () => {
       productKind: "replacement_part",
       priceCents: 700
     };
-    const deferredNet = {
+    const approvedStandardNet = {
       ...part40,
       key: "tiger-replacement-net",
       slug: "tiger-replacement-net",
+      name: "Tiger PingPong Standard Replacement Net",
+      priceCents: 2_000,
+      sku: "8367"
+    };
+    const approvedUpgradeSystem = {
+      ...part40,
+      key: "tiger-table-net-replacement-set",
+      slug: "tiger-table-net-replacement-set",
+      name: "Tiger PingPong Expo & Portland Net Upgrade System",
+      priceCents: 14_999,
+      sku: "15875"
+    };
+    const deferredWhistlerSystem = {
+      ...part40,
+      key: "tiger-whistler-net-upgrade-system",
+      slug: "tiger-whistler-net-upgrade-system",
       status: "draft",
       v1PublicNavigation: false,
       v1CheckoutScope: false,
@@ -241,7 +257,9 @@ describe("server-authoritative checkout", () => {
     };
 
     expect(service.isProductCheckoutable(part40)).toBe(true);
-    expect(service.isProductCheckoutable(deferredNet)).toBe(false);
+    expect(service.isProductCheckoutable(approvedStandardNet)).toBe(true);
+    expect(service.isProductCheckoutable(approvedUpgradeSystem)).toBe(true);
+    expect(service.isProductCheckoutable(deferredWhistlerSystem)).toBe(false);
 
     service.readCheckoutConfig = () => ({});
     service.getPrisma = () => ({});

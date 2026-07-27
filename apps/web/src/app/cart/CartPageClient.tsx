@@ -1,6 +1,7 @@
 "use client";
 
 import { TABLE_ACCESSORIES_PRICING_RULE_VERSION } from "@tigerpingpong/shared";
+import Image from "next/image";
 import { useState } from "react";
 
 import { CheckoutApiError, createCheckoutSession } from "../../lib/checkout-api";
@@ -10,11 +11,13 @@ import {
   formatCartMoney,
   type CartItem
 } from "../../lib/cart";
+import type { TigerCartStory } from "../../lib/tiger-story";
 import { useCart } from "../../lib/use-cart";
 
 import styles from "./page.module.css";
 
-const CHECKOUT_ERROR_MESSAGE = "Checkout could not be started. Please try again or contact us.";
+const CHECKOUT_ERROR_MESSAGE =
+  "We couldn’t get checkout started. Try again, or give us a call and we’ll help sort it out.";
 const REPLACEMENT_PART_HREFS: Readonly<Record<string, string>> = {
   "tiger-pingpong-replacement-part-40": "/replacement-parts/#part-40",
   "tiger-replacement-net": "/replacement-parts/#standard-replacement-net",
@@ -37,7 +40,11 @@ function getCartItemHref(item: CartItem): string {
   return `/catalog/products/${item.productSlug}`;
 }
 
-export function CartPageClient() {
+interface CartPageClientProps {
+  emptyStateStory: TigerCartStory["empty"];
+}
+
+export function CartPageClient({ emptyStateStory }: CartPageClientProps) {
   const {
     discountCents,
     itemCount,
@@ -96,13 +103,51 @@ export function CartPageClient() {
 
   if (items.length === 0) {
     return (
-      <main className={styles.page}>
-        <section className={styles.emptyState} aria-labelledby="cart-empty-title">
-          <h1 id="cart-empty-title">Your cart is empty.</h1>
-          {error ? <p role="status">{error}</p> : null}
-          <a className={styles.primaryAction} href="/tables/">
-            Continue shopping
-          </a>
+      <main className={`${styles.page} ${styles.emptyPage}`}>
+        <section
+          className={styles.emptyState}
+          aria-labelledby="cart-empty-title"
+          data-testid="empty-cart"
+        >
+          <div className={styles.emptyHero}>
+            <div className={styles.emptyCopy}>
+              <p className={styles.emptyEyebrow}>{emptyStateStory.eyebrow}</p>
+              <h1 id="cart-empty-title">{emptyStateStory.heading}</h1>
+              <p className={styles.emptyBody}>{emptyStateStory.body}</p>
+              {error ? (
+                <p className={styles.emptyError} role="status">
+                  {error}
+                </p>
+              ) : null}
+              <a className={styles.primaryAction} href={emptyStateStory.primaryAction.href}>
+                {emptyStateStory.primaryAction.label}
+              </a>
+            </div>
+
+            <figure className={styles.emptyMedia}>
+              <Image
+                alt={emptyStateStory.image.altText}
+                className={styles.emptyImage}
+                fill
+                priority
+                sizes="(max-width: 940px) 100vw, 52vw"
+                src={emptyStateStory.image.finalUrl}
+              />
+              <figcaption>{emptyStateStory.image.caption}</figcaption>
+            </figure>
+          </div>
+
+          <nav className={styles.shopRoutes} aria-label="Shop by category">
+            <p>Pick a starting point</p>
+            <div className={styles.shopRouteGrid}>
+              {emptyStateStory.shopLinks.map((link) => (
+                <a href={link.href} key={link.href}>
+                  <strong>{link.label}</strong>
+                  <span>{link.body}</span>
+                </a>
+              ))}
+            </div>
+          </nav>
         </section>
       </main>
     );
@@ -137,7 +182,7 @@ export function CartPageClient() {
                 </a>
 
                 <div className={styles.itemInfo}>
-                  <p>{item.categoryName ?? "Tiger Ping Pong"}</p>
+                  <p>{item.categoryName ?? "Tiger PingPong"}</p>
                   <h2>
                     <a href={getCartItemHref(item)}>{item.name}</a>
                   </h2>

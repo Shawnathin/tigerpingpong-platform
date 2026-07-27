@@ -2,7 +2,11 @@
 
 ## In Progress
 
-- `codex/feature/replacement-nets-commerce-v1` — local implementation and release proof are complete for the owner-approved standard net and Expo/Portland upgrade. Exact media, live-catalog purchase controls, fit/included-item guidance, cart behavior, fallback help, and responsive QA pass; branch review, its pull request to `develop`, and any deployed catalog write remain separately gated.
+- `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, and regression proof are complete for the Tiger-styled cart empty state. The task branch is ready for draft review; any pull request must target `develop`.
+
+## Awaiting Review
+
+- PR #140 / `codex/feature/replacement-nets-commerce-v1` — implementation and release proof are complete for the owner-approved standard net and Expo/Portland upgrade. Exact media, live-catalog purchase controls, fit/included-item guidance, cart behavior, fallback help, and responsive QA pass; PR review and any deployed catalog write remain separately gated.
 
 ## Done
 

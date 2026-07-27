@@ -2,42 +2,31 @@
 
 ## Active task
 
-Standard Replacement Net and Expo & Portland Net Upgrade System commerce.
+Tiger-styled cart empty state.
 
 ## Selected task card
 
-Add the two owner-approved net choices to the dedicated Replacement Parts support hub: a `$20 CAD` live-catalog seed for the net-only standard replacement and a `$149.99 CAD` live-catalog seed for the complete Expo and Portland upgrade.
+Replace the broken, oversized empty-cart presentation with a focused Tiger PingPong experience that uses the approved brand voice, cleared storefront imagery, and useful shopping routes.
 
 ## Boundaries
 
-- Work only on `codex/feature/replacement-nets-commerce-v1` created from current `develop`; target its pull request to `develop`, never `main`.
-- Preserve Part 40, manuals, setup videos, navigation, footer, generic-catalog/PDP/sitemap exclusions, hosted Stripe Checkout, webhook payment truth, and Canada-only shipping.
-- Prices and availability remain live catalog truth. The reviewed CSV values are activation seeds, not hardcoded storefront copy or trusted client totals.
-- Keep internal SKUs `8367` and `15875` out of public copy.
-- State fit and included items exactly: the standard product is net-only for any standard PingPong table; the complete upgrade fits every indoor/outdoor Expo and Portland and does not fit Whistler or Plaza.
-- Keep supplier and reordering history out of customer copy. Do not imply planned obsolescence.
-- The only new shipping exception is the owner-approved Part 40 full set: a cart containing at least eight clips ships free. Do not add any other exception, fit selector, new schema, migration, payment rule, generic replacement-parts catalogue, or production catalog write.
+- Work only on `codex/fix/cart-empty-state-tiger-v1`, created from current `develop`; target any pull request to `develop`, never `main`.
+- Use the approved empty-cart copy from the Tiger storytelling content map and a cleared image from the brand media map.
+- Preserve the shared storefront navigation, cart storage, line-item behavior, catalog refresh, shipping calculations, discounts, hosted Stripe Checkout, and webhook payment truth.
+- Do not invent prices, availability, shipping promises, product claims, or a parallel visual system.
+- Keep the experience responsive, keyboard accessible, motion-safe, and free of horizontal overflow.
 
 ## Required proof
 
-- The reviewed import accepts both active replacement parts only with exact SKU, positive CAD price, approved primary Cloudinary media, public/checkout flags, and `online_checkout`.
-- The page uses live price and availability, adds each product through the existing cart, and falls back to photo help without exposing stale prices when catalog data is unavailable.
-- Standard-net cart math is `$20` subtotal, `$15` shipping, and `$35` pre-tax total.
-- Expo and Portland upgrade cart math is `$149.99` subtotal, free shipping under the existing over-`$100` rule, and `$149.99` pre-tax total.
-- The Part 40 page shows the verified product photo and offers one clip or a full set of eight. The set total is derived from the live unit price, seven clips retain flat-rate shipping, and eight or more clips receive free shipping consistently in cart, checkout, and webhook validation.
-- Compatibility, included items, older-system guidance, Whistler/Plaza exclusions, image alternatives, focus behaviour, and generic-discovery exclusions have focused coverage.
-- Cloudinary delivery verification, import validation, scoped dry-run, lint, typecheck, unit tests, focused browser tests, production build, and secret scanning pass.
+- The empty cart shows exactly one `h1`, the approved “Nothing here yet.” / “Let’s find your next rally.” copy, the cleared `MAY-011` Vancouver image, a normal-height “Keep Shopping” action, and four working category routes.
+- Empty-state browser coverage passes at 390, 417, 768, 1280, and 1440 pixels without horizontal overflow or CTA stretching.
+- Existing replacement-parts cart-empty expectations are updated without weakening their cart behavior proof.
+- Formatting, lint, typecheck, unit tests, the production-style build, focused browser tests, and tracked-secret scanning pass.
 
 ## Status
 
-PR #133 and the follow-up browser-test stabilization in PR #138 are merged into `develop`; the table accessory offer is no longer the active lane.
+Implementation and local visual review are complete. The empty cart now uses the shared Tiger story layer, approved copy, cleared Vancouver lifestyle imagery, a compact primary action, and direct routes to tables, paddles, balls, and all gear. The layout has been reviewed at 390, 417, 768, 1280, and 1440 pixels with no horizontal overflow and a consistent 52-pixel CTA height.
 
-Shawn approved the two replacement-net products, their compatibility, included items, current availability, and catalog seed prices on 2026-07-27. The exact product images are processed, stripped of sensitive metadata, uploaded to Cloudinary, and verified in `data/media/replacement-nets-commerce-media-v1.json`.
+The populated-cart calculations, shipping, discounts, catalog reconciliation, Checkout request, and payment-truth paths were not changed. Lint, typecheck, all 128 unit tests, the production-style build, three focused cart browser tests, responsive empty-state proof, changed-file formatting, tracked-secret scanning, and diff validation pass. The repository-wide formatting command still reports 49 files that were already outside Prettier style; none is part of this task.
 
-The local branch implementation and proof are complete. Draft PR #140 is open against `develop`. The dedicated support hub now welcomes people into a general parts finder, keeps Part 40 in its own section, distinguishes the net-only choice from the complete Expo/Portland upgrade, reads live catalog price and availability, uses the shared cart and exact shipping rule, links cart lines back to the right card, and falls back to photo help without showing stale prices.
-
-Import validation and the connectionless replacement-parts staging dry-run pass with no blocking gates. Lint, typecheck, 128 unit tests, the production build, tracked-secret scan, high-severity dependency gate, 11 focused replacement-parts browser tests, all 87 active browser tests, and responsive visual review pass. The two delivered Cloudinary files return exact hash-matching JPEG bytes.
-
-Shawn's page review removed the redundant net-section explainer, replaced “table-side system” with **Replace the whole net setup.**, removed the standalone “more than a little fix” aside, and reframed the hero around common parts, manuals, and photo help rather than repeating Part 40. The Part 40 card now keeps one quiet fit-check path, removes the repeated email action from its purchase panel, replaces the context-dependent four-foot-rod joke with **Replace the clip—not the whole opening system.**, shows the verified product photo, and offers either one clip or a full set of eight. The full set uses eight times the live unit price and receives the owner-approved free-shipping exception.
-
-No database write, deployment, Stripe payment, production catalog activation, merge, or production promotion has occurred. The next step is continued review of PR #140; any catalog write remains separately approval-gated.
+No database write, deployment, Stripe payment, catalog mutation, merge, or production promotion has occurred. Publishing the task branch for draft review does not change production.

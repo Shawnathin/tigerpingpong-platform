@@ -194,6 +194,24 @@ export interface TigerVicePurchaseOptionStory {
   variantKey: string;
 }
 
+export interface TigerCartStory {
+  empty: {
+    body: string;
+    eyebrow: string;
+    heading: string;
+    image: TigerStoryImage;
+    primaryAction: {
+      href: string;
+      label: string;
+    };
+    shopLinks: Array<{
+      body: string;
+      href: string;
+      label: string;
+    }>;
+  };
+}
+
 const aboutStoryImageMap = aboutStoryImageMapData as TigerStoryImageMap;
 const aquaProductMediaMap = aquaProductMediaData as TigerAquaProductMediaMap;
 const aquaProductStoryImageMap = aquaProductStoryImageMapData as TigerStoryImageMap;
@@ -956,7 +974,43 @@ export function getTigerVicePurchaseOptionStory(
   return options[variantKey] ?? null;
 }
 
+export const tigerCartStory = {
+  empty: {
+    eyebrow: "Your cart",
+    heading: "Nothing here yet.",
+    body: "Let’s find your next rally.",
+    primaryAction: {
+      href: "/tables/",
+      label: "Keep Shopping"
+    },
+    shopLinks: [
+      {
+        href: "/tables/",
+        label: "Tables",
+        body: "Indoor and outdoor"
+      },
+      {
+        href: "/accessories/paddles/",
+        label: "Paddles",
+        body: "Pick your paddle"
+      },
+      {
+        href: "/accessories/ping-pong-balls/",
+        label: "Balls",
+        body: "Keep the rally ready"
+      },
+      {
+        href: "/accessories/",
+        label: "All gear",
+        body: "Covers, nets and more"
+      }
+    ],
+    image: requireStoryImage("MAY-011")
+  }
+} satisfies TigerCartStory;
+
 export const tigerStory = {
+  cart: tigerCartStory,
   homepage: {
     hero: {
       anchor: "home",

@@ -136,6 +136,7 @@ describe("curated replacement parts", () => {
     expect(resolved[1]?.configuration).toMatchObject({
       compatibility:
         "Fits every Tiger PingPong Expo and Portland table, indoor or outdoor. It does not fit Whistler or Plaza.",
+      descriptor: "Replace the whole net setup.",
       included: [
         "Replacement net",
         "Two triangular support pieces",

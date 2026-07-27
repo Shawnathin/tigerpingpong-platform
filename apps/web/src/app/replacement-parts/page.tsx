@@ -58,34 +58,32 @@ export default async function ReplacementPartsPage() {
             <p className={styles.lightEyebrow}>{hero.eyebrow}</p>
             <h1 id="replacement-parts-title">{hero.heading}</h1>
             <p className={styles.heroBody}>{hero.body}</p>
-            <div className={styles.heroActions} aria-label="Replacement-parts starting points">
-              <a className={styles.primaryAction} href="#part-40">
-                Find Part 40
-              </a>
-              <a className={styles.ghostAction} href={contact.generalPartsEmailHref}>
-                Send us a photo
-              </a>
-            </div>
           </div>
 
-          <figure className={styles.heroFigure}>
-            <span className={styles.partBadge}>Most-requested fix</span>
-            <div className={styles.heroImageFrame}>
-              <Image
-                alt={hero.image.altText}
-                className={styles.heroImage}
-                fill
-                priority
-                sizes="(max-width: 899px) calc(100vw - 80px), 520px"
-                src={hero.image.finalUrl}
-                unoptimized
-              />
+          <nav
+            aria-labelledby="parts-finder-title"
+            className={styles.heroFinder}
+            data-testid="parts-finder"
+          >
+            <p className={styles.heroFinderEyebrow}>{hero.finder.eyebrow}</p>
+            <h2 id="parts-finder-title">{hero.finder.heading}</h2>
+            <div className={styles.heroFinderLinks}>
+              {hero.finder.items.map((item, index) => (
+                <a aria-label={item.label} href={item.href} key={item.label}>
+                  <span className={styles.heroFinderNumber}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.heroFinderLinkCopy}>
+                    <strong>{item.label}</strong>
+                    <small>{item.body}</small>
+                  </span>
+                  <span aria-hidden="true" className={styles.heroFinderArrow}>
+                    →
+                  </span>
+                </a>
+              ))}
             </div>
-            <figcaption>
-              <strong>Part 40</strong>
-              <span>The little clip that keeps a big repair small.</span>
-            </figcaption>
-          </figure>
+          </nav>
         </section>
 
         <section
@@ -143,7 +141,6 @@ export default async function ReplacementPartsPage() {
             <p className={styles.orangeEyebrow}>{replacementNets.eyebrow}</p>
             <div>
               <h2 id="replacement-nets-title">{replacementNets.heading}</h2>
-              <p>{replacementNets.body}</p>
             </div>
           </header>
 

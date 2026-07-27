@@ -73,7 +73,7 @@ export const curatedReplacementParts: readonly CuratedReplacementPart[] = [
     compatibility:
       "Fits every Tiger PingPong Expo and Portland table, indoor or outdoor. It does not fit Whistler or Plaza.",
     confirmationLabel: "Your Expo & Portland net upgrade system is in your cart.",
-    descriptor: "Everything needed to update the table-side system.",
+    descriptor: "Replace the whole net setup.",
     featured: false,
     heading: "Expo & Portland Net Upgrade System",
     humanNote: "We know that's more than a little fix.",

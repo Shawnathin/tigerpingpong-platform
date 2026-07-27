@@ -81,7 +81,7 @@ CTA: **Add to Cart**
 ### Expo & Portland Net Upgrade System
 
 Eyebrow: **Expo & Portland tables**
-Descriptor: **Bring the whole setup forward.**
+Descriptor: **Replace the whole net setup.**
 Category story: Fits every Tiger PingPong Expo and Portland table, indoor or outdoor. It does not fit Whistler or Plaza.
 Included: The replacement net, two triangular support pieces, the net-support assembly, all installation hardware, and two new side panels.
 Older-system guidance: Older Expo and Portland tables used removable metal uprights, and those pieces were easy to misplace. The earlier and current hardware do not interchange piece by piece; if anything from the older setup is missing, use the complete upgrade.
@@ -93,3 +93,5 @@ CTA: **Add to Cart**
 Approved facts: The compatibility, included-item, older-system, and customer-help limits above.
 Claims rejected: Universal fit for the complete system; Whistler or Plaza compatibility; component-level backwards compatibility; public supplier/reordering history; a fixed public price outside live catalog rendering.
 Follow-up evidence needed: Whistler-specific replacement-system facts and media; verified dimensions, warranty, care, and installation guidance if those sections are added later.
+
+Page-level owner refinement, 2026-07-27: The Replacement Parts hero welcomes people into a general parts finder instead of repeating Part 40. The net section moves directly from “What needs replacing?” into the two choices, without an extra explainer paragraph. Avoid “table-side system”; use the plain-language descriptor **Replace the whole net setup.**

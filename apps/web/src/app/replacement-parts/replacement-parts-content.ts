@@ -142,13 +142,12 @@ const supportEmailHrefByKey = {
   standardReplacementNet: replacementNetEmailHref
 } satisfies Record<CuratedReplacementPart["supportEmailKey"], string>;
 
-const part40Media = requireImplementedMedia("replacement-part-40-primary");
 const part40Configuration = curatedReplacementParts.find(
   (part) => part.section === "featured-part"
 );
 
-if (part40Media.assetType !== "image" || !part40Media.altText || !part40Configuration) {
-  throw new Error("Part 40 media is missing its image metadata.");
+if (!part40Configuration) {
+  throw new Error("Part 40 configuration is missing.");
 }
 
 const replacementNets = curatedReplacementParts
@@ -179,13 +178,30 @@ export const replacementPartsContent = {
     phoneHref: "tel:+18885525259"
   },
   hero: {
-    body: "Something missing, wobbly, or just plain broken? Start with Part 40, find your manual, or send us a photo. You'll get a real person in Vancouver, and we'll get it sorted.",
-    eyebrow: "Parts & setup",
-    heading: "Keep the rally going.",
-    image: {
-      altText: part40Media.altText,
-      finalUrl: part40Media.finalUrl
-    }
+    body: "Something missing, wobbly, or just plain broken? Start with whatever you know—the part, the table, or just what went wrong. We'll help you sort out the next move.",
+    eyebrow: "Replacement parts",
+    finder: {
+      eyebrow: "Parts finder",
+      heading: "Start with what you know.",
+      items: [
+        {
+          body: "See the common fixes below.",
+          href: "#part-40",
+          label: "Shop common parts"
+        },
+        {
+          body: "Choose the table you already own.",
+          href: "#manuals",
+          label: "Find your manual"
+        },
+        {
+          body: "We'll help identify the odd little bit.",
+          href: generalPartsEmailHref,
+          label: "Send us a photo"
+        }
+      ]
+    },
+    heading: "Let's find the fix."
   },
   identification: {
     body: "A few useful details usually save a few rounds of email.",
@@ -214,7 +230,6 @@ export const replacementPartsContent = {
     requireManual("manual-plaza-outdoor")
   ] satisfies ReplacementManual[],
   replacementNets: {
-    body: "Keep what still works, or update the whole table-side system. These are two different fixes, so start with what is actually missing.",
     eyebrow: "Net help",
     heading: "What needs replacing?",
     items: replacementNets

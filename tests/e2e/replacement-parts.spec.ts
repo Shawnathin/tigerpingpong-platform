@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test("replacement-parts page makes Part 40 and real help the clear starting points", async ({
+test("replacement-parts page welcomes people into the parts finder before Part 40", async ({
   page
 }) => {
   await page.setViewportSize({ height: 900, width: 1440 });
@@ -29,27 +29,28 @@ test("replacement-parts page makes Part 40 and real help the clear starting poin
     "Shop Tiger PingPong Part 40, a standard replacement net, and the Expo & Portland net upgrade system—or find manuals and real help in Vancouver."
   );
 
-  await expect(
-    page.getByRole("heading", { level: 1, name: "Keep the rally going." })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Let's find the fix." })).toBeVisible();
   await expect(page.locator("main h1")).toHaveCount(1);
 
   const hero = page.getByTestId("replacement-parts-hero");
-  await expect(hero.getByText("Most-requested fix", { exact: true })).toBeVisible();
-  await expect(hero.locator("img")).toHaveAttribute(
-    "alt",
-    "Black Tiger Part 40 replacement clip on a white background"
-  );
-  await expect(hero.locator("img")).toHaveAttribute(
-    "src",
-    /res\.cloudinary\.com.*replacement-parts.*part-40/
-  );
-  await expect(hero.getByRole("link", { name: "Find Part 40" })).toHaveAttribute(
+  await expect(hero).toContainText("Start with whatever you know");
+  await expect(hero).not.toContainText("Most-requested fix");
+  await expect(hero.locator("img")).toHaveCount(0);
+
+  const finder = hero.getByTestId("parts-finder");
+  await expect(
+    finder.getByRole("heading", { level: 2, name: "Start with what you know." })
+  ).toBeVisible();
+  await expect(finder.getByRole("link", { name: "Shop common parts" })).toHaveAttribute(
     "href",
     "#part-40"
   );
+  await expect(finder.getByRole("link", { name: "Find your manual" })).toHaveAttribute(
+    "href",
+    "#manuals"
+  );
 
-  const photoEmailHref = await hero
+  const photoEmailHref = await finder
     .getByRole("link", { name: "Send us a photo" })
     .getAttribute("href");
   const decodedPhotoEmailHref = decodeURIComponent((photoEmailHref ?? "").replaceAll("+", " "));
@@ -141,6 +142,9 @@ test("replacement-net cards distinguish the net-only fix from the complete upgra
   await expect(
     page.getByRole("heading", { level: 2, name: "What needs replacing?" })
   ).toBeVisible();
+  await expect(page.getByTestId("replacement-nets-section")).not.toContainText(
+    "Keep what still works, or update the whole table-side system."
+  );
 
   const standardNet = page.locator("#standard-replacement-net");
   await expect(standardNet).toBeVisible();
@@ -163,7 +167,7 @@ test("replacement-net cards distinguish the net-only fix from the complete upgra
 
   const upgrade = page.locator("#expo-portland-net-upgrade");
   await expect(upgrade).toBeVisible();
-  await expect(upgrade).toContainText("Everything needed to update the table-side system.");
+  await expect(upgrade).toContainText("Replace the whole net setup.");
   await expect(upgrade).toContainText(
     "Fits every Tiger PingPong Expo and Portland table, indoor or outdoor."
   );
@@ -401,26 +405,26 @@ test("replacement-parts experience stays readable and overflow-free across break
     await page.goto("/replacement-parts/");
 
     await expect(
-      page.getByRole("heading", { level: 1, name: "Keep the rally going." })
+      page.getByRole("heading", { level: 1, name: "Let's find the fix." })
     ).toBeVisible();
 
     const layout = await page.evaluate(() => {
       const hero = document.querySelector('[data-testid="replacement-parts-hero"]');
-      const heroImage = hero?.querySelector("img");
+      const finder = hero?.querySelector('[data-testid="parts-finder"]');
       const firstManual = document.querySelector('[data-testid="manual-card"]');
 
       return {
         clientWidth: document.documentElement.clientWidth,
+        finderWidth: finder?.getBoundingClientRect().width ?? 0,
         firstManualWidth: firstManual?.getBoundingClientRect().width ?? 0,
-        heroImageWidth: heroImage?.getBoundingClientRect().width ?? 0,
         heroWidth: hero?.getBoundingClientRect().width ?? 0,
         scrollWidth: document.documentElement.scrollWidth
       };
     });
 
     expect(layout.scrollWidth, `${viewport.width}px`).toBe(layout.clientWidth);
-    expect(layout.heroImageWidth, `${viewport.width}px hero image`).toBeGreaterThan(180);
-    expect(layout.heroImageWidth, `${viewport.width}px hero containment`).toBeLessThanOrEqual(
+    expect(layout.finderWidth, `${viewport.width}px parts finder`).toBeGreaterThan(250);
+    expect(layout.finderWidth, `${viewport.width}px finder containment`).toBeLessThanOrEqual(
       layout.heroWidth
     );
     expect(layout.firstManualWidth, `${viewport.width}px manual card`).toBeGreaterThan(250);
@@ -444,7 +448,7 @@ test("capture replacement-parts design evidence", async ({ page }) => {
   ]) {
     await page.setViewportSize(viewport);
     await page.goto("/replacement-parts/");
-    await expect(page.getByTestId("replacement-parts-hero").locator("img")).toBeVisible();
+    await expect(page.getByTestId("parts-finder")).toBeVisible();
     await page.screenshot({
       fullPage: false,
       path: path.join(outputDirectory, `replacement-parts-${viewport.name}-viewport.png`)

@@ -33,8 +33,10 @@ PR #133 and the follow-up browser-test stabilization in PR #138 are merged into 
 
 Shawn approved the two replacement-net products, their compatibility, included items, current availability, and catalog seed prices on 2026-07-27. The exact product images are processed, stripped of sensitive metadata, uploaded to Cloudinary, and verified in `data/media/replacement-nets-commerce-media-v1.json`.
 
-The local branch implementation and proof are complete. The dedicated support hub now distinguishes the net-only choice from the complete Expo/Portland upgrade, reads live catalog price and availability, uses the shared cart and exact shipping rule, links cart lines back to the right card, and falls back to photo help without showing stale prices.
+The local branch implementation and proof are complete. Draft PR #140 is open against `develop`. The dedicated support hub now welcomes people into a general parts finder, keeps Part 40 in its own section, distinguishes the net-only choice from the complete Expo/Portland upgrade, reads live catalog price and availability, uses the shared cart and exact shipping rule, links cart lines back to the right card, and falls back to photo help without showing stale prices.
 
 Import validation and the connectionless replacement-parts staging dry-run pass with no blocking gates. Lint, typecheck, 124 unit tests, the production build, tracked-secret scan, high-severity dependency gate, 10 focused browser tests, all 86 active browser tests, and responsive visual review pass. The two delivered Cloudinary files return exact hash-matching JPEG bytes.
 
-No database write, deployment, Stripe payment, production catalog activation, merge, or production promotion has occurred. The next step is branch review and a pull request to `develop`; any catalog write remains separately approval-gated.
+Shawn's page review removed the redundant net-section explainer, replaced “table-side system” with **Replace the whole net setup.**, and reframed the hero around common parts, manuals, and photo help rather than repeating Part 40.
+
+No database write, deployment, Stripe payment, production catalog activation, merge, or production promotion has occurred. The next step is continued review of PR #140; any catalog write remains separately approval-gated.

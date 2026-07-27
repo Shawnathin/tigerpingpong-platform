@@ -125,7 +125,6 @@
   text-wrap: pretty;
 }
 
-.heroActions,
 .manualActions,
 .helpActions {
   display: flex;
@@ -133,12 +132,7 @@
   gap: 12px;
 }
 
-.heroActions {
-  margin-top: 4px;
-}
-
 .primaryAction,
-.ghostAction,
 .darkAction,
 .netSupportAction,
 .manualPrimaryAction,
@@ -168,74 +162,114 @@
   box-shadow: 0 18px 34px rgb(232 111 24 / 24%);
 }
 
-.ghostAction {
-  color: #ffffff;
-  background: rgb(255 255 255 / 10%);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 44%);
-}
-
-.heroFigure {
-  position: relative;
+.heroFinder {
   display: grid;
   width: min(100%, 520px);
   min-width: 0;
   justify-self: end;
-  margin: 0;
+  gap: 20px;
+  border: 1px solid rgb(255 255 255 / 50%);
+  border-radius: 30px;
+  padding: clamp(24px, 3.5vw, 38px);
+  color: var(--tiger-ink);
+  background:
+    radial-gradient(circle at 100% 0%, rgb(116 200 242 / 34%), transparent 42%),
+    rgb(255 255 255 / 94%);
+  box-shadow:
+    18px 20px 0 rgb(242 138 46 / 72%),
+    0 32px 72px rgb(2 11 20 / 28%);
+  backdrop-filter: blur(18px);
 }
 
-.partBadge {
-  position: absolute;
-  top: -18px;
-  right: -14px;
-  z-index: 2;
-  display: inline-flex;
-  min-height: 38px;
+.heroFinderEyebrow {
+  display: flex;
   align-items: center;
-  border-radius: 999px;
-  padding: 0 16px;
-  color: var(--tiger-ink);
-  background: #74c8f2;
-  box-shadow: 0 14px 30px rgb(2 11 20 / 22%);
+  gap: 10px;
+  margin: 0;
+  color: var(--tiger-orange-deep);
   font-size: 0.74rem;
   font-weight: 950;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.1em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
-.heroImageFrame {
-  position: relative;
-  aspect-ratio: 6 / 5;
-  overflow: hidden;
-  border: 10px solid #ffffff;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow:
-    24px 28px 0 var(--tiger-orange),
-    0 32px 72px rgb(2 11 20 / 32%);
+.heroFinderEyebrow::before {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
 }
 
-.heroImage {
-  object-fit: contain;
+.heroFinder h2 {
+  max-width: 410px;
+  margin: 0;
+  color: var(--tiger-ink);
+  font-size: clamp(2.55rem, 4.1vw, 4rem);
+  font-weight: 950;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+  text-wrap: balance;
 }
 
-.heroFigure figcaption {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 18px;
-  margin: 42px 0 0 34px;
-  color: rgb(255 255 255 / 72%);
-  font-size: 0.82rem;
-  font-weight: 760;
+.heroFinderLinks {
+  display: grid;
+  gap: 10px;
+}
+
+.heroFinderLinks a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid rgb(19 42 59 / 13%);
+  border-radius: 18px;
+  padding: 15px 16px;
+  color: var(--tiger-ink);
+  background: rgb(255 255 255 / 72%);
+  text-decoration: none;
+  transition:
+    border-color 170ms ease,
+    background 170ms ease,
+    transform 170ms ease;
+}
+
+.heroFinderNumber {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  color: #ffffff;
+  background: var(--parts-dark);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.heroFinderLinkCopy {
+  display: grid;
+  gap: 3px;
+}
+
+.heroFinderLinkCopy strong {
+  font-size: 0.98rem;
+  font-weight: 950;
+}
+
+.heroFinderLinkCopy small {
+  color: rgb(19 42 59 / 70%);
+  font-size: 0.78rem;
+  font-weight: 720;
   line-height: 1.35;
 }
 
-.heroFigure figcaption strong {
-  color: #ffffff;
-  font-size: 0.8rem;
+.heroFinderArrow {
+  color: var(--tiger-orange-deep);
+  font-size: 1.35rem;
   font-weight: 950;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .partFeature {
@@ -990,10 +1024,10 @@
   box-shadow: inset 0 0 0 1px rgb(38 48 73 / 12%);
 }
 
+.heroFinderLinks a:hover,
+.heroFinderLinks a:focus-visible,
 .primaryAction:hover,
 .primaryAction:focus-visible,
-.ghostAction:hover,
-.ghostAction:focus-visible,
 .darkAction:hover,
 .darkAction:focus-visible,
 .netSupportAction:hover,
@@ -1011,8 +1045,8 @@
   transform: translateY(-2px);
 }
 
+.heroFinderLinks a:focus-visible,
 .primaryAction:focus-visible,
-.ghostAction:focus-visible,
 .darkAction:focus-visible,
 .netSupportAction:focus-visible,
 .manualPrimaryAction:focus-visible,
@@ -1025,6 +1059,16 @@
 .purchaseConfirmation a:focus-visible {
   outline: 3px solid #ffffff;
   outline-offset: 4px;
+}
+
+.heroFinderLinks a:hover,
+.heroFinderLinks a:focus-visible {
+  border-color: rgb(242 138 46 / 58%);
+  background: #ffffff;
+}
+
+.heroFinderLinks a:focus-visible {
+  outline-color: #74c8f2;
 }
 
 .manualPrimaryAction:focus-visible,
@@ -1075,7 +1119,7 @@
     padding: 38px 30px 48px;
   }
 
-  .heroFigure {
+  .heroFinder {
     width: min(100%, 480px);
     justify-self: start;
   }
@@ -1137,7 +1181,6 @@
     font-size: clamp(3.45rem, 16.5vw, 4.4rem);
   }
 
-  .heroActions,
   .helpActions,
   .purchaseActions {
     display: grid;
@@ -1145,7 +1188,6 @@
   }
 
   .primaryAction,
-  .ghostAction,
   .darkAction,
   .netSupportAction,
   .lightAction,
@@ -1154,29 +1196,28 @@
     width: 100%;
   }
 
-  .heroFigure {
+  .heroFinder {
     width: calc(100% - 10px);
-  }
-
-  .partBadge {
-    top: -14px;
-    right: -8px;
-    min-height: 34px;
-    padding-inline: 13px;
-    font-size: 0.68rem;
-  }
-
-  .heroImageFrame {
-    border-width: 7px;
+    gap: 16px;
+    border-radius: 22px;
+    padding: 22px 18px;
     box-shadow:
       13px 16px 0 var(--tiger-orange),
       0 24px 48px rgb(2 11 20 / 28%);
   }
 
-  .heroFigure figcaption {
-    display: grid;
-    gap: 6px;
-    margin: 30px 0 0 16px;
+  .heroFinder h2 {
+    font-size: clamp(2.35rem, 12vw, 3.25rem);
+  }
+
+  .heroFinderLinks a {
+    gap: 11px;
+    padding: 13px 12px;
+  }
+
+  .heroFinderNumber {
+    width: 34px;
+    height: 34px;
   }
 
   .partFeature,
@@ -1220,8 +1261,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .heroFinderLinks a,
   .primaryAction,
-  .ghostAction,
   .darkAction,
   .netSupportAction,
   .manualPrimaryAction,

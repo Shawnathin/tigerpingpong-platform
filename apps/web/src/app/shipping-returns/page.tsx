@@ -6,8 +6,8 @@ import { getPathMetadata } from "../../lib/seo";
 import styles from "../shipping/page.module.css";
 
 export const metadata: Metadata = getPathMetadata({
-  title: "Shipping & Returns | Tiger Ping Pong",
-  description: "Tiger Ping Pong Canada-wide shipping and returns support.",
+  title: "Shipping & Returns | Tiger PingPong",
+  description: "Tiger PingPong Canada-wide shipping and returns support.",
   pathname: "/shipping-returns"
 });
 
@@ -21,9 +21,9 @@ export default function ShippingReturnsPage() {
             Shipping & Returns
           </h1>
           <p className={styles.intro}>
-            Tiger Ping Pong ships storefront orders within Canada. Orders over $100 CAD ship free
+            Tiger PingPong ships storefront orders within Canada. Orders over $100 CAD ship free
             across Canada. The Aqua 4-Pack w/ 3 Balls also ships free when it is the only item in
-            the cart.
+            the cart. A cart with a full set of eight Part 40 clips ships free too.
           </p>
         </section>
 
@@ -31,8 +31,8 @@ export default function ShippingReturnsPage() {
           <div className={styles.ruleLead}>
             <p className={styles.eyebrow}>Shipping rule</p>
             <h2 id="shipping-rules-title">
-              Over $100 ships free. The Aqua 4-Pack ships free on its own. Otherwise, shipping is
-              $15.
+              Over $100 ships free. So do the Aqua 4-Pack on its own and a full set of Part 40
+              clips. Otherwise, shipping is $15.
             </h2>
           </div>
 
@@ -61,6 +61,12 @@ export default function ShippingReturnsPage() {
               The free-shipping exception applies when that 4-pack is the only item in the cart.
             </p>
           </article>
+
+          <article>
+            <span>Part 40 full-set exception</span>
+            <strong>Eight or more Part 40 clips ship free across Canada.</strong>
+            <p>The free-shipping exception starts when the cart contains a full set of eight.</p>
+          </article>
         </section>
 
         <section className={styles.copyBand} aria-labelledby="returns-copy-title">
@@ -73,7 +79,7 @@ export default function ShippingReturnsPage() {
             <li>Include your order reference if available.</li>
             <li>Include your checkout email.</li>
             <li>Include the product name and a short description of the issue.</li>
-            <li>Tiger Ping Pong support will confirm the next step for the order.</li>
+            <li>Tiger PingPong support will confirm the next step for the order.</li>
           </ul>
         </section>
 

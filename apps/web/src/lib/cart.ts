@@ -4,12 +4,14 @@ import {
   CANADA_FLAT_RATE_SHIPPING_CENTS,
   CANADA_FREE_SHIPPING_THRESHOLD_CENTS,
   isAquaFourPackShippingItem,
+  isPart40FullSetShippingItem,
   type CanadaShippingItem,
   type TableAccessoryPricingResult
 } from "@tigerpingpong/shared";
 
 import {
   AQUA_FOUR_PACK_FREE_SHIPPING_COPY,
+  PART_40_FULL_SET_FREE_SHIPPING_COPY,
   V1_FLAT_RATE_SHIPPING_COPY,
   V1_FREE_SHIPPING_COPY
 } from "./shipping";
@@ -328,6 +330,10 @@ export function getCartShippingCopy(
 ): string {
   const shippingItems = toCanadaShippingItems(items);
 
+  if (shippingItems.some(isPart40FullSetShippingItem)) {
+    return PART_40_FULL_SET_FREE_SHIPPING_COPY;
+  }
+
   if (shippingItems.length > 0 && shippingItems.every(isAquaFourPackShippingItem)) {
     return AQUA_FOUR_PACK_FREE_SHIPPING_COPY;
   }
@@ -360,6 +366,7 @@ export function getCartLineId(productSlug: string, selectedOptions: CartItemOpti
 function toCanadaShippingItems(items: readonly CartItem[]): CanadaShippingItem[] {
   return items.map((item) => ({
     productSlug: item.productSlug,
+    quantity: item.quantity,
     variantKey: item.selectedVariantKey
   }));
 }

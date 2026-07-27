@@ -237,10 +237,26 @@ describe("protected product editor", () => {
       priceCents: 700,
       sku: "8123"
     };
-    const deferredNet = {
+    const approvedStandardNet = {
       ...part40,
       key: "tiger-replacement-net",
       slug: "tiger-replacement-net",
+      name: "Tiger PingPong Standard Replacement Net",
+      priceCents: 2_000,
+      sku: "8367"
+    };
+    const approvedUpgradeSystem = {
+      ...part40,
+      key: "tiger-table-net-replacement-set",
+      slug: "tiger-table-net-replacement-set",
+      name: "Tiger PingPong Expo & Portland Net Upgrade System",
+      priceCents: 14_999,
+      sku: "15875"
+    };
+    const deferredWhistlerSystem = {
+      ...part40,
+      key: "tiger-whistler-net-upgrade-system",
+      slug: "tiger-whistler-net-upgrade-system",
       status: "draft",
       v1PublicNavigation: false,
       v1CheckoutScope: false,
@@ -248,8 +264,18 @@ describe("protected product editor", () => {
     };
 
     expect(service.getCheckoutEligibility(part40)).toEqual({ eligible: true, reasons: [] });
-    expect(service.getCheckoutEligibility(deferredNet)).toMatchObject({ eligible: false });
-    expect(service.getCheckoutEligibility(deferredNet).reasons).toEqual(
+    expect(service.getCheckoutEligibility(approvedStandardNet)).toEqual({
+      eligible: true,
+      reasons: []
+    });
+    expect(service.getCheckoutEligibility(approvedUpgradeSystem)).toEqual({
+      eligible: true,
+      reasons: []
+    });
+    expect(service.getCheckoutEligibility(deferredWhistlerSystem)).toMatchObject({
+      eligible: false
+    });
+    expect(service.getCheckoutEligibility(deferredWhistlerSystem).reasons).toEqual(
       expect.arrayContaining([
         "product_not_active",
         "not_public_navigation",
@@ -257,7 +283,7 @@ describe("protected product editor", () => {
         "purchase_mode_not_checkoutable"
       ])
     );
-    expect(service.getCheckoutEligibility(deferredNet).reasons).not.toContain(
+    expect(service.getCheckoutEligibility(deferredWhistlerSystem).reasons).not.toContain(
       "replacement_part_deferred"
     );
   });

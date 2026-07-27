@@ -40,9 +40,10 @@ const EXPECTED_LEGACY_REDIRECTS = {
   "/accessories/ping-pong-paddle-case": "/accessories/paddles",
   "/accessories/ping-pong-table-cover": "/catalog/products/tiger-table-cover-black-polyester",
   "/accessories/premium-table-cover": "/catalog/products/tiger-table-cover-black-polyester",
-  "/accessories/replacement-net": "/accessories/nets",
+  "/accessories/replacement-net": "/replacement-parts#standard-replacement-net",
   "/accessories/table-tennis-net-post-set": "/catalog/products/tiger-net-post-set",
-  "/accessories/tiger-pingpong-table-net-replacement-set": "/accessories/nets",
+  "/accessories/tiger-pingpong-table-net-replacement-set":
+    "/replacement-parts#expo-portland-net-upgrade",
   "/accessories/vice-ping-pong-paddle": "/catalog/products/tiger-vice-paddle",
   "/brands": "/catalog",
   "/paddles/aqua-outdoor-indoor-paddle": "/catalog/products/tiger-aqua-outdoor-indoor-paddle",
@@ -121,20 +122,26 @@ beforeEach(() => {
   getProductsMock.mockReset();
   getProductsMock.mockResolvedValue([
     ...PUBLIC_PRODUCT_SLUGS.map(productSummary),
-    {
-      ...productSummary("tiger-pingpong-replacement-part-40"),
+    ...(
+      [
+        ["tiger-pingpong-replacement-part-40", "table-opening-parts"],
+        ["tiger-replacement-net", "replacement-nets"],
+        ["tiger-table-net-replacement-set", "replacement-nets"]
+      ] as const
+    ).map(([slug, familyKey]) => ({
+      ...productSummary(slug),
       category: {
         key: "replacement-parts",
         name: "Replacement Parts",
         slug: "replacement-parts"
       },
       family: {
-        key: "table-opening-parts",
-        name: "Table-Opening Parts",
-        slug: "table-opening-parts"
+        key: familyKey,
+        name: familyKey,
+        slug: familyKey
       },
       productKind: "replacement_part"
-    }
+    }))
   ]);
 });
 
@@ -190,7 +197,13 @@ describe("canonical sitemap contract", () => {
 
     expect(entries).toHaveLength(34);
     expect(new Set(paths).size).toBe(34);
-    expect(paths).not.toContain("/catalog/products/tiger-pingpong-replacement-part-40");
+    for (const replacementPartSlug of [
+      "tiger-pingpong-replacement-part-40",
+      "tiger-replacement-net",
+      "tiger-table-net-replacement-set"
+    ]) {
+      expect(paths).not.toContain(`/catalog/products/${replacementPartSlug}`);
+    }
     expect(paths).toEqual([
       ...EXPECTED_STATIC_SITEMAP_PATHS,
       ...expectedArticlePaths,

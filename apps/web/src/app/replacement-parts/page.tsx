@@ -1,10 +1,11 @@
+import { PART_40_FULL_SET_QUANTITY } from "@tigerpingpong/shared";
 import Image from "next/image";
 import { headers } from "next/headers";
 
 import { getProducts } from "../../lib/catalog-api";
 import { resolveLiveCuratedReplacementParts } from "../../lib/curated-replacement-parts";
 import { getPathMetadata } from "../../lib/seo";
-import { V1_FLAT_RATE_SHIPPING_COPY } from "../../lib/shipping";
+import { getV1ShippingMessage } from "../../lib/shipping";
 import { PublicStorefrontFooter } from "../PublicStorefrontFooter";
 import { PublicStorefrontNav } from "../PublicStorefrontNav";
 import { ReplacementPartPurchase } from "./ReplacementPartPurchase";
@@ -15,7 +16,7 @@ export const metadata = getPathMetadata({
   pathname: "/replacement-parts",
   title: "Replacement Parts & Manuals | Tiger PingPong",
   description:
-    "Find Tiger PingPong Part 40, download table manuals, watch setup videos, or send our Vancouver team a photo for replacement-part help."
+    "Shop Tiger PingPong Part 40, a standard replacement net, and the Expo & Portland net upgrade system—or find manuals and real help in Vancouver."
 });
 
 async function loadLiveReplacementParts() {
@@ -37,9 +38,13 @@ async function loadLiveReplacementParts() {
 }
 
 export default async function ReplacementPartsPage() {
-  const { contact, hero, identification, manuals, part40 } = replacementPartsContent;
+  const { contact, hero, identification, manuals, part40, replacementNets } =
+    replacementPartsContent;
   const liveReplacementParts = await loadLiveReplacementParts();
-  const livePart40 = liveReplacementParts.find((part) => part.configuration.slug === part40.slug);
+  const liveReplacementPartsBySlug = new Map(
+    liveReplacementParts.map((part) => [part.configuration.slug, part] as const)
+  );
+  const livePart40 = liveReplacementPartsBySlug.get(part40.slug);
 
   return (
     <>
@@ -54,34 +59,32 @@ export default async function ReplacementPartsPage() {
             <p className={styles.lightEyebrow}>{hero.eyebrow}</p>
             <h1 id="replacement-parts-title">{hero.heading}</h1>
             <p className={styles.heroBody}>{hero.body}</p>
-            <div className={styles.heroActions} aria-label="Replacement-parts starting points">
-              <a className={styles.primaryAction} href="#part-40">
-                Find Part 40
-              </a>
-              <a className={styles.ghostAction} href={contact.generalPartsEmailHref}>
-                Send us a photo
-              </a>
-            </div>
           </div>
 
-          <figure className={styles.heroFigure}>
-            <span className={styles.partBadge}>Most-requested fix</span>
-            <div className={styles.heroImageFrame}>
-              <Image
-                alt={hero.image.altText}
-                className={styles.heroImage}
-                fill
-                priority
-                sizes="(max-width: 899px) calc(100vw - 80px), 520px"
-                src={hero.image.finalUrl}
-                unoptimized
-              />
+          <nav
+            aria-labelledby="parts-finder-title"
+            className={styles.heroFinder}
+            data-testid="parts-finder"
+          >
+            <p className={styles.heroFinderEyebrow}>{hero.finder.eyebrow}</p>
+            <h2 id="parts-finder-title">{hero.finder.heading}</h2>
+            <div className={styles.heroFinderLinks}>
+              {hero.finder.items.map((item, index) => (
+                <a aria-label={item.label} href={item.href} key={item.label}>
+                  <span className={styles.heroFinderNumber}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.heroFinderLinkCopy}>
+                    <strong>{item.label}</strong>
+                    <small>{item.body}</small>
+                  </span>
+                  <span aria-hidden="true" className={styles.heroFinderArrow}>
+                    →
+                  </span>
+                </a>
+              ))}
             </div>
-            <figcaption>
-              <strong>Part 40</strong>
-              <span>The little clip that keeps a big repair small.</span>
-            </figcaption>
-          </figure>
+          </nav>
         </section>
 
         <section
@@ -101,6 +104,22 @@ export default async function ReplacementPartsPage() {
             </p>
             {livePart40 ? (
               <ReplacementPartPurchase
+                anchorId={livePart40.configuration.anchorId}
+                confirmationLabel={livePart40.configuration.confirmationLabel}
+                fullSetOption={{
+                  buttonLabel: `Add full set of ${PART_40_FULL_SET_QUANTITY}`,
+                  confirmationLabel: `A full set of ${PART_40_FULL_SET_QUANTITY} Part 40 clips is in your cart.`,
+                  label: `Full set of ${PART_40_FULL_SET_QUANTITY}`,
+                  quantity: PART_40_FULL_SET_QUANTITY,
+                  shippingCopy: getV1ShippingMessage(
+                    livePart40.product.priceCents * PART_40_FULL_SET_QUANTITY,
+                    {
+                      productSlug: livePart40.product.slug,
+                      quantity: PART_40_FULL_SET_QUANTITY
+                    }
+                  )
+                }}
+                priceLabel="One clip"
                 product={{
                   categoryName: livePart40.product.category.name,
                   currency: livePart40.product.currency,
@@ -111,9 +130,11 @@ export default async function ReplacementPartsPage() {
                   productSlug: livePart40.product.slug,
                   unitPriceCents: livePart40.product.priceCents
                 }}
-                shippingCopy={V1_FLAT_RATE_SHIPPING_COPY}
-                supportHref={contact.part40EmailHref}
-                supportPrompt={part40.supportPrompt}
+                shippingCopy={getV1ShippingMessage(livePart40.product.priceCents, {
+                  productSlug: livePart40.product.slug,
+                  quantity: 1
+                })}
+                singleButtonLabel="Add one clip"
               />
             ) : (
               <a className={styles.darkAction} href={contact.part40EmailHref}>
@@ -121,10 +142,128 @@ export default async function ReplacementPartsPage() {
               </a>
             )}
           </div>
-          <blockquote className={styles.partQuote}>
-            <span aria-hidden="true">40</span>
-            <p>{part40.punchline}</p>
-          </blockquote>
+          <figure className={styles.partVisual} data-testid="part-40-visual">
+            <div className={styles.partVisualFrame}>
+              <Image
+                alt={part40.image.altText}
+                className={styles.partVisualImage}
+                fill
+                sizes="(max-width: 820px) calc(100vw - 104px), 440px"
+                src={livePart40?.imageUrl ?? part40.image.finalUrl}
+                unoptimized
+              />
+            </div>
+            <figcaption>{part40.punchline}</figcaption>
+          </figure>
+        </section>
+
+        <section
+          aria-labelledby="replacement-nets-title"
+          className={styles.netFinder}
+          data-testid="replacement-nets-section"
+          id="replacement-nets"
+        >
+          <header className={styles.netFinderHeader}>
+            <p className={styles.orangeEyebrow}>{replacementNets.eyebrow}</p>
+            <div>
+              <h2 id="replacement-nets-title">{replacementNets.heading}</h2>
+            </div>
+          </header>
+
+          <div className={styles.netGrid}>
+            {replacementNets.items.map(({ configuration, image, supportHref }, index) => {
+              const livePart = liveReplacementPartsBySlug.get(configuration.slug);
+              const titleId = `${configuration.anchorId}-title`;
+
+              return (
+                <article
+                  aria-labelledby={titleId}
+                  className={styles.netCard}
+                  data-testid="replacement-net-card"
+                  data-tone={String(index)}
+                  id={configuration.anchorId}
+                  key={configuration.slug}
+                >
+                  <div className={styles.netImagePanel}>
+                    <span>{configuration.cardLabel}</span>
+                    <div className={styles.netImageFrame}>
+                      <Image
+                        alt={image.altText}
+                        className={styles.netImage}
+                        fill
+                        sizes="(max-width: 820px) calc(100vw - 76px), 540px"
+                        src={livePart?.imageUrl ?? image.finalUrl}
+                        unoptimized
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.netCardCopy}>
+                    <p className={styles.netDescriptor}>{configuration.descriptor}</p>
+                    <h3 id={titleId}>{configuration.heading}</h3>
+                    <p className={styles.netBody}>{configuration.body}</p>
+
+                    <div className={styles.netDetail}>
+                      <strong>
+                        {configuration.slug === "tiger-replacement-net" ? "Best when" : "Fits"}
+                      </strong>
+                      <p>{configuration.compatibility}</p>
+                    </div>
+
+                    <div className={styles.netIncluded}>
+                      <strong>What&apos;s included</strong>
+                      <ul>
+                        {configuration.included.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                      {configuration.notIncluded ? <p>{configuration.notIncluded}</p> : null}
+                    </div>
+
+                    {configuration.legacyNote ? (
+                      <div className={styles.netLegacyNote}>
+                        <strong>Replacing the older system?</strong>
+                        <p>{configuration.legacyNote}</p>
+                      </div>
+                    ) : null}
+
+                    {livePart ? (
+                      <ReplacementPartPurchase
+                        anchorId={configuration.anchorId}
+                        confirmationLabel={configuration.confirmationLabel}
+                        product={{
+                          categoryName: livePart.product.category.name,
+                          currency: livePart.product.currency,
+                          imageUrl: livePart.imageUrl,
+                          name: livePart.product.name,
+                          productKey: livePart.product.key,
+                          productKind: livePart.product.productKind,
+                          productSlug: livePart.product.slug,
+                          unitPriceCents: livePart.product.priceCents
+                        }}
+                        shippingCopy={getV1ShippingMessage(livePart.product.priceCents)}
+                        supportHref={supportHref}
+                        supportPrompt={configuration.supportPrompt}
+                      />
+                    ) : (
+                      <a className={styles.netSupportAction} href={supportHref}>
+                        {configuration.slug === "tiger-replacement-net"
+                          ? "Ask about the replacement net"
+                          : "Ask about the upgrade system"}
+                      </a>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <p className={styles.netClarification}>
+            Starting with a bare tabletop?{" "}
+            <a href="/catalog/products/tiger-net-post-set">
+              The Net &amp; Post Set is a different product.
+            </a>
+          </p>
         </section>
 
         <section

@@ -1,10 +1,13 @@
 import Stripe from "stripe";
 import { describe, expect, it, vi } from "vitest";
 import {
+  AQUA_FOUR_PACK_CANADA_SHIPPING_RULE,
   AQUA_FOUR_PACK_PRODUCT_SLUG,
   AQUA_FOUR_PACK_VARIANT_KEY,
   AQUA_PADDLE_PRODUCT_KEY,
   CURRENT_CANADA_SHIPPING_RULE,
+  PART_40_FULL_SET_QUANTITY,
+  PART_40_PRODUCT_SLUG,
   PREMIUM_WHITE_BALLS_SIX_PACK_PRODUCT_KEY,
   TABLE_ACCESSORIES_PRICING_RULE_VERSION,
   TABLE_ACCESSORIES_PROMOTION_KEY,
@@ -125,6 +128,7 @@ describe("server-authoritative checkout", () => {
         items: Array<{
           lineTotalCents: number;
           productSlug?: string;
+          quantity?: number;
           variantKey?: string | null;
         }>
       ): {
@@ -145,13 +149,40 @@ describe("server-authoritative checkout", () => {
       service.calculateTotals([
         {
           lineTotalCents: 700,
-          productSlug: "tiger-pingpong-replacement-part-40",
+          productSlug: PART_40_PRODUCT_SLUG,
+          quantity: 1,
           variantKey: null
         }
       ])
     ).toMatchObject({
       shippingCents: 1_500,
       totalCents: 2_200
+    });
+    expect(
+      service.calculateTotals([
+        {
+          lineTotalCents: 5_600,
+          productSlug: PART_40_PRODUCT_SLUG,
+          quantity: PART_40_FULL_SET_QUANTITY,
+          variantKey: null
+        }
+      ])
+    ).toMatchObject({
+      shippingCents: 0,
+      totalCents: 5_600
+    });
+    expect(
+      service.calculateTotals([
+        {
+          lineTotalCents: 4_900,
+          productSlug: PART_40_PRODUCT_SLUG,
+          quantity: PART_40_FULL_SET_QUANTITY - 1,
+          variantKey: null
+        }
+      ])
+    ).toMatchObject({
+      shippingCents: 1_500,
+      totalCents: 6_400
     });
     expect(
       service.calculateTotals([
@@ -230,10 +261,26 @@ describe("server-authoritative checkout", () => {
       productKind: "replacement_part",
       priceCents: 700
     };
-    const deferredNet = {
+    const approvedStandardNet = {
       ...part40,
       key: "tiger-replacement-net",
       slug: "tiger-replacement-net",
+      name: "Tiger PingPong Standard Replacement Net",
+      priceCents: 2_000,
+      sku: "8367"
+    };
+    const approvedUpgradeSystem = {
+      ...part40,
+      key: "tiger-table-net-replacement-set",
+      slug: "tiger-table-net-replacement-set",
+      name: "Tiger PingPong Expo & Portland Net Upgrade System",
+      priceCents: 14_999,
+      sku: "15875"
+    };
+    const deferredWhistlerSystem = {
+      ...part40,
+      key: "tiger-whistler-net-upgrade-system",
+      slug: "tiger-whistler-net-upgrade-system",
       status: "draft",
       v1PublicNavigation: false,
       v1CheckoutScope: false,
@@ -241,7 +288,9 @@ describe("server-authoritative checkout", () => {
     };
 
     expect(service.isProductCheckoutable(part40)).toBe(true);
-    expect(service.isProductCheckoutable(deferredNet)).toBe(false);
+    expect(service.isProductCheckoutable(approvedStandardNet)).toBe(true);
+    expect(service.isProductCheckoutable(approvedUpgradeSystem)).toBe(true);
+    expect(service.isProductCheckoutable(deferredWhistlerSystem)).toBe(false);
 
     service.readCheckoutConfig = () => ({});
     service.getPrisma = () => ({});
@@ -1292,6 +1341,62 @@ describe("Stripe webhook safety checks with local fakes", () => {
           shippingCents: 1_500,
           subtotalCents: 8_000,
           totalCents: 9_500
+        }
+      )
+    ).toBeNull();
+  });
+
+  it("accepts the Part 40 full-set exception and preserves the previous stored rule", () => {
+    const part40FullSet = {
+      currency: "CAD",
+      discountUnitCents: 0,
+      lineTotalCents: 5_600,
+      listUnitPriceCents: 700,
+      productSlug: PART_40_PRODUCT_SLUG,
+      promotionKey: null,
+      quantity: PART_40_FULL_SET_QUANTITY,
+      unitPriceCents: 700,
+      variantKey: null
+    };
+
+    expect(
+      validate(
+        {
+          amount_subtotal: 5_600,
+          amount_total: 5_600,
+          shipping_cost: { amount_total: 0 },
+          total_details: { amount_discount: 0, amount_shipping: 0, amount_tax: 0 }
+        },
+        false,
+        {
+          items: [part40FullSet],
+          listSubtotalCents: 5_600,
+          discountCents: 0,
+          shippingCents: 0,
+          shippingRule: CURRENT_CANADA_SHIPPING_RULE,
+          subtotalCents: 5_600,
+          totalCents: 5_600
+        }
+      )
+    ).toBeNull();
+
+    expect(
+      validate(
+        {
+          amount_subtotal: 5_600,
+          amount_total: 7_100,
+          shipping_cost: { amount_total: 1_500 },
+          total_details: { amount_discount: 0, amount_shipping: 1_500, amount_tax: 0 }
+        },
+        false,
+        {
+          items: [part40FullSet],
+          listSubtotalCents: 5_600,
+          discountCents: 0,
+          shippingCents: 1_500,
+          shippingRule: AQUA_FOUR_PACK_CANADA_SHIPPING_RULE,
+          subtotalCents: 5_600,
+          totalCents: 7_100
         }
       )
     ).toBeNull();

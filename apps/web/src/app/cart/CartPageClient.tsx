@@ -15,6 +15,11 @@ import { useCart } from "../../lib/use-cart";
 import styles from "./page.module.css";
 
 const CHECKOUT_ERROR_MESSAGE = "Checkout could not be started. Please try again or contact us.";
+const REPLACEMENT_PART_HREFS: Readonly<Record<string, string>> = {
+  "tiger-pingpong-replacement-part-40": "/replacement-parts/#part-40",
+  "tiger-replacement-net": "/replacement-parts/#standard-replacement-net",
+  "tiger-table-net-replacement-set": "/replacement-parts/#expo-portland-net-upgrade"
+};
 
 function CartThumbnail({ item }: { item: CartItem }) {
   if (item.imageUrl) {
@@ -26,9 +31,7 @@ function CartThumbnail({ item }: { item: CartItem }) {
 
 function getCartItemHref(item: CartItem): string {
   if (item.productKind === "replacement_part") {
-    return item.productSlug === "tiger-pingpong-replacement-part-40"
-      ? "/replacement-parts/#part-40"
-      : "/replacement-parts/";
+    return REPLACEMENT_PART_HREFS[item.productSlug] ?? "/replacement-parts/";
   }
 
   return `/catalog/products/${item.productSlug}`;

@@ -1,7 +1,7 @@
 # Tiger PingPong Brand Operating System
 
-Version: 2.2.1
-Effective: 2026-07-24
+Version: 2.3.0
+Effective: 2026-07-27
 Brand owner: Shawn Cleve
 Status: Canonical after merge
 
@@ -60,6 +60,7 @@ If a conflict could change a product fact, compatibility statement, warranty, sh
 ## Canonical implementation sources
 
 - Brand and page story content: `apps/web/src/lib/tiger-story.ts`
+- Product-specific fact and story briefs: `docs/brand/product-briefs/`
 - Story placement and dosage: `docs/planning/tiger-storytelling-content-map-v1.md`
 - Global visual tokens and navigation: `apps/web/src/app/globals.css`
 - Homepage system: `apps/web/src/app/page.module.css`

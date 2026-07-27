@@ -11,8 +11,8 @@ interface ReplacementPartPurchaseProps {
   confirmationLabel: string;
   product: CartProductInput;
   shippingCopy: string;
-  supportHref: string;
-  supportPrompt: string;
+  supportHref?: string;
+  supportPrompt?: string;
 }
 
 export function ReplacementPartPurchase({
@@ -53,9 +53,11 @@ export function ReplacementPartPurchase({
         >
           Add to Cart
         </button>
-        <a className={styles.supportAction} href={supportHref}>
-          {supportPrompt}
-        </a>
+        {supportHref && supportPrompt ? (
+          <a className={styles.supportAction} href={supportHref}>
+            {supportPrompt}
+          </a>
+        ) : null}
       </div>
       {hasAdded ? (
         <div aria-live="polite" className={styles.purchaseConfirmation} role="status">

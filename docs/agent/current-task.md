@@ -37,6 +37,6 @@ The local branch implementation and proof are complete. Draft PR #140 is open ag
 
 Import validation and the connectionless replacement-parts staging dry-run pass with no blocking gates. Lint, typecheck, 124 unit tests, the production build, tracked-secret scan, high-severity dependency gate, 10 focused browser tests, all 86 active browser tests, and responsive visual review pass. The two delivered Cloudinary files return exact hash-matching JPEG bytes.
 
-Shawn's page review removed the redundant net-section explainer, replaced “table-side system” with **Replace the whole net setup.**, and reframed the hero around common parts, manuals, and photo help rather than repeating Part 40.
+Shawn's page review removed the redundant net-section explainer, replaced “table-side system” with **Replace the whole net setup.**, and reframed the hero around common parts, manuals, and photo help rather than repeating Part 40. The Part 40 card now keeps one quiet fit-check path, removes the repeated email action from its purchase panel, and replaces the context-dependent four-foot-rod joke with **Replace the clip—not the whole opening system.**
 
 No database write, deployment, Stripe payment, production catalog activation, merge, or production promotion has occurred. The next step is continued review of PR #140; any catalog write remains separately approval-gated.

@@ -63,7 +63,7 @@ test("replacement-parts page welcomes people into the parts finder before Part 4
     part40.getByRole("heading", { level: 2, name: "Part 40. Small clip. Big save." })
   ).toBeVisible();
   await expect(
-    part40.getByText("Good news: Part 40 fits in an envelope. The nearly four-foot rod does not.", {
+    part40.getByText("Replace the clip—not the whole opening system.", {
       exact: true
     })
   ).toBeVisible();
@@ -74,10 +74,9 @@ test("replacement-parts page welcomes people into the parts finder before Part 4
     )
   ).toBeVisible();
 
-  const part40EmailHref = await part40
-    .getByRole("link", { name: "Not sure? Send us a photo before ordering.", exact: true })
-    .first()
-    .getAttribute("href");
+  const part40FitHelp = part40.getByRole("link", { name: "Need a fit check?", exact: true });
+  await expect(part40FitHelp).toHaveCount(1);
+  const part40EmailHref = await part40FitHelp.getAttribute("href");
   const decodedPart40EmailHref = decodeURIComponent((part40EmailHref ?? "").replaceAll("+", " "));
   expect(decodedPart40EmailHref).toContain("Part 40 fit check");
   expect(decodedPart40EmailHref).toContain("Approximate purchase year:");
@@ -107,11 +106,7 @@ test("Part 40 uses the live catalog price and the existing cart and shipping rul
 
   const confirmation = purchase.getByRole("status");
   await expect(confirmation).toContainText("Part 40 is in your cart.");
-  const supportLink = purchase.getByRole("link", {
-    name: "Not sure? Send us a photo before ordering."
-  });
-  await page.keyboard.press("Tab");
-  await expect(supportLink).toBeFocused();
+  await expect(purchase.locator('a[href^="mailto:"]')).toHaveCount(0);
   await page.keyboard.press("Tab");
 
   const viewCart = confirmation.getByRole("link", { name: "View Cart" });
@@ -164,6 +159,9 @@ test("replacement-net cards distinguish the net-only fix from the complete upgra
     "src",
     /v1785178768\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-replacement-net-primary-01\.jpg/
   );
+  await expect(
+    standardNet.getByRole("link", { name: "Net or full system? We can help.", exact: true })
+  ).toHaveCount(1);
 
   const upgrade = page.locator("#expo-portland-net-upgrade");
   await expect(upgrade).toBeVisible();
@@ -199,6 +197,12 @@ test("replacement-net cards distinguish the net-only fix from the complete upgra
     "src",
     /v1785178770\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-table-net-replacement-set-primary-01\.jpg/
   );
+  await expect(
+    upgrade.getByRole("link", {
+      name: "Not sure which setup you have? Ask Tiger.",
+      exact: true
+    })
+  ).toHaveCount(1);
 
   await expect(standardNet.locator("form, input, select, fieldset")).toHaveCount(0);
   await expect(upgrade.locator("form, input, select, fieldset")).toHaveCount(0);

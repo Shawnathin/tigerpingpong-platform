@@ -116,8 +116,6 @@ export default async function ReplacementPartsPage() {
                   unitPriceCents: livePart40.product.priceCents
                 }}
                 shippingCopy={getV1ShippingMessage(livePart40.product.priceCents)}
-                supportHref={contact.part40EmailHref}
-                supportPrompt={part40.supportPrompt}
               />
             ) : (
               <a className={styles.darkAction} href={contact.part40EmailHref}>

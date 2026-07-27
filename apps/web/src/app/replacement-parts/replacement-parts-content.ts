@@ -239,7 +239,7 @@ export const replacementPartsContent = {
     compatibility: part40Configuration.compatibility,
     eyebrow: "Most-requested fix",
     heading: part40Configuration.heading,
-    punchline: "Good news: Part 40 fits in an envelope. The nearly four-foot rod does not.",
+    punchline: "Replace the clip—not the whole opening system.",
     slug: part40Configuration.slug,
     supportPrompt: part40Configuration.supportPrompt
   }

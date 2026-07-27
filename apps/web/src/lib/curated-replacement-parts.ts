@@ -45,7 +45,7 @@ export const curatedReplacementParts: readonly CuratedReplacementPart[] = [
     section: "featured-part",
     slug: "tiger-pingpong-replacement-part-40",
     supportEmailKey: "part40",
-    supportPrompt: "Not sure? Send us a photo before ordering."
+    supportPrompt: "Need a fit check?"
   },
   {
     anchorId: "standard-replacement-net",
@@ -63,7 +63,7 @@ export const curatedReplacementParts: readonly CuratedReplacementPart[] = [
     section: "replacement-nets",
     slug: "tiger-replacement-net",
     supportEmailKey: "standardReplacementNet",
-    supportPrompt: "Not sure if you need the net or the full system? Send us a photo."
+    supportPrompt: "Net or full system? We can help."
   },
   {
     anchorId: "expo-portland-net-upgrade",
@@ -90,7 +90,7 @@ export const curatedReplacementParts: readonly CuratedReplacementPart[] = [
     section: "replacement-nets",
     slug: "tiger-table-net-replacement-set",
     supportEmailKey: "expoPortlandNetUpgrade",
-    supportPrompt: "Not sure which setup you have? Send us a photo before ordering."
+    supportPrompt: "Not sure which setup you have? Ask Tiger."
   }
 ] as const;
 

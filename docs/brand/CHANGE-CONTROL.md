@@ -66,7 +66,7 @@ Files updated: Brand facts and version, product story brief, reviewed product/fa
 
 Copy or claim replaced: The two products were previously draft and deferred with legacy `$28` and `$140` values and unqualified compatibility copy. Public guidance now distinguishes the net-only choice from the complete current Expo and Portland system, names Whistler and Plaza as exclusions from the upgrade, and keeps supplier and reordering details out of customer copy.
 
-Owner page-review refinement: Welcome customers into a general parts finder instead of repeating Part 40 in the hero. Let “What needs replacing?” lead directly into the two net choices, and use **Replace the whole net setup.** instead of “table-side system.”
+Owner page-review refinement: Welcome customers into a general parts finder instead of repeating Part 40 in the hero. Let “What needs replacing?” lead directly into the two net choices, and use **Replace the whole net setup.** instead of “table-side system.” Keep the general photo-help route prominent, then use only one quieter fit-help path per product. Replace the Part 40 four-foot-rod joke with **Replace the clip—not the whole opening system.**
 
 Follow-up: Review the revised support hub and focused commerce proof through the feature-branch pull request. Any deployed catalog write or production promotion remains separately approval-gated. A Whistler-specific system needs its own SKU, price, included items, compatibility copy, media, and approval.
 

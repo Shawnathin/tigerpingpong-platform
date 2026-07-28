@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- `codex/fix/protected-merge-history` — active merge-only ruleset is verified on `develop` and `main`; branch-policy hardening and the file-preserving history reconciliation are complete and proven locally. Final checks and the task PR into `develop` remain in progress.
+- PR #144 / `codex/fix/protected-merge-history` — active merge-only ruleset is verified on `develop` and `main`; branch-policy hardening and the file-preserving history reconciliation are complete and proven. The draft PR into `develop` is conflict-free and tracks the required hosted check.
 
 ## Awaiting Review
 

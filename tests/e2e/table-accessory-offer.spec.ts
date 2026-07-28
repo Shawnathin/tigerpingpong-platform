@@ -3,21 +3,21 @@ import { expect, test } from "@playwright/test";
 const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
 const EXPO_PATH = "/catalog/products/tiger-expo-outdoor-table";
 const PLAZA_PATH = "/catalog/products/tiger-plaza-outdoor-table-grey";
-const TABLE_NOTICE = "Now pick the paddles and balls that fit your game.";
+const REMOVED_TABLE_NOTICE = "Now pick the paddles and balls that fit your game.";
 const AQUA_TWO_PACK_VARIANT_KEY = "tiger-aqua-package-2-pack-3-balls";
 const AQUA_FOUR_PACK_VARIANT_KEY = "tiger-aqua-package-4-pack-3-balls";
 const COVER_PRODUCT_KEY = "tiger-table-cover-black-polyester";
 
 test("table confirmation starts unselected and allows a cover-only offer", async ({ page }) => {
   await page.goto(EXPO_PATH);
-  await expect(page.getByText(TABLE_NOTICE, { exact: true })).toBeVisible();
+  await expect(page.getByText(REMOVED_TABLE_NOTICE, { exact: true })).toHaveCount(0);
 
   await page.locator('input[value="Blue"]').evaluate((input: HTMLInputElement) => input.click());
   await page.getByRole("button", { name: "Add to cart" }).click();
 
   const dialog = page.getByRole("dialog", { name: /is in/i });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByText(TABLE_NOTICE, { exact: true })).toBeVisible();
+  await expect(dialog.getByText(REMOVED_TABLE_NOTICE, { exact: true })).toHaveCount(0);
   await expect(
     dialog.getByText("Pick a play set. Add a cover if you need one.", { exact: true })
   ).toHaveCount(0);
@@ -290,7 +290,7 @@ test("Plaza omits the cover, and offer failure never blocks the confirmed table"
     await page.getByRole("button", { name: "Add to cart" }).click();
 
     const failedDialog = page.getByRole("dialog");
-    await expect(failedDialog.getByText(TABLE_NOTICE, { exact: true })).toBeVisible();
+    await expect(failedDialog.getByText(REMOVED_TABLE_NOTICE, { exact: true })).toHaveCount(0);
     await expect(
       failedDialog.getByText(
         "Accessory choices are temporarily unavailable. Your table is still in your cart.",
@@ -380,5 +380,5 @@ test("non-table products keep the original two-action confirmation", async ({ pa
   await expect(dialog.getByRole("button", { name: "Keep shopping" })).toBeVisible();
   await expect(dialog.getByRole("link", { name: "View cart", exact: true })).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Add selected extras" })).toHaveCount(0);
-  await expect(dialog.getByText(TABLE_NOTICE, { exact: true })).toHaveCount(0);
+  await expect(dialog.getByText(REMOVED_TABLE_NOTICE, { exact: true })).toHaveCount(0);
 });

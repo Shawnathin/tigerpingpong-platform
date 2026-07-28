@@ -906,10 +906,6 @@ function TableSupportLinks({ resource }: { resource: TableSupportResource }) {
       <div className={styles.specResourcesCopy}>
         <p className={styles.eyebrow}>Manuals &amp; setup</p>
         <h3>Ready when the toolbox comes out.</h3>
-        <p>
-          {resource.title} assembly guide <span aria-hidden="true">·</span>{" "}
-          <span className={styles.specResourceRevision}>{resource.revision}</span>
-        </p>
       </div>
       <div className={styles.specResourceActions}>
         <a
@@ -918,7 +914,7 @@ function TableSupportLinks({ resource }: { resource: TableSupportResource }) {
           download
           href={resource.downloadUrl}
         >
-          Download assembly guide (PDF)
+          Assembly guide (PDF)
         </a>
         {resource.videoUrl ? (
           <a
@@ -928,9 +924,12 @@ function TableSupportLinks({ resource }: { resource: TableSupportResource }) {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Watch setup video
+            Setup video
           </a>
         ) : null}
+        <a className={styles.specResourceSecondary} href="/replacement-parts/">
+          Replacement parts
+        </a>
       </div>
     </div>
   );

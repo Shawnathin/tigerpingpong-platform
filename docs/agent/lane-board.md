@@ -6,7 +6,7 @@
 
 ## Awaiting Review
 
-- Draft PR #146 / `codex/feature/table-manual-spec-links` — five matching table Specifications sections now expose their approved manuals and setup videos from the same validated mapping as the Replacement Parts shelf; local proof passes and required hosted checks are running.
+- Draft PR #146 / `codex/feature/table-manual-spec-links` — five matching table Specifications sections expose their approved manuals, setup videos, and Replacement Parts route from the same validated mapping as the support shelf; Shawn's ordering/copy review is incorporated, local proof passes, and required hosted checks will rerun for the follow-up commit.
 - PR #143 / `develop` -> `main` — the history split is repaired and GitHub reports the promotion conflict-free and mergeable. Required checks and explicit production approval remain separate; do not merge as part of the policy task.
 
 ## Done

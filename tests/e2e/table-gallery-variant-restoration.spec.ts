@@ -151,11 +151,20 @@ test("each table specification section contains its matching manual and setup vi
     const manualLink = resources.getByRole("link", {
       name: `Download ${table.manualTitle} assembly guide PDF`
     });
+    const sectionOrder = await page.locator("main > section").evaluateAll((sections) => {
+      return sections.map((section) => section.getAttribute("aria-label"));
+    });
 
     await expect(resources).toHaveAttribute("data-product-slug", table.slug);
-    await expect(resources).toContainText(table.manualRevision);
+    await expect(resources).not.toContainText(table.manualRevision);
     await expect(manualLink).toHaveAttribute("href", table.manualUrl);
     await expect(manualLink).toHaveAttribute("download", "");
+    await expect(
+      resources.getByRole("link", { name: "Replacement parts", exact: true })
+    ).toHaveAttribute("href", "/replacement-parts/");
+    expect(sectionOrder.indexOf("Table comparison")).toBeLessThan(
+      sectionOrder.indexOf("Specifications")
+    );
 
     if (table.videoUrl) {
       const videoLink = resources.getByRole("link", {

@@ -17,8 +17,10 @@ Help owners find setup information where they are already reading product specif
 
 ## Required proof
 
-- Each of the five matching product pages shows its exact manual revision and download URL inside Specifications.
+- Each of the five matching product pages shows its exact manual download URL inside Specifications without repeating the manifest revision.
 - The four products with sourced setup videos show their exact YouTube URL; Plaza does not show a video control.
+- Table comparison appears before Specifications, and the setup panel includes a route to Replacement Parts.
+- The removed table-package reassurance sentence does not appear in the product purchase panel or table confirmation.
 - The Replacement Parts manual shelf continues to show five manuals and four setup videos.
 - The resource panel remains visible, keyboard-usable, at least 44 pixels tall per link, and free of horizontal overflow at 390, 417, 768, 1280, and 1440 pixels.
 - Lint, typecheck, the two affected browser suites, and the production-style build pass.
@@ -29,6 +31,8 @@ Implemented locally from one shared table-support mapping. The product Specifica
 
 Lint, Prisma client generation, full TypeScript typecheck, the 20-test table-gallery and Replacement Parts browser run, five-width responsive coverage, changed-file formatting, diff validation, and the production-style build pass. The browser run passed 18 active tests with two evidence-only screenshot tests skipped by their existing opt-in gates. Desktop and 390-pixel visual review passed.
 
-Draft PR #146 is published against `develop`. GitHub reports it mergeable; required hosted checks are running. It remains draft and unmerged.
+Shawn's browser review is incorporated: Table Comparison now precedes Specifications, the table purchase and confirmation no longer repeat the package prompt, the setup panel no longer shows the manual title/revision line, and it now links to Replacement Parts. The 15-test table-gallery and table-accessory browser run passed 14 active tests with one evidence-only screenshot test skipped; lint, typecheck, the production-style build, and local visual review also pass.
+
+Draft PR #146 is published against `develop`. It remains draft and unmerged; required hosted checks will rerun for the browser-review commit.
 
 No catalog, database, checkout, payment, shipping, deployment, or production state changed.

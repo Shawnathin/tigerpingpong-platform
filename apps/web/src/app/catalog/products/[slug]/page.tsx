@@ -1082,8 +1082,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 <FeatureHighlightsSection normalizedContent={normalizedContent} product={product} />
               </>
             )}
-            <SpecsGridSection normalizedContent={normalizedContent} product={product} />
             <TableComparisonSection currentSlug={product.slug} products={tableComparisonProducts} />
+            <SpecsGridSection normalizedContent={normalizedContent} product={product} />
           </>
         )}
       </main>

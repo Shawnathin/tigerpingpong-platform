@@ -668,14 +668,6 @@
   text-wrap: balance;
 }
 
-.tablePackageNotice {
-  margin: 0;
-  color: rgb(255 255 255 / 82%);
-  font-size: 0.94rem;
-  font-weight: 740;
-  line-height: 1.48;
-}
-
 .tableAddedProduct {
   display: grid;
   gap: 24px;
@@ -2263,17 +2255,6 @@
   color: var(--tiger-ink);
   font-size: clamp(1.3rem, 2.4vw, 1.85rem);
   line-height: 1.05;
-}
-
-.specResourcesCopy > p:last-child {
-  margin: 0;
-  color: rgb(32 40 63 / 72%);
-  font-weight: 760;
-  line-height: 1.5;
-}
-
-.specResourceRevision {
-  white-space: nowrap;
 }
 
 .specResourceActions {

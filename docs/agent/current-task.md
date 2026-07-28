@@ -2,27 +2,30 @@
 
 ## Active task
 
-Repair the shared table add-to-cart accessory confirmation so every table name stays concise and the cart actions remain reachable at short desktop and mobile viewports.
+Restore protected admin orders and products after the live API exhausted the Supabase session pool.
 
 ## Selected task card
 
-Mission-critical storefront regression confirmed on every table flow: the full catalog name overruns the confirmation panel and the action row cannot be reached reliably.
+Production regression: authenticated admin product and order requests return HTTP `503` while public catalog health remains green.
+
+## Confirmed cause
+
+The production API opens five independent Prisma clients without a connection cap. A read-only Render shell probe reproduced Supabase `EMAXCONNSESSION`: session-mode clients reached the pool limit of 15.
 
 ## Boundaries
 
-- Work only on `codex/fix/table-accessory-modal-reachability`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
-- Reuse the approved product-page display title instead of deriving shopper copy from the live catalog name.
-- Keep the offer choices, table/accessory cart payloads, live prices, discounts, shipping, checkout, Stripe, webhook, order, catalog, database, and deployment behavior unchanged.
-- Make the action row persistently reachable on desktop and keep the full modal scrollable on tablet/mobile.
+- Work only on `codex/fix/admin-api-connection-pool`, created from current `develop`; target its pull request to `develop`, never `main`.
+- Cap only implicit Supabase session-pool connections and preserve an explicitly configured `connection_limit`.
+- Keep catalog data, database schema/data, orders, checkout, Stripe, webhook payment truth, protected-route auth, shipping, DNS, and production credentials unchanged.
+- Do not mutate production or merge/promote the fix without Shawn's separate approval.
 
 ## Required proof
 
-- The live-length catalog names for Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler, and Plaza render with their concise approved confirmation headings.
-- At a 1280 x 640 viewport, `Add selected extras`, `Go to cart`, and `Keep shopping` remain inside the visible dialog without first scrolling.
-- At 390, 417, 768, 1280, and 1440 pixels, the modal has no horizontal overflow and its actions remain reachable.
-- The accessory selection, savings summary, add-selected-extras flow, focus trap, Escape close, and non-table confirmation continue to work.
-- Lint, typecheck, focused browser coverage, and the production-style build pass.
+- Supabase session-pool URLs without an explicit override receive a safe connection cap.
+- Explicit limits, transaction-pool URLs, local URLs, and invalid/missing configuration retain their existing behavior.
+- Focused unit coverage, lint, typecheck, Prisma validation, and the production-style build pass.
+- After reviewed promotion, authenticated admin products and orders return successfully without exposing customer or credential data.
 
 ## Status
 
-Implementation and local regression validation are complete and draft PR #149 targets `develop`. All five table confirmations, eight focused browser tests, lint, typecheck, the production-style build, diff validation, console review, and side-by-side visual QA passed. No payment, shipping, catalog, database, deployment, or production state changed.
+Root cause is confirmed and the focused connection cap is complete. Full lint, typecheck, 132 unit tests, Prisma generation/validation, changed-file formatting, diff validation, and the production-style build pass. Draft PR #152 targets `develop` and its hosted checks are queued; no production setting, deployment, database data/schema, payment, shipping, or auth state changed.

@@ -7,6 +7,57 @@ const REMOVED_TABLE_NOTICE = "Now pick the paddles and balls that fit your game.
 const AQUA_TWO_PACK_VARIANT_KEY = "tiger-aqua-package-2-pack-3-balls";
 const AQUA_FOUR_PACK_VARIANT_KEY = "tiger-aqua-package-4-pack-3-balls";
 const COVER_PRODUCT_KEY = "tiger-table-cover-black-polyester";
+const TABLE_CONFIRMATION_CASES = [
+  {
+    expectedHeading: "Expo Outdoor is in.",
+    optionValue: "Blue",
+    path: EXPO_PATH
+  },
+  {
+    expectedHeading: "Portland Indoor is in.",
+    optionValue: "Grey",
+    path: "/catalog/products/tiger-portland-indoor-table"
+  },
+  {
+    expectedHeading: "Portland Outdoor is in.",
+    optionValue: "Blue",
+    path: "/catalog/products/tiger-portland-outdoor-table"
+  },
+  {
+    expectedHeading: "Whistler is in.",
+    optionValue: "Blue",
+    path: "/catalog/products/tiger-whistler-indoor-table"
+  },
+  {
+    expectedHeading: "Plaza is in.",
+    optionValue: null,
+    path: PLAZA_PATH
+  }
+] as const;
+
+test("every table uses its concise approved name in the shared confirmation", async ({ page }) => {
+  for (const table of TABLE_CONFIRMATION_CASES) {
+    await page.goto(table.path);
+
+    if (table.optionValue) {
+      await page
+        .locator(`input[value="${table.optionValue}"]`)
+        .evaluate((input: HTMLInputElement) => input.click());
+    }
+
+    await page.getByRole("button", { name: "Add to cart" }).click();
+
+    const dialog = page.getByRole("dialog", { name: table.expectedHeading });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAccessibleName(table.expectedHeading);
+    await expect(dialog.getByRole("heading", { name: table.expectedHeading })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "Go to cart" })).toBeInViewport();
+    await expect(dialog.getByRole("button", { name: "Keep shopping" })).toBeInViewport();
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+  }
+});
 
 test("table confirmation starts unselected and allows a cover-only offer", async ({ page }) => {
   await page.goto(EXPO_PATH);
@@ -17,6 +68,9 @@ test("table confirmation starts unselected and allows a cover-only offer", async
 
   const dialog = page.getByRole("dialog", { name: /is in/i });
   await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAccessibleName("Expo Outdoor is in.");
+  await expect(dialog.getByRole("heading", { name: "Expo Outdoor is in." })).toBeVisible();
+  await expect(dialog).not.toContainText("Ping Pong Table Grey or Blue is in.");
   await expect(dialog.getByText(REMOVED_TABLE_NOTICE, { exact: true })).toHaveCount(0);
   await expect(
     dialog.getByText("Pick a play set. Add a cover if you need one.", { exact: true })
@@ -61,7 +115,7 @@ test("table confirmation starts unselected and allows a cover-only offer", async
 
   await dialog.getByRole("button", { name: "Add selected extras" }).click();
   await expect(page).toHaveURL(/\/cart$/);
-  await expect(page.getByRole("heading", { name: /Tiger Expo Outdoor Table/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Expo Outdoor/ })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: /Tiger PingPong Protective Ping Pong Table Cover/ })
   ).toBeVisible();
@@ -324,8 +378,16 @@ test("table offer modal is keyboard-contained, reduced-motion safe, and responsi
   test.setTimeout(120_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
 
-  for (const width of [390, 417, 768, 1280, 1440]) {
-    await page.setViewportSize({ height: 900, width });
+  const viewports = [
+    { height: 700, width: 390 },
+    { height: 700, width: 417 },
+    { height: 800, width: 768 },
+    { height: 640, width: 1280 },
+    { height: 900, width: 1440 }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
     await page.goto(EXPO_PATH);
     await page.evaluate((key) => window.localStorage.removeItem(key), CART_STORAGE_KEY);
     await page.reload();
@@ -339,6 +401,28 @@ test("table offer modal is keyboard-contained, reduced-motion safe, and responsi
     const keepShoppingButton = dialog.getByRole("button", { name: "Keep shopping" });
     const viewCartLink = dialog.getByRole("link", { name: "Go to cart" });
     await expect(closeButton).toBeFocused();
+    await expect(dialog).toHaveAccessibleName("Expo Outdoor is in.");
+
+    if (viewport.width > 900) {
+      const actionBounds = await dialog.evaluate((element) => {
+        const actions = element.querySelector('[class*="tableAccessoryModalActions"]');
+        const dialogRect = element.getBoundingClientRect();
+        const actionsRect = actions?.getBoundingClientRect();
+
+        return {
+          actionsBottom: actionsRect?.bottom ?? Number.POSITIVE_INFINITY,
+          actionsTop: actionsRect?.top ?? Number.NEGATIVE_INFINITY,
+          dialogBottom: dialogRect.bottom,
+          dialogTop: dialogRect.top
+        };
+      });
+
+      expect(actionBounds.actionsTop).toBeGreaterThanOrEqual(actionBounds.dialogTop);
+      expect(actionBounds.actionsBottom).toBeLessThanOrEqual(actionBounds.dialogBottom);
+      await expect(viewCartLink).toBeInViewport();
+      await expect(keepShoppingButton).toBeInViewport();
+    }
+
     await viewCartLink.scrollIntoViewIfNeeded();
     await expect(viewCartLink).toBeInViewport();
     await expect(keepShoppingButton).toBeInViewport();

@@ -67,6 +67,7 @@ export interface TigerPurchasePresentation {
 interface CheckoutButtonProps {
   availabilityMessage: string;
   basePriceLabel: string;
+  confirmationProductName: string;
   isCheckoutEligible: boolean;
   onVariantChange?: (variantKey: string | null) => void;
   priceSummary: string | null;
@@ -252,6 +253,7 @@ function TableAddToCartModal({
   offer,
   onAddSelectedExtras,
   onClose,
+  productDisplayName,
   product
 }: {
   isOfferEligible: boolean;
@@ -259,6 +261,7 @@ function TableAddToCartModal({
   offer: CatalogTableAccessoryOffer | null;
   onAddSelectedExtras: (items: CatalogTableAccessoryOfferItem[]) => void;
   onClose: () => void;
+  productDisplayName: string;
   product: CartProductInput;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -355,7 +358,7 @@ function TableAddToCartModal({
         <div className={styles.tableAccessoryIntro}>
           <header className={styles.tableAccessoryIntroCopy}>
             <p className={styles.tableAccessoryEyebrow}>Table added</p>
-            <h2 id="table-added-to-cart-title">{getTableModalProductName(product.name)} is in.</h2>
+            <h2 id="table-added-to-cart-title">{productDisplayName} is in.</h2>
           </header>
 
           <div className={styles.tableAddedProduct}>
@@ -577,6 +580,7 @@ function TableAddToCartModal({
 export function CheckoutButton({
   availabilityMessage,
   basePriceLabel,
+  confirmationProductName,
   isCheckoutEligible,
   onVariantChange,
   priceSummary,
@@ -966,6 +970,7 @@ export function CheckoutButton({
             onAddSelectedExtras={handleAddSelectedExtras}
             onClose={handleCloseModal}
             product={addedProduct ?? product}
+            productDisplayName={confirmationProductName}
           />
         ) : (
           <AddToCartModal onClose={handleCloseModal} product={addedProduct ?? product} />
@@ -977,10 +982,6 @@ export function CheckoutButton({
 
 function getTableAccessoryOfferItemKey(item: CatalogTableAccessoryOfferItem): string {
   return `${item.productKey}:${item.variantKey ?? "base"}`;
-}
-
-function getTableModalProductName(productName: string): string {
-  return productName.replace(/^Tiger\s+/i, "").replace(/\s+Table$/i, "");
 }
 
 function getTableAccessoryOfferItemLabel(item: CatalogTableAccessoryOfferItem): string {

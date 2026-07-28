@@ -1,11 +1,6 @@
 name: Branch policy
 
 on:
-  # Keep the existing event for the one protected merge that installs
-  # pull_request_target on develop. Remove it in the immediate follow-up PR.
-  pull_request:
-    types: [opened, synchronize, reopened, edited, ready_for_review]
-    branches: [main, develop]
   pull_request_target:
     types: [opened, synchronize, reopened, edited, ready_for_review]
     branches: [main, develop]

@@ -10,7 +10,7 @@ Prevent recurring false conflicts between `develop` and `main`, repair the curre
 
 ## Boundaries
 
-- Work only on `codex/fix/protected-merge-history`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
+- Work only on follow-up branch `codex/fix/trusted-branch-policy-only`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
 - Do not push directly to `develop` or `main`, merge PR #143, enable auto-merge, deploy, or promote production.
 - Keep the active GitHub ruleset scoped to `refs/heads/develop` and `refs/heads/main`, allow only merge commits, and grant no bypass actors.
 - Preserve the repair branch's first-parent tree when adding current `main` as the history merge's second parent.
@@ -34,4 +34,6 @@ The dedicated repair branch now contains policy commit `c108ad0` and history-onl
 
 Changed-file formatting, diff validation, four branch-policy simulations, ruleset verification, parent/tree equality, local ancestry proof, lint, full TypeScript typecheck, and tracked-secret scanning pass. Draft PR #144 is published against `develop`; GitHub reports it conflict-free and tracks its required hosted check.
 
-The event handoff is intentionally staged: PR #144 temporarily retains `pull_request` while installing `pull_request_target` on `develop`, so the existing required check never disappears. An immediate follow-up task PR will remove the old event after the trusted-base event exists on `develop`. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.
+PR #144 passed branch policy and the complete release-readiness workflow, then merged into `develop` with merge commit `5826676`. Current `main` is now an ancestor of `develop`, and GitHub reports PR #143 conflict-free and mergeable; its separate production approval and required checks remain untouched.
+
+The event handoff is now on its immediate follow-up branch. Because `pull_request_target` exists on `develop`, this branch removes the temporary `pull_request` event so future policy checks always run from trusted base code, including when a PR conflicts. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.

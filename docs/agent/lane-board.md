@@ -2,14 +2,15 @@
 
 ## In Progress
 
-- PR #144 / `codex/fix/protected-merge-history` — active merge-only ruleset is verified on `develop` and `main`; branch-policy hardening and the file-preserving history reconciliation are complete and proven. The draft PR into `develop` is conflict-free and retains the old policy event only for the protected handoff to the trusted-base event; the immediate follow-up PR will remove it.
+- `codex/fix/trusted-branch-policy-only` — remove the temporary policy event now that the trusted-base event is installed on `develop`; focused proof and a task PR into `develop` are in progress.
 
 ## Awaiting Review
 
-- PR #143 / `develop` -> `main` — production promotion is blocked by the squash-history split and must not merge until the protected-lane reconciliation reaches `develop`; production approval remains separate.
+- PR #143 / `develop` -> `main` — the history split is repaired and GitHub reports the promotion conflict-free and mergeable. Required checks and explicit production approval remain separate; do not merge as part of the policy task.
 
 ## Done
 
+- PR #144 merged the protected-lane history repair, merge-only enforcement guidance, and trusted-base policy handoff into `develop`; no production promotion occurred.
 - PR #142 merged the Tiger-styled cart empty state and its regression coverage into `develop`.
 - PR #140 merged the owner-approved standard net and Expo/Portland upgrade into `develop`; any deployed catalog write remains separately gated.
 - PR #138 merged the focused table-accessory checkout browser-test stabilization into `develop`.

@@ -19,6 +19,7 @@
     "import:tiger:deployed": "node scripts/import-tiger-deployed-catalog.mjs",
     "prisma:format": "prisma format --schema prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
+    "prisma:migrate:deploy": "node scripts/migrate-deploy.mjs",
     "prisma:validate": "prisma validate --schema prisma/schema.prisma"
   },
   "dependencies": {

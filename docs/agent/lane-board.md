@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- PR #144 / `codex/fix/protected-merge-history` — active merge-only ruleset is verified on `develop` and `main`; branch-policy hardening and the file-preserving history reconciliation are complete and proven. The draft PR into `develop` is conflict-free and tracks the required hosted check.
+- PR #144 / `codex/fix/protected-merge-history` — active merge-only ruleset is verified on `develop` and `main`; branch-policy hardening and the file-preserving history reconciliation are complete and proven. The draft PR into `develop` is conflict-free and retains the old policy event only for the protected handoff to the trusted-base event; the immediate follow-up PR will remove it.
 
 ## Awaiting Review
 

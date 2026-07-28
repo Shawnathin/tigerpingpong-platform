@@ -2240,6 +2240,90 @@
   color: var(--tiger-orange-deep);
 }
 
+.specResources {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  border: 1px solid rgb(25 55 100 / 12%);
+  border-radius: 24px;
+  padding: clamp(20px, 3vw, 28px);
+  background:
+    radial-gradient(circle at 10% 20%, rgb(255 173 93 / 18%), transparent 34%),
+    linear-gradient(135deg, rgb(232 241 255 / 90%), rgb(255 255 255 / 82%));
+}
+
+.specResourcesCopy {
+  display: grid;
+  gap: 7px;
+}
+
+.specResourcesCopy h3 {
+  margin: 0;
+  color: var(--tiger-ink);
+  font-size: clamp(1.3rem, 2.4vw, 1.85rem);
+  line-height: 1.05;
+}
+
+.specResourcesCopy > p:last-child {
+  margin: 0;
+  color: rgb(32 40 63 / 72%);
+  font-weight: 760;
+  line-height: 1.5;
+}
+
+.specResourceRevision {
+  white-space: nowrap;
+}
+
+.specResourceActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.specResourcePrimary,
+.specResourceSecondary {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #173867;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 900;
+  line-height: 1.15;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.specResourcePrimary {
+  background: #173867;
+  color: #fff;
+  box-shadow: 0 10px 22px rgb(23 56 103 / 18%);
+}
+
+.specResourceSecondary {
+  background: rgb(255 255 255 / 60%);
+  color: #173867;
+}
+
+.specResourcePrimary:hover,
+.specResourceSecondary:hover {
+  transform: translateY(-1px);
+}
+
+.specResourcePrimary:focus-visible,
+.specResourceSecondary:focus-visible {
+  outline: 3px solid var(--tiger-orange-deep);
+  outline-offset: 3px;
+}
+
 .mobileDisclosure {
   display: none;
 }
@@ -2804,6 +2888,23 @@
   .tableComparisonSection > .comparisonSectionHeading,
   .tableComparisonSection > .comparisonTableScroll {
     display: none;
+  }
+
+  .specResources {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  .specResourceActions {
+    display: grid;
+    justify-content: stretch;
+  }
+
+  .specResourcePrimary,
+  .specResourceSecondary {
+    width: 100%;
   }
 
   .specSection,

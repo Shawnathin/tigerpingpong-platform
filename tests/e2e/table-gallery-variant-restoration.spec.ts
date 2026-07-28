@@ -7,8 +7,12 @@ interface TableCase {
   colorValues: string[];
   descriptor: string;
   heading: string;
+  manualRevision: string;
+  manualTitle: string;
+  manualUrl: string;
   price: string;
   slug: string;
+  videoUrl?: string;
 }
 
 const TABLES: TableCase[] = [
@@ -16,34 +20,58 @@ const TABLES: TableCase[] = [
     colorValues: ["Blue", "Grey"],
     descriptor: "Easygoing outdoor.",
     heading: "Expo Outdoor",
+    manualRevision: "MA 212 - v.14.05.13-03",
+    manualTitle: "Expo Outdoor",
+    manualUrl:
+      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Expo-Outdoor-Installation-Guide/v1784409337/tiger-pingpong/resources/manuals/expo-outdoor-installation-guide.pdf",
     price: "$1,300.00",
-    slug: "tiger-expo-outdoor-table"
+    slug: "tiger-expo-outdoor-table",
+    videoUrl: "https://www.youtube.com/watch?v=3WAdtN03EJ4"
   },
   {
     colorValues: ["Green", "Grey"],
     descriptor: "Home-court feel.",
     heading: "Portland Indoor",
+    manualRevision: "MA 205 - v.25.05.16-01",
+    manualTitle: "Portland Indoor",
+    manualUrl:
+      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Portland-Indoor-Installation-Guide/v1784409346/tiger-pingpong/resources/manuals/portland-indoor-installation-guide.pdf",
     price: "$1,300.00",
-    slug: "tiger-portland-indoor-table"
+    slug: "tiger-portland-indoor-table",
+    videoUrl: "https://www.youtube.com/watch?v=EDCxiCuWoIo"
   },
   {
     colorValues: ["Blue", "Grey"],
     descriptor: "Tough outside. Smart inside.",
     heading: "Portland Outdoor",
+    manualRevision: "MA 213 - v.30.04.13-03",
+    manualTitle: "Portland Outdoor",
+    manualUrl:
+      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Portland-Outdoor-Installation-Guide/v1784409348/tiger-pingpong/resources/manuals/portland-outdoor-installation-guide.pdf",
     price: "$1,500.00",
-    slug: "tiger-portland-outdoor-table"
+    slug: "tiger-portland-outdoor-table",
+    videoUrl: "https://www.youtube.com/watch?v=mUmB-HPWHHs"
   },
   {
     colorValues: ["Blue", "Green"],
     descriptor: "For the serious rallies.",
     heading: "Whistler",
+    manualRevision: "MA 258.4-7 - v.30.07.09-01",
+    manualTitle: "Whistler Indoor",
+    manualUrl:
+      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Whistler-Indoor-Assembly-Guide/v1784409349/tiger-pingpong/resources/manuals/whistler-indoor-installation-guide.pdf",
     price: "$1,600.00",
-    slug: "tiger-whistler-indoor-table"
+    slug: "tiger-whistler-indoor-table",
+    videoUrl: "https://www.youtube.com/watch?v=tuvacihKUCk"
   },
   {
     colorValues: ["Grey"],
     descriptor: "Made for shared spaces.",
     heading: "Plaza",
+    manualRevision: "MA 244 - v.25.05.16-01",
+    manualTitle: "Plaza Outdoor",
+    manualUrl:
+      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Plaza-Outdoor-Installation-and-Parts-Guide/v1784409350/tiger-pingpong/resources/manuals/plaza-outdoor-installation-guide.pdf",
     price: "$2,600.00",
     slug: "tiger-plaza-outdoor-table-grey"
   }
@@ -110,6 +138,34 @@ test("all five tables open with their complete curated gallery and catalogue lea
         return getComputedStyle(node).backgroundColor;
       });
     expect(canvas).toBe("rgb(255, 255, 255)");
+  }
+});
+
+test("each table specification section contains its matching manual and setup video", async ({
+  page
+}) => {
+  for (const table of TABLES) {
+    await page.goto(productPath(table.slug));
+
+    const resources = page.getByTestId("table-support-resources");
+    const manualLink = resources.getByRole("link", {
+      name: `Download ${table.manualTitle} assembly guide PDF`
+    });
+
+    await expect(resources).toHaveAttribute("data-product-slug", table.slug);
+    await expect(resources).toContainText(table.manualRevision);
+    await expect(manualLink).toHaveAttribute("href", table.manualUrl);
+    await expect(manualLink).toHaveAttribute("download", "");
+
+    if (table.videoUrl) {
+      const videoLink = resources.getByRole("link", {
+        name: `Watch ${table.manualTitle} setup video on YouTube`
+      });
+      await expect(videoLink).toHaveAttribute("href", table.videoUrl);
+      await expect(videoLink).toHaveAttribute("target", "_blank");
+    } else {
+      await expect(resources.getByRole("link", { name: /setup video/i })).toHaveCount(0);
+    }
   }
 });
 
@@ -227,13 +283,31 @@ test("table galleries stay accessible and overflow-free at the approved widths",
     await page.setViewportSize(viewport);
     for (const table of TABLES) {
       await page.goto(productPath(table.slug));
+      const resources = page.getByTestId("table-support-resources");
+      await expect(resources).toBeVisible();
       const accessibility = await page.evaluate(() => ({
         documentWidth: document.documentElement.scrollWidth,
         imagesWithoutAlt: document.querySelectorAll("main img:not([alt])").length,
         viewportWidth: window.innerWidth
       }));
+      const resourceLayout = await resources.evaluate((node) => {
+        const bounds = node.getBoundingClientRect();
+        const linkHeights = Array.from(node.querySelectorAll("a")).map(
+          (link) => link.getBoundingClientRect().height
+        );
+
+        return {
+          left: bounds.left,
+          linkHeights,
+          right: bounds.right,
+          viewportWidth: window.innerWidth
+        };
+      });
       expect(accessibility.documentWidth).toBeLessThanOrEqual(accessibility.viewportWidth);
       expect(accessibility.imagesWithoutAlt).toBe(0);
+      expect(resourceLayout.left).toBeGreaterThanOrEqual(0);
+      expect(resourceLayout.right).toBeLessThanOrEqual(resourceLayout.viewportWidth);
+      expect(resourceLayout.linkHeights.every((height) => height >= 44)).toBe(true);
     }
   }
 });

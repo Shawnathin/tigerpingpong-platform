@@ -4,6 +4,7 @@ import {
   curatedReplacementParts,
   type CuratedReplacementPart
 } from "../../lib/curated-replacement-parts";
+import { tableSupportResources } from "../../lib/table-support-resources";
 
 interface ReplacementPartsMediaEntry {
   altText?: string;
@@ -19,14 +20,6 @@ interface ReplacementPartsMediaEntry {
 interface ReplacementPartsMediaManifest {
   entries: ReplacementPartsMediaEntry[];
   status: "approved" | "uploaded" | "implemented";
-}
-
-export interface ReplacementManual {
-  assetId: string;
-  downloadUrl: string;
-  revision: string;
-  title: string;
-  videoUrl?: string;
 }
 
 const launchMediaManifest = mediaManifestData as ReplacementPartsMediaManifest;
@@ -53,22 +46,6 @@ function requireImplementedMedia(
     ...entry,
     deliveryStatus: "implemented",
     finalUrl: entry.finalUrl
-  };
-}
-
-function requireManual(assetId: string, videoUrl?: string): ReplacementManual {
-  const entry = requireImplementedMedia(assetId);
-
-  if (entry.assetType !== "manual" || !entry.downloadUrl || !entry.revision) {
-    throw new Error(`Replacement-parts manual is incomplete: ${assetId}`);
-  }
-
-  return {
-    assetId,
-    downloadUrl: entry.downloadUrl,
-    revision: entry.revision,
-    title: entry.title,
-    videoUrl
   };
 }
 
@@ -228,13 +205,7 @@ export const replacementPartsContent = {
       }
     ]
   },
-  manuals: [
-    requireManual("manual-expo-outdoor", "https://www.youtube.com/watch?v=3WAdtN03EJ4"),
-    requireManual("manual-portland-indoor", "https://www.youtube.com/watch?v=EDCxiCuWoIo"),
-    requireManual("manual-portland-outdoor", "https://www.youtube.com/watch?v=mUmB-HPWHHs"),
-    requireManual("manual-whistler-indoor", "https://www.youtube.com/watch?v=tuvacihKUCk"),
-    requireManual("manual-plaza-outdoor")
-  ] satisfies ReplacementManual[],
+  manuals: tableSupportResources,
   replacementNets: {
     eyebrow: "Net help",
     heading: "What needs replacing?",

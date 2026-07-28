@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- PR #145 / `codex/fix/trusted-branch-policy-only` — preserve the existing required event after proving GitHub will not activate the trusted-base event until it reaches default branch `main`; record the safe cleanup gate without touching production.
+- `codex/feature/table-manual-spec-links` — add the five approved manuals and four existing setup videos to their matching table Specifications sections from one shared validated mapping; local proof passes and draft review handoff is next.
 
 ## Awaiting Review
 
@@ -10,6 +10,7 @@
 
 ## Done
 
+- PR #145 merged the safe trusted-branch-policy transition record into `develop`; no production promotion occurred.
 - PR #144 merged the protected-lane history repair, merge-only enforcement guidance, and trusted-base policy handoff into `develop`; no production promotion occurred.
 - PR #142 merged the Tiger-styled cart empty state and its regression coverage into `develop`.
 - PR #140 merged the owner-approved standard net and Expo/Portland upgrade into `develop`; any deployed catalog write remains separately gated.

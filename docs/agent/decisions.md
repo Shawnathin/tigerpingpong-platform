@@ -40,4 +40,10 @@ Decision: Keep production `main` aligned with the live site. Every task uses its
 
 Why: The site is live, so production needs a deliberate promotion boundary while experimentation and cleanup continue away from `main`.
 
+## 2026-07-27 - Preserve protected-branch ancestry with merge commits
+
+Decision: Require **Create a merge commit** for every pull request into `develop` or `main`. The active repository ruleset `Protected lane merge commits only` targets exactly those two branches, allows no bypass actors, and disables squash/rebase choices there. The branch-policy workflow also verifies the ruleset and requires current `main` to be an ancestor of `develop` before production promotion.
+
+Why: Squashing `develop` into `main` copied the correct files but discarded the shared ancestry, so the next promotion presented overlapping application changes as conflicts. A protected merge-only lane preserves the reviewed history and prevents the same false-conflict cycle from recurring.
+
 Out of scope: No application, deployment, DNS, database, payment, hosting, catalog, media, or production-data change was made as part of repository cleanup.

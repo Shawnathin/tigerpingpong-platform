@@ -2,33 +2,32 @@
 
 ## Active task
 
-Tiger-styled cart empty state.
+Permanent protected-lane merge-history guard and release #143 reconciliation.
 
 ## Selected task card
 
-Replace the broken, oversized empty-cart presentation with a focused Tiger PingPong experience that uses the approved brand voice, cleared storefront imagery, and useful shopping routes.
+Prevent recurring false conflicts between `develop` and `main`, repair the current ancestry split without hand-merging overlapping application files, and make the safe merge method the only available GitHub choice.
 
 ## Boundaries
 
-- Work only on `codex/fix/cart-empty-state-tiger-v1`, created from current `develop`; target any pull request to `develop`, never `main`.
-- Use the approved empty-cart copy from the Tiger storytelling content map and a cleared image from the brand media map.
-- Preserve the shared storefront navigation, cart storage, line-item behavior, catalog refresh, shipping calculations, discounts, hosted Stripe Checkout, and webhook payment truth.
-- Do not invent prices, availability, shipping promises, product claims, or a parallel visual system.
-- Keep the experience responsive, keyboard accessible, motion-safe, and free of horizontal overflow.
+- Work only on `codex/fix/protected-merge-history`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
+- Do not push directly to `develop` or `main`, merge PR #143, enable auto-merge, deploy, or promote production.
+- Keep the active GitHub ruleset scoped to `refs/heads/develop` and `refs/heads/main`, allow only merge commits, and grant no bypass actors.
+- Preserve the repair branch's first-parent tree when adding current `main` as the history merge's second parent.
+- Do not hand-resolve the five overlapping application/test/workflow files shown by PR #143; they are artifacts of the discarded squash ancestry, not competing desired content.
 
 ## Required proof
 
-- The empty cart shows exactly one `h1`, the approved “Nothing here yet.” / “Let’s find your next rally.” copy, the cleared `MAY-011` Vancouver image, a normal-height “Keep Shopping” action, and four working category routes.
-- Empty-state browser coverage passes at 390, 417, 768, 1280, and 1440 pixels without horizontal overflow or CTA stretching.
-- Existing replacement-parts cart-empty expectations are updated without weakening their cart behavior proof.
-- Formatting, lint, typecheck, unit tests, the production-style build, focused browser tests, and tracked-secret scanning pass.
+- GitHub reports active ruleset `Protected lane merge commits only` on both protected branches with `allowed_merge_methods: ["merge"]` and no bypass actors.
+- Existing branch protection still requires pull requests, the `validate-promotion-path` status check, current-base strictness, admin enforcement, and blocks force pushes/deletions.
+- Branch policy runs from trusted base code even when a PR conflicts, rejects non-`develop` promotion heads, rejects missing main ancestry, and rejects removal of the merge-only rule.
+- The history reconciliation commit has both current `develop` and current `main` as parents, changes no files relative to its first parent, and makes both protected branch heads ancestors of the repair branch.
+- Changed-file formatting, workflow syntax review, branch-policy simulations, diff validation, and hosted checks pass.
 
 ## Status
 
-Implementation and local visual review are complete, and PR #142 is ready for review against `develop`. The empty cart now uses the shared Tiger story layer, approved copy, cleared Vancouver lifestyle imagery, a compact primary action, and direct routes to tables, paddles, balls, and all gear. The layout has been reviewed at 390, 417, 768, 1280, and 1440 pixels with no horizontal overflow and a consistent 52-pixel CTA height.
+The recurring conflict is confirmed as a history split: PR #139 copied the correct `develop` tree into `main` as a single-parent squash commit, then PR #142 advanced `develop`. Current `main` and pre-PR-142 `develop` are byte-for-byte identical, while the five conflicts GitHub reports are overlapping paths caused by the missing ancestry.
 
-The populated-cart calculations, shipping, discounts, catalog reconciliation, Checkout request, and payment-truth paths were not changed. Lint, typecheck, all 128 unit tests, the production-style build, three focused cart browser tests, responsive empty-state proof, changed-file formatting, tracked-secret scanning, and diff validation pass. The repository-wide formatting command still reports 49 files that were already outside Prettier style; none is part of this task.
+Repository ruleset `Protected lane merge commits only` is active and verified on `develop` and `main`. It allows only merge commits and has no bypass actors; the existing protected-branch checks and force-push safeguards remain layered in place.
 
-The first PR release-readiness run passed 87 active browser tests and failed only because the table-accessory checkout test still expected the replaced checkout-error sentence. That assertion now matches the approved Tiger copy, the exact formerly failing test passes locally, and the subsequent hosted branch-policy and release-readiness checks pass.
-
-No database write, deployment, Stripe payment, catalog mutation, merge, or production promotion has occurred. Publishing the task branch for draft review does not change production.
+The dedicated repair branch is active. Branch-policy hardening, repository guidance, workflow records, history-only reconciliation, validation, and the task pull request remain in progress. No direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.

@@ -30,4 +30,6 @@ The recurring conflict is confirmed as a history split: PR #139 copied the corre
 
 Repository ruleset `Protected lane merge commits only` is active and verified on `develop` and `main`. It allows only merge commits and has no bypass actors; the existing protected-branch checks and force-push safeguards remain layered in place.
 
-The dedicated repair branch is active. Branch-policy hardening, repository guidance, workflow records, history-only reconciliation, validation, and the task pull request remain in progress. No direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.
+The dedicated repair branch now contains policy commit `c108ad0` and history-only reconciliation commit `8dabaf2`. The reconciliation has first parent `c108ad0` and second parent current `main` (`46b513b`); its tree is byte-for-byte identical to its first parent. Both current protected-branch heads are ancestors of the repair branch, the future merge comparison is conflict-free, and only the six intended policy/documentation files differ from current `develop`.
+
+Changed-file formatting, diff validation, four branch-policy simulations, ruleset verification, parent/tree equality, and local ancestry proof pass. Remaining work is the repository-wide relevant checks and publishing a draft task pull request into `develop`. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.

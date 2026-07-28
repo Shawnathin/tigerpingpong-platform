@@ -2,40 +2,37 @@
 
 ## Active task
 
-Permanent protected-lane merge-history guard and release #143 reconciliation.
+Add each approved table manual and setup-video link to the matching product page's Specifications section.
 
 ## Selected task card
 
-Prevent recurring false conflicts between `develop` and `main`, repair the current ancestry split without hand-merging overlapping application files, make the safe merge method the only available GitHub choice, and preserve the required status check during its trusted-event transition.
+Help owners find setup information where they are already reading product specifications, while keeping the Replacement Parts manual shelf and product pages on one validated source of truth.
 
 ## Boundaries
 
-- Work only on follow-up branch `codex/fix/trusted-branch-policy-only`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
-- Do not push directly to `develop` or `main`, merge PR #143, enable auto-merge, deploy, or promote production.
-- Keep the active GitHub ruleset scoped to `refs/heads/develop` and `refs/heads/main`, allow only merge commits, and grant no bypass actors.
-- Preserve the repair branch's first-parent tree when adding current `main` as the history merge's second parent.
-- Do not hand-resolve the five overlapping application/test/workflow files shown by PR #143; they are artifacts of the discarded squash ancestry, not competing desired content.
+- Work only on `codex/feature/table-manual-spec-links`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
+- Reuse the five implemented manual records and four existing setup-video URLs already published on the Replacement Parts page.
+- Match only Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler Indoor, and Plaza Outdoor. Do not infer a manual for another product.
+- Do not change manual files, product facts, catalog data, pricing, availability, checkout, payments, shipping, database state, deployment, or production.
 
 ## Required proof
 
-- GitHub reports active ruleset `Protected lane merge commits only` on both protected branches with `allowed_merge_methods: ["merge"]` and no bypass actors.
-- Existing branch protection still requires pull requests, the `validate-promotion-path` status check, current-base strictness, admin enforcement, and blocks force pushes/deletions.
-- Branch policy runs from trusted base code even when a PR conflicts, rejects non-`develop` promotion heads, rejects missing main ancestry, and rejects removal of the merge-only rule.
-- The history reconciliation commit has both current `develop` and current `main` as parents, changes no files relative to its first parent, and makes both protected branch heads ancestors of the repair branch.
-- Changed-file formatting, workflow syntax review, branch-policy simulations, diff validation, and hosted checks pass.
+- Each of the five matching product pages shows its exact manual download URL inside Specifications without repeating the manifest revision.
+- The four products with sourced setup videos show their exact YouTube URL; Plaza does not show a video control.
+- Table comparison appears before Specifications, and the setup panel includes a route to Replacement Parts.
+- The removed table-package reassurance sentence does not appear in the product purchase panel or table confirmation.
+- The Replacement Parts manual shelf continues to show five manuals and four setup videos.
+- The resource panel remains visible, keyboard-usable, at least 44 pixels tall per link, and free of horizontal overflow at 390, 417, 768, 1280, and 1440 pixels.
+- Lint, typecheck, the two affected browser suites, and the production-style build pass.
 
 ## Status
 
-The recurring conflict is confirmed as a history split: PR #139 copied the correct `develop` tree into `main` as a single-parent squash commit, then PR #142 advanced `develop`. Current `main` and pre-PR-142 `develop` are byte-for-byte identical, while the five conflicts GitHub reports are overlapping paths caused by the missing ancestry.
+Implemented locally from one shared table-support mapping. The product Specifications section now presents a compact Tiger-styled manual/setup panel for each matching table, and the Replacement Parts page reads the same mapping so the two surfaces cannot drift.
 
-Repository ruleset `Protected lane merge commits only` is active and verified on `develop` and `main`. It allows only merge commits and has no bypass actors; the existing protected-branch checks and force-push safeguards remain layered in place.
+Lint, Prisma client generation, full TypeScript typecheck, the 20-test table-gallery and Replacement Parts browser run, five-width responsive coverage, changed-file formatting, diff validation, and the production-style build pass. The browser run passed 18 active tests with two evidence-only screenshot tests skipped by their existing opt-in gates. Desktop and 390-pixel visual review passed.
 
-The dedicated repair branch now contains policy commit `c108ad0` and history-only reconciliation commit `8dabaf2`. The reconciliation has first parent `c108ad0` and second parent current `main` (`46b513b`); its tree is byte-for-byte identical to its first parent. Both current protected-branch heads are ancestors of the repair branch, the future merge comparison is conflict-free, and only the six intended policy/documentation files differ from current `develop`.
+Shawn's browser review is incorporated: Table Comparison now precedes Specifications, the table purchase and confirmation no longer repeat the package prompt, the setup panel no longer shows the manual title/revision line, and it now links to Replacement Parts. The 15-test table-gallery and table-accessory browser run passed 14 active tests with one evidence-only screenshot test skipped; lint, typecheck, the production-style build, and local visual review also pass.
 
-Changed-file formatting, diff validation, four branch-policy simulations, ruleset verification, parent/tree equality, local ancestry proof, lint, full TypeScript typecheck, and tracked-secret scanning pass. Draft PR #144 is published against `develop`; GitHub reports it conflict-free and tracks its required hosted check.
+Draft PR #146 is published against `develop`. It remains draft and unmerged; required hosted checks will rerun for the browser-review commit.
 
-PR #144 passed branch policy and the complete release-readiness workflow, then merged into `develop` with merge commit `5826676`. Current `main` is now an ancestor of `develop`, and GitHub reports PR #143 conflict-free and mergeable; its separate production approval and required checks remain untouched.
-
-The follow-up proved a GitHub event constraint before changing the protected check: `pull_request_target` does not activate until its workflow exists on the default branch (`main`). Removing `pull_request` while the workflow exists only on `develop` would leave the required policy check queued forever. This branch therefore preserves both events and records that the old event may be removed only in a later dedicated task after an explicitly approved promotion puts the trusted-base workflow on `main` and its operation is verified.
-
-The permanent recurrence fix does not depend on that later cleanup: the active merge-only ruleset prevents another squash-history split, and the current ancestry is repaired. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.
+No catalog, database, checkout, payment, shipping, deployment, or production state changed.

@@ -2,6 +2,10 @@ import {
   getProductContentBySlug,
   type NormalizedProductContent
 } from "../../../../lib/product-content";
+import {
+  getTableSupportResource,
+  type TableSupportResource
+} from "../../../../lib/table-support-resources";
 import { tigerTablesProductStories } from "../../../../lib/tiger-story";
 import type {
   CatalogProductDetail,
@@ -892,6 +896,45 @@ function SpecificationGrid({ fields }: { fields: LabeledValue[] }) {
   );
 }
 
+function TableSupportLinks({ resource }: { resource: TableSupportResource }) {
+  return (
+    <div
+      className={styles.specResources}
+      data-product-slug={resource.productSlug}
+      data-testid="table-support-resources"
+    >
+      <div className={styles.specResourcesCopy}>
+        <p className={styles.eyebrow}>Manuals &amp; setup</p>
+        <h3>Ready when the toolbox comes out.</h3>
+      </div>
+      <div className={styles.specResourceActions}>
+        <a
+          aria-label={`Download ${resource.title} assembly guide PDF`}
+          className={styles.specResourcePrimary}
+          download
+          href={resource.downloadUrl}
+        >
+          Assembly guide (PDF)
+        </a>
+        {resource.videoUrl ? (
+          <a
+            aria-label={`Watch ${resource.title} setup video on YouTube`}
+            className={styles.specResourceSecondary}
+            href={resource.videoUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Setup video
+          </a>
+        ) : null}
+        <a className={styles.specResourceSecondary} href="/replacement-parts/">
+          Replacement parts
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export function SpecsGridSection({
   normalizedContent,
   product
@@ -901,6 +944,7 @@ export function SpecsGridSection({
 }) {
   const fields = getSpecificationFields(product, normalizedContent);
   const isTable = isTableProduct(product);
+  const supportResource = isTable ? getTableSupportResource(product.slug) : null;
   const title = isTable ? "Specs and dimensions." : "Specs.";
 
   if (fields.length === 0) {
@@ -932,6 +976,7 @@ export function SpecsGridSection({
           <SpecificationGrid fields={fields} />
         </div>
       </details>
+      {supportResource ? <TableSupportLinks resource={supportResource} /> : null}
     </section>
   );
 }

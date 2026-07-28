@@ -33,7 +33,6 @@ import styles from "./page.module.css";
 
 const AQUA_PRODUCT_SLUG = "tiger-aqua-outdoor-indoor-paddle";
 const PLAZA_PRODUCT_SLUG = "tiger-plaza-outdoor-table-grey";
-const TABLE_PACKAGE_NOTICE = "Now pick the paddles and balls that fit your game.";
 
 export interface ProductOptionGroup {
   displayName: string;
@@ -357,7 +356,6 @@ function TableAddToCartModal({
           <header className={styles.tableAccessoryIntroCopy}>
             <p className={styles.tableAccessoryEyebrow}>Table added</p>
             <h2 id="table-added-to-cart-title">{getTableModalProductName(product.name)} is in.</h2>
-            <p className={styles.tablePackageNotice}>{TABLE_PACKAGE_NOTICE}</p>
           </header>
 
           <div className={styles.tableAddedProduct}>
@@ -801,7 +799,6 @@ export function CheckoutButton({
                   {displayedShippingLines.map((line) => (
                     <span key={line}>{line}</span>
                   ))}
-                  {isTable ? <span>{TABLE_PACKAGE_NOTICE}</span> : null}
                 </div>
               </div>
 
@@ -845,7 +842,6 @@ export function CheckoutButton({
             {displayedShippingLines.map((line) => (
               <span key={line}>{line}</span>
             ))}
-            {isTable ? <span>{TABLE_PACKAGE_NOTICE}</span> : null}
           </div>
 
           <div className={styles.checkoutPanel}>

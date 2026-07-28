@@ -29,4 +29,6 @@ Implemented locally from one shared table-support mapping. The product Specifica
 
 Lint, Prisma client generation, full TypeScript typecheck, the 20-test table-gallery and Replacement Parts browser run, five-width responsive coverage, changed-file formatting, diff validation, and the production-style build pass. The browser run passed 18 active tests with two evidence-only screenshot tests skipped by their existing opt-in gates. Desktop and 390-pixel visual review passed.
 
+Draft PR #146 is published against `develop`. GitHub reports it mergeable; required hosted checks are running. It remains draft and unmerged.
+
 No catalog, database, checkout, payment, shipping, deployment, or production state changed.

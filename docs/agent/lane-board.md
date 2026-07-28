@@ -2,10 +2,11 @@
 
 ## In Progress
 
-- `codex/feature/table-manual-spec-links` — add the five approved manuals and four existing setup videos to their matching table Specifications sections from one shared validated mapping; local proof passes and draft review handoff is next.
+- None.
 
 ## Awaiting Review
 
+- Draft PR #146 / `codex/feature/table-manual-spec-links` — five matching table Specifications sections now expose their approved manuals and setup videos from the same validated mapping as the Replacement Parts shelf; local proof passes and required hosted checks are running.
 - PR #143 / `develop` -> `main` — the history split is repaired and GitHub reports the promotion conflict-free and mergeable. Required checks and explicit production approval remain separate; do not merge as part of the policy task.
 
 ## Done

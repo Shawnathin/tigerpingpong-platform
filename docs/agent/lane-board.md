@@ -2,14 +2,16 @@
 
 ## In Progress
 
-- PR #142 / `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, local regression proof, branch policy, and hosted release readiness pass for the Tiger-styled cart empty state. The PR is ready for review against `develop`; merge remains pending.
+- PR #144 / `codex/fix/protected-merge-history` — active merge-only ruleset is verified on `develop` and `main`; branch-policy hardening and the file-preserving history reconciliation are complete and proven. The draft PR into `develop` is conflict-free and retains the old policy event only for the protected handoff to the trusted-base event; the immediate follow-up PR will remove it.
 
 ## Awaiting Review
 
-- PR #140 / `codex/feature/replacement-nets-commerce-v1` — implementation and release proof are complete for the owner-approved standard net and Expo/Portland upgrade. Exact media, live-catalog purchase controls, fit/included-item guidance, cart behavior, fallback help, and responsive QA pass; PR review and any deployed catalog write remain separately gated.
+- PR #143 / `develop` -> `main` — production promotion is blocked by the squash-history split and must not merge until the protected-lane reconciliation reaches `develop`; production approval remains separate.
 
 ## Done
 
+- PR #142 merged the Tiger-styled cart empty state and its regression coverage into `develop`.
+- PR #140 merged the owner-approved standard net and Expo/Portland upgrade into `develop`; any deployed catalog write remains separately gated.
 - PR #138 merged the focused table-accessory checkout browser-test stabilization into `develop`.
 - PR #133 merged the table-triggered 30% accessory offer, server-authoritative pricing snapshots, Stripe net-line handling, and protected savings presentation into `develop`; migration, targeted catalog write, Stripe test-mode proof, deployment, and promotion remain separately approval-gated.
 - PR #132 merged the Vice bundle catalog foundation with exact bundle SKU `15488` into `develop`; staging and production catalog writes remain separately approval-gated.

@@ -6,7 +6,7 @@ Permanent protected-lane merge-history guard and release #143 reconciliation.
 
 ## Selected task card
 
-Prevent recurring false conflicts between `develop` and `main`, repair the current ancestry split without hand-merging overlapping application files, and make the safe merge method the only available GitHub choice.
+Prevent recurring false conflicts between `develop` and `main`, repair the current ancestry split without hand-merging overlapping application files, make the safe merge method the only available GitHub choice, and preserve the required status check during its trusted-event transition.
 
 ## Boundaries
 
@@ -36,4 +36,6 @@ Changed-file formatting, diff validation, four branch-policy simulations, rulese
 
 PR #144 passed branch policy and the complete release-readiness workflow, then merged into `develop` with merge commit `5826676`. Current `main` is now an ancestor of `develop`, and GitHub reports PR #143 conflict-free and mergeable; its separate production approval and required checks remain untouched.
 
-The event handoff is now on its immediate follow-up branch. Because `pull_request_target` exists on `develop`, this branch removes the temporary `pull_request` event so future policy checks always run from trusted base code, including when a PR conflicts. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.
+The follow-up proved a GitHub event constraint before changing the protected check: `pull_request_target` does not activate until its workflow exists on the default branch (`main`). Removing `pull_request` while the workflow exists only on `develop` would leave the required policy check queued forever. This branch therefore preserves both events and records that the old event may be removed only in a later dedicated task after an explicitly approved promotion puts the trusted-base workflow on `main` and its operation is verified.
+
+The permanent recurrence fix does not depend on that later cleanup: the active merge-only ruleset prevents another squash-history split, and the current ancestry is repaired. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.

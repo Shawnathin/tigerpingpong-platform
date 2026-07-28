@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- `codex/fix/trusted-branch-policy-only` — remove the temporary policy event now that the trusted-base event is installed on `develop`; focused proof and a task PR into `develop` are in progress.
+- PR #145 / `codex/fix/trusted-branch-policy-only` — preserve the existing required event after proving GitHub will not activate the trusted-base event until it reaches default branch `main`; record the safe cleanup gate without touching production.
 
 ## Awaiting Review
 

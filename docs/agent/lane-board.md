@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Draft PR #142 / `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, and regression proof are complete for the Tiger-styled cart empty state. The stale checkout-error assertion exposed by the first hosted run is corrected and passes locally; the hosted rerun and review remain pending against `develop`.
+- Draft PR #142 / `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, local regression proof, branch policy, and hosted release readiness pass for the Tiger-styled cart empty state. Review remains pending against `develop`.
 
 ## Awaiting Review
 

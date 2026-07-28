@@ -2,15 +2,16 @@
 
 ## In Progress
 
-- Hosted validation for draft PR #149; no production promotion is authorized.
+- Hosted validation for draft PR #152 / `codex/fix/admin-api-connection-pool` -> `develop`: cap implicit Supabase session-pool connections after live `EMAXCONNSESSION` proof. No production mutation or promotion is authorized.
 
 ## Awaiting Review
 
-- Draft PR #149 / `codex/fix/table-accessory-modal-reachability` -> `develop` — shared mission-critical table confirmation repair keeps every approved short product title and all cart actions reachable at short viewports without touching commerce calculations or payment logic.
-- PR #147 / `develop` -> `main` — the history split is repaired and GitHub reports the production promotion clean, mergeable, and fully green. Explicit production approval remains separate; do not merge as part of the modal hotfix.
+- None.
 
 ## Done
 
+- PR #150 promoted the reviewed table confirmation hotfix from `develop` to production `main`.
+- PR #149 merged the shared table confirmation repair into `develop`.
 - PR #146 merged the approved table manuals, setup videos, comparison/spec ordering, and Replacement Parts route into `develop`.
 - PR #148 merged the zero-file history reconciliation into `develop`, restoring a clean promotion path for PR #147 without changing application files.
 - PR #145 merged the safe trusted-branch-policy transition record into `develop`; no production promotion occurred.

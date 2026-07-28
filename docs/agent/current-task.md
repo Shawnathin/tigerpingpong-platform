@@ -28,4 +28,4 @@ The production API opens five independent Prisma clients without a connection ca
 
 ## Status
 
-Root cause is confirmed and the focused connection cap is complete locally. Full lint, typecheck, 132 unit tests, Prisma generation/validation, changed-file formatting, diff validation, and the production-style build pass. Review publication remains; no production setting, deployment, database data/schema, payment, shipping, or auth state changed.
+Root cause is confirmed and the focused connection cap is complete. Full lint, typecheck, 132 unit tests, Prisma generation/validation, changed-file formatting, diff validation, and the production-style build pass. Draft PR #152 targets `develop` and its hosted checks are queued; no production setting, deployment, database data/schema, payment, shipping, or auth state changed.

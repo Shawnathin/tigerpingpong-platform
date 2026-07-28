@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Production admin recovery on `codex/fix/admin-api-connection-pool`: cap implicit Supabase session-pool connections after live `EMAXCONNSESSION` proof. No production mutation or promotion is authorized.
+- Hosted validation for draft PR #152 / `codex/fix/admin-api-connection-pool` -> `develop`: cap implicit Supabase session-pool connections after live `EMAXCONNSESSION` proof. No production mutation or promotion is authorized.
 
 ## Awaiting Review
 

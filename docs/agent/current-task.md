@@ -6,11 +6,11 @@ Permanent protected-lane merge-history guard and release #143 reconciliation.
 
 ## Selected task card
 
-Prevent recurring false conflicts between `develop` and `main`, repair the current ancestry split without hand-merging overlapping application files, and make the safe merge method the only available GitHub choice.
+Prevent recurring false conflicts between `develop` and `main`, repair the current ancestry split without hand-merging overlapping application files, make the safe merge method the only available GitHub choice, and preserve the required status check during its trusted-event transition.
 
 ## Boundaries
 
-- Work only on `codex/fix/protected-merge-history`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
+- Work only on follow-up branch `codex/fix/trusted-branch-policy-only`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
 - Do not push directly to `develop` or `main`, merge PR #143, enable auto-merge, deploy, or promote production.
 - Keep the active GitHub ruleset scoped to `refs/heads/develop` and `refs/heads/main`, allow only merge commits, and grant no bypass actors.
 - Preserve the repair branch's first-parent tree when adding current `main` as the history merge's second parent.
@@ -34,4 +34,8 @@ The dedicated repair branch now contains policy commit `c108ad0` and history-onl
 
 Changed-file formatting, diff validation, four branch-policy simulations, ruleset verification, parent/tree equality, local ancestry proof, lint, full TypeScript typecheck, and tracked-secret scanning pass. Draft PR #144 is published against `develop`; GitHub reports it conflict-free and tracks its required hosted check.
 
-The event handoff is intentionally staged: PR #144 temporarily retains `pull_request` while installing `pull_request_target` on `develop`, so the existing required check never disappears. An immediate follow-up task PR will remove the old event after the trusted-base event exists on `develop`. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.
+PR #144 passed branch policy and the complete release-readiness workflow, then merged into `develop` with merge commit `5826676`. Current `main` is now an ancestor of `develop`, and GitHub reports PR #143 conflict-free and mergeable; its separate production approval and required checks remain untouched.
+
+The follow-up proved a GitHub event constraint before changing the protected check: `pull_request_target` does not activate until its workflow exists on the default branch (`main`). Removing `pull_request` while the workflow exists only on `develop` would leave the required policy check queued forever. This branch therefore preserves both events and records that the old event may be removed only in a later dedicated task after an explicitly approved promotion puts the trusted-base workflow on `main` and its operation is verified.
+
+The permanent recurrence fix does not depend on that later cleanup: the active merge-only ruleset prevents another squash-history split, and the current ancestry is repaired. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createDatabaseConfig } from "../../packages/db/src";
+import { capSupabaseSessionPoolConnections, createDatabaseConfig } from "../../packages/db/src";
 
 describe("database configuration", () => {
   it("requires DATABASE_URL", () => {
@@ -23,6 +23,17 @@ describe("database configuration", () => {
       "postgresql://postgres.example:password@aws-1-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require&connection_limit=1";
 
     expect(createDatabaseConfig({ DATABASE_URL: databaseUrl }).databaseUrl).toBe(databaseUrl);
+  });
+
+  it("supports a one-connection cap for migration processes", () => {
+    const databaseUrl =
+      "postgresql://postgres.example:password@aws-1-us-west-2.pooler.supabase.com:5432/postgres";
+
+    expect(
+      new URL(capSupabaseSessionPoolConnections(databaseUrl, "1")).searchParams.get(
+        "connection_limit"
+      )
+    ).toBe("1");
   });
 
   it("does not rewrite non-session-pool database URLs", () => {

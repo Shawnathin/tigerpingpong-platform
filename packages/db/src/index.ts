@@ -26,7 +26,10 @@ export function createDatabaseConfig(env: Record<string, string | undefined>): D
   };
 }
 
-function capSupabaseSessionPoolConnections(databaseUrl: string): string {
+export function capSupabaseSessionPoolConnections(
+  databaseUrl: string,
+  connectionLimit = "2"
+): string {
   let parsedUrl: URL;
 
   try {
@@ -46,7 +49,7 @@ function capSupabaseSessionPoolConnections(databaseUrl: string): string {
   // The API currently has several intentionally isolated Prisma clients. Keeping
   // each client below the Supabase session pool's 15-client ceiling prevents a
   // late-loaded admin client from being rejected after storefront traffic starts.
-  parsedUrl.searchParams.set("connection_limit", "2");
+  parsedUrl.searchParams.set("connection_limit", connectionLimit);
 
   return parsedUrl.toString();
 }

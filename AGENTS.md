@@ -269,6 +269,8 @@ Payment code is high risk. Be conservative.
 - Do not commit feature work directly on `develop`; it is an integration and approval branch.
 - Only an approved `develop` pull request may target and update production `main`.
 - Approval means Shawn explicitly authorizes the `develop`-to-`main` merge; never merge or enable auto-merge without that authorization.
+- Every pull request whose base is `develop` or `main` must use **Create a merge commit**. The active `Protected lane merge commits only` GitHub ruleset enforces this; never squash or rebase a protected-lane pull request.
+- If `main` is no longer an ancestor of `develop`, stop the promotion. Reconcile history through a dedicated task branch and pull request into `develop`, preserve the current `develop` tree in the history merge, and never hand-resolve the overlapping application files produced by a squash-history split.
 - Keep both `develop` and `main` free of force pushes and direct pushes.
 - Keep PRs focused and boring.
 - Do not mix feature work with broad cleanup.

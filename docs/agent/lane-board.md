@@ -2,10 +2,17 @@
 
 ## In Progress
 
-- `codex/feature/replacement-nets-commerce-v1` — local implementation and release proof are complete for the owner-approved standard net and Expo/Portland upgrade. Exact media, live-catalog purchase controls, fit/included-item guidance, cart behavior, fallback help, and responsive QA pass; branch review, its pull request to `develop`, and any deployed catalog write remain separately gated.
+- PR #145 / `codex/fix/trusted-branch-policy-only` — preserve the existing required event after proving GitHub will not activate the trusted-base event until it reaches default branch `main`; record the safe cleanup gate without touching production.
+
+## Awaiting Review
+
+- PR #143 / `develop` -> `main` — the history split is repaired and GitHub reports the promotion conflict-free and mergeable. Required checks and explicit production approval remain separate; do not merge as part of the policy task.
 
 ## Done
 
+- PR #144 merged the protected-lane history repair, merge-only enforcement guidance, and trusted-base policy handoff into `develop`; no production promotion occurred.
+- PR #142 merged the Tiger-styled cart empty state and its regression coverage into `develop`.
+- PR #140 merged the owner-approved standard net and Expo/Portland upgrade into `develop`; any deployed catalog write remains separately gated.
 - PR #138 merged the focused table-accessory checkout browser-test stabilization into `develop`.
 - PR #133 merged the table-triggered 30% accessory offer, server-authoritative pricing snapshots, Stripe net-line handling, and protected savings presentation into `develop`; migration, targeted catalog write, Stripe test-mode proof, deployment, and promotion remain separately approval-gated.
 - PR #132 merged the Vice bundle catalog foundation with exact bundle SKU `15488` into `develop`; staging and production catalog writes remain separately approval-gated.

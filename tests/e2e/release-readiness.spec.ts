@@ -550,6 +550,77 @@ test("cart summary clarifies tax timing and keeps the checkout encouragement con
   ).toHaveCount(0);
 });
 
+test("empty cart keeps the Tiger voice, real home-court media, and useful shopping paths", async ({
+  page
+}) => {
+  await page.addInitScript(() => {
+    window.localStorage.removeItem("tigerpingpong.cart.v1");
+  });
+
+  await page.goto("/cart");
+
+  const emptyCart = page.getByTestId("empty-cart");
+  await expect(
+    emptyCart.getByRole("heading", { level: 1, name: "Nothing here yet." })
+  ).toBeVisible();
+  await expect(emptyCart.getByText("Let’s find your next rally.", { exact: true })).toBeVisible();
+  await expect(emptyCart.getByRole("link", { name: "Keep Shopping" })).toHaveAttribute(
+    "href",
+    "/tables/"
+  );
+  await expect(
+    emptyCart.getByRole("img", {
+      name: "Blue Tiger Expo Outdoor table on a Vancouver terrace overlooking the water and North Shore mountains."
+    })
+  ).toBeVisible();
+  await expect(emptyCart.getByText("Home court, Vancouver.", { exact: true })).toBeVisible();
+
+  const shopNavigation = emptyCart.getByRole("navigation", { name: "Shop by category" });
+  await expect(shopNavigation.getByRole("link", { name: /^Tables/ })).toHaveAttribute(
+    "href",
+    "/tables/"
+  );
+  await expect(shopNavigation.getByRole("link", { name: /^Paddles/ })).toHaveAttribute(
+    "href",
+    "/accessories/paddles/"
+  );
+  await expect(shopNavigation.getByRole("link", { name: /^Balls/ })).toHaveAttribute(
+    "href",
+    "/accessories/ping-pong-balls/"
+  );
+  await expect(shopNavigation.getByRole("link", { name: /^All gear/ })).toHaveAttribute(
+    "href",
+    "/accessories/"
+  );
+
+  const primaryActionHeight = await emptyCart
+    .getByRole("link", { name: "Keep Shopping" })
+    .evaluate((element) => element.getBoundingClientRect().height);
+  expect(primaryActionHeight).toBeLessThan(80);
+
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 417, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1280, height: 900 },
+    { width: 1440, height: 900 }
+  ]) {
+    await page.setViewportSize(viewport);
+    const layout = await page.evaluate(() => {
+      const primaryAction = document.querySelector('[data-testid="empty-cart"] a[href="/tables/"]');
+
+      return {
+        actionHeight: primaryAction?.getBoundingClientRect().height ?? 0,
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth
+      };
+    });
+
+    expect(layout.scrollWidth, `${viewport.width}px empty cart overflow`).toBe(layout.clientWidth);
+    expect(layout.actionHeight, `${viewport.width}px empty cart CTA height`).toBeLessThan(80);
+  }
+});
+
 test("priced product options update the displayed price and shipping message", async ({ page }) => {
   await page.goto("/catalog/products/tiger-premium-balls-6-orange");
   const displayedPrice = page.getByTestId("product-price");

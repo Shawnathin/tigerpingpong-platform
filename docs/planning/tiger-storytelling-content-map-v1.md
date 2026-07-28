@@ -1,7 +1,7 @@
 # Tiger PingPong Storytelling Content Map V1
 
 Date: 2026-07-18
-Status: About, Contact, Summer in Canada homepage, all three table category experiences, and six gear category experiences implemented; product, cart, and footer excerpts remain planning only
+Status: About, Contact, Summer in Canada homepage, all three table category experiences, six gear category experiences, and cart reassurance/empty state implemented; product and footer excerpts remain planning only
 
 ## Purpose
 
@@ -625,7 +625,7 @@ Keep the existing cart reassurance:
 
 Do not add the company story to the order summary or Stripe handoff.
 
-Recommended empty-cart copy:
+Implemented empty-cart copy:
 
 Heading:
 

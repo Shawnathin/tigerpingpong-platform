@@ -2,42 +2,40 @@
 
 ## Active task
 
-Standard Replacement Net and Expo & Portland Net Upgrade System commerce.
+Permanent protected-lane merge-history guard and release #143 reconciliation.
 
 ## Selected task card
 
-Add the two owner-approved net choices to the dedicated Replacement Parts support hub: a `$20 CAD` live-catalog seed for the net-only standard replacement and a `$149.99 CAD` live-catalog seed for the complete Expo and Portland upgrade.
+Prevent recurring false conflicts between `develop` and `main`, repair the current ancestry split without hand-merging overlapping application files, make the safe merge method the only available GitHub choice, and preserve the required status check during its trusted-event transition.
 
 ## Boundaries
 
-- Work only on `codex/feature/replacement-nets-commerce-v1` created from current `develop`; target its pull request to `develop`, never `main`.
-- Preserve Part 40, manuals, setup videos, navigation, footer, generic-catalog/PDP/sitemap exclusions, hosted Stripe Checkout, webhook payment truth, and Canada-only shipping.
-- Prices and availability remain live catalog truth. The reviewed CSV values are activation seeds, not hardcoded storefront copy or trusted client totals.
-- Keep internal SKUs `8367` and `15875` out of public copy.
-- State fit and included items exactly: the standard product is net-only for any standard PingPong table; the complete upgrade fits every indoor/outdoor Expo and Portland and does not fit Whistler or Plaza.
-- Keep supplier and reordering history out of customer copy. Do not imply planned obsolescence.
-- The only new shipping exception is the owner-approved Part 40 full set: a cart containing at least eight clips ships free. Do not add any other exception, fit selector, new schema, migration, payment rule, generic replacement-parts catalogue, or production catalog write.
+- Work only on follow-up branch `codex/fix/trusted-branch-policy-only`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
+- Do not push directly to `develop` or `main`, merge PR #143, enable auto-merge, deploy, or promote production.
+- Keep the active GitHub ruleset scoped to `refs/heads/develop` and `refs/heads/main`, allow only merge commits, and grant no bypass actors.
+- Preserve the repair branch's first-parent tree when adding current `main` as the history merge's second parent.
+- Do not hand-resolve the five overlapping application/test/workflow files shown by PR #143; they are artifacts of the discarded squash ancestry, not competing desired content.
 
 ## Required proof
 
-- The reviewed import accepts both active replacement parts only with exact SKU, positive CAD price, approved primary Cloudinary media, public/checkout flags, and `online_checkout`.
-- The page uses live price and availability, adds each product through the existing cart, and falls back to photo help without exposing stale prices when catalog data is unavailable.
-- Standard-net cart math is `$20` subtotal, `$15` shipping, and `$35` pre-tax total.
-- Expo and Portland upgrade cart math is `$149.99` subtotal, free shipping under the existing over-`$100` rule, and `$149.99` pre-tax total.
-- The Part 40 page shows the verified product photo and offers one clip or a full set of eight. The set total is derived from the live unit price, seven clips retain flat-rate shipping, and eight or more clips receive free shipping consistently in cart, checkout, and webhook validation.
-- Compatibility, included items, older-system guidance, Whistler/Plaza exclusions, image alternatives, focus behaviour, and generic-discovery exclusions have focused coverage.
-- Cloudinary delivery verification, import validation, scoped dry-run, lint, typecheck, unit tests, focused browser tests, production build, and secret scanning pass.
+- GitHub reports active ruleset `Protected lane merge commits only` on both protected branches with `allowed_merge_methods: ["merge"]` and no bypass actors.
+- Existing branch protection still requires pull requests, the `validate-promotion-path` status check, current-base strictness, admin enforcement, and blocks force pushes/deletions.
+- Branch policy runs from trusted base code even when a PR conflicts, rejects non-`develop` promotion heads, rejects missing main ancestry, and rejects removal of the merge-only rule.
+- The history reconciliation commit has both current `develop` and current `main` as parents, changes no files relative to its first parent, and makes both protected branch heads ancestors of the repair branch.
+- Changed-file formatting, workflow syntax review, branch-policy simulations, diff validation, and hosted checks pass.
 
 ## Status
 
-PR #133 and the follow-up browser-test stabilization in PR #138 are merged into `develop`; the table accessory offer is no longer the active lane.
+The recurring conflict is confirmed as a history split: PR #139 copied the correct `develop` tree into `main` as a single-parent squash commit, then PR #142 advanced `develop`. Current `main` and pre-PR-142 `develop` are byte-for-byte identical, while the five conflicts GitHub reports are overlapping paths caused by the missing ancestry.
 
-Shawn approved the two replacement-net products, their compatibility, included items, current availability, and catalog seed prices on 2026-07-27. The exact product images are processed, stripped of sensitive metadata, uploaded to Cloudinary, and verified in `data/media/replacement-nets-commerce-media-v1.json`.
+Repository ruleset `Protected lane merge commits only` is active and verified on `develop` and `main`. It allows only merge commits and has no bypass actors; the existing protected-branch checks and force-push safeguards remain layered in place.
 
-The local branch implementation and proof are complete. Draft PR #140 is open against `develop`. The dedicated support hub now welcomes people into a general parts finder, keeps Part 40 in its own section, distinguishes the net-only choice from the complete Expo/Portland upgrade, reads live catalog price and availability, uses the shared cart and exact shipping rule, links cart lines back to the right card, and falls back to photo help without showing stale prices.
+The dedicated repair branch now contains policy commit `c108ad0` and history-only reconciliation commit `8dabaf2`. The reconciliation has first parent `c108ad0` and second parent current `main` (`46b513b`); its tree is byte-for-byte identical to its first parent. Both current protected-branch heads are ancestors of the repair branch, the future merge comparison is conflict-free, and only the six intended policy/documentation files differ from current `develop`.
 
-Import validation and the connectionless replacement-parts staging dry-run pass with no blocking gates. Lint, typecheck, 128 unit tests, the production build, tracked-secret scan, high-severity dependency gate, 11 focused replacement-parts browser tests, all 87 active browser tests, and responsive visual review pass. The two delivered Cloudinary files return exact hash-matching JPEG bytes.
+Changed-file formatting, diff validation, four branch-policy simulations, ruleset verification, parent/tree equality, local ancestry proof, lint, full TypeScript typecheck, and tracked-secret scanning pass. Draft PR #144 is published against `develop`; GitHub reports it conflict-free and tracks its required hosted check.
 
-Shawn's page review removed the redundant net-section explainer, replaced “table-side system” with **Replace the whole net setup.**, removed the standalone “more than a little fix” aside, and reframed the hero around common parts, manuals, and photo help rather than repeating Part 40. The Part 40 card now keeps one quiet fit-check path, removes the repeated email action from its purchase panel, replaces the context-dependent four-foot-rod joke with **Replace the clip—not the whole opening system.**, shows the verified product photo, and offers either one clip or a full set of eight. The full set uses eight times the live unit price and receives the owner-approved free-shipping exception.
+PR #144 passed branch policy and the complete release-readiness workflow, then merged into `develop` with merge commit `5826676`. Current `main` is now an ancestor of `develop`, and GitHub reports PR #143 conflict-free and mergeable; its separate production approval and required checks remain untouched.
 
-No database write, deployment, Stripe payment, production catalog activation, merge, or production promotion has occurred. The next step is continued review of PR #140; any catalog write remains separately approval-gated.
+The follow-up proved a GitHub event constraint before changing the protected check: `pull_request_target` does not activate until its workflow exists on the default branch (`main`). Removing `pull_request` while the workflow exists only on `develop` would leave the required policy check queued forever. This branch therefore preserves both events and records that the old event may be removed only in a later dedicated task after an explicitly approved promotion puts the trusted-base workflow on `main` and its operation is verified.
+
+The permanent recurrence fix does not depend on that later cleanup: the active merge-only ruleset prevents another squash-history split, and the current ancestry is repaired. No application/runtime file change, direct protected-branch push, PR #143 merge, deployment, or production promotion has occurred.

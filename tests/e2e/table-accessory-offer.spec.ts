@@ -199,7 +199,7 @@ test("cart pricing is automatic, reversible, and checkout sends list-price hints
   );
 
   await expect(page.getByRole("status")).toHaveText(
-    "Checkout could not be started. Please try again or contact us."
+    "We couldn’t get checkout started. Try again, or give us a call and we’ll help sort it out."
   );
   const tableLine = page.locator("article").filter({ hasText: "Tiger Expo Outdoor Table" });
   await tableLine.getByRole("button", { name: "Remove" }).click();

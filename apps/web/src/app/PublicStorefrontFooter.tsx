@@ -66,10 +66,10 @@ export function PublicStorefrontFooter() {
   }
 
   return (
-    <footer className="publicFooter" aria-label="Tiger Ping Pong footer">
+    <footer className="publicFooter" aria-label="Tiger PingPong footer">
       <div className="publicFooterInner">
         <div className="publicFooterBrand">
-          <a className="publicBrand" href="/" aria-label="Tiger Ping Pong home">
+          <a className="publicBrand" href="/" aria-label="Tiger PingPong home">
             <PublicBrandLogo />
           </a>
         </div>

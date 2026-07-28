@@ -596,7 +596,8 @@
 .tableAccessoryModal {
   display: grid;
   width: min(980px, calc(100vw - 56px));
-  height: min(760px, calc(100vh - 56px));
+  height: min(760px, calc(100dvh - 32px));
+  max-height: calc(100dvh - 32px);
   grid-template-columns: minmax(250px, 0.72fr) minmax(0, 1.38fr);
   gap: 0;
   overflow: hidden;
@@ -617,6 +618,7 @@
   min-width: 0;
   align-content: space-between;
   gap: 34px;
+  overflow: hidden;
   padding: 38px 32px 34px;
   color: #ffffff;
   background:
@@ -723,11 +725,10 @@
 }
 
 .tableAccessoryPanel {
-  display: grid;
+  display: flex;
   min-width: 0;
   min-height: 0;
-  grid-template-rows: minmax(0, 1fr) auto;
-  align-content: start;
+  flex-direction: column;
   gap: 24px;
   overflow: hidden;
   padding: 38px 34px 28px;
@@ -738,10 +739,14 @@
 
 .tableAccessoryOffer {
   display: grid;
+  flex: 1 1 auto;
   min-height: 0;
   gap: 14px;
   overflow: hidden auto;
+  overscroll-behavior: contain;
   padding-right: 5px;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tableAccessoryOfferHeader {
@@ -960,9 +965,12 @@
 
 .tableAccessoryModalActions {
   display: flex;
+  flex: 0 0 auto;
   flex-wrap: wrap;
   gap: 9px;
   align-items: center;
+  border-top: 1px solid rgb(40 57 77 / 16%);
+  padding-top: 14px;
 }
 
 .addSelectedExtrasButton,
@@ -2713,6 +2721,7 @@
 
   .tableAccessoryModal {
     height: auto;
+    max-height: calc(100dvh - 24px);
     grid-template-columns: 1fr;
     overflow: hidden auto;
   }

@@ -81,6 +81,7 @@ export function ProductHeroPurchase({
         <CheckoutButton
           availabilityMessage={availabilityMessage}
           basePriceLabel={basePriceLabel}
+          confirmationProductName={heroTitle}
           isCheckoutEligible={isCheckoutEligible}
           onVariantChange={setSelectedVariantKey}
           priceSummary={priceSummary}

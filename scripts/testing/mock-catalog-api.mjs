@@ -480,7 +480,7 @@ const tableProducts = [
   {
     key: "tiger-expo-outdoor-table",
     slug: "tiger-expo-outdoor-table",
-    name: "Tiger Expo Outdoor Table",
+    name: "Tiger PingPong Expo Outdoor Ping Pong Table Grey or Blue",
     productKind: "table",
     purchaseMode: "online_checkout",
     priceCents: 130000,
@@ -495,7 +495,7 @@ const tableProducts = [
   {
     key: "tiger-portland-indoor-table",
     slug: "tiger-portland-indoor-table",
-    name: "Tiger Portland Indoor Table",
+    name: "Tiger PingPong Portland Indoor Ping Pong Table Grey or Green",
     productKind: "table",
     purchaseMode: "online_checkout",
     priceCents: 130000,
@@ -510,7 +510,7 @@ const tableProducts = [
   {
     key: "tiger-portland-outdoor-table",
     slug: "tiger-portland-outdoor-table",
-    name: "Tiger Portland Outdoor Table",
+    name: "Tiger PingPong Portland Outdoor Ping Pong Table Grey or Blue",
     productKind: "table",
     purchaseMode: "online_checkout",
     priceCents: 150000,
@@ -525,7 +525,7 @@ const tableProducts = [
   {
     key: "tiger-whistler-indoor-table",
     slug: "tiger-whistler-indoor-table",
-    name: "Tiger Whistler Indoor Table",
+    name: "Tiger PingPong Whistler Indoor Ping Pong Table Green or Blue",
     productKind: "table",
     purchaseMode: "online_checkout",
     priceCents: 160000,
@@ -540,7 +540,7 @@ const tableProducts = [
   {
     key: "tiger-plaza-outdoor-table-grey",
     slug: "tiger-plaza-outdoor-table-grey",
-    name: "Tiger Plaza Outdoor Table Grey",
+    name: "Tiger PingPong Plaza Outdoor Ping Pong Table Grey",
     productKind: "table",
     purchaseMode: "online_checkout",
     priceCents: 260000,

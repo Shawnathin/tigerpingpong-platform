@@ -152,6 +152,44 @@ final result: passed
 
 ---
 
+# Table Accessory Modal Reachability QA
+
+Date: 2026-07-27
+
+Scope: Keep every table confirmation concise and its cart actions reachable without changing offer or checkout behavior.
+
+## Source truth
+
+- Live Expo regression: `/var/folders/t0/jhxslg8n76qb4vntjw805zz80000gn/T/TemporaryItems/NSIRD_screencaptureui_MOcTNe/Screenshot 2026-07-27 at 9.43.38 PM.png`
+- Live Portland Indoor regression: `/var/folders/t0/jhxslg8n76qb4vntjw805zz80000gn/T/TemporaryItems/NSIRD_screencaptureui_NDOm3v/Screenshot 2026-07-27 at 9.54.13 PM.png`
+- Fixed implementation: `/tmp/tiger-portland-table-accessory-modal-fixed-1280x696.png`
+- Side-by-side comparison, source left and implementation right: `/tmp/tiger-portland-table-accessory-modal-comparison.png`
+
+## Viewport and state
+
+- Source crop normalized from the live desktop capture to `1280 x 696`.
+- Implementation captured in the local in-app browser at CSS viewport `1280 x 696`, device scale `1`.
+- Both states show the table-confirmed accessory offer before an accessory selection.
+
+## Comparison history
+
+1. **Blocked:** the source used the full catalog name, producing an eight-line Portland title and pushing the action row below the visible modal. The shopper could not reliably reach the cart.
+2. **Passed:** the implementation reuses the approved product-page display title, keeps the offer body independently scrollable, and pins the three actions inside the visible desktop modal.
+3. **Passed:** automated coverage repeated the confirmation across Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler, and Plaza using their live-length catalog names.
+
+## Fidelity review
+
+- Typography: existing Tiger display type, weights, and line-height preserved.
+- Layout: existing two-panel composition preserved; only overflow ownership and action positioning changed.
+- Colour and effects: existing ink, orange, glass, gradients, shadows, and radii preserved.
+- Images: existing catalog media and object-fit behavior preserved.
+- Copy: approved short table display names reused; offer wording and prices unchanged.
+- Interaction: `Add selected extras`, `Go to cart`, and `Keep shopping` remain reachable; keyboard containment, Escape close, reduced motion, and mobile scrolling pass.
+
+final result: passed
+
+---
+
 # About — Owner-Corrected Origin Story QA
 
 Date: 2026-07-20

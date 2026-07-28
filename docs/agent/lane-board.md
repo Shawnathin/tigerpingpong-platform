@@ -2,15 +2,16 @@
 
 ## In Progress
 
-- None.
+- `codex/fix/table-accessory-modal-reachability` — mission-critical table confirmation repair to keep the concise product title and cart actions reachable at short viewports without touching commerce calculations or payment logic.
 
 ## Awaiting Review
 
-- Draft PR #146 / `codex/feature/table-manual-spec-links` — five matching table Specifications sections expose their approved manuals, setup videos, and Replacement Parts route from the same validated mapping as the support shelf; Shawn's ordering/copy review is incorporated, local proof passes, and required hosted checks will rerun for the follow-up commit.
-- PR #143 / `develop` -> `main` — the history split is repaired and GitHub reports the promotion conflict-free and mergeable. Required checks and explicit production approval remain separate; do not merge as part of the policy task.
+- PR #147 / `develop` -> `main` — the history split is repaired and GitHub reports the production promotion clean, mergeable, and fully green. Explicit production approval remains separate; do not merge as part of the modal hotfix.
 
 ## Done
 
+- PR #146 merged the approved table manuals, setup videos, comparison/spec ordering, and Replacement Parts route into `develop`.
+- PR #148 merged the zero-file history reconciliation into `develop`, restoring a clean promotion path for PR #147 without changing application files.
 - PR #145 merged the safe trusted-branch-policy transition record into `develop`; no production promotion occurred.
 - PR #144 merged the protected-lane history repair, merge-only enforcement guidance, and trusted-base policy handoff into `develop`; no production promotion occurred.
 - PR #142 merged the Tiger-styled cart empty state and its regression coverage into `develop`.

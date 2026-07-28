@@ -103,7 +103,7 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
   }, []);
 
   return (
-    <header className="publicHeader" aria-label="Tiger Ping Pong public header">
+    <header className="publicHeader" aria-label="Tiger PingPong public header">
       <nav
         className={`glassNav${isMobileMenuOpen ? " publicMobileMenuIsOpen" : ""}`}
         aria-label="Public navigation"
@@ -121,7 +121,7 @@ export function PublicStorefrontNav({ activeItem }: PublicStorefrontNavProps) {
           <span aria-hidden="true" />
         </button>
 
-        <a className="publicBrand" href="/" aria-label="Tiger Ping Pong home">
+        <a className="publicBrand" href="/" aria-label="Tiger PingPong home">
           <PublicBrandLogo priority />
         </a>
 

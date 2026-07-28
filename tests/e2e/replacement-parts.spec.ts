@@ -285,7 +285,7 @@ test("Standard Replacement Net uses its live price and flat-rate cart total", as
   await expect(orderSummary).toContainText("Total$35.00");
 
   await cartItem.getByRole("button", { name: "Remove" }).click();
-  await expect(page.getByRole("heading", { name: "Your cart is empty." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Nothing here yet." })).toBeVisible();
 });
 
 test("Expo and Portland upgrade uses its live price and free-shipping cart total", async ({
@@ -318,7 +318,7 @@ test("Expo and Portland upgrade uses its live price and free-shipping cart total
   await expect(orderSummary).toContainText("Total$149.99");
 
   await cartItem.getByRole("button", { name: "Remove" }).click();
-  await expect(page.getByRole("heading", { name: "Your cart is empty." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Nothing here yet." })).toBeVisible();
 });
 
 test("Part 40 falls back to photo help when live catalog data is unavailable", async ({ page }) => {

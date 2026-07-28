@@ -29,4 +29,6 @@ Implementation and local visual review are complete, and draft PR #142 is open a
 
 The populated-cart calculations, shipping, discounts, catalog reconciliation, Checkout request, and payment-truth paths were not changed. Lint, typecheck, all 128 unit tests, the production-style build, three focused cart browser tests, responsive empty-state proof, changed-file formatting, tracked-secret scanning, and diff validation pass. The repository-wide formatting command still reports 49 files that were already outside Prettier style; none is part of this task.
 
+The first PR release-readiness run passed 87 active browser tests and failed only because the table-accessory checkout test still expected the replaced checkout-error sentence. That assertion now matches the approved Tiger copy, and the exact formerly failing test passes locally; the GitHub rerun is pending.
+
 No database write, deployment, Stripe payment, catalog mutation, merge, or production promotion has occurred. Publishing the task branch for draft review does not change production.

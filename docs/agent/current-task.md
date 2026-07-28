@@ -25,7 +25,7 @@ Replace the broken, oversized empty-cart presentation with a focused Tiger PingP
 
 ## Status
 
-Implementation and local visual review are complete, and draft PR #142 is open against `develop`. The empty cart now uses the shared Tiger story layer, approved copy, cleared Vancouver lifestyle imagery, a compact primary action, and direct routes to tables, paddles, balls, and all gear. The layout has been reviewed at 390, 417, 768, 1280, and 1440 pixels with no horizontal overflow and a consistent 52-pixel CTA height.
+Implementation and local visual review are complete, and PR #142 is ready for review against `develop`. The empty cart now uses the shared Tiger story layer, approved copy, cleared Vancouver lifestyle imagery, a compact primary action, and direct routes to tables, paddles, balls, and all gear. The layout has been reviewed at 390, 417, 768, 1280, and 1440 pixels with no horizontal overflow and a consistent 52-pixel CTA height.
 
 The populated-cart calculations, shipping, discounts, catalog reconciliation, Checkout request, and payment-truth paths were not changed. Lint, typecheck, all 128 unit tests, the production-style build, three focused cart browser tests, responsive empty-state proof, changed-file formatting, tracked-secret scanning, and diff validation pass. The repository-wide formatting command still reports 49 files that were already outside Prettier style; none is part of this task.
 

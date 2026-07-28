@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- Draft PR #142 / `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, local regression proof, branch policy, and hosted release readiness pass for the Tiger-styled cart empty state. Review remains pending against `develop`.
+- PR #142 / `codex/fix/cart-empty-state-tiger-v1` — implementation, responsive visual review, local regression proof, branch policy, and hosted release readiness pass for the Tiger-styled cart empty state. The PR is ready for review against `develop`; merge remains pending.
 
 ## Awaiting Review
 

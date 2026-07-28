@@ -2,10 +2,11 @@
 
 ## In Progress
 
-- `codex/fix/table-accessory-modal-reachability` — mission-critical table confirmation repair to keep the concise product title and cart actions reachable at short viewports without touching commerce calculations or payment logic.
+- Hosted validation for draft PR #149; no production promotion is authorized.
 
 ## Awaiting Review
 
+- Draft PR #149 / `codex/fix/table-accessory-modal-reachability` -> `develop` — shared mission-critical table confirmation repair keeps every approved short product title and all cart actions reachable at short viewports without touching commerce calculations or payment logic.
 - PR #147 / `develop` -> `main` — the history split is repaired and GitHub reports the production promotion clean, mergeable, and fully green. Explicit production approval remains separate; do not merge as part of the modal hotfix.
 
 ## Done

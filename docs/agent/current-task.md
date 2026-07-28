@@ -25,4 +25,4 @@ Mission-critical storefront regression confirmed on every table flow: the full c
 
 ## Status
 
-Implementation and local regression validation are complete. All five table confirmations, eight focused browser tests, lint, typecheck, the production-style build, diff validation, console review, and side-by-side visual QA passed. No payment, shipping, catalog, database, deployment, or production state changed.
+Implementation and local regression validation are complete and draft PR #149 targets `develop`. All five table confirmations, eight focused browser tests, lint, typecheck, the production-style build, diff validation, console review, and side-by-side visual QA passed. No payment, shipping, catalog, database, deployment, or production state changed.

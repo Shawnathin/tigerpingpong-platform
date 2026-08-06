@@ -2,11 +2,11 @@
 
 ## In Progress
 
-- `codex/fix/admin-predeploy-pool` -> `develop`: bound the Render Prisma migration process after approved production PR #153 was safely blocked by `EMAXCONNSESSION` before release. The prior API deployment remains live.
+- `TPP-BC-RUNTIME-DECOUPLING` on `codex/fix/bigcommerce-runtime-media-cutover` -> `develop`: remove all active storefront BigCommerce-hosted media dependencies using reviewed Cloudinary assets; remove unverified old-model detail visuals when no exact current replacement exists. No DNS, provider, deployment, or email action is in scope.
 
 ## Awaiting Review
 
-- None.
+- Authenticated production admin products/orders proof requires a supervised protected login; unauthenticated route protection and public health are confirmed, but successful protected reads remain unproven.
 
 ## Done
 

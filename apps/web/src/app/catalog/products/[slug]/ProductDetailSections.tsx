@@ -303,7 +303,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "Made for Shared Spaces",
         visual: {
           alt: "Plaza Outdoor permanent table",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/117/409/plaza_outdoor-01__91454.1659978562.jpg?c=1"
+          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg"
         }
       }
     ],
@@ -439,28 +439,20 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "6mm Indoor / Outdoor Top",
         visual: {
           alt: "Portland Outdoor 6mm table top in playback position",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-outdoor-black-grey-top.jpg?t=1685557874"
+          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg"
         }
       },
       {
         description:
           "The 1 by 2 inch steel frame is welded for strength, then powder-coated for a durable finish that stands up to regular outdoor use.",
         kicker: "Strength and stability",
-        title: "Welded Steel Frame",
-        visual: {
-          alt: "Portland Outdoor welded steel frame",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-leg.jpg?t=1685557614"
-        }
+        title: "Welded Steel Frame"
       },
       {
         description:
           "A highly visible handle and dual-slot lock system secure the table in play or storage position, so one person can fold, unlock, and roll it away.",
         kicker: "Simple open and close",
-        title: "Smart Locking System",
-        visual: {
-          alt: "Portland Outdoor smart locking handle",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/potland-handle.jpg?t=1685557395"
-        }
+        title: "Smart Locking System"
       },
       {
         description:
@@ -469,7 +461,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "Adjustable Net",
         visual: {
           alt: "Portland Outdoor adjustable net",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/adjustable-net.jpg?t=1685557091"
+          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg"
         }
       },
       {
@@ -479,7 +471,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "Paddle & Ball Storage",
         visual: {
           alt: "Portland Outdoor paddle and ball storage",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/paddle-and-ball-storege.jpg?t=1685557410"
+          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg"
         }
       }
     ],
@@ -490,24 +482,16 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         value: "Fold one side up and practice against the back board.",
         visual: {
           alt: "Portland Outdoor playback position",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-outdoor-black-grey-top.jpg?t=1685557874"
+          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg"
         }
       },
       {
         title: "Easily Movable",
-        value: "5 inch double rubberized wheels roll across varied terrain.",
-        visual: {
-          alt: "Portland Outdoor wheels",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-wheel2.jpg?t=1685558011"
-        }
+        value: "5 inch double rubberized wheels roll across varied terrain."
       },
       {
         title: "Easy Leg Level",
-        value: "Large steel leg levelers rotate up to 1 1/4 inches.",
-        visual: {
-          alt: "Portland Outdoor leg leveler",
-          src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-leg-level.jpg?t=1685558111"
-        }
+        value: "Large steel leg levelers rotate up to 1 1/4 inches."
       }
     ]
   },

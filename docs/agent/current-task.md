@@ -2,32 +2,32 @@
 
 ## Active task
 
-Complete the protected admin recovery after the first production deployment was safely blocked by the same saturated Supabase session pool during Prisma pre-deploy.
+Remove the remaining runtime BigCommerce media dependencies before the final DNS-authority cutover to GoDaddy.
+
+## Stable task key
+
+`TPP-BC-RUNTIME-DECOUPLING`
 
 ## Selected task card
 
-Production regression: authenticated admin product and order requests return HTTP `503` while public catalog health remains green.
-
-## Confirmed cause
-
-The production API opens five independent Prisma clients without a connection cap. A read-only Render shell probe reproduced Supabase `EMAXCONNSESSION`: session-mode clients reached the pool limit of 15. PR #153 promoted the runtime cap, but Render's pre-deploy Prisma migration process still used the uncapped raw URL and was rejected before the new API could start.
+Replace every active storefront BigCommerce image reference with exact reviewed Cloudinary media. Where no verified current-model image exists, remove the legacy visual instead of substituting an uncertain product image.
 
 ## Boundaries
 
-- Work only on `codex/fix/admin-predeploy-pool`, created from current `develop`; target its pull request to `develop`, never `main`.
-- Reuse the shared URL guard to give only the Prisma migration process a one-connection cap.
-- Keep the API's two-connection runtime cap and preserve an explicitly configured `connection_limit`.
-- Keep catalog data, database schema/data, orders, checkout, Stripe, webhook payment truth, protected-route auth, shipping, DNS, and production credentials unchanged.
-- Shawn approved production promotion; keep every follow-up change on the protected task-branch -> `develop` -> `main` path.
+- Work only on `codex/fix/bigcommerce-runtime-media-cutover`, created from current `origin/develop`; target any pull request to `develop`, never `main`.
+- Preserve checkout, Stripe, webhook payment truth, protected-route auth, shipping, catalog facts, prices, availability, database data/schema, and production configuration.
+- Preserve historical source traceability in `data/` and `docs/`; the zero-dependency gate applies to active runtime source in `apps/web/src`.
+- Use only owner-cleared exact current-model product media. Portland Outdoor V1 archive media is prohibited.
+- Do not change DNS, nameservers, GoDaddy, BigCommerce account state, Render configuration, deployment state, or email sending in this task.
 
 ## Required proof
 
-- Supabase session-pool URLs without an explicit override receive a safe connection cap.
-- Explicit limits, transaction-pool URLs, local URLs, and invalid/missing configuration retain their existing behavior.
-- Focused unit coverage, lint, typecheck, Prisma validation, and the production-style build pass.
-- The Render pre-deploy command completes without printing the database URL.
-- After reviewed promotion, authenticated admin products and orders return successfully without exposing customer or credential data.
+- `apps/web/src` contains zero `bigcommerce.com` references, protected by a regression test.
+- Every replacement Cloudinary URL returns successfully.
+- Affected catalog fallback and table detail experiences render without broken media at required responsive widths.
+- Relevant unit/browser tests, lint, typecheck, and production-style build pass.
+- Any promotion, deployment, provider action, or production cutover remains separately reviewed and explicitly approved.
 
 ## Status
 
-PR #152 merged into `develop`, and approved production PR #153 merged into `main` after complete hosted validation. Render built commit `b512bba` but safely stopped before release when its uncapped Prisma pre-deploy command hit `EMAXCONNSESSION`; the previous API remains live and no migration or data change occurred. The focused migration-process cap is now in progress.
+Local implementation and proof completed 2026-08-06 after preserving and reapplying the unfinished automated-email and universal table-page work in named safety stashes. The clean task worktree is based on `origin/develop` commit `d4413cbbb92f59d39a260a12404ea5095a316b14`. All 22 active source occurrences representing 15 distinct BigCommerce asset URLs were removed. Eleven exact reviewed Cloudinary replacements returned HTTP 200, and unverified Portland detail visuals were removed. The regression test, all 134 unit tests, lint, typecheck, production-style build, and seven active table gallery browser tests passed across the approved responsive widths; one evidence-only screenshot test remained skipped by its existing opt-in gate. No provider, DNS, deploy, merge, push, email, database, payment, or production mutation occurred.

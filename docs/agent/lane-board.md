@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- `TPP-BC-RUNTIME-DECOUPLING` on `codex/fix/bigcommerce-runtime-media-cutover` -> `develop`: remove all active storefront BigCommerce-hosted media dependencies using reviewed Cloudinary assets; remove unverified old-model detail visuals when no exact current replacement exists. No DNS, provider, deployment, or email action is in scope.
+- `TPP-PROMOTION-LANE-PERMANENT-REPAIR` on `codex/fix/permanent-promotion-lane-policy` -> `develop`: remove the self-defeating production ancestry/up-to-date cycle while preserving the exact `task branch -> develop -> main`, PR-only, merge-only, and no-force-push protections. Production PR #158 remains unmerged.
 
 ## Awaiting Review
 
@@ -10,6 +10,7 @@
 
 ## Done
 
+- PR #157 merged the BigCommerce runtime-media decoupling into `develop`; production promotion and deployment remain separately approval-gated.
 - PR #153 promoted the reviewed admin API runtime connection cap to `main`; Render built it successfully but did not release it because the existing uncapped Prisma pre-deploy command exhausted the session pool.
 - PR #152 merged the reviewed admin API runtime connection cap into `develop`.
 - PR #150 promoted the reviewed table confirmation hotfix from `develop` to production `main`.

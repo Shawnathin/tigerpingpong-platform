@@ -2,32 +2,36 @@
 
 ## Active task
 
-Remove the remaining runtime BigCommerce media dependencies before the final DNS-authority cutover to GoDaddy.
+Permanently repair the protected production-promotion lane so a successful `develop -> main` merge does not force a history-only reconciliation before the next release.
 
 ## Stable task key
 
-`TPP-BC-RUNTIME-DECOUPLING`
+`TPP-PROMOTION-LANE-PERMANENT-REPAIR`
 
 ## Selected task card
 
-Replace every active storefront BigCommerce image reference with exact reviewed Cloudinary media. Where no verified current-model image exists, remove the legacy visual instead of substituting an uncertain product image.
+Remove the self-defeating `main`-ancestor requirement, preserve the exact allowed source branch and merge-only protections, and make only `main`'s required status check non-strict. Keep `develop` strict for task PRs.
+
+## Confirmed cause
+
+A merge-commit promotion creates a new release commit only on `main`, with the reviewed `develop` head as its second parent. The custom ancestry check and `main`'s strict up-to-date setting then immediately reject the next valid `develop -> main` promotion, forcing a zero-file history reconciliation every release.
 
 ## Boundaries
 
-- Work only on `codex/fix/bigcommerce-runtime-media-cutover`, created from current `origin/develop`; target any pull request to `develop`, never `main`.
-- Preserve checkout, Stripe, webhook payment truth, protected-route auth, shipping, catalog facts, prices, availability, database data/schema, and production configuration.
-- Preserve historical source traceability in `data/` and `docs/`; the zero-dependency gate applies to active runtime source in `apps/web/src`.
-- Use only owner-cleared exact current-model product media. Portland Outdoor V1 archive media is prohibited.
-- Do not change DNS, nameservers, GoDaddy, BigCommerce account state, Render configuration, deployment state, or email sending in this task.
+- Work only on `codex/fix/permanent-promotion-lane-policy`, created from current `origin/develop`; target its pull request to `develop`, never `main`.
+- Preserve PR-only updates, merge-commit-only enforcement, no bypass actors, no force pushes, and the rule that only this repository's `develop` may target `main`.
+- Keep `develop`'s required status check strict/up-to-date.
+- Change only `main`'s required-status strictness; do not weaken its required check, PR requirement, admin enforcement, merge method, or force-push/deletion protections.
+- Do not merge PR #158, deploy, change DNS/providers, send email, or mutate application/database/payment/production state.
 
 ## Required proof
 
-- `apps/web/src` contains zero `bigcommerce.com` references, protected by a regression test.
-- Every replacement Cloudinary URL returns successfully.
-- Affected catalog fallback and table detail experiences render without broken media at required responsive widths.
-- Relevant unit/browser tests, lint, typecheck, and production-style build pass.
-- Any promotion, deployment, provider action, or production cutover remains separately reviewed and explicitly approved.
+- The workflow accepts only this repository's `develop` as a `main` PR source and still rejects `main`/`develop` as direct sources into `develop`.
+- The workflow no longer compares `main...develop` ancestry or requests history-only reconciliation.
+- The merge-only repository ruleset remains active with no bypass actors.
+- `develop` protection remains strict and `main` protection is non-strict, with the same required `validate-promotion-path` context and all other protections unchanged.
+- Focused regression coverage, formatting, lint, typecheck, and diff validation pass.
 
 ## Status
 
-Local implementation and proof completed 2026-08-06 after preserving and reapplying the unfinished automated-email and universal table-page work in named safety stashes. The clean task worktree is based on `origin/develop` commit `d4413cbbb92f59d39a260a12404ea5095a316b14`. All 22 active source occurrences representing 15 distinct BigCommerce asset URLs were removed. Eleven exact reviewed Cloudinary replacements returned HTTP 200, and unverified Portland detail visuals were removed. The regression test, all 134 unit tests, lint, typecheck, production-style build, and seven active table gallery browser tests passed across the approved responsive widths; one evidence-only screenshot test remained skipped by its existing opt-in gate. No provider, DNS, deploy, merge, push, email, database, payment, or production mutation occurred.
+Local workflow and contract repair completed 2026-08-06 after PR #157 merged correctly into `develop` and immediately reproduced the artificial-behind state on production PR #158. Four focused regression tests, formatting, lint, Prisma generation, typecheck, diff validation, and tracked-secret scanning passed. The external protection change and task PR publication remain pending; no production promotion or deployment occurred.

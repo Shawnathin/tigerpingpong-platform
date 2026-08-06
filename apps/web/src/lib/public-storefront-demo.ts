@@ -21,13 +21,13 @@ type StorefrontSummaryProduct = Pick<
 >;
 
 const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
-  // Temporary frontend-only fallback media until canonical catalog/Cloudinary media is complete.
+  // Frontend-only fallback media for catalog/API degradation.
   "tiger-expo-outdoor-table": [
     {
       alt: "Expo Outdoor table",
       caption: "Expo Outdoor table",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/114/601/expo_outdoor-01__84166.1651174263.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
       title: "Expo Outdoor table"
     }
   ],
@@ -36,7 +36,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong net and post set",
       caption: "Net and post set",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/128/images/644/home_accessories-net_post_set__11719.1650711219__23376.1659982669.386.513.png?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303667/tigerpingpong/products/tiger-net-post-set/01-main.png",
       title: "Net and post set"
     }
   ],
@@ -45,7 +45,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Plaza Outdoor table in grey",
       caption: "Plaza Outdoor table",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/117/409/plaza_outdoor-01__91454.1659978562.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg",
       title: "Plaza Outdoor table"
     }
   ],
@@ -54,38 +54,38 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Portland Indoor table",
       caption: "Portland Indoor table",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/115/609/portland_indoor-04__35084.1665858559.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303684/tigerpingpong/products/tiger-portland-indoor-table/01-main.jpg",
       title: "Portland Indoor table"
     }
   ],
   "tiger-portland-outdoor-table": [
     {
-      alt: "Portland Outdoor table",
+      alt: "Tiger Portland Outdoor V2 PingPong table with a blue top",
       caption: "Portland Outdoor table",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/112/774/Portland_Outdoor_Black_-_Grey_Top__73629.1685479931.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg",
       title: "Portland Outdoor table"
     },
     {
-      alt: "Portland Outdoor table folded for solo play",
+      alt: "Tiger Portland Outdoor V2 grey table set up for single-player practice",
       caption: "Playback position",
       role: "alternate",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-outdoor-black-grey-top.jpg?t=1685557874",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg",
       title: "Portland Outdoor playback position"
     },
     {
       alt: "Portland Outdoor adjustable net detail",
       caption: "Adjustable net",
       role: "detail",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/adjustable-net.jpg?t=1685557091",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg",
       title: "Portland Outdoor adjustable net"
     },
     {
-      alt: "Portland Outdoor wheel detail",
-      caption: "Wheel detail",
+      alt: "Paddle and ball storage built into the Tiger Portland Outdoor V2 table",
+      caption: "Paddle and ball storage",
       role: "detail",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/original/image-manager/portland-wheel2.jpg?t=1685558011",
-      title: "Portland Outdoor wheels"
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg",
+      title: "Portland Outdoor paddle and ball storage"
     }
   ],
   "tiger-premium-balls-140": [
@@ -93,7 +93,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong balls 140 pack",
       caption: "140 pack balls",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/126/images/655/Asset_63__05208__66402.1659978470.386.513.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269868/tigerpingpong/products/tiger-premium-balls-140/refresh-20260716-primary.jpg",
       title: "Tiger Ping Pong balls"
     }
   ],
@@ -102,7 +102,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong orange balls 6 pack",
       caption: "Orange 6 pack balls",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/products/135/images/688/Asset_34__95063_600x600__38848.1652347243.386.513.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269869/tigerpingpong/products/tiger-premium-balls-6-orange/refresh-20260716-primary.jpg",
       title: "Orange ping pong balls"
     }
   ],
@@ -215,7 +215,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Whistler Indoor table",
       caption: "Whistler Indoor table",
       role: "primary",
-      src: "https://cdn11.bigcommerce.com/s-dh0jici9dm/images/stencil/1280x1280/products/116/623/whistler_indoor-04__70000.1665858593.jpg?c=1",
+      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269867/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg",
       title: "Whistler Indoor table"
     }
   ]

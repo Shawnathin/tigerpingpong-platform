@@ -47,3 +47,11 @@ Decision: Require **Create a merge commit** for every pull request into `develop
 Why: Squashing `develop` into `main` copied the correct files but discarded the shared ancestry, so the next promotion presented overlapping application changes as conflicts. A protected merge-only lane preserves the reviewed history and prevents the same false-conflict cycle from recurring.
 
 Out of scope: No application, deployment, DNS, database, payment, hosting, catalog, media, or production-data change was made as part of repository cleanup.
+
+## 2026-08-06 - Remove the self-defeating production ancestry gate
+
+Decision: Keep protected merge commits and the exact `task branch -> develop -> main` path, but stop requiring current `main` to be an ancestor of `develop`. Keep task PRs into `develop` strict/up-to-date; make the required status check on `main` non-strict so a reviewed `develop` promotion can merge over the prior release-only merge commit.
+
+Why: Every merge-commit promotion creates a new commit on `main` whose second parent is the reviewed `develop` head. Requiring that new commit to already exist in `develop` made every successful release manufacture its own next blocker and forced zero-file history reconciliation PRs. The source-branch restriction already ensures that only this repository's `develop` may update `main`, while the merge-only ruleset, required policy check, pull-request protection, conflict detection, and explicit owner approval preserve the production boundary.
+
+Out of scope: No application, deployment, DNS, database, payment, hosting, catalog, media, email, or production-data change is part of this policy repair.

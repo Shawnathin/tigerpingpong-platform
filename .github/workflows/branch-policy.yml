@@ -14,17 +14,15 @@ permissions:
   contents: read
 
 jobs:
-  validate-promotion-path:
+  validate-promotion-path-v2:
     runs-on: ubuntu-latest
     steps:
-      - name: Enforce protected branch path, history, and merge method
+      - name: Enforce protected branch path and merge method
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           GH_TOKEN: ${{ github.token }}
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
           HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           TARGET_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
@@ -32,13 +30,6 @@ jobs:
           if [ "$BASE_REF" = "main" ]; then
             if [ "$HEAD_REF" != "develop" ] || [ "$HEAD_REPOSITORY" != "$TARGET_REPOSITORY" ]; then
               echo "Pull requests into main must come from this repository's develop branch."
-              exit 1
-            fi
-
-            HISTORY_STATUS="$(gh api "repos/$TARGET_REPOSITORY/compare/$BASE_SHA...$HEAD_SHA" --jq '.status')"
-            if [ "$HISTORY_STATUS" != "ahead" ] && [ "$HISTORY_STATUS" != "identical" ]; then
-              echo "The current main commit must be an ancestor of develop before production promotion."
-              echo "Open a history-only reconciliation task branch into develop; never resolve overlapping files by hand."
               exit 1
             fi
           fi

@@ -17,6 +17,7 @@ const STATIC_PUBLIC_ROUTES = [
   "/shipping-returns",
   "/returns-policy",
   "/privacy-policy",
+  "/paddlebuddy/privacy-policy",
   "/terms-and-conditions",
   "/tables",
   "/tables/indoor-tables",

@@ -9,6 +9,7 @@ test("public and policy routes render with baseline security headers", async ({ 
     "/",
     "/cart",
     "/privacy-policy",
+    "/paddlebuddy/privacy-policy",
     "/terms-and-conditions",
     "/returns-policy"
   ]) {
@@ -23,6 +24,16 @@ test("public and policy routes render with baseline security headers", async ({ 
   await expect(page.getByRole("link", { name: "Returns Policy" }).first()).toBeVisible();
   await expect(page.getByText(/do not sell personal information/i)).toBeVisible();
   await expect(page.getByText(/owner review draft/i)).toHaveCount(0);
+
+  await page.goto("/paddlebuddy/privacy-policy");
+  await expect(page).toHaveTitle("PaddleBuddy Privacy Policy | Tiger PingPong");
+  await expect(
+    page.getByRole("listitem").filter({ hasText: "PaddleBuddy does not require an account." })
+  ).toBeVisible();
+  await expect(page.getByText(/does not automatically upload it/i)).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "PaddleBuddy Privacy Policy" }).first()
+  ).toBeVisible();
 
   await page.goto("/terms-and-conditions");
   await expect(page.getByText(/checkout redirect alone does not confirm payment/i)).toBeVisible();
@@ -718,6 +729,7 @@ test("critical public routes do not overflow at a mobile viewport", async ({ pag
     "/",
     "/cart",
     "/privacy-policy",
+    "/paddlebuddy/privacy-policy",
     "/terms-and-conditions",
     "/returns-policy"
   ]) {
@@ -727,6 +739,23 @@ test("critical public routes do not overflow at a mobile viewport", async ({ pag
       scrollWidth: document.documentElement.scrollWidth
     }));
     expect(dimensions.scrollWidth, path).toBe(dimensions.clientWidth);
+  }
+});
+
+test("PaddleBuddy privacy policy fits the required storefront widths", async ({ page }) => {
+  for (const width of [390, 417, 768, 1280, 1440]) {
+    await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
+    await page.goto("/paddlebuddy/privacy-policy");
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "PaddleBuddy Privacy Policy" })
+    ).toBeVisible();
+
+    const dimensions = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth
+    }));
+    expect(dimensions.scrollWidth, `width ${width}`).toBe(dimensions.clientWidth);
   }
 });
 

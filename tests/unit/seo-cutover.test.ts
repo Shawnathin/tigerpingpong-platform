@@ -73,6 +73,7 @@ const EXPECTED_STATIC_SITEMAP_PATHS = [
   "/shipping-returns",
   "/returns-policy",
   "/privacy-policy",
+  "/paddlebuddy/privacy-policy",
   "/terms-and-conditions",
   "/tables",
   "/tables/indoor-tables",
@@ -189,14 +190,14 @@ describe("approved legacy redirect contract", () => {
 });
 
 describe("canonical sitemap contract", () => {
-  it("emits the complete 34-URL launch inventory with loc values only", async () => {
+  it("emits the complete 35-URL launch inventory with loc values only", async () => {
     const entries = await getSitemapEntries();
     const paths = entries.map((entry) => entry.pathname);
     const expectedArticlePaths = RESOURCE_ARTICLES.map((article) => `/resources/${article.slug}`);
     const expectedProductPaths = PUBLIC_PRODUCT_SLUGS.map((slug) => `/catalog/products/${slug}`);
 
-    expect(entries).toHaveLength(34);
-    expect(new Set(paths).size).toBe(34);
+    expect(entries).toHaveLength(35);
+    expect(new Set(paths).size).toBe(35);
     for (const replacementPartSlug of [
       "tiger-pingpong-replacement-part-40",
       "tiger-replacement-net",
@@ -214,7 +215,7 @@ describe("canonical sitemap contract", () => {
     ).toBe(true);
 
     const xml = serializeSitemap(entries);
-    expect(xml.match(/<loc>/g)).toHaveLength(34);
+    expect(xml.match(/<loc>/g)).toHaveLength(35);
     expect(xml).not.toMatch(/<lastmod>|<changefreq>|<priority>/);
   });
 

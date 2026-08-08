@@ -85,13 +85,14 @@ test("sitemap contains the complete canonical inventory without fabricated fresh
   const xml = await response.text();
   const locations = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 
-  expect(locations).toHaveLength(34);
-  expect(new Set(locations).size).toBe(34);
+  expect(locations).toHaveLength(35);
+  expect(new Set(locations).size).toBe(35);
   expect(locations.every((location) => location.startsWith(`${CANONICAL_SITE_ORIGIN}/`))).toBe(
     true
   );
   expect(locations).toContain(`${CANONICAL_SITE_ORIGIN}/catalog`);
   expect(locations).toContain(`${CANONICAL_SITE_ORIGIN}/shipping-returns`);
+  expect(locations).toContain(`${CANONICAL_SITE_ORIGIN}/paddlebuddy/privacy-policy`);
   expect(locations).toContain(
     `${CANONICAL_SITE_ORIGIN}/catalog/products/tiger-aqua-outdoor-indoor-paddle`
   );
@@ -106,6 +107,7 @@ test("canonical and utility-page robot directives are readable and correct", asy
     "/shipping-returns",
     "/returns-policy",
     "/privacy-policy",
+    "/paddlebuddy/privacy-policy",
     "/terms-and-conditions"
   ]) {
     await page.goto(path);
@@ -207,9 +209,10 @@ test("all sitemap pages and their public internal links avoid unintended errors"
       expect(new URL(response.headers().location, "http://local.test").pathname, path).toBe(
         normalizedPath
       );
-      expect((await request.get(normalizedPath, { maxRedirects: 0 })).status(), normalizedPath).toBe(
-        200
-      );
+      expect(
+        (await request.get(normalizedPath, { maxRedirects: 0 })).status(),
+        normalizedPath
+      ).toBe(200);
       continue;
     }
 

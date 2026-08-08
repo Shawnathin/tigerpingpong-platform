@@ -21,7 +21,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
           <h1>PaddleBuddy Privacy Policy</h1>
           <p className={styles.effectiveDate}>Effective date: August 8, 2026</p>
           <p className={styles.intro}>
-            Tiger Ping Pong (&quot;Tiger Ping Pong,&quot; &quot;we,&quot; &quot;us,&quot; or
+            Tiger PingPong (&quot;Tiger PingPong,&quot; &quot;we,&quot; &quot;us,&quot; or
             &quot;our&quot;) provides the PaddleBuddy mobile application. This Privacy Policy
             explains how information is handled when you use PaddleBuddy.
           </p>
@@ -42,7 +42,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
               <li>PaddleBuddy does not use third-party analytics or advertising SDKs.</li>
               <li>
                 PaddleBuddy does not automatically send your practice records, goals, feedback, or
-                robot diagnostics to Tiger Ping Pong.
+                robot diagnostics to Tiger PingPong.
               </li>
               <li>
                 App information is stored locally on your device unless you deliberately export and
@@ -112,7 +112,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
             <p>
               PaddleBuddy does not use Bluetooth to determine your location, track your movements,
               or identify nearby people. The app does not automatically transmit Bluetooth
-              information to Tiger Ping Pong.
+              information to Tiger PingPong.
             </p>
             <p>
               You can manage PaddleBuddy&apos;s Bluetooth permission in the iOS Settings app. If
@@ -135,7 +135,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
               service you select may process the file under their own privacy terms.
             </p>
             <p>
-              Tiger Ping Pong receives a diagnostic file only if you choose to send it to us. If you
+              Tiger PingPong receives a diagnostic file only if you choose to send it to us. If you
               do, we use it to respond to your request, investigate app or robot-connection
               behaviour, improve reliability, and protect the safety and integrity of the app.
               Please review a diagnostic file before sharing it and do not add personal information
@@ -144,9 +144,9 @@ export default function PaddleBuddyPrivacyPolicyPage() {
           </section>
 
           <section>
-            <h2>Information Tiger Ping Pong receives</h2>
+            <h2>Information Tiger PingPong receives</h2>
             <p>
-              Tiger Ping Pong does not automatically collect information from PaddleBuddy. We may
+              Tiger PingPong does not automatically collect information from PaddleBuddy. We may
               receive information when you voluntarily contact us, submit TestFlight feedback, or
               send a diagnostic file. This may include:
             </p>
@@ -172,7 +172,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
               If you use a TestFlight version of PaddleBuddy, Apple operates the TestFlight service.
               Apple may process tester identifiers, contact information, usage information, crash
               information, diagnostics, and feedback under Apple&apos;s own terms and privacy
-              policies. Tiger Ping Pong may receive information Apple makes available to developers
+              policies. Tiger PingPong may receive information Apple makes available to developers
               for beta administration, support, and troubleshooting.
             </p>
             <p>
@@ -208,7 +208,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
               particular content using controls available in the app, or delete the app.
             </p>
             <p>
-              Support communications and diagnostic files you choose to send to Tiger Ping Pong are
+              Support communications and diagnostic files you choose to send to Tiger PingPong are
               retained only as long as reasonably necessary to respond to you, investigate and
               resolve the issue, maintain security and reliability records, and satisfy applicable
               legal obligations. When they are no longer needed, we delete or de-identify them where
@@ -232,7 +232,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
             </p>
             <p>
               To request access to, correction of, or deletion of information that you previously
-              sent to Tiger Ping Pong, contact us using the information below. We may need to retain
+              sent to Tiger PingPong, contact us using the information below. We may need to retain
               limited information where required for security, legal, accounting, or
               dispute-resolution purposes.
             </p>
@@ -254,7 +254,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
               PaddleBuddy does not require an account and does not automatically collect personal
               information from users, including children. The app is not designed to solicit
               personal information from children. If you believe a child has sent personal
-              information to Tiger Ping Pong, contact us so we can review and delete it where
+              information to Tiger PingPong, contact us so we can review and delete it where
               appropriate.
             </p>
           </section>
@@ -262,8 +262,8 @@ export default function PaddleBuddyPrivacyPolicyPage() {
           <section>
             <h2>International processing</h2>
             <p>
-              Tiger Ping Pong is based in British Columbia, Canada. Information you choose to send
-              to us may be processed in Canada and in other locations where our service providers
+              Tiger PingPong is based in British Columbia, Canada. Information you choose to send to
+              us may be processed in Canada and in other locations where our service providers
               operate, subject to applicable safeguards and legal requirements.
             </p>
           </section>
@@ -283,7 +283,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
             <p>
               This policy applies to the PaddleBuddy app. If you visit{" "}
               <a href="https://tigerpingpong.ca">tigerpingpong.ca</a>, including a webpage that
-              hosts this policy, the separate Tiger Ping Pong{" "}
+              hosts this policy, the separate Tiger PingPong{" "}
               <a href="/privacy-policy">website privacy policy</a> applies to information processed
               through the website.
             </p>
@@ -302,7 +302,7 @@ export default function PaddleBuddyPrivacyPolicyPage() {
             <h2>Contact us</h2>
             <p>For privacy questions or requests, contact:</p>
             <address>
-              <strong>Tiger Ping Pong</strong>
+              <strong>Tiger PingPong</strong>
               <br />
               1644 S.E. Marine Drive
               <br />

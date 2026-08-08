@@ -31,6 +31,9 @@ test("public and policy routes render with baseline security headers", async ({ 
     page.getByRole("listitem").filter({ hasText: "PaddleBuddy does not require an account." })
   ).toBeVisible();
   await expect(page.getByText(/does not automatically upload it/i)).toBeVisible();
+  await expect(page.getByText("Tiger Ping Pong", { exact: false })).toHaveCount(0);
+  await expect(page.getByText(/Information Tiger PingPong receives/i)).toBeVisible();
+  await expect(page.locator("address strong")).toHaveText("Tiger PingPong");
   await expect(
     page.getByRole("link", { name: "PaddleBuddy Privacy Policy" }).first()
   ).toBeVisible();

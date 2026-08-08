@@ -6,7 +6,7 @@
 
 ## Awaiting Review
 
-- `TPP-PADDLEBUDDY-PRIVACY-POLICY` on `codex/feature/paddlebuddy-privacy-policy` -> `develop`: the owner-supplied PaddleBuddy privacy policy, distinct footer legal link, stable sitemap route, responsive proof, and production build are complete. No screenshot is included until a current app capture is approved.
+- `TPP-PADDLEBUDDY-BRAND-SPELLING` on `codex/fix/paddlebuddy-brand-spelling` -> `develop`: correct the published PaddleBuddy policy's spaced brand references to the registered `Tiger PingPong` spelling and add regression proof. Production promotion is owner-approved after required checks pass.
 - Authenticated production admin products/orders proof requires a supervised protected login; unauthenticated route protection and public health are confirmed, but successful protected reads remain unproven.
 
 ## Done

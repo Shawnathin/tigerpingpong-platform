@@ -42,6 +42,7 @@ const FOOTER_SECTIONS = [
     title: "Legal",
     links: [
       { href: "/privacy-policy", label: "Privacy Policy" },
+      { href: "/paddlebuddy/privacy-policy", label: "PaddleBuddy Privacy Policy" },
       { href: "/terms-and-conditions", label: "Terms & Conditions" },
       { href: "/returns-policy", label: "Returns Policy" }
     ]

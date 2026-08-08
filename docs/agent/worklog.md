@@ -1,5 +1,7 @@
 # Launch Review Worklog
 
+- **2026-08-08**: Selected and completed `TPP-PADDLEBUDDY-PRIVACY-POLICY` on `codex/feature/paddlebuddy-privacy-policy` from current `develop`. Added the complete owner-supplied PaddleBuddy privacy policy at `/paddlebuddy/privacy-policy`, a distinct footer Legal link, canonical metadata, and sitemap coverage. Focused formatting, lint, Prisma generation, typecheck, 11 sitemap unit tests, the production-style build, three focused Chromium tests, and visual review at `390`, `417`, `768`, `1280`, and `1440` pixels passed. No outdated app screenshot, checkout/payment/shipping change, database write, deployment, or production mutation occurred.
+
 - **2026-06-24 00:00 UTC**: Read and verified repository layout and instructions.
 - **2026-06-24 00:10 UTC**: Reviewed launch guardrails, checkout/webhook/catalog/security routes, and deployment notes.
 - **2026-06-24 00:20 UTC**: Created `docs/launch/launch-readiness-audit.md` with blocker/fix/caveat classification and sequence.

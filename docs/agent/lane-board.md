@@ -2,14 +2,16 @@
 
 ## In Progress
 
-- `TPP-PROMOTION-LANE-PERMANENT-REPAIR` on `codex/fix/permanent-promotion-lane-policy` -> `develop`: remove the self-defeating production ancestry/up-to-date cycle while preserving the exact `task branch -> develop -> main`, PR-only, merge-only, and no-force-push protections. Production PR #158 remains unmerged.
+- None.
 
 ## Awaiting Review
 
+- `TPP-PADDLEBUDDY-PRIVACY-POLICY` on `codex/feature/paddlebuddy-privacy-policy` -> `develop`: the owner-supplied PaddleBuddy privacy policy, distinct footer legal link, stable sitemap route, responsive proof, and production build are complete. No screenshot is included until a current app capture is approved.
 - Authenticated production admin products/orders proof requires a supervised protected login; unauthenticated route protection and public health are confirmed, but successful protected reads remain unproven.
 
 ## Done
 
+- PR #160 merged the permanent promotion-lane repair into `develop`; the next `develop -> main` promotion remains separately approval-gated.
 - PR #157 merged the BigCommerce runtime-media decoupling into `develop`; production promotion and deployment remain separately approval-gated.
 - PR #153 promoted the reviewed admin API runtime connection cap to `main`; Render built it successfully but did not release it because the existing uncapped Prisma pre-deploy command exhausted the session pool.
 - PR #152 merged the reviewed admin API runtime connection cap into `develop`.

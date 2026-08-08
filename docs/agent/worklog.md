@@ -1,5 +1,8 @@
 # Launch Review Worklog
 
+- **2026-08-08**: Selected and completed `TPP-PADDLEBUDDY-PRIVACY-POLICY` on `codex/feature/paddlebuddy-privacy-policy` from current `develop`. Added the complete owner-supplied PaddleBuddy privacy policy at `/paddlebuddy/privacy-policy`, a distinct footer Legal link, canonical metadata, and sitemap coverage. Focused formatting, lint, Prisma generation, typecheck, 11 sitemap unit tests, the production-style build, three focused Chromium tests, and visual review at `390`, `417`, `768`, `1280`, and `1440` pixels passed. No outdated app screenshot, checkout/payment/shipping change, database write, deployment, or production mutation occurred.
+- **2026-08-08**: Draft PR #161's first hosted run passed lint, Prisma generation/validation, typecheck, all unit tests, the production build, 91 active browser tests, and the tracked-secret scan, then failed only at the final high-severity dependency audit on newly reported transitive `nanoid@3.3.16`. After Shawn's explicit approval, updated only the lockfile resolution to patched `3.3.17`, which is already permitted by PostCSS's `^3.3.16` range. Frozen install, the high-severity audit gate, lint, typecheck, 11 focused unit tests, and the production build pass locally; one existing moderate advisory remains below the gate.
+
 - **2026-06-24 00:00 UTC**: Read and verified repository layout and instructions.
 - **2026-06-24 00:10 UTC**: Reviewed launch guardrails, checkout/webhook/catalog/security routes, and deployment notes.
 - **2026-06-24 00:20 UTC**: Created `docs/launch/launch-readiness-audit.md` with blocker/fix/caveat classification and sequence.

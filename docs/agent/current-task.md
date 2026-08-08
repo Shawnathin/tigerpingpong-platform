@@ -2,31 +2,29 @@
 
 ## Active task
 
-Publish the PaddleBuddy privacy policy on the Tiger PingPong storefront for TestFlight use.
+Correct the PaddleBuddy privacy policy to use the registered Tiger PingPong spelling throughout.
 
 ## Stable task key
 
-`TPP-PADDLEBUDDY-PRIVACY-POLICY`
+`TPP-PADDLEBUDDY-BRAND-SPELLING`
 
 ## Selected task card
 
-Add a stable public PaddleBuddy privacy-policy route using the owner-supplied policy, link it from the existing footer Legal section, and include it in the public sitemap.
+Replace every spaced `Tiger Ping Pong` reference introduced in the published React policy with the owner-approved `Tiger PingPong` spelling and add regression proof.
 
 ## Boundaries
 
-- Work only on `codex/feature/paddlebuddy-privacy-policy` and target its pull request to `develop`, never `main`.
-- Preserve the supplied policy wording and effective date.
-- Reuse the existing Tiger storefront navigation, footer, tokens, and legal-page patterns.
-- Do not add an outdated app screenshot; media can be added later from a current approved capture.
-- Do not change checkout, payment, shipping, auth, API, database, DNS, deployment, or production state.
+- Work only on `codex/fix/paddlebuddy-brand-spelling` and target its task pull request to `develop`.
+- Preserve all policy wording except the explicit brand-spelling correction.
+- Do not change layout, screenshots, legal meaning, effective date, checkout, payment, shipping, auth, API, database, DNS, or webhook behaviour.
+- Production promotion is explicitly authorized by Shawn after the task PR passes required checks.
 
 ## Required proof
 
-- `/paddlebuddy/privacy-policy` renders publicly with canonical metadata and the complete supplied policy.
-- The footer clearly distinguishes the PaddleBuddy policy from the website privacy policy.
-- The public sitemap includes the PaddleBuddy route.
-- The page has no horizontal overflow on mobile and passes focused route, lint, typecheck, and production-build checks.
+- `/paddlebuddy/privacy-policy` contains no `Tiger Ping Pong` text.
+- The policy heading, body references, and contact block use `Tiger PingPong`.
+- Focused route coverage, lint, typecheck, and the production build pass.
 
 ## Status
 
-Local implementation and proof completed on 2026-08-08. The stable public route renders the complete owner-supplied policy with canonical metadata, the footer Legal section distinguishes it from the website privacy policy, and the sitemap includes it. Focused formatting, lint, Prisma generation, typecheck, 11 sitemap unit tests, the production-style build, three focused Chromium tests, and visual review at `390`, `417`, `768`, `1280`, and `1440` pixels passed. Draft PR #161 is open against `develop`. Its first hosted run passed lint, Prisma generation/validation, typecheck, all unit tests, the production build, 91 active browser tests, and the tracked-secret scan, then failed only when a new high-severity Nano ID advisory reached the final dependency gate. Shawn approved the narrow lockfile-only update from transitive `nanoid@3.3.16` to patched `3.3.17`; frozen install, the high-severity audit gate, lint, typecheck, the focused unit tests, and the production build pass locally. No app screenshot, checkout/payment/shipping change, database write, deployment, or production mutation occurred.
+Local implementation and proof completed on 2026-08-08. The owner-supplied Markdown already uses `Tiger PingPong`; all thirteen incorrect spaced variants introduced in the published React page were corrected. Lint, Prisma generation, typecheck, the focused Chromium policy test, changed-file formatting, diff validation, and the production-style build pass. Layout, legal meaning, effective date, checkout, payment, shipping, auth, API, database, DNS, and webhook behaviour are unchanged.

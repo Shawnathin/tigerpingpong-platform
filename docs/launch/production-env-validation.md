@@ -8,7 +8,7 @@ It is intentionally limited to:
 
 - required/optional presence checks,
 - HTTPS, PostgreSQL, public URL, boolean, and mode shape checks,
-- Stripe key-prefix and `STRIPE_EXPECTED_LIVEMODE` mode checks,
+- Stripe and Resend key-prefix checks plus `STRIPE_EXPECTED_LIVEMODE` mode checks,
 - optional final-origin consistency across site, CORS, and checkout return URLs,
 - non-secret status reporting.
 
@@ -28,6 +28,9 @@ It is not a runtime healthcheck.
 - `NEXT_PUBLIC_API_BASE_URL` required: valid HTTPS URL
 - `NEXT_PUBLIC_SITE_URL` required: valid HTTPS URL and expected-origin match when requested
 - `INTERNAL_ORDERS_API_TOKEN` required: present
+- `RESEND_API_KEY` required: present and must start with `re_`
+- `ORDER_EMAIL_FROM` required: present; operators must separately confirm its domain is verified in Resend
+- `ORDER_EMAIL_REPLY_TO` optional: present when set; otherwise the approved support address is used
 - `INTERNAL_ORDERS_BASIC_AUTH_USER` required: present
 - `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD` required: present
 - `CLOUDINARY_CLOUD_NAME` optional: present/checks format
@@ -60,7 +63,7 @@ It is not a runtime healthcheck.
 - No service-side auth verification
 - No `.env` file loading, editing, or migration/import execution
 - No deployment mutations
-- No external API calls (Stripe/Supabase/Cloudinary/Supabase are untouched)
+- No external API calls (Stripe, Resend, Supabase, and Cloudinary are untouched)
 
 ## How to run
 

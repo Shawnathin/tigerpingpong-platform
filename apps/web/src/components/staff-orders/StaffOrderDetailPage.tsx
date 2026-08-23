@@ -3,18 +3,24 @@ import Link from "next/link";
 import {
   getInternalOrder,
   type InternalOrderDetail,
+  type InternalOrderEmailDelivery,
   type InternalShippingAddress
 } from "../../lib/internal-orders-api";
 
+import ShipmentForm from "./ShipmentForm";
 import styles from "./staff-orders.module.css";
 
 interface StaffOrderDetailPageProps {
   backHref: "/admin/orders" | "/internal/orders";
   eyebrow: string;
   publicReference: string;
+  retryOrderEmail: (formData: FormData) => Promise<void>;
   saveShipmentRecord: (formData: FormData) => Promise<void>;
   searchParams?: {
+    emailKind?: string | string[];
+    emailStatus?: string | string[];
     shipmentError?: string | string[];
+    shipmentEmail?: string | string[];
     shipmentSaved?: string | string[];
   };
 }
@@ -114,6 +120,17 @@ function getSearchParam(value: string | string[] | undefined): string | null {
   return value ?? null;
 }
 
+function getEmailDelivery(
+  order: InternalOrderDetail,
+  kind: InternalOrderEmailDelivery["kind"]
+): InternalOrderEmailDelivery | null {
+  return order.emails.find((delivery) => delivery.kind === kind) ?? null;
+}
+
+function formatEmailStatus(delivery: InternalOrderEmailDelivery | null): string {
+  return delivery ? formatStatus(delivery.status) : "Not queued";
+}
+
 function renderFallback(
   publicReference: string,
   error: boolean,
@@ -150,6 +167,7 @@ export default async function StaffOrderDetailPage({
   backHref,
   eyebrow,
   publicReference,
+  retryOrderEmail,
   saveShipmentRecord,
   searchParams
 }: StaffOrderDetailPageProps) {
@@ -157,6 +175,9 @@ export default async function StaffOrderDetailPage({
   const order = resource.order;
   const shipmentSaved = getSearchParam(searchParams?.shipmentSaved) === "1";
   const shipmentError = getSearchParam(searchParams?.shipmentError) === "1";
+  const shipmentEmail = getSearchParam(searchParams?.shipmentEmail);
+  const retriedEmailKind = getSearchParam(searchParams?.emailKind);
+  const retriedEmailStatus = getSearchParam(searchParams?.emailStatus);
 
   if (!order) {
     return renderFallback(publicReference, resource.error, eyebrow, backHref);
@@ -170,8 +191,8 @@ export default async function StaffOrderDetailPage({
           Order {order.publicReference}
         </h1>
         <p className={styles.intro}>
-          This protected staff page can save shipment details. It does not mutate payment, refund,
-          checkout, or customer data.
+          This protected staff page saves shipment details and sends customer tracking email. It
+          does not mutate payment, refund, checkout, or customer data.
         </p>
         <div className={styles.actions}>
           <Link className={styles.link} href={backHref}>
@@ -209,74 +230,79 @@ export default async function StaffOrderDetailPage({
         <div className={styles.panelHeader}>
           <div>
             <h2 id="staff-order-shipment-title">Shipment record</h2>
-            <p>Manual staff tracking details only. This does not send customer email.</p>
+            <p>
+              Select a carrier and enter its tracking number. The carrier link is built for you.
+            </p>
           </div>
-          <span className={styles.badge}>Manual</span>
+          <span className={styles.badge}>Automated</span>
         </div>
 
-        {shipmentSaved ? <p className={styles.successText}>Shipment details saved.</p> : null}
+        {shipmentSaved ? (
+          <p className={shipmentEmail === "sent" ? styles.successText : styles.errorText}>
+            {shipmentEmail === "sent"
+              ? "Shipment details saved and tracking email sent."
+              : shipmentEmail === "skipped"
+                ? "Shipment details saved, but no customer email is available."
+                : "Shipment details saved. The tracking email is queued or needs attention below."}
+          </p>
+        ) : null}
         {shipmentError ? (
           <p className={styles.errorText}>Shipment details could not be saved.</p>
         ) : null}
 
-        <form className={styles.formGrid} action={saveShipmentRecord}>
-          <input type="hidden" name="publicReference" value={order.publicReference} />
-          <label className={styles.field}>
-            <span>Carrier</span>
-            <input
-              name="carrier"
-              required
-              maxLength={500}
-              defaultValue={order.shipment.carrier ?? ""}
-              autoComplete="off"
-            />
-          </label>
-          <label className={styles.field}>
-            <span>Tracking number</span>
-            <input
-              name="trackingNumber"
-              required
-              maxLength={500}
-              defaultValue={order.shipment.trackingNumber ?? ""}
-              autoComplete="off"
-            />
-          </label>
-          <label className={styles.fieldFull}>
-            <span>Tracking URL</span>
-            <input
-              name="trackingUrl"
-              type="url"
-              required
-              maxLength={1000}
-              defaultValue={order.shipment.trackingUrl ?? ""}
-              autoComplete="off"
-            />
-          </label>
-          <label className={styles.field}>
-            <span>Shipped date</span>
-            <input
-              name="shippedDate"
-              type="date"
-              required
-              defaultValue={formatDateInputValue(order.shipment.shippedAt)}
-            />
-          </label>
-          <label className={styles.fieldFull}>
-            <span>Internal note</span>
-            <textarea
-              name="internalNote"
-              required
-              maxLength={2000}
-              rows={4}
-              defaultValue={order.shipment.internalNote ?? ""}
-            />
-          </label>
-          <div className={styles.formActions}>
-            <button className={styles.button} type="submit">
-              Save shipment details
-            </button>
+        <ShipmentForm
+          action={saveShipmentRecord}
+          publicReference={order.publicReference}
+          shippedDate={
+            formatDateInputValue(order.shipment.shippedAt) || new Date().toISOString().slice(0, 10)
+          }
+          shipment={order.shipment}
+        />
+      </section>
+
+      <section className={styles.panel} aria-labelledby="staff-order-emails-title">
+        <div className={styles.panelHeader}>
+          <div>
+            <h2 id="staff-order-emails-title">Customer emails</h2>
+            <p>Resend delivery handoff status. Payment state remains separate and authoritative.</p>
           </div>
-        </form>
+          <span className={styles.badge}>Protected</span>
+        </div>
+
+        {retriedEmailKind && retriedEmailStatus ? (
+          <p className={retriedEmailStatus === "sent" ? styles.successText : styles.errorText}>
+            {formatStatus(retriedEmailKind)} email retry: {formatStatus(retriedEmailStatus)}.
+          </p>
+        ) : null}
+
+        <div className={styles.summaryGrid}>
+          {(["order_received", "shipment"] as const).map((kind) => {
+            const delivery = getEmailDelivery(order, kind);
+            const canRetry =
+              Boolean(order.customerEmail?.trim()) &&
+              delivery?.status !== "sent" &&
+              delivery?.status !== "sending" &&
+              (kind === "order_received" || Boolean(order.shipment.trackingUrl));
+
+            return (
+              <div className={styles.summaryCard} key={kind}>
+                <span>{kind === "order_received" ? "Order received" : "Shipment"}</span>
+                <strong>{formatEmailStatus(delivery)}</strong>
+                <small>Sent: {formatDateTime(delivery?.sentAt ?? null)}</small>
+                {delivery?.lastError ? <small>{delivery.lastError}</small> : null}
+                {canRetry ? (
+                  <form action={retryOrderEmail}>
+                    <input type="hidden" name="publicReference" value={order.publicReference} />
+                    <input type="hidden" name="kind" value={kind} />
+                    <button className={styles.secondaryButton} type="submit">
+                      {delivery ? "Retry email" : "Send email"}
+                    </button>
+                  </form>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       <section className={styles.panel} aria-labelledby="staff-order-contact-title">

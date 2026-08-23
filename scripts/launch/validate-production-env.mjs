@@ -130,6 +130,24 @@ const API_VARIABLES = [
     validator: "present"
   },
   {
+    name: "RESEND_API_KEY",
+    surface: "api",
+    required: true,
+    validator: "resend-api-key"
+  },
+  {
+    name: "ORDER_EMAIL_FROM",
+    surface: "api",
+    required: true,
+    validator: "present"
+  },
+  {
+    name: "ORDER_EMAIL_REPLY_TO",
+    surface: "api",
+    required: false,
+    validator: "present"
+  },
+  {
     name: "CLOUDINARY_API_KEY",
     surface: "api",
     required: false,
@@ -631,6 +649,8 @@ function validateDefinition(definition, expectedMode, expectedOrigin) {
         value,
         "whsec_"
       );
+    case "resend-api-key":
+      return validateSecret(definition.name, definition.surface, definition.required, value, "re_");
     case "livemode":
       return validateStripeExpectedMode(
         definition.name,

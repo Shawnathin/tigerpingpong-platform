@@ -766,6 +766,22 @@ const internalOrder = {
     trackingNumber: "LOCAL-TEST-TRACKING",
     trackingUrl: "https://example.invalid/tracking/LOCAL-TEST-TRACKING"
   },
+  emails: [
+    {
+      attemptCount: 1,
+      kind: "order_received",
+      lastError: null,
+      sentAt: "2026-07-16T11:01:00.000Z",
+      status: "sent"
+    },
+    {
+      attemptCount: 1,
+      kind: "shipment",
+      lastError: null,
+      sentAt: "2026-07-16T12:01:00.000Z",
+      status: "sent"
+    }
+  ],
   paidAt: "2026-07-16T11:00:00.000Z",
   createdAt: "2026-07-16T10:00:00.000Z",
   updatedAt: "2026-07-16T12:00:00.000Z",

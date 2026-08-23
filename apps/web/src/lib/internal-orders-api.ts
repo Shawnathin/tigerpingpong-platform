@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { ShippingCarrierCode } from "@tigerpingpong/shared";
+
 const DEFAULT_API_BASE_URL = "http://localhost:3001";
 
 export interface InternalOrderListItem {
@@ -69,11 +71,20 @@ export interface InternalOrderShipment {
 }
 
 export interface InternalOrderShipmentInput {
-  carrier: string;
+  carrierCode: ShippingCarrierCode;
+  customCarrier?: string;
   internalNote: string;
   shippedDate: string;
   trackingNumber: string;
-  trackingUrl: string;
+  trackingUrl?: string;
+}
+
+export interface InternalOrderEmailDelivery {
+  attemptCount: number;
+  kind: "order_received" | "shipment";
+  lastError: string | null;
+  sentAt: string | null;
+  status: "failed" | "pending" | "sending" | "sent" | "skipped";
 }
 
 export interface InternalOrderDetail {
@@ -102,6 +113,7 @@ export interface InternalOrderDetail {
   stripeAmountTaxCents: number | null;
   stripeAutomaticTaxStatus: string | null;
   shipment: InternalOrderShipment;
+  emails: InternalOrderEmailDelivery[];
   paidAt: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -163,12 +175,33 @@ export async function getInternalOrder(
 export async function updateInternalOrderShipment(
   publicReference: string,
   input: InternalOrderShipmentInput
-): Promise<InternalOrderDetail> {
-  const response = await fetchInternalOrders<{ order: InternalOrderDetail }>(
-    `/internal/orders/${encodeURIComponent(publicReference)}/shipment`,
+): Promise<{
+  emailDelivery: InternalOrderEmailDelivery | null;
+  order: InternalOrderDetail;
+}> {
+  const response = await fetchInternalOrders<{
+    emailDelivery: InternalOrderEmailDelivery | null;
+    order: InternalOrderDetail;
+  }>(`/internal/orders/${encodeURIComponent(publicReference)}/shipment`, {
+    body: input,
+    method: "PATCH"
+  });
+
+  if (!response) {
+    throw new InternalOrdersApiError("Internal orders API returned no response.", null, "");
+  }
+
+  return response;
+}
+
+export async function retryInternalOrderEmail(
+  publicReference: string,
+  kind: InternalOrderEmailDelivery["kind"]
+): Promise<InternalOrderEmailDelivery> {
+  const response = await fetchInternalOrders<{ emailDelivery: InternalOrderEmailDelivery }>(
+    `/internal/orders/${encodeURIComponent(publicReference)}/emails/${encodeURIComponent(kind)}/retry`,
     {
-      body: input,
-      method: "PATCH"
+      method: "POST"
     }
   );
 
@@ -176,7 +209,7 @@ export async function updateInternalOrderShipment(
     throw new InternalOrdersApiError("Internal orders API returned no response.", null, "");
   }
 
-  return response.order;
+  return response.emailDelivery;
 }
 
 async function fetchInternalOrders<TResponse>(

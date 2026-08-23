@@ -5,7 +5,12 @@
 - Accessibility remediation beyond current modal keyboard support baseline.
 - Advanced admin product tooling and long-term inventory/audit workflow expansion.
 - Any optional marketplace/marketing tasks after launch green-light.
-- Finalize which domain variant and DNS provider owns canonical launch routing (`tigerpingpong.ca`/`www`/`.com`) outside this task scope.
+- Canonical routing refinements for `tigerpingpong.ca`/`www`/`.com` remain outside this task; GoDaddy is now authoritative for the `.ca` zone.
+
+- Automated order/shipment email production activation after the recovered code task is reviewed and merged:
+  - Resend has a sending-only API key and a successful onboarding test send; the key value is not committed or stored in repository docs.
+  - GoDaddy is authoritative for `tigerpingpong.ca`, but `updates.tigerpingpong.ca` currently publishes no Resend TXT, MX, or DKIM records and remains unverified.
+  - In a separately selected activation lane, publish the exact Resend DNS records in GoDaddy, verify the sending domain, set the approved server-only Render email environment, apply the outbox migration, deploy, and run a controlled order/shipment inbox proof before production promotion.
 
 - Optional target env warnings that remain for operator review:
   `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 
 import StaffOrderDetailPage from "../../../../components/staff-orders/StaffOrderDetailPage";
 
-import { saveShipmentRecord } from "./actions";
+import { retryOrderEmail, saveShipmentRecord } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Internal Order Detail | Tiger Ping Pong Platform",
+  title: "Internal Order Detail | Tiger PingPong Platform",
   description: "Protected internal order detail."
 };
 
@@ -16,7 +16,10 @@ interface InternalOrderDetailPageProps {
     publicReference: string;
   }>;
   searchParams?: Promise<{
+    emailKind?: string | string[];
+    emailStatus?: string | string[];
     shipmentError?: string | string[];
+    shipmentEmail?: string | string[];
     shipmentSaved?: string | string[];
   }>;
 }
@@ -31,8 +34,9 @@ export default async function InternalOrderDetailPage({
   return (
     <StaffOrderDetailPage
       backHref="/internal/orders"
-      eyebrow="Tiger Ping Pong internal"
+      eyebrow="Tiger PingPong internal"
       publicReference={resolvedParams.publicReference}
+      retryOrderEmail={retryOrderEmail}
       saveShipmentRecord={saveShipmentRecord}
       searchParams={resolvedSearchParams}
     />

@@ -12,7 +12,9 @@ const safeApiEnv = {
   CORS_ORIGIN: "https://tigerpingpong.ca,https://tigerpingpong-web.onrender.com",
   DATABASE_URL: "postgresql://example.invalid/tigerpingpong",
   INTERNAL_ORDERS_API_TOKEN: "redacted-internal-token",
+  ORDER_EMAIL_FROM: "Tiger PingPong <orders@example.invalid>",
   PORT: "3001",
+  RESEND_API_KEY: "re_redacted",
   STRIPE_EXPECTED_LIVEMODE: "false",
   STRIPE_SECRET_KEY: "sk_test_redacted",
   STRIPE_TAX_ENABLED: "true",
@@ -40,6 +42,7 @@ describe("production environment validator", () => {
     expect(result.status).toBe(0);
     expect(result.stdout).not.toContain("sk_test_redacted");
     expect(result.stdout).not.toContain("redacted-internal-token");
+    expect(result.stdout).not.toContain("re_redacted");
   });
 
   it("fails invalid database URLs and mode mismatches", () => {

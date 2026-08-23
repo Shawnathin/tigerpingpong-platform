@@ -463,6 +463,26 @@ test("staff routes fail closed when credentials are absent", async ({ request })
   }
 });
 
+test("protected shipment form generates the selected carrier tracking link", async ({ page }) => {
+  await page.setExtraHTTPHeaders({
+    Authorization: `Basic ${Buffer.from("local-admin:local-password").toString("base64")}`
+  });
+  await page.goto("/admin/orders/TPP-TEST-001");
+
+  await expect(page.getByRole("heading", { name: "Order TPP-TEST-001" })).toBeVisible();
+  await page.getByLabel("Carrier").selectOption("ups");
+  await page.getByLabel("Tracking number").fill("1Z 999");
+
+  const trackingLink = page.getByRole("link", { name: /ups\.com\/track/i });
+  await expect(trackingLink).toHaveAttribute(
+    "href",
+    "https://www.ups.com/track?loc=en_CA&tracknum=1Z%20999"
+  );
+  await expect(page.getByRole("heading", { name: "Customer emails" })).toBeVisible();
+  await expect(page.getByText("Order received", { exact: true })).toBeVisible();
+  await expect(page.getByText("Shipment", { exact: true })).toBeVisible();
+});
+
 test("Nest 11 runtime preserves health, CORS, headers, auth, safe errors, and raw webhook bodies", async ({
   request
 }) => {
@@ -812,7 +832,7 @@ test("capture local PR evidence", async ({ page }) => {
   });
   await page.goto("/admin/orders/TPP-TEST-001");
   await expect(page.getByRole("heading", { name: "Order TPP-TEST-001" })).toBeVisible();
-  await expect(page.getByText("Customer notification")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Customer emails" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Shipment record" })).toBeVisible();
   await page.screenshot({
     fullPage: true,

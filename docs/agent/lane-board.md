@@ -2,10 +2,11 @@
 
 ## In Progress
 
-- None.
+- `TPP-NANOID-ZERO-SIZE-ADVISORY` on `codex/fix/nanoid-zero-size-advisory` -> `develop`: patch only the transitive lockfile resolution from `nanoid@3.3.17` to `3.3.18`, clear the high-severity dependency gate, and leave application and production behaviour unchanged.
 
 ## Awaiting Review
 
+- `TPP-AUTOMATED-ORDER-EMAILS-RECOVERY` on `codex/feature/automated-order-shipment-emails` -> `develop` in draft PR #165: customer order-received and shipment emails are implemented and locally proven; review follows the nanoid hotfix, while Resend DNS, environment configuration, migration, deployment, and production email proof remain separately gated.
 - `TPP-PADDLEBUDDY-BRAND-SPELLING` on `codex/fix/paddlebuddy-brand-spelling` -> `develop`: correct the published PaddleBuddy policy's spaced brand references to the registered `Tiger PingPong` spelling and add regression proof. Production promotion is owner-approved after required checks pass.
 - Authenticated production admin products/orders proof requires a supervised protected login; unauthenticated route protection and public health are confirmed, but successful protected reads remain unproven.
 

@@ -14,7 +14,8 @@ Email is never payment truth. A send failure cannot roll back or change the orde
 - `order_email_deliveries` is the database outbox.
 - `(order_id, kind)` is unique, so each order has at most one delivery record for each email type.
 - Resend receives the stable idempotency key `tiger/<kind>/<delivery-id>`.
-- Failed sends retain a safe status/error and use bounded retry backoff while the API service is running.
+- The paid webhook persists the outbox row but does not wait for the Resend network request before acknowledging Stripe.
+- Failed sends retain a safe status/error and use exponential backoff for at most five automatic attempts while the API service is running.
 - Protected admin/internal order detail can deliberately retry an unsent message.
 - Provider response bodies, API keys, customer addresses, and full order payloads are not logged.
 - Row Level Security is enabled on the outbox with no anon/authenticated policies; only the existing privileged API database path may access it.

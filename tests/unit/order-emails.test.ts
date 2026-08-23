@@ -163,6 +163,48 @@ describe("carrier-aware protected shipment updates", () => {
 });
 
 describe("transactional email outbox", () => {
+  it("queues the paid-order email without waiting for provider delivery", async () => {
+    const dispatchDelivery = vi.fn();
+    const queueDelivery = vi.fn().mockResolvedValue({
+      attemptCount: 0,
+      id: "delivery-1",
+      kind: ORDER_RECEIVED_EMAIL_KIND,
+      lastError: null,
+      sentAt: null,
+      status: "pending"
+    });
+    const service = new OrderEmailService() as unknown as {
+      dispatchDelivery: typeof dispatchDelivery;
+      getPrisma: () => unknown;
+      queueDelivery: typeof queueDelivery;
+      queueOrderReceivedByCheckoutSessionId(sessionId: string): Promise<unknown>;
+    };
+    service.getPrisma = () => ({
+      order: {
+        findUnique: async () => ({
+          customerEmail: "buyer@example.com",
+          id: "order-1",
+          status: "paid"
+        })
+      }
+    });
+    service.queueDelivery = queueDelivery;
+    service.dispatchDelivery = dispatchDelivery;
+
+    await expect(
+      service.queueOrderReceivedByCheckoutSessionId("cs_test_email")
+    ).resolves.toMatchObject({
+      kind: ORDER_RECEIVED_EMAIL_KIND,
+      status: "pending"
+    });
+    expect(queueDelivery).toHaveBeenCalledWith(
+      "order-1",
+      ORDER_RECEIVED_EMAIL_KIND,
+      "buyer@example.com"
+    );
+    expect(dispatchDelivery).not.toHaveBeenCalled();
+  });
+
   it("automatically retries only deliveries with a scheduled retry time", async () => {
     let where: Record<string, unknown> | null = null;
     const service = new OrderEmailService() as unknown as {
@@ -185,6 +227,37 @@ describe("transactional email outbox", () => {
       status: { in: ["pending", "failed"] }
     });
     expect(where).not.toHaveProperty("OR");
+  });
+
+  it("stops automatic retries after five failed attempts", async () => {
+    let updateData: Record<string, unknown> | null = null;
+    const service = new OrderEmailService() as unknown as {
+      getPrisma: () => unknown;
+      recordFailure(delivery: unknown, message: string, retryable: boolean): Promise<unknown>;
+    };
+    const delivery = {
+      attemptCount: 5,
+      id: "delivery-1",
+      kind: ORDER_RECEIVED_EMAIL_KIND,
+      lastError: null,
+      sentAt: null,
+      status: "sending"
+    };
+    service.getPrisma = () => ({
+      orderEmailDelivery: {
+        update: async ({ data }: { data: Record<string, unknown> }) => {
+          updateData = data;
+          return { ...delivery, ...data };
+        }
+      }
+    });
+
+    await service.recordFailure(delivery, "Resend returned HTTP 400.", true);
+
+    expect(updateData).toMatchObject({
+      nextAttemptAt: null,
+      status: "failed"
+    });
   });
 
   it("uses one outbox row for repeated queue attempts", async () => {
@@ -269,6 +342,19 @@ describe("transactional email outbox", () => {
     expect(rendered.html).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
     expect(rendered.html).not.toContain("<script>alert(1)</script>");
     expect(rendered.subject).toContain(orderRecord.publicReference);
+  });
+
+  it("does not label a pre-tax fallback as the amount paid", () => {
+    const service = new OrderEmailService() as unknown as {
+      renderOrderReceived(order: unknown): { html: string; subject: string; text: string };
+    };
+    const rendered = service.renderOrderReceived({
+      ...orderRecord,
+      stripeAmountTotalCents: null
+    });
+
+    expect(rendered.text).toContain("Order total before tax: $23.00");
+    expect(rendered.text).not.toContain("Total paid: $23.00");
   });
 });
 

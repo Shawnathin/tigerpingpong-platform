@@ -42,6 +42,7 @@ const EMAIL_STATUS_SKIPPED: OrderEmailStatus = "skipped";
 const OUTBOX_INTERVAL_MS = 60_000;
 const SENDING_STALE_AFTER_MS = 5 * 60_000;
 const RESEND_TIMEOUT_MS = 12_000;
+const MAX_AUTOMATIC_ATTEMPTS = 5;
 const MAX_ERROR_LENGTH = 500;
 
 const emailOrderSelect = {
@@ -141,7 +142,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
       order.customerEmail
     );
 
-    return this.dispatchDelivery(delivery.id, true);
+    return this.serializeDelivery(delivery);
   }
 
   async queueShipmentByOrderId(orderId: string): Promise<OrderEmailDeliverySummary> {
@@ -470,7 +471,8 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
 
   private renderOrderReceived(order: EmailOrder): RenderedMessage {
     const reference = order.publicReference;
-    const totalPaid = this.formatMoney(
+    const hasStripeTotal = order.stripeAmountTotalCents !== null;
+    const displayedTotal = this.formatMoney(
       order.stripeAmountTotalCents ?? order.totalCents,
       order.currency
     );
@@ -478,7 +480,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
     const subject = `We’ve got your Tiger PingPong order ${reference}`;
     const detailRows = [
       this.renderDetailRow("Order reference", reference),
-      this.renderDetailRow("Total paid", totalPaid)
+      this.renderDetailRow(hasStripeTotal ? "Total paid" : "Order total before tax", displayedTotal)
     ].join("");
     const html = this.renderLayout({
       eyebrow: "Payment confirmed",
@@ -497,7 +499,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
       "",
       this.renderItemsText(order),
       `Order reference: ${reference}`,
-      `Total paid: ${totalPaid}`,
+      `${hasStripeTotal ? "Total paid" : "Order total before tax"}: ${displayedTotal}`,
       "",
       "Questions? Reply to this email and a real Tiger person will help."
     ].join("\n");
@@ -611,13 +613,14 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
     retryable: boolean
   ): Promise<OrderEmailDeliverySummary> {
     const retryDelaySeconds = Math.min(60 * 2 ** Math.max(delivery.attemptCount - 1, 0), 3600);
+    const shouldRetry = retryable && delivery.attemptCount < MAX_AUTOMATIC_ATTEMPTS;
     const failed = await this.getPrisma().orderEmailDelivery.update({
       where: {
         id: delivery.id
       },
       data: {
         lastError: message.slice(0, MAX_ERROR_LENGTH),
-        nextAttemptAt: retryable ? new Date(Date.now() + retryDelaySeconds * 1000) : null,
+        nextAttemptAt: shouldRetry ? new Date(Date.now() + retryDelaySeconds * 1000) : null,
         status: EMAIL_STATUS_FAILED
       }
     });

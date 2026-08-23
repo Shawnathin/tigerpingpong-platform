@@ -2,29 +2,30 @@
 
 ## Active task
 
-Correct the PaddleBuddy privacy policy to use the registered Tiger PingPong spelling throughout.
+Patch the newly disclosed high-severity `nanoid` advisory without changing application behaviour or production state.
 
 ## Stable task key
 
-`TPP-PADDLEBUDDY-BRAND-SPELLING`
+`TPP-NANOID-ZERO-SIZE-ADVISORY`
 
 ## Selected task card
 
-Replace every spaced `Tiger Ping Pong` reference introduced in the published React policy with the owner-approved `Tiger PingPong` spelling and add regression proof.
+Update the transitive lockfile resolution from vulnerable `nanoid@3.3.17` to patched `3.3.18`, which is already allowed by PostCSS's `^3.3.16` dependency range.
 
 ## Boundaries
 
-- Work only on `codex/fix/paddlebuddy-brand-spelling` and target its task pull request to `develop`.
-- Preserve all policy wording except the explicit brand-spelling correction.
-- Do not change layout, screenshots, legal meaning, effective date, checkout, payment, shipping, auth, API, database, DNS, or webhook behaviour.
-- Production promotion is explicitly authorized by Shawn after the task PR passes required checks.
+- Work only on `codex/fix/nanoid-zero-size-advisory` and target its task pull request to `develop`.
+- Keep the patch lockfile-only; do not upgrade PostCSS, Next.js, Sharp, or any other package.
+- Do not change runtime logic, checkout, payment, shipping, auth, API, database, DNS, email configuration, deployment, or production state.
+- Keep the automated-email implementation isolated on its existing branch until this hotfix is reviewed.
 
 ## Required proof
 
-- `/paddlebuddy/privacy-policy` contains no `Tiger Ping Pong` text.
-- The policy heading, body references, and contact block use `Tiger PingPong`.
-- Focused route coverage, lint, typecheck, and the production build pass.
+- A frozen `pnpm@9.12.0` install accepts the lockfile.
+- The resolved PostCSS dependency is `nanoid@3.3.18`.
+- `pnpm security:audit` passes the high-severity gate.
+- Lint, typecheck, unit tests, production build, browser tests, and tracked-secret scanning pass.
 
 ## Status
 
-Local implementation and proof completed on 2026-08-08. The owner-supplied Markdown already uses `Tiger PingPong`; all thirteen incorrect spaced variants introduced in the published React page were corrected. Lint, Prisma generation, typecheck, the focused Chromium policy test, changed-file formatting, diff validation, and the production-style build pass. Layout, legal meaning, effective date, checkout, payment, shipping, auth, API, database, DNS, and webhook behaviour are unchanged.
+Completed locally on 2026-08-23 after the repository audit and with Shawn's explicit approval. The patch changes only the transitive lockfile resolution from `nanoid@3.3.17` to `3.3.18`; PostCSS, Next.js, Sharp, and application code are unchanged. Frozen install and the complete `pnpm launch:preflight` pass, including lint, Prisma generation/validation, typecheck, 138 unit tests, the production build, 91 active browser tests, tracked-secret scanning, and the high-severity production audit gate. Eleven evidence-only browser tests remain skipped by their existing opt-in gates, and one existing moderate advisory remains below the configured gate. No production mutation occurred.

@@ -10,7 +10,7 @@
 
 ## Done
 
-- `TPP-AUTOMATED-ORDER-EMAILS-RECOVERY`: PR #165 merged the reviewed Resend email system into `develop`; production PR #167 passed the complete hosted gate and merged into `main` as `79d7f7c`. Render successfully applied the email outbox migration and deployed that commit to API and web. The protected staff-only proof reached provider-accepted `sent` status without contacting a customer or changing payment/shipment state; staff inbox receipt and first controlled customer/shipment inbox proofs remain operational follow-up.
+- `TPP-AUTOMATED-ORDER-EMAILS-RECOVERY`: PR #165 merged the reviewed Resend email system into `develop`; production PR #167 passed the complete hosted gate and merged into `main` as `79d7f7c`. Render successfully applied the email outbox migration and deployed that commit to API and web. The protected staff-only proof reached provider-accepted `sent` status without contacting a customer or changing payment/shipment state, and the owner confirmed receipt in `info@tigerpingpong.com`. The first controlled customer/shipment inbox proofs remain operational follow-up.
 - PR #166 merged the focused `nanoid@3.3.18` high-severity advisory patch into `develop`; local and hosted release readiness passed and no application or production behaviour changed.
 - PR #164 promoted the PaddleBuddy privacy-policy dependency patch and brand-spelling correction from `develop` to production `main`; hosted release readiness passed.
 - PR #163 merged the PaddleBuddy brand-spelling correction into `develop`.

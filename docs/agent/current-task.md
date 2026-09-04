@@ -1,10 +1,10 @@
 # Current Task
 
-## Current selected task: universal table-page recovery
+## Completed selected task: universal table-page recovery and production release
 
 Shawn selected recovery on 2026-09-04. Restore safety stash `ecd2dd5` onto current `develop` on `codex/feature/recover-universal-table-pages`, validate the horizontal feature cards and model-specific stories for all five models, and prepare a draft PR into `develop`.
 
-The stash applied cleanly and remains preserved. Shawn subsequently selected release preparation and asked to publish Whistler with checkout disabled and an Out of stock label. PR #169 includes the reviewed specification/resources layout and removal of the old Portland patio photo. The release preparation adds stock labels and a guarded catalog activation script; production has not changed. Local database initialization currently fails, so activation must run with the working production environment after deployment. Main promotion still requires explicit approval. Fresh screenshots and remaining review points are recorded in `docs/qa/universal-table-pages-recovery.md`.
+The stash applied cleanly and remains preserved. Shawn approved release after reviewing the specification/resources layout and Portland photo changes. PR #169 merged into develop; approved promotion #170 merged into main as `8a124f63e4c5afa7e5e02a02b0142045d0b0295b`. Both Render production services deployed that revision on 2026-09-04. Whistler was then published using the guarded production-shell activation: active/public, checkout disabled. Live page and Tables listing show Out of stock; a direct checkout attempt returned HTTP 400 without creating a session. All 190 unit tests and 92 active browser tests pass, as do the full hosted release gates. No next task is selected. Detailed proof and follow-up are in `docs/qa/universal-table-pages-recovery.md`.
 
 ## Historical completed task: automated emails
 

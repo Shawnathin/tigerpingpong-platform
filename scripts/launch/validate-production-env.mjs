@@ -136,7 +136,7 @@ const API_VARIABLES = [
     validator: "resend-api-key"
   },
   {
-    name: "ORDER_EMAIL_FROM",
+    name: "EMAIL_FROM",
     surface: "api",
     required: true,
     validator: "present"
@@ -148,7 +148,7 @@ const API_VARIABLES = [
     validator: "present"
   },
   {
-    name: "STAFF_ORDER_EMAIL_TO",
+    name: "ORDER_NOTIFICATION_EMAIL",
     surface: "api",
     required: true,
     validator: "email"

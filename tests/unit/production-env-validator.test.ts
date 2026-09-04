@@ -12,10 +12,10 @@ const safeApiEnv = {
   CORS_ORIGIN: "https://tigerpingpong.ca,https://tigerpingpong-web.onrender.com",
   DATABASE_URL: "postgresql://example.invalid/tigerpingpong",
   INTERNAL_ORDERS_API_TOKEN: "redacted-internal-token",
-  ORDER_EMAIL_FROM: "Tiger PingPong <orders@example.invalid>",
+  EMAIL_FROM: "Tiger PingPong <orders@example.invalid>",
   PORT: "3001",
   RESEND_API_KEY: "re_redacted",
-  STAFF_ORDER_EMAIL_TO: "orders@example.invalid",
+  ORDER_NOTIFICATION_EMAIL: "orders@example.invalid",
   STRIPE_EXPECTED_LIVEMODE: "false",
   STRIPE_SECRET_KEY: "sk_test_redacted",
   STRIPE_TAX_ENABLED: "true",
@@ -72,14 +72,17 @@ describe("production environment validator", () => {
   });
 
   it("requires a valid staff order notification recipient", () => {
-    const missing = runValidator({ ...safeApiEnv, STAFF_ORDER_EMAIL_TO: "" }, ["--surface", "api"]);
-    const invalid = runValidator({ ...safeApiEnv, STAFF_ORDER_EMAIL_TO: "not-an-email" }, [
+    const missing = runValidator({ ...safeApiEnv, ORDER_NOTIFICATION_EMAIL: "" }, [
+      "--surface",
+      "api"
+    ]);
+    const invalid = runValidator({ ...safeApiEnv, ORDER_NOTIFICATION_EMAIL: "not-an-email" }, [
       "--surface",
       "api"
     ]);
 
     expect(missing.status).toBe(1);
-    expect(missing.stdout).toContain("STAFF_ORDER_EMAIL_TO");
+    expect(missing.stdout).toContain("ORDER_NOTIFICATION_EMAIL");
     expect(invalid.status).toBe(1);
     expect(invalid.stdout).toContain("must be a valid email address");
   });

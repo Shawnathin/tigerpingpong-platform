@@ -29,8 +29,9 @@ It is not a runtime healthcheck.
 - `NEXT_PUBLIC_SITE_URL` required: valid HTTPS URL and expected-origin match when requested
 - `INTERNAL_ORDERS_API_TOKEN` required: present
 - `RESEND_API_KEY` required: present and must start with `re_`
-- `ORDER_EMAIL_FROM` required: present; operators must separately confirm its domain is verified in Resend
+- `EMAIL_FROM` required: present; operators must separately confirm its domain is verified in Resend
 - `ORDER_EMAIL_REPLY_TO` optional: present when set; otherwise the approved support address is used
+- `ORDER_NOTIFICATION_EMAIL` required: valid monitored staff inbox
 - `INTERNAL_ORDERS_BASIC_AUTH_USER` required: present
 - `INTERNAL_ORDERS_BASIC_AUTH_PASSWORD` required: present
 - `CLOUDINARY_CLOUD_NAME` optional: present/checks format

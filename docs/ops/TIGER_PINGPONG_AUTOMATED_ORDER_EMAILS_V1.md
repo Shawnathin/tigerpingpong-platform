@@ -36,9 +36,9 @@ The admin shipment form generates customer tracking links for:
 ## Required API configuration
 
 - `RESEND_API_KEY`: secret Resend sending key.
-- `ORDER_EMAIL_FROM`: verified sender, for example `Tiger PingPong <orders@verified-sending-domain>`.
+- `EMAIL_FROM`: verified sender, currently `Tiger PingPong <info@tigerpingpong.com>`.
 - `ORDER_EMAIL_REPLY_TO`: customer reply destination. Defaults to the currently approved `info@tigerpingpong.com` when omitted.
-- `STAFF_ORDER_EMAIL_TO`: staff inbox that receives one new-paid-order alert per order.
+- `ORDER_NOTIFICATION_EMAIL`: staff inbox that receives one new-paid-order alert per order, currently `info@tigerpingpong.com`.
 
 Do not place these on the browser/web service except where an internal deployment system mirrors configuration. Never commit real values.
 

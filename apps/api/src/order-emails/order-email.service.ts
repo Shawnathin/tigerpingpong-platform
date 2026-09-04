@@ -738,7 +738,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
 
     if (
       error instanceof Error &&
-      /^(RESEND_API_KEY|ORDER_EMAIL_FROM) is required\.$/.test(error.message)
+      /^(RESEND_API_KEY|EMAIL_FROM) is required\.$/.test(error.message)
     ) {
       return "Transactional email is not configured.";
     }

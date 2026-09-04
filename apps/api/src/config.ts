@@ -114,11 +114,11 @@ export function getInternalOrdersApiConfig(
 export function getOrderEmailConfig(env: NodeJS.ProcessEnv = process.env): OrderEmailConfig {
   return {
     apiKey: readRequiredString(env.RESEND_API_KEY, "RESEND_API_KEY"),
-    from: readRequiredString(env.ORDER_EMAIL_FROM, "ORDER_EMAIL_FROM"),
+    from: readRequiredString(env.EMAIL_FROM ?? env.ORDER_EMAIL_FROM, "EMAIL_FROM"),
     replyTo: env.ORDER_EMAIL_REPLY_TO?.trim() || "info@tigerpingpong.com"
   };
 }
 
 export function getStaffOrderEmailRecipient(env: NodeJS.ProcessEnv = process.env): string | null {
-  return env.STAFF_ORDER_EMAIL_TO?.trim() || null;
+  return env.ORDER_NOTIFICATION_EMAIL?.trim() || env.STAFF_ORDER_EMAIL_TO?.trim() || null;
 }

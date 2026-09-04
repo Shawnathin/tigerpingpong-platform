@@ -169,7 +169,7 @@ describe("transactional email outbox", () => {
   });
 
   it("queues customer and staff paid-order emails without waiting for provider delivery", async () => {
-    vi.stubEnv("STAFF_ORDER_EMAIL_TO", "staff@example.com");
+    vi.stubEnv("ORDER_NOTIFICATION_EMAIL", "staff@example.com");
     const dispatchDelivery = vi.fn();
     const queueDelivery = vi.fn(async (_orderId: string, kind: string) => ({
       attemptCount: 0,
@@ -397,7 +397,7 @@ describe("transactional email outbox", () => {
   });
 
   it("uses the configured staff recipient when manually retrying a staff alert", async () => {
-    vi.stubEnv("STAFF_ORDER_EMAIL_TO", "staff@example.com");
+    vi.stubEnv("ORDER_NOTIFICATION_EMAIL", "staff@example.com");
     const queueDelivery = vi.fn().mockResolvedValue({ id: "delivery-staff" });
     const dispatchDelivery = vi.fn().mockResolvedValue({
       attemptCount: 1,

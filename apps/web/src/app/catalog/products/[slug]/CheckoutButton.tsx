@@ -828,7 +828,9 @@ export function CheckoutButton({
             </div>
           ) : (
             <p className={styles.checkoutUnavailable}>
-              This product is not available for online checkout yet.
+              {availabilityMessage === "Out of stock"
+                ? "Out of stock"
+                : "This product is not available for online checkout yet."}
             </p>
           )}
         </div>

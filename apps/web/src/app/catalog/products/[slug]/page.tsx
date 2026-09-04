@@ -22,6 +22,10 @@ import {
 } from "../../../../lib/product-content";
 import { getCanonicalUrl } from "../../../../lib/seo";
 import {
+  getPublishableTigerTablePage,
+  type TigerTablePageDefinition
+} from "../../../../lib/tiger-table-pages";
+import {
   getTigerAquaPurchaseOptionStory,
   getTigerTableGalleryMedia,
   getTigerTableVariantSelectorMedia,
@@ -52,6 +56,7 @@ import {
 import { AquaProductExperience } from "./AquaProductExperience";
 import { ProductHeroPurchase } from "./ProductHeroPurchase";
 import type { ProductMediaGalleryItem } from "./ProductMediaGallery";
+import { TigerTableProductPage } from "./TigerTableProductPage";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -747,16 +752,19 @@ async function loadTableAccessoryOffer(
 
 async function loadTableComparisonProducts(
   product: CatalogProductDetail,
-  publicProducts: CatalogProductSummary[]
+  publicProducts: CatalogProductSummary[],
+  tablePageDefinition?: TigerTablePageDefinition
 ): Promise<CatalogProductDetail[]> {
   if (normalizeOptionKey(product.productKind) !== "table") {
     return [];
   }
 
   const publicProductSlugs = new Set(publicProducts.map((catalogProduct) => catalogProduct.slug));
-  const tableSlugs = TABLE_COMPARISON_PRODUCT_SLUGS.filter(
-    (slug) => slug === product.slug || publicProductSlugs.has(slug)
-  );
+  const tableSlugs = tablePageDefinition
+    ? [tablePageDefinition.slug, ...tablePageDefinition.comparisonPeerSlugs]
+    : TABLE_COMPARISON_PRODUCT_SLUGS.filter(
+        (slug) => slug === product.slug || publicProductSlugs.has(slug)
+      );
   const products = await Promise.all(
     tableSlugs.map(async (slug) => {
       if (slug === product.slug) {
@@ -974,7 +982,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     loadTableAccessoryOffer(product)
   ]);
   const publicProducts = catalogProducts.filter(isSummaryPublicProduct);
-  const tableComparisonProducts = await loadTableComparisonProducts(product, publicProducts);
+  const publishableTablePage = getPublishableTigerTablePage(product.slug);
+  const tableComparisonProducts = await loadTableComparisonProducts(
+    product,
+    publicProducts,
+    publishableTablePage
+  );
   const heroDisplayTitle = getHeroDisplayTitle(product);
   const heroEyebrow = getHeroEyebrow(product);
   const heroPriceSummary = getHeroPriceSummary(product, normalizedContent);
@@ -1011,11 +1024,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         <ProductHeroPurchase
           availabilityMessage={
-            isAqua
-              ? tigerAquaProductStory.purchase.availability
-              : hasTableV2
-                ? tigerTablePurchaseStory.availability
-                : V1_IN_STOCK_HANDLING_COPY
+            isTable && !product.v1CheckoutScope
+              ? "Out of stock"
+              : isAqua
+                ? tigerAquaProductStory.purchase.availability
+                : hasTableV2
+                  ? tigerTablePurchaseStory.availability
+                  : V1_IN_STOCK_HANDLING_COPY
           }
           basePriceLabel={basePriceLabel}
           categoryName={product.category.name}
@@ -1067,6 +1082,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         {isAqua ? (
           <AquaProductExperience />
+        ) : publishableTablePage ? (
+          <TigerTableProductPage
+            comparisonProducts={tableComparisonProducts}
+            definition={publishableTablePage}
+            product={product}
+          />
         ) : (
           <>
             <QuickFactsSection normalizedContent={normalizedContent} product={product} />

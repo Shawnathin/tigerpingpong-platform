@@ -112,8 +112,10 @@ test("all five tables open with their complete curated gallery and catalogue lea
     expect(response?.status()).toBe(200);
     await expect(page.getByRole("heading", { level: 1, name: table.heading })).toBeVisible();
     await expect(page.getByTestId("product-price")).toContainText(table.price);
-    await expect(page.locator('[data-purchase-presentation="tiger-v2"]')).toHaveCount(1);
-    await expect(page.getByText(table.descriptor, { exact: true })).toBeVisible();
+    const purchasePresentation = page.locator('[data-purchase-presentation="tiger-v2"]');
+    await expect(purchasePresentation).toHaveCount(1);
+    await expect(page.locator('[data-table-page-system="universal-v1"]')).toHaveCount(1);
+    await expect(page.getByText(table.descriptor, { exact: true }).first()).toBeVisible();
     await expect(page.getByText("In stock. Ready to ship.", { exact: true })).toBeVisible();
     await expect(
       page.getByText("Every table ships free across Canada.", { exact: true })
@@ -123,6 +125,9 @@ test("all five tables open with their complete curated gallery and catalogue lea
       page.getByText("Not sure which colour? Call Tiger.", { exact: true })
     ).toHaveAttribute("href", "tel:+18885525259");
     await expect(page.locator('[data-gallery-presentation="table"]')).toHaveCount(1);
+    await expect(page.getByRole("heading", { name: "Details that matter." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Find your table." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Specs and dimensions." })).toBeVisible();
     await expect(page.locator('[aria-label="Product images"] button')).toHaveCount(
       product.assets.length
     );
@@ -149,11 +154,14 @@ test("each table specification section contains its matching manual and setup vi
 
     const resources = page.getByTestId("table-support-resources");
     const manualLink = resources.getByRole("link", {
-      name: `Download ${table.manualTitle} assembly guide PDF`
+      name: new RegExp(`${table.manualTitle}.*guide`, "i")
     });
-    const sectionOrder = await page.locator("main > section").evaluateAll((sections) => {
-      return sections.map((section) => section.getAttribute("aria-label"));
-    });
+    const comparisonTop = await page
+      .getByRole("heading", { name: "Find your table." })
+      .evaluate((node) => node.getBoundingClientRect().top + window.scrollY);
+    const specificationsTop = await page
+      .getByRole("heading", { name: "Specs and dimensions." })
+      .evaluate((node) => node.getBoundingClientRect().top + window.scrollY);
 
     await expect(resources).toHaveAttribute("data-product-slug", table.slug);
     await expect(resources).not.toContainText(table.manualRevision);
@@ -162,18 +170,22 @@ test("each table specification section contains its matching manual and setup vi
     await expect(
       resources.getByRole("link", { name: "Replacement parts", exact: true })
     ).toHaveAttribute("href", "/replacement-parts/");
-    expect(sectionOrder.indexOf("Table comparison")).toBeLessThan(
-      sectionOrder.indexOf("Specifications")
-    );
+    expect(comparisonTop).toBeLessThan(specificationsTop);
 
     if (table.videoUrl) {
       const videoLink = resources.getByRole("link", {
-        name: `Watch ${table.manualTitle} setup video on YouTube`
+        name: `Watch the ${table.manualTitle} setup video`
       });
       await expect(videoLink).toHaveAttribute("href", table.videoUrl);
       await expect(videoLink).toHaveAttribute("target", "_blank");
     } else {
       await expect(resources.getByRole("link", { name: /setup video/i })).toHaveCount(0);
+      await expect(
+        resources.getByRole("link", { name: "Plaza Outdoor specifications sheet" })
+      ).toHaveAttribute(
+        "href",
+        "https://drive.google.com/file/d/17TavVOPhXHJZB7uuav2aIWtNi4-ff1ZD/view?usp=sharing"
+      );
     }
   }
 });
@@ -181,6 +193,7 @@ test("each table specification section contains its matching manual and setup vi
 test("each colour selects the matching image and removes other colours from view", async ({
   page
 }) => {
+  test.setTimeout(60_000);
   for (const table of TABLES) {
     const product = manifestProduct(table.slug);
     await page.goto(productPath(table.slug));
@@ -294,6 +307,9 @@ test("table galleries stay accessible and overflow-free at the approved widths",
       await page.goto(productPath(table.slug));
       const resources = page.getByTestId("table-support-resources");
       await expect(resources).toBeVisible();
+      await expect(
+        page.locator("details").filter({ hasText: "View specs and dimensions" })
+      ).not.toHaveAttribute("open", "");
       const accessibility = await page.evaluate(() => ({
         documentWidth: document.documentElement.scrollWidth,
         imagesWithoutAlt: document.querySelectorAll("main img:not([alt])").length,

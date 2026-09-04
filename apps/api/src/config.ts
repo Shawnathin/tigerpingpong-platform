@@ -21,6 +21,12 @@ export interface InternalOrdersApiConfig {
   apiToken: string;
 }
 
+export interface OrderEmailConfig {
+  apiKey: string;
+  from: string;
+  replyTo: string;
+}
+
 function readCsv(value: string | undefined, fallback: string[]): string[] {
   if (!value) {
     return fallback;
@@ -103,4 +109,16 @@ export function getInternalOrdersApiConfig(
   return {
     apiToken: readRequiredString(env.INTERNAL_ORDERS_API_TOKEN, "INTERNAL_ORDERS_API_TOKEN")
   };
+}
+
+export function getOrderEmailConfig(env: NodeJS.ProcessEnv = process.env): OrderEmailConfig {
+  return {
+    apiKey: readRequiredString(env.RESEND_API_KEY, "RESEND_API_KEY"),
+    from: readRequiredString(env.EMAIL_FROM ?? env.ORDER_EMAIL_FROM, "EMAIL_FROM"),
+    replyTo: env.ORDER_EMAIL_REPLY_TO?.trim() || "info@tigerpingpong.com"
+  };
+}
+
+export function getStaffOrderEmailRecipient(env: NodeJS.ProcessEnv = process.env): string | null {
+  return env.ORDER_NOTIFICATION_EMAIL?.trim() || env.STAFF_ORDER_EMAIL_TO?.trim() || null;
 }

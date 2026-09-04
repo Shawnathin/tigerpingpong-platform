@@ -3,13 +3,21 @@ import {
   Injectable,
   NotFoundException,
   OnModuleDestroy,
+  Optional,
   ServiceUnavailableException,
   UnauthorizedException
 } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
+import {
+  buildCarrierTrackingUrl,
+  getShippingCarrierLabel,
+  isShippingCarrierCode,
+  type ShippingCarrierCode
+} from "@tigerpingpong/shared";
 import { timingSafeEqual } from "crypto";
 
 import { getInternalOrdersApiConfig } from "../config";
+import { OrderEmailService, type OrderEmailKind } from "../order-emails/order-email.service";
 
 type InternalOrderStatus =
   | "canceled"
@@ -35,6 +43,8 @@ interface ShippingAddress {
 
 interface InternalOrderShipmentInput {
   carrier?: unknown;
+  carrierCode?: unknown;
+  customCarrier?: unknown;
   internalNote?: unknown;
   shippedDate?: unknown;
   trackingNumber?: unknown;
@@ -92,6 +102,7 @@ const internalOrderListSelect = {
 } satisfies Prisma.OrderSelect;
 
 const internalOrderDetailSelect = {
+  id: true,
   publicReference: true,
   status: true,
   currency: true,
@@ -124,6 +135,18 @@ const internalOrderDetailSelect = {
   paidAt: true,
   createdAt: true,
   updatedAt: true,
+  emailDeliveries: {
+    orderBy: {
+      createdAt: "asc"
+    },
+    select: {
+      attemptCount: true,
+      kind: true,
+      lastError: true,
+      sentAt: true,
+      status: true
+    }
+  },
   items: {
     orderBy: {
       createdAt: "asc"
@@ -157,6 +180,8 @@ type InternalOrderDetailRecord = Prisma.OrderGetPayload<{
 @Injectable()
 export class InternalOrdersService implements OnModuleDestroy {
   private prisma: PrismaClient | null = null;
+
+  constructor(@Optional() private readonly orderEmailService?: OrderEmailService) {}
 
   async onModuleDestroy(): Promise<void> {
     if (this.prisma) {
@@ -238,6 +263,36 @@ export class InternalOrdersService implements OnModuleDestroy {
     };
   }
 
+  async retryEmail(
+    requestToken: string | string[] | undefined,
+    publicReferenceParam: string,
+    kindParam: string
+  ): Promise<unknown> {
+    this.assertAuthorized(requestToken);
+    const publicReference = this.parsePublicReference(publicReferenceParam);
+
+    if (!this.orderEmailService || !this.orderEmailService.isOrderEmailKind(kindParam)) {
+      throw new BadRequestException({
+        message: "Email type is invalid."
+      });
+    }
+
+    try {
+      const emailDelivery = await this.orderEmailService.retryDelivery(
+        publicReference,
+        kindParam as OrderEmailKind
+      );
+
+      return {
+        emailDelivery
+      };
+    } catch {
+      throw new ServiceUnavailableException({
+        message: "Order email could not be retried."
+      });
+    }
+  }
+
   async updateShipment(
     requestToken: string | string[] | undefined,
     publicReferenceParam: string,
@@ -275,7 +330,24 @@ export class InternalOrdersService implements OnModuleDestroy {
       });
     }
 
+    let emailDelivery = null;
+
+    if (this.orderEmailService) {
+      try {
+        emailDelivery = await this.orderEmailService.queueShipmentByOrderId(order.id);
+      } catch {
+        emailDelivery = {
+          attemptCount: 0,
+          kind: "shipment",
+          lastError: "Shipment email could not be queued.",
+          sentAt: null,
+          status: "failed"
+        };
+      }
+    }
+
     return {
+      emailDelivery,
       order: this.serializeDetailOrder(order)
     };
   }
@@ -347,14 +419,56 @@ export class InternalOrdersService implements OnModuleDestroy {
       });
     }
 
+    const trackingNumber = this.readRequiredShipmentString(
+      input,
+      "trackingNumber",
+      "tracking number"
+    );
+    const carrier = this.normalizeShipmentCarrier(input, trackingNumber);
+
     return {
-      carrier: this.readRequiredShipmentString(input, "carrier", "carrier"),
-      trackingNumber: this.readRequiredShipmentString(input, "trackingNumber", "tracking number"),
-      trackingUrl: this.normalizeShipmentTrackingUrl(input.trackingUrl),
+      carrier: carrier.name,
+      trackingNumber,
+      trackingUrl: carrier.trackingUrl,
       shippedAt: this.normalizeShipmentDate(input.shippedDate),
       internalNote: this.readRequiredShipmentString(input, "internalNote", "internal note", {
         maxLength: MAX_SHIPMENT_NOTE_LENGTH
       })
+    };
+  }
+
+  private normalizeShipmentCarrier(
+    input: Record<string, unknown>,
+    trackingNumber: string
+  ): { name: string; trackingUrl: string } {
+    const carrierCode = this.normalizeOptionalString(input.carrierCode);
+
+    if (!carrierCode) {
+      return {
+        name: this.readRequiredShipmentString(input, "carrier", "carrier"),
+        trackingUrl: this.normalizeShipmentTrackingUrl(input.trackingUrl)
+      };
+    }
+
+    if (!isShippingCarrierCode(carrierCode)) {
+      throw new BadRequestException({
+        message: "carrier is invalid."
+      });
+    }
+
+    if (carrierCode === "other") {
+      return {
+        name: this.readRequiredShipmentString(input, "customCarrier", "custom carrier"),
+        trackingUrl: this.normalizeShipmentTrackingUrl(input.trackingUrl)
+      };
+    }
+
+    return {
+      name: getShippingCarrierLabel(carrierCode),
+      trackingUrl: buildCarrierTrackingUrl(
+        carrierCode as Exclude<ShippingCarrierCode, "other">,
+        trackingNumber
+      )
     };
   }
 
@@ -505,6 +619,13 @@ export class InternalOrdersService implements OnModuleDestroy {
         shippedAt: this.serializeDate(order.shipmentShippedAt),
         internalNote: order.shipmentInternalNote
       },
+      emails: order.emailDeliveries.map((delivery) => ({
+        attemptCount: delivery.attemptCount,
+        kind: delivery.kind,
+        lastError: delivery.lastError,
+        sentAt: this.serializeDate(delivery.sentAt),
+        status: delivery.status
+      })),
       paidAt: this.serializeDate(order.paidAt),
       createdAt: this.serializeDate(order.createdAt),
       updatedAt: this.serializeDate(order.updatedAt),

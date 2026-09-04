@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Patch, Query, Res } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Param, Patch, Post, Query, Res } from "@nestjs/common";
 
 import { InternalOrdersService } from "./internal-orders.service";
 
@@ -13,6 +13,8 @@ interface HeaderResponse {
 
 interface InternalOrderShipmentBody {
   carrier?: unknown;
+  carrierCode?: unknown;
+  customCarrier?: unknown;
   internalNote?: unknown;
   shippedDate?: unknown;
   trackingNumber?: unknown;
@@ -62,6 +64,18 @@ export class InternalOrdersController {
     setInternalResponseHeaders(response);
 
     return this.internalOrdersService.updateShipment(requestToken, publicReference, body);
+  }
+
+  @Post(":publicReference/emails/:kind/retry")
+  retryEmail(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: string | string[] | undefined,
+    @Param("publicReference") publicReference: string,
+    @Param("kind") kind: string
+  ): Promise<unknown> {
+    setInternalResponseHeaders(response);
+
+    return this.internalOrdersService.retryEmail(requestToken, publicReference, kind);
   }
 }
 

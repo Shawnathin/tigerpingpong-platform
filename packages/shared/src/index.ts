@@ -57,6 +57,17 @@ export interface ViceBundlePricingComponents {
   whiteBallsSixPack?: CatalogComponentPrice | null;
 }
 
+export const SHIPPING_CARRIERS = [
+  { code: "canada_post", label: "Canada Post" },
+  { code: "purolator", label: "Purolator" },
+  { code: "ups", label: "UPS" },
+  { code: "fedex", label: "FedEx" },
+  { code: "dhl_express", label: "DHL Express" },
+  { code: "other", label: "Other carrier" }
+] as const;
+
+export type ShippingCarrierCode = (typeof SHIPPING_CARRIERS)[number]["code"];
+
 export type CanadaShippingRule =
   | typeof CURRENT_CANADA_SHIPPING_RULE
   | typeof AQUA_FOUR_PACK_CANADA_SHIPPING_RULE
@@ -307,4 +318,47 @@ function isValidCatalogComponentPrice(
     component.priceCents > 0 &&
     component.currency.length > 0
   );
+}
+
+export function isShippingCarrierCode(value: string): value is ShippingCarrierCode {
+  return SHIPPING_CARRIERS.some((carrier) => carrier.code === value);
+}
+
+export function getShippingCarrierLabel(code: ShippingCarrierCode): string {
+  return SHIPPING_CARRIERS.find((carrier) => carrier.code === code)?.label ?? "Other carrier";
+}
+
+export function inferShippingCarrierCode(carrierName: string | null): ShippingCarrierCode {
+  const normalized = carrierName?.trim().toLowerCase();
+  const carrier = SHIPPING_CARRIERS.find(
+    (candidate) => candidate.code !== "other" && candidate.label.toLowerCase() === normalized
+  );
+
+  return carrier?.code ?? "other";
+}
+
+export function buildCarrierTrackingUrl(
+  code: Exclude<ShippingCarrierCode, "other">,
+  trackingNumber: string
+): string {
+  const normalizedTrackingNumber = trackingNumber.trim();
+
+  if (!normalizedTrackingNumber) {
+    throw new Error("tracking number is required.");
+  }
+
+  const encoded = encodeURIComponent(normalizedTrackingNumber);
+
+  switch (code) {
+    case "canada_post":
+      return `https://www.canadapost-postescanada.ca/track-reperage/en#/details/${encoded}`;
+    case "purolator":
+      return `https://www.purolator.com/en/shipping/tracker?pin=${encoded}`;
+    case "ups":
+      return `https://www.ups.com/track?loc=en_CA&tracknum=${encoded}`;
+    case "fedex":
+      return `https://www.fedex.com/fedextrack/?trknbr=${encoded}`;
+    case "dhl_express":
+      return `https://www.dhl.com/ca-en/home/tracking.html?tracking-id=${encoded}`;
+  }
 }

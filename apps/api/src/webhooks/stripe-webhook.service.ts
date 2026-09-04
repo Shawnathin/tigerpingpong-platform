@@ -3,6 +3,7 @@ import {
   Injectable,
   Logger,
   OnModuleDestroy,
+  Optional,
   ServiceUnavailableException
 } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
@@ -16,6 +17,7 @@ import {
 import StripeConstructor from "stripe";
 
 import { StripeWebhookConfig, getStripeWebhookConfig } from "../config";
+import { OrderEmailService } from "../order-emails/order-email.service";
 
 const CHECKOUT_SESSION_COMPLETED_EVENT = "checkout.session.completed";
 const SUPPORTED_EVENTS = new Set<string>([CHECKOUT_SESSION_COMPLETED_EVENT]);
@@ -113,6 +115,8 @@ export class StripeWebhookService implements OnModuleDestroy {
   private readonly logger = new Logger(StripeWebhookService.name);
   private prisma: PrismaClient | null = null;
 
+  constructor(@Optional() private readonly orderEmailService?: OrderEmailService) {}
+
   async onModuleDestroy(): Promise<void> {
     if (this.prisma) {
       await this.prisma.$disconnect();
@@ -140,6 +144,8 @@ export class StripeWebhookService implements OnModuleDestroy {
     const event = this.verifyWebhookEvent(rawBody, signature, config.stripeWebhookSecret);
     const result = await this.recordAndProcessWebhookEvent(event, config);
 
+    await this.queueOrderReceivedEmail(event, result);
+
     this.logWebhookResult(event, result);
 
     return {
@@ -147,6 +153,31 @@ export class StripeWebhookService implements OnModuleDestroy {
       status: result.status,
       type: event.type
     };
+  }
+
+  private async queueOrderReceivedEmail(
+    event: VerifiedStripeEvent,
+    result: StripeWebhookProcessResult
+  ): Promise<void> {
+    if (
+      !this.orderEmailService ||
+      !["paid", "already_paid", "duplicate_processed"].includes(result.status)
+    ) {
+      return;
+    }
+
+    const session = this.readCheckoutSession(event);
+    const sessionId = this.normalizeOptionalString(session?.id);
+
+    if (!sessionId) {
+      return;
+    }
+
+    try {
+      await this.orderEmailService.queueOrderReceivedByCheckoutSessionId(sessionId);
+    } catch {
+      this.logger.warn("Order-received email could not be queued; paid order state was preserved.");
+    }
   }
 
   private readWebhookConfig(): StripeWebhookConfig {

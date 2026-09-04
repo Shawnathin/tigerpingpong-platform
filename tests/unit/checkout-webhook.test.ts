@@ -243,6 +243,23 @@ describe("server-authoritative checkout", () => {
     expect(service.createPendingOrder).not.toHaveBeenCalled();
   });
 
+  it("rejects a public active out-of-stock Whistler while keeping the page publishable", () => {
+    const service = new CheckoutService() as unknown as {
+      isProductCheckoutable(product: unknown): boolean;
+    };
+    const whistler = {
+      ...checkoutProduct,
+      key: "tiger-whistler-indoor-table",
+      slug: "tiger-whistler-indoor-table",
+      productKind: "table",
+      v1CheckoutScope: false
+    };
+    expect(whistler.status).toBe("active");
+    expect(whistler.v1PublicNavigation).toBe(true);
+    expect(service.isProductCheckoutable(whistler)).toBe(false);
+    expect(service.isProductCheckoutable({ ...whistler, v1CheckoutScope: true })).toBe(true);
+  });
+
   it("allows an approved replacement part while keeping deferred parts unavailable", async () => {
     const service = new CheckoutService() as unknown as {
       createCheckoutSession(body: unknown): Promise<unknown>;

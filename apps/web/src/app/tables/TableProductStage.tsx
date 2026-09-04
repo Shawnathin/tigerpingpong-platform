@@ -122,6 +122,7 @@ export function TableProductStage({
         <strong className={styles.productPrice}>
           {formatPrice(product.priceCents, product.currency)}
         </strong>
+        {!product.v1CheckoutScope ? <p>Out of stock</p> : null}
         <p className={styles.productDescriptor}>{story.descriptor}</p>
         <p className={styles.productStory}>{story.body}</p>
         <a className={styles.productAction} href={href}>

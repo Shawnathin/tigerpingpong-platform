@@ -143,6 +143,7 @@ export function TigerTableProductPage({
                         <a href={`/catalog/products/${column.product.slug}`}>{column.label}</a>
                       )}
                     </h3>
+                    {!column.product.v1CheckoutScope ? <p>Out of stock</p> : null}
                   </header>
                   {columnIndex === 0 ? (
                     <img

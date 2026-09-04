@@ -23,4 +23,19 @@ Owner annotation follow-up (2026-09-04): replaced the equal-height specification
 - Comparison requires all three configured models; Portland Indoor comparison therefore disappears while Whistler is absent from the public catalog. Decide whether to retain that behavior or support the remaining two models. Do not publish Whistler merely to complete a comparison.
 - Recovered fact sheets cite a July 28 owner decision and current product records. Review the recovered specifications, warranty language, and media with the page preview before promotion; recovery is not a new confirmation of those claims.
 
-Whistler remains out of stock per Shawn. Its definition is recovered, but its production publication and stock state are unchanged.
+## Whistler release preparation
+
+Shawn explicitly requested Whistler be published but out of stock. The production record was inspected read-only: archived, public navigation false, checkout scope false. The existing admin available-for-sale toggle couples publication and checkout, so it must not be used for this activation.
+
+The storefront now labels non-checkout tables Out of stock in the purchase panel, table listing, and comparison. Existing backend checkout eligibility continues rejecting these products; no payment logic changed.
+
+After the approved develop-to-main release is deployed, run the following from the repository root in the API production environment (with built database package and its existing database environment):
+
+```sh
+node scripts/launch/publish-whistler-out-of-stock.mjs
+node scripts/launch/publish-whistler-out-of-stock.mjs --apply
+```
+
+Review the dry-run first. The script targets only `tiger-whistler-indoor-table`, validates its type/state, uses an optimistic updatedAt guard, and sets active/public=true/checkout=false without changing price, variants, or media. Verify the public product and Tables page after activation, and that no Add to cart control is offered. Do not enable the admin available-for-sale toggle. Local dry-run failed database initialization; no production catalog mutation or deployment has occurred.
+
+Fresh stock-change proof: `pnpm lint`, `pnpm typecheck`, `pnpm test` (190 tests), and production-style `pnpm build` pass. A backend regression test proves an active/public Whistler with checkout scope false is rejected. With `MOCK_WHISTLER_OUT_OF_STOCK=1`, the local browser shows the complete Whistler page, both colour images, Out of stock in the purchase panel and comparison, and no Add to cart button. The mock switch is opt-in and leaves ordinary browser fixtures unchanged. Full browser coverage was not rerun for this final stock-label change; the focused browser inspection supplements the recovery suite above.

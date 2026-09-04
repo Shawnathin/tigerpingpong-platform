@@ -1024,11 +1024,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         <ProductHeroPurchase
           availabilityMessage={
-            isAqua
-              ? tigerAquaProductStory.purchase.availability
-              : hasTableV2
-                ? tigerTablePurchaseStory.availability
-                : V1_IN_STOCK_HANDLING_COPY
+            isTable && !product.v1CheckoutScope
+              ? "Out of stock"
+              : isAqua
+                ? tigerAquaProductStory.purchase.availability
+                : hasTableV2
+                  ? tigerTablePurchaseStory.availability
+                  : V1_IN_STOCK_HANDLING_COPY
           }
           basePriceLabel={basePriceLabel}
           categoryName={product.category.name}

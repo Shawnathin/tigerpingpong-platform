@@ -4,7 +4,7 @@
 
 Shawn selected recovery on 2026-09-04. Restore safety stash `ecd2dd5` onto current `develop` on `codex/feature/recover-universal-table-pages`, validate the horizontal feature cards and model-specific stories for all five models, and prepare a draft PR into `develop`.
 
-The stash applied cleanly and remains preserved. Whistler is out of stock per Shawn; catalog publication and availability remain unchanged. No production deployment is included. The recovered Portland patio composite is marked local-preview media and needs a production-media decision before release. Lint, typecheck, 189 unit tests, production build, and security gates pass. Browser coverage passed 91 tests with one timeout; that test passes after a timeout-budget correction. Fresh screenshots and remaining review points are recorded in `docs/qa/universal-table-pages-recovery.md`.
+The stash applied cleanly and remains preserved. Shawn subsequently selected release preparation and asked to publish Whistler with checkout disabled and an Out of stock label. PR #169 includes the reviewed specification/resources layout and removal of the old Portland patio photo. The release preparation adds stock labels and a guarded catalog activation script; production has not changed. Local database initialization currently fails, so activation must run with the working production environment after deployment. Main promotion still requires explicit approval. Fresh screenshots and remaining review points are recorded in `docs/qa/universal-table-pages-recovery.md`.
 
 ## Historical completed task: automated emails
 

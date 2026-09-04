@@ -1141,45 +1141,7 @@ function getComparisonHeading(slug: string): string {
 }
 
 function DetailVisual({ visual }: { visual: ProductFeatureVisual }) {
-  if (visual.src) {
-    return <img src={visual.src} alt={visual.alt ?? ""} />;
-  }
-
-  const variantClass = getVisualPlaceholderClassName(visual);
-
-  return (
-    <span className={`${styles.miniPlaceholder} ${variantClass}`.trim()} aria-hidden="true">
-      {visual.label}
-    </span>
-  );
-}
-
-function getVisualPlaceholderClassName(visual: ProductFeatureVisual): string {
-  if (visual.variant === "anchor") {
-    return styles.anchorPlaceholder;
-  }
-
-  if (visual.variant === "frame") {
-    return styles.framePlaceholder;
-  }
-
-  if (visual.variant === "lock") {
-    return styles.lockPlaceholder;
-  }
-
-  if (visual.variant === "net") {
-    return styles.netPlaceholder;
-  }
-
-  if (visual.variant === "top") {
-    return styles.topPlaceholder;
-  }
-
-  if (visual.variant === "wheel") {
-    return styles.wheelPlaceholder;
-  }
-
-  return "";
+  return <img src={visual.src} alt={visual.alt ?? ""} />;
 }
 
 function getStoryHeading(product: CatalogProductDetail): string {

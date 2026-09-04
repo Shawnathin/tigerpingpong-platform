@@ -1,6 +1,14 @@
 # Current Task
 
-## Completed task
+## Current selected task: universal table-page recovery
+
+Shawn selected recovery on 2026-09-04. Restore safety stash `ecd2dd5` onto current `develop` on `codex/feature/recover-universal-table-pages`, validate the horizontal feature cards and model-specific stories for all five models, and prepare a draft PR into `develop`.
+
+The stash applied cleanly and remains preserved. Shawn subsequently selected release preparation and asked to publish Whistler with checkout disabled and an Out of stock label. PR #169 includes the reviewed specification/resources layout and removal of the old Portland patio photo. The release preparation adds stock labels and a guarded catalog activation script; production has not changed. Local database initialization currently fails, so activation must run with the working production environment after deployment. Main promotion still requires explicit approval. Fresh screenshots and remaining review points are recorded in `docs/qa/universal-table-pages-recovery.md`.
+
+## Historical completed task: automated emails
+
+The following task card is retained as the previous email milestone, not the scope of the current table recovery.
 
 Recover, review, activate, and prove automated customer order, staff new-order, and shipment emails.
 

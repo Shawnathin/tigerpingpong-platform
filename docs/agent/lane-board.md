@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- None.
+- Recover Universal Tiger Table Product Pages from safety stash `ecd2dd5` on `codex/feature/recover-universal-table-pages`; refresh validation and prepare a draft PR into `develop`. Production promotion remains separate.
 
 ## Awaiting Review
 

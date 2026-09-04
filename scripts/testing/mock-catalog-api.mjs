@@ -531,7 +531,7 @@ const tableProducts = [
     priceCents: 160000,
     currency: "CAD",
     v1PublicNavigation: true,
-    v1CheckoutScope: true,
+    v1CheckoutScope: process.env.MOCK_WHISTLER_OUT_OF_STOCK !== "1",
     shippingReviewRequired: false,
     family: { key: "whistler", slug: "whistler", name: "Whistler" },
     category: { key: "tables", slug: "tables", name: "Tables" },

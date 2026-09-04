@@ -9,6 +9,7 @@
 
 - Automated order/shipment email production activation after the recovered code task is reviewed and merged:
   - Resend has a sending-only API key and a successful onboarding test send; the key value is not committed or stored in repository docs.
+  - Set `STAFF_ORDER_EMAIL_TO` on the API service to the approved monitored staff inbox before controlled testing.
   - GoDaddy is authoritative for `tigerpingpong.ca`, but `updates.tigerpingpong.ca` currently publishes no Resend TXT, MX, or DKIM records and remains unverified.
   - In a separately selected activation lane, publish the exact Resend DNS records in GoDaddy, verify the sending domain, set the approved server-only Render email environment, apply the outbox migration, deploy, and run a controlled order/shipment inbox proof before production promotion.
 

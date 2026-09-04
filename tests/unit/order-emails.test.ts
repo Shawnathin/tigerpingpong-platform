@@ -4,6 +4,7 @@ import { InternalOrdersService } from "../../apps/api/src/internal-orders/intern
 import {
   ORDER_RECEIVED_EMAIL_KIND,
   OrderEmailService,
+  STAFF_NEW_ORDER_EMAIL_KIND,
   SHIPMENT_EMAIL_KIND
 } from "../../apps/api/src/order-emails/order-email.service";
 import { StripeWebhookService } from "../../apps/api/src/webhooks/stripe-webhook.service";
@@ -163,16 +164,21 @@ describe("carrier-aware protected shipment updates", () => {
 });
 
 describe("transactional email outbox", () => {
-  it("queues the paid-order email without waiting for provider delivery", async () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("queues customer and staff paid-order emails without waiting for provider delivery", async () => {
+    vi.stubEnv("STAFF_ORDER_EMAIL_TO", "staff@example.com");
     const dispatchDelivery = vi.fn();
-    const queueDelivery = vi.fn().mockResolvedValue({
+    const queueDelivery = vi.fn(async (_orderId: string, kind: string) => ({
       attemptCount: 0,
-      id: "delivery-1",
-      kind: ORDER_RECEIVED_EMAIL_KIND,
+      id: `delivery-${kind}`,
+      kind,
       lastError: null,
       sentAt: null,
       status: "pending"
-    });
+    }));
     const service = new OrderEmailService() as unknown as {
       dispatchDelivery: typeof dispatchDelivery;
       getPrisma: () => unknown;
@@ -202,7 +208,39 @@ describe("transactional email outbox", () => {
       ORDER_RECEIVED_EMAIL_KIND,
       "buyer@example.com"
     );
+    expect(queueDelivery).toHaveBeenCalledWith(
+      "order-1",
+      STAFF_NEW_ORDER_EMAIL_KIND,
+      "staff@example.com"
+    );
     expect(dispatchDelivery).not.toHaveBeenCalled();
+  });
+
+  it("records a skipped staff alert when its recipient is not configured", async () => {
+    const create = vi.fn(async ({ data }: { data: Record<string, unknown> }) => ({
+      ...data,
+      attemptCount: 0,
+      id: "delivery-staff",
+      sentAt: null
+    }));
+    const service = new OrderEmailService() as unknown as {
+      getPrisma: () => unknown;
+      queueDelivery(orderId: string, kind: string, email: string | null): Promise<unknown>;
+    };
+    service.getPrisma = () => ({
+      orderEmailDelivery: {
+        create,
+        findUnique: async () => null
+      }
+    });
+
+    await expect(
+      service.queueDelivery("order-1", STAFF_NEW_ORDER_EMAIL_KIND, null)
+    ).resolves.toMatchObject({
+      kind: STAFF_NEW_ORDER_EMAIL_KIND,
+      lastError: "Staff order notification email is not configured.",
+      status: "skipped"
+    });
   });
 
   it("automatically retries only deliveries with a scheduled retry time", async () => {
@@ -342,6 +380,57 @@ describe("transactional email outbox", () => {
     expect(rendered.html).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
     expect(rendered.html).not.toContain("<script>alert(1)</script>");
     expect(rendered.subject).toContain(orderRecord.publicReference);
+  });
+
+  it("renders a staff alert with fulfillment details and no customer-service footer", () => {
+    const service = new OrderEmailService() as unknown as {
+      renderStaffNewOrder(order: unknown): { html: string; subject: string; text: string };
+    };
+    const rendered = service.renderStaffNewOrder(orderRecord);
+
+    expect(rendered.subject).toBe("New paid order TPP-TEST-001 — $23.00");
+    expect(rendered.text).toContain("Customer: Test Customer");
+    expect(rendered.text).toContain("Customer email: customer@example.invalid");
+    expect(rendered.text).toContain("Order items");
+    expect(rendered.html).toContain("Staff notification.");
+    expect(rendered.html).not.toContain("Questions? Reply to this email");
+  });
+
+  it("uses the configured staff recipient when manually retrying a staff alert", async () => {
+    vi.stubEnv("STAFF_ORDER_EMAIL_TO", "staff@example.com");
+    const queueDelivery = vi.fn().mockResolvedValue({ id: "delivery-staff" });
+    const dispatchDelivery = vi.fn().mockResolvedValue({
+      attemptCount: 1,
+      kind: STAFF_NEW_ORDER_EMAIL_KIND,
+      lastError: null,
+      sentAt: "2026-07-16T00:01:00.000Z",
+      status: "sent"
+    });
+    const service = new OrderEmailService() as unknown as {
+      dispatchDelivery: typeof dispatchDelivery;
+      getPrisma: () => unknown;
+      queueDelivery: typeof queueDelivery;
+      retryDelivery(publicReference: string, kind: string): Promise<unknown>;
+    };
+    service.getPrisma = () => ({
+      order: {
+        findUnique: async () => ({
+          customerEmail: "buyer@example.com",
+          id: "order-1"
+        })
+      }
+    });
+    service.queueDelivery = queueDelivery;
+    service.dispatchDelivery = dispatchDelivery;
+
+    await service.retryDelivery("TPP-TEST-001", STAFF_NEW_ORDER_EMAIL_KIND);
+
+    expect(queueDelivery).toHaveBeenCalledWith(
+      "order-1",
+      STAFF_NEW_ORDER_EMAIL_KIND,
+      "staff@example.com"
+    );
+    expect(dispatchDelivery).toHaveBeenCalledWith("delivery-staff", true);
   });
 
   it("does not label a pre-tax fallback as the amount paid", () => {

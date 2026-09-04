@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- `TPP-AUTOMATED-ORDER-EMAILS-RECOVERY` on `codex/feature/automated-order-shipment-emails` -> `develop`: review and prove the recovered Resend outbox, paid-order email, shipment email, carrier links, and protected retry/status controls on the patched dependency baseline. No DNS, environment, migration, deployment, or production send is part of this lane.
+- `TPP-AUTOMATED-ORDER-EMAILS-RECOVERY` on `codex/feature/automated-order-shipment-emails` -> `develop`: review and prove the recovered Resend outbox, customer paid-order email, staff new-order alert, shipment email, carrier links, and protected retry/status controls on the patched dependency baseline. No DNS, environment, migration, deployment, or production send is part of this lane.
 
 ## Awaiting Review
 

@@ -1,11 +1,16 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
 
-import { getOrderEmailConfig, type OrderEmailConfig } from "../config";
+import { getOrderEmailConfig, getStaffOrderEmailRecipient, type OrderEmailConfig } from "../config";
 
 export const ORDER_RECEIVED_EMAIL_KIND = "order_received";
+export const STAFF_NEW_ORDER_EMAIL_KIND = "staff_new_order";
 export const SHIPMENT_EMAIL_KIND = "shipment";
-export const ORDER_EMAIL_KINDS = [ORDER_RECEIVED_EMAIL_KIND, SHIPMENT_EMAIL_KIND] as const;
+export const ORDER_EMAIL_KINDS = [
+  ORDER_RECEIVED_EMAIL_KIND,
+  STAFF_NEW_ORDER_EMAIL_KIND,
+  SHIPMENT_EMAIL_KIND
+] as const;
 
 export type OrderEmailKind = (typeof ORDER_EMAIL_KINDS)[number];
 
@@ -136,13 +141,22 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
       return null;
     }
 
-    const delivery = await this.queueDelivery(
-      order.id,
-      ORDER_RECEIVED_EMAIL_KIND,
-      order.customerEmail
-    );
+    const [customerResult, staffResult] = await Promise.allSettled([
+      this.queueDelivery(order.id, ORDER_RECEIVED_EMAIL_KIND, order.customerEmail),
+      this.queueDelivery(order.id, STAFF_NEW_ORDER_EMAIL_KIND, getStaffOrderEmailRecipient())
+    ]);
 
-    return this.serializeDelivery(delivery);
+    if (customerResult.status === "rejected") {
+      this.logger.warn("Customer order-received email could not be queued.");
+    }
+
+    if (staffResult.status === "rejected") {
+      this.logger.warn("Staff new-order email could not be queued.");
+    }
+
+    return customerResult.status === "fulfilled"
+      ? this.serializeDelivery(customerResult.value)
+      : null;
   }
 
   async queueShipmentByOrderId(orderId: string): Promise<OrderEmailDeliverySummary> {
@@ -178,7 +192,9 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
       throw new Error("Order email delivery was not found.");
     }
 
-    const delivery = await this.queueDelivery(order.id, kind, order.customerEmail);
+    const recipient =
+      kind === STAFF_NEW_ORDER_EMAIL_KIND ? getStaffOrderEmailRecipient() : order.customerEmail;
+    const delivery = await this.queueDelivery(order.id, kind, recipient);
 
     return this.dispatchDelivery(delivery.id, true);
   }
@@ -224,7 +240,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
       return await this.getPrisma().orderEmailDelivery.create({
         data: {
           kind,
-          lastError: recipient ? null : "Customer email is unavailable.",
+          lastError: recipient ? null : this.getMissingRecipientError(kind),
           nextAttemptAt: recipient ? new Date() : null,
           orderId,
           recipientEmail: recipient,
@@ -401,7 +417,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
     }
 
     if (!this.normalizeEmail(delivery.recipientEmail)) {
-      return "Customer email is unavailable.";
+      return this.getMissingRecipientError(delivery.kind as OrderEmailKind);
     }
 
     if (delivery.kind === SHIPMENT_EMAIL_KIND) {
@@ -464,9 +480,15 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
   }
 
   private renderMessage(delivery: EmailDeliveryWithOrder): RenderedMessage {
-    return delivery.kind === ORDER_RECEIVED_EMAIL_KIND
-      ? this.renderOrderReceived(delivery.order)
-      : this.renderShipment(delivery.order);
+    if (delivery.kind === ORDER_RECEIVED_EMAIL_KIND) {
+      return this.renderOrderReceived(delivery.order);
+    }
+
+    if (delivery.kind === STAFF_NEW_ORDER_EMAIL_KIND) {
+      return this.renderStaffNewOrder(delivery.order);
+    }
+
+    return this.renderShipment(delivery.order);
   }
 
   private renderOrderReceived(order: EmailOrder): RenderedMessage {
@@ -549,6 +571,56 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
     return { html, subject, text };
   }
 
+  private renderStaffNewOrder(order: EmailOrder): RenderedMessage {
+    const reference = order.publicReference;
+    const hasStripeTotal = order.stripeAmountTotalCents !== null;
+    const displayedTotal = this.formatMoney(
+      order.stripeAmountTotalCents ?? order.totalCents,
+      order.currency
+    );
+    const customerName = order.customerName?.trim() || order.shippingName?.trim() || "Not set";
+    const customerEmail = order.customerEmail?.trim() || "Not set";
+    const paidAt = this.formatDateTime(order.paidAt);
+    const subject = `New paid order ${reference} — ${displayedTotal}`;
+    const detailRows = [
+      this.renderDetailRow("Order reference", reference),
+      this.renderDetailRow("Customer", customerName),
+      this.renderDetailRow("Customer email", customerEmail),
+      this.renderDetailRow(
+        hasStripeTotal ? "Total paid" : "Order total before tax",
+        displayedTotal
+      ),
+      this.renderDetailRow("Paid", paidAt)
+    ].join("");
+    const html = this.renderLayout({
+      eyebrow: "Staff order alert",
+      headline: "A new paid order is ready.",
+      intro: "Stripe payment is confirmed and the order is ready for staff review and fulfillment.",
+      main: `${this.renderItems(order, "Order items")}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;border-collapse:collapse">${detailRows}</table>`,
+      preheader: `New paid Tiger PingPong order ${reference} for ${displayedTotal}.`,
+      reference,
+      staff: true
+    });
+    const text = [
+      "Staff order alert",
+      "",
+      "A new paid order is ready.",
+      "",
+      "Stripe payment is confirmed and the order is ready for staff review and fulfillment.",
+      "",
+      this.renderItemsText(order, "Order items"),
+      `Order reference: ${reference}`,
+      `Customer: ${customerName}`,
+      `Customer email: ${customerEmail}`,
+      `${hasStripeTotal ? "Total paid" : "Order total before tax"}: ${displayedTotal}`,
+      `Paid: ${paidAt}`,
+      "",
+      "Open the protected Tiger PingPong admin to review the complete order."
+    ].join("\n");
+
+    return { html, subject, text };
+  }
+
   private renderLayout(input: {
     eyebrow: string;
     headline: string;
@@ -556,11 +628,16 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
     main: string;
     preheader: string;
     reference: string;
+    staff?: boolean;
   }): string {
-    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#edf9fc;color:#171b2e;font-family:Inter,Arial,sans-serif"><div style="display:none;max-height:0;overflow:hidden;opacity:0">${this.escapeHtml(input.preheader)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fffaf5,#edf9fc);border-collapse:collapse"><tr><td align="center" style="padding:32px 14px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;border-collapse:separate;border-spacing:0;border-radius:32px;background:#ffffff;box-shadow:0 22px 70px rgba(27,36,65,.14);overflow:hidden"><tr><td style="background:#102947;padding:34px 38px"><div style="color:#74c8f2;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Tiger PingPong</div><div style="margin-top:22px;color:#f28a2e;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">${this.escapeHtml(input.eyebrow)}</div><h1 style="margin:8px 0 0;color:#ffffff;font-size:34px;line-height:1.12;letter-spacing:-.03em">${this.escapeHtml(input.headline)}</h1></td></tr><tr><td style="padding:34px 38px"><p style="margin:0;color:#394258;font-size:17px;line-height:1.65">${this.escapeHtml(input.intro)}</p><div style="margin-top:28px">${input.main}</div><div style="margin-top:32px;border-top:1px solid #dce8ef;padding-top:24px;color:#5d6678;font-size:14px;line-height:1.6"><strong style="color:#171b2e">Good gear. Real help. No runaround.</strong><br>Questions? Reply to this email and a real Tiger person will help.<br><span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace">${this.escapeHtml(input.reference)}</span></div></td></tr></table></td></tr></table></body></html>`;
+    const footer = input.staff
+      ? '<strong style="color:#171b2e">Staff notification.</strong><br>Open the protected Tiger PingPong admin to review the complete order.'
+      : '<strong style="color:#171b2e">Good gear. Real help. No runaround.</strong><br>Questions? Reply to this email and a real Tiger person will help.';
+
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#edf9fc;color:#171b2e;font-family:Inter,Arial,sans-serif"><div style="display:none;max-height:0;overflow:hidden;opacity:0">${this.escapeHtml(input.preheader)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fffaf5,#edf9fc);border-collapse:collapse"><tr><td align="center" style="padding:32px 14px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;border-collapse:separate;border-spacing:0;border-radius:32px;background:#ffffff;box-shadow:0 22px 70px rgba(27,36,65,.14);overflow:hidden"><tr><td style="background:#102947;padding:34px 38px"><div style="color:#74c8f2;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Tiger PingPong</div><div style="margin-top:22px;color:#f28a2e;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">${this.escapeHtml(input.eyebrow)}</div><h1 style="margin:8px 0 0;color:#ffffff;font-size:34px;line-height:1.12;letter-spacing:-.03em">${this.escapeHtml(input.headline)}</h1></td></tr><tr><td style="padding:34px 38px"><p style="margin:0;color:#394258;font-size:17px;line-height:1.65">${this.escapeHtml(input.intro)}</p><div style="margin-top:28px">${input.main}</div><div style="margin-top:32px;border-top:1px solid #dce8ef;padding-top:24px;color:#5d6678;font-size:14px;line-height:1.6">${footer}<br><span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace">${this.escapeHtml(input.reference)}</span></div></td></tr></table></td></tr></table></body></html>`;
   }
 
-  private renderItems(order: EmailOrder): string {
+  private renderItems(order: EmailOrder, heading = "Your order"): string {
     const rows = order.items
       .map(
         (item) =>
@@ -568,16 +645,16 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
       )
       .join("");
 
-    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr><td colspan="2" style="padding-bottom:4px;color:#5d6678;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Your order</td></tr>${rows}</table>`;
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr><td colspan="2" style="padding-bottom:4px;color:#5d6678;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">${this.escapeHtml(heading)}</td></tr>${rows}</table>`;
   }
 
-  private renderItemsText(order: EmailOrder): string {
+  private renderItemsText(order: EmailOrder, heading = "Your order"): string {
     const lines = order.items.map(
       (item) =>
         `- ${item.name} × ${item.quantity}: ${this.formatMoney(item.lineTotalCents, order.currency)}`
     );
 
-    return ["Your order", ...lines, ""].join("\n");
+    return [heading, ...lines, ""].join("\n");
   }
 
   private renderDetailRow(label: string, value: string): string {
@@ -605,6 +682,24 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
       dateStyle: "long",
       timeZone: "UTC"
     }).format(value);
+  }
+
+  private formatDateTime(value: Date | null): string {
+    if (!value) {
+      return "Not set";
+    }
+
+    return new Intl.DateTimeFormat("en-CA", {
+      dateStyle: "long",
+      timeStyle: "short",
+      timeZone: "America/Vancouver"
+    }).format(value);
+  }
+
+  private getMissingRecipientError(kind: OrderEmailKind): string {
+    return kind === STAFF_NEW_ORDER_EMAIL_KIND
+      ? "Staff order notification email is not configured."
+      : "Customer email is unavailable.";
   }
 
   private async recordFailure(

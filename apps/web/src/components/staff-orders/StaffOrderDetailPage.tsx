@@ -191,8 +191,8 @@ export default async function StaffOrderDetailPage({
           Order {order.publicReference}
         </h1>
         <p className={styles.intro}>
-          This protected staff page saves shipment details and sends customer tracking email. It
-          does not mutate payment, refund, checkout, or customer data.
+          This protected staff page shows email delivery status, saves shipment details, and sends
+          customer tracking email. It does not mutate payment, refund, checkout, or customer data.
         </p>
         <div className={styles.actions}>
           <Link className={styles.link} href={backHref}>
@@ -263,7 +263,7 @@ export default async function StaffOrderDetailPage({
       <section className={styles.panel} aria-labelledby="staff-order-emails-title">
         <div className={styles.panelHeader}>
           <div>
-            <h2 id="staff-order-emails-title">Customer emails</h2>
+            <h2 id="staff-order-emails-title">Email notifications</h2>
             <p>Resend delivery handoff status. Payment state remains separate and authoritative.</p>
           </div>
           <span className={styles.badge}>Protected</span>
@@ -276,17 +276,24 @@ export default async function StaffOrderDetailPage({
         ) : null}
 
         <div className={styles.summaryGrid}>
-          {(["order_received", "shipment"] as const).map((kind) => {
+          {(["order_received", "staff_new_order", "shipment"] as const).map((kind) => {
             const delivery = getEmailDelivery(order, kind);
             const canRetry =
-              Boolean(order.customerEmail?.trim()) &&
               delivery?.status !== "sent" &&
               delivery?.status !== "sending" &&
-              (kind === "order_received" || Boolean(order.shipment.trackingUrl));
+              (kind === "staff_new_order" ||
+                (Boolean(order.customerEmail?.trim()) &&
+                  (kind === "order_received" || Boolean(order.shipment.trackingUrl))));
+            const label =
+              kind === "order_received"
+                ? "Customer order received"
+                : kind === "staff_new_order"
+                  ? "Staff new order"
+                  : "Customer shipment";
 
             return (
               <div className={styles.summaryCard} key={kind}>
-                <span>{kind === "order_received" ? "Order received" : "Shipment"}</span>
+                <span>{label}</span>
                 <strong>{formatEmailStatus(delivery)}</strong>
                 <small>Sent: {formatDateTime(delivery?.sentAt ?? null)}</small>
                 {delivery?.lastError ? <small>{delivery.lastError}</small> : null}

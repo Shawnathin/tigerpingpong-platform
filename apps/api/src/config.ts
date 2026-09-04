@@ -118,3 +118,7 @@ export function getOrderEmailConfig(env: NodeJS.ProcessEnv = process.env): Order
     replyTo: env.ORDER_EMAIL_REPLY_TO?.trim() || "info@tigerpingpong.com"
   };
 }
+
+export function getStaffOrderEmailRecipient(env: NodeJS.ProcessEnv = process.env): string | null {
+  return env.STAFF_ORDER_EMAIL_TO?.trim() || null;
+}

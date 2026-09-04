@@ -15,6 +15,7 @@ const safeApiEnv = {
   ORDER_EMAIL_FROM: "Tiger PingPong <orders@example.invalid>",
   PORT: "3001",
   RESEND_API_KEY: "re_redacted",
+  STAFF_ORDER_EMAIL_TO: "orders@example.invalid",
   STRIPE_EXPECTED_LIVEMODE: "false",
   STRIPE_SECRET_KEY: "sk_test_redacted",
   STRIPE_TAX_ENABLED: "true",
@@ -68,6 +69,19 @@ describe("production environment validator", () => {
 
     expect(result.status).toBe(1);
     expect(result.stdout).toContain("does not include --expected-origin");
+  });
+
+  it("requires a valid staff order notification recipient", () => {
+    const missing = runValidator({ ...safeApiEnv, STAFF_ORDER_EMAIL_TO: "" }, ["--surface", "api"]);
+    const invalid = runValidator({ ...safeApiEnv, STAFF_ORDER_EMAIL_TO: "not-an-email" }, [
+      "--surface",
+      "api"
+    ]);
+
+    expect(missing.status).toBe(1);
+    expect(missing.stdout).toContain("STAFF_ORDER_EMAIL_TO");
+    expect(invalid.status).toBe(1);
+    expect(invalid.stdout).toContain("must be a valid email address");
   });
 
   it("requires both checkout return URLs to use the expected origin", () => {

@@ -33,6 +33,7 @@ Do not commit real values.
 - `RESEND_API_KEY`
 - `ORDER_EMAIL_FROM`
 - `ORDER_EMAIL_REPLY_TO`
+- `STAFF_ORDER_EMAIL_TO`
 
 ### `tigerpingpong-web`
 
@@ -44,5 +45,5 @@ Do not commit real values.
 - The API should own all database access.
 - The web service should call the API, not Supabase directly.
 - Apply pending Prisma migrations before deploying API code that reads `order_email_deliveries`.
-- `ORDER_EMAIL_FROM` must use a sending domain that is verified in Resend. Keep the API key on the API service only.
+- `ORDER_EMAIL_FROM` must use a sending domain that is verified in Resend. Keep the API key and `STAFF_ORDER_EMAIL_TO` on the API service only.
 - Render deployment is intentionally not part of the foundation task.

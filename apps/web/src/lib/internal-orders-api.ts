@@ -81,7 +81,7 @@ export interface InternalOrderShipmentInput {
 
 export interface InternalOrderEmailDelivery {
   attemptCount: number;
-  kind: "order_received" | "shipment";
+  kind: "order_received" | "staff_new_order" | "shipment";
   lastError: string | null;
   sentAt: string | null;
   status: "failed" | "pending" | "sending" | "sent" | "skipped";

@@ -957,33 +957,6 @@
           }
         },
         {
-          "mediaKey": "tiger-portland-outdoor-table-lifestyle-patio-01",
-          "role": "lifestyle",
-          "variantKey": null,
-          "sortOrder": 9,
-          "isPrimary": false,
-          "altText": "Tiger Portland Outdoor table on a shaded garden patio",
-          "rightsStatus": "owner_cleared",
-          "modelVerification": "scene_only_requires_current_model_reskin",
-          "editorialReviewNote": "The patio environment is retained as a scene reference. The visible table construction is not approved as current-model product truth and must be reskinned before editorial use.",
-          "qualityStatus": "approved",
-          "uploadAction": "reuse",
-          "source": {
-            "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784388274/tigerpingpong/storefront/tables/hero-portland-patio.jpg",
-            "sha256": "f74234261424f52474becd0f98edf6f7948ef5276c1c2be86eca869e3a471a5d",
-            "width": 3264,
-            "height": 2448
-          },
-          "cloudinary": {
-            "assetId": "4da1691b28701f75f49446af9887c7da",
-            "publicId": "tigerpingpong/storefront/tables/hero-portland-patio",
-            "version": "1784388274",
-            "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784388274/tigerpingpong/storefront/tables/hero-portland-patio.jpg"
-          }
-        },
-        {
           "mediaKey": "tiger-portland-outdoor-table-lifestyle-patio-v2-01",
           "role": "lifestyle",
           "variantKey": "tiger-portland-outdoor-table-v2-grey",

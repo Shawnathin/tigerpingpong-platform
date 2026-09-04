@@ -508,3 +508,72 @@ Scope: Mobile-only disclosure treatment for product specifications and table com
 - No product facts, specifications, comparison values, prices, availability, shipping promises, or destinations changed.
 
 final result: passed
+
+---
+
+# Universal Tiger Table Product Page — Design QA
+
+Date: 2026-07-28
+
+Branch: `codex/feature/universal-table-product-pages`
+
+Scope: Universal product-page composition and voice system for Expo Outdoor, Portland Indoor, Portland Outdoor, Whistler Indoor, and Plaza Outdoor.
+
+## Comparison target
+
+- Source visual truth:
+  - `/Users/shawncleve/.codex/visualizations/2026/07/28/019fa6e1-e25b-74b1-835f-df0f310ad311/portland-composite-visual-stage/portland-stage2-copy-desktop.png`
+  - `/Users/shawncleve/.codex/visualizations/2026/07/28/019fa6e1-e25b-74b1-835f-df0f310ad311/portland-composite-visual-stage/portland-stage2-copy-mobile-top.png`
+  - `/Users/shawncleve/.codex/visualizations/2026/07/28/019fa6e1-e25b-74b1-835f-df0f310ad311/portland-composite-visual-stage/portland-stage2-copy-mobile-story-details.png`
+  - `/Users/shawncleve/.codex/visualizations/2026/07/28/019fa6e1-e25b-74b1-835f-df0f310ad311/portland-composite-visual-stage/portland-stage2-specs-mobile-open.png`
+- Implemented route:
+  - `http://127.0.0.1:4181/catalog/products/tiger-portland-outdoor-table`
+- Browser-rendered regression evidence:
+  - `/tmp/tiger-universal-current-route-1440.png`
+  - `/tmp/tiger-universal-current-route-390.png`
+
+## Capture normalization
+
+- Desktop implementation: 1440 × 900 pixels at a 1440 × 900 CSS-pixel viewport, browser scale 1.
+- Mobile implementation: 390 × 844 pixels at a 390 × 844 CSS-pixel viewport, browser scale 1.
+- Additional layout measurements were taken at 417, 768, and 1280 CSS pixels.
+- State: product detail route loaded from the local mock catalog with an empty cart and the first colour/gallery image selected.
+
+## Findings
+
+- No actionable P0, P1, or P2 visual difference remains after same-state comparison of the approved reference and routed implementation.
+- All five active table records render through the same `universal-v1` system. No route falls back to the legacy lower-page composition.
+- The existing family switcher, purchase gallery, colour controls, live catalog price, “In stock. Ready to ship.” message, Add to cart behavior, and cart identity remain intact.
+- The trust strip leads with Made in Germany and uses the current product-page warranty or product facts supplied for that model.
+- Portland Outdoor uses the current grey V2 patio composite. The selected table, black frame, net system, orange branding, red handle, braces, and wheel configuration remain consistent with the current V2 source set.
+- On mobile, the lifestyle image precedes the story copy, the feature carousel uses compact controls and interactive dots underneath, the current product stays first in the contained comparison scroller, and specifications default closed.
+- On desktop, the page preserves the approved restrained proof strip, immersive story stage, one-large-plus-clipped-next detail carousel, three-card comparison, and compact grouped specifications.
+- Portland Outdoor has no document-level horizontal overflow at 390, 417, 768, 1280, or 1440 CSS pixels.
+- All five routes render one H1, the expected trust and feature counts, a current-table comparison card, closed mobile specifications, and no page-level overflow at 390 × 844.
+- Carousel buttons, keyboard arrow navigation, interactive dots, counter updates, disabled end states, and reduced-motion styling are present.
+- The current product pages and catalog remain the authority for factual product descriptions and the published stock message. No current-page fact is withheld as pending in any of the five active page definitions.
+- Browser console review found no application errors.
+
+## Comparison history
+
+- Initial review found a legacy fallback where the routed implementation did not yet match the approved universal composition.
+- Fixes applied:
+  - all five current table records now use the universal renderer;
+  - current product-page descriptions and listed facts are treated as approved source content;
+  - comparison prices use checkout-equivalent effective variant prices and exclude ineligible variants;
+  - comparison images resolve through reviewed current-model media;
+  - the Portland patio scene uses the current grey V2 reskin rather than presenting V1 construction as V2;
+  - universal cards use one image-first layout;
+  - CSS-art product fallbacks were removed.
+- Same-state mobile story comparison used the approved reference and implementation side by side at 390 × 844. The source photo, image-first order, glass/mist visual system, typography, spacing, and responsive crop align; the broadened Portland story is an intentional owner-directed content change.
+
+## Validation
+
+- `pnpm test`: 24 test files passed, 165 tests passed.
+- `pnpm lint`: passed.
+- `pnpm typecheck`: passed.
+- Production-style `pnpm build`: passed.
+- Focused table-page Playwright suite: 7 tests passed; 1 screenshot-only test intentionally skipped.
+- `git diff --check`: passed.
+
+final result: passed

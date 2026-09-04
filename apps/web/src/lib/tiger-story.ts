@@ -83,6 +83,7 @@ interface TigerTableProductGalleryManifest {
       cloudinary: {
         secureUrl: string;
       };
+      localPublicPath?: string;
       mediaKey: string;
       role: string;
       sortOrder: number;
@@ -292,7 +293,7 @@ export function getTigerTableGalleryMedia(productSlug: string): Array<{
       mediaKey: asset.mediaKey,
       role: asset.role,
       sortOrder: asset.sortOrder,
-      src: asset.cloudinary.secureUrl,
+      src: asset.localPublicPath ?? asset.cloudinary.secureUrl,
       variantKey: asset.variantKey
     }));
 }

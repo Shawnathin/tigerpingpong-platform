@@ -238,6 +238,202 @@
             "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575467/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01.jpg",
             "bytes": 135578
           }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-detail-playing-surface-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 9,
+          "isPrimary": false,
+          "altText": "Close-up of the Expo Outdoor table's 5mm melamine resin playing surface",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275352/tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top.webp",
+            "sha256": "33a87c24917dd624eb96db4c68b25fa7d319c739e2952a0756754a03ec5e1825",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top",
+            "version": "1784275352",
+            "format": "webp",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275352/tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top.webp",
+            "bytes": 57540
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-detail-frame-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 10,
+          "isPrimary": false,
+          "altText": "Expo Outdoor table's powder-coated frame and undercarriage",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275353/tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame.webp",
+            "sha256": "7fa9ad14b731bf485bee6b6f33ffa6e72d7c7538ee23daef6619981cf4aa3751",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame",
+            "version": "1784275353",
+            "format": "webp",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275353/tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame.webp",
+            "bytes": 64534
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-detail-folding-system-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 11,
+          "isPrimary": false,
+          "altText": "Red handle for the Expo Outdoor quick-lock folding system",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system.jpg",
+            "sha256": "b7d4f084f73bc2de9116ac80bf03b0e57b2f83bb88f90ac02d05c8fda295e913",
+            "width": 913,
+            "height": 1000
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system",
+            "version": "1784275354",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system.jpg",
+            "bytes": 66381
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-detail-net-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 12,
+          "isPrimary": false,
+          "altText": "Fixed adjustable net attached to the Expo Outdoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net.jpg",
+            "sha256": "960dd0b056d9783657756bf1d4b400a97458e426ef4d1c42bf63bc6fc7c0531b",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net",
+            "version": "1784275354",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net.jpg",
+            "bytes": 135513
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-detail-wheels-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 13,
+          "isPrimary": false,
+          "altText": "Double outdoor wheels on the Expo Outdoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "approved",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275355/tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels.jpg",
+            "sha256": "4cb9a9c9847479477698c5ced2b0aea89e16b4bbb083cd00030b6fcec1e16c6d",
+            "width": 6144,
+            "height": 4096
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels",
+            "version": "1784275355",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275355/tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels.jpg",
+            "bytes": 2872536
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-detail-rollaway-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 14,
+          "isPrimary": false,
+          "altText": "Expo Outdoor table folded into its single-frame rollaway position",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275356/tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway.jpg",
+            "sha256": "33f7f76b45793fbf58b6442cf32f6c7694fb37dd94fb7f9c612c7488bb905a53",
+            "width": 800,
+            "height": 500
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway",
+            "version": "1784275356",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275356/tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway.jpg",
+            "bytes": 50894
+          }
+        },
+        {
+          "mediaKey": "tiger-expo-outdoor-table-detail-storage-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 15,
+          "isPrimary": false,
+          "altText": "Built-in paddle and ball storage on the Expo Outdoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275357/tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage.webp",
+            "sha256": "f0fbea4af2e8d44c12fa44b4b0432b8f4e50c011dc190f76283232bd80987df0",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage",
+            "version": "1784275357",
+            "format": "webp",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275357/tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage.webp",
+            "bytes": 84542
+          }
         }
       ]
     },
@@ -327,6 +523,202 @@
             "format": "jpg",
             "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515186/tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-lobby-v1.jpg",
             "bytes": 1123916
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-detail-playing-surface-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 4,
+          "isPrimary": false,
+          "altText": "Close-up of the Portland Indoor table's 7/8 inch chipboard top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top.jpg",
+            "sha256": "71409351cc7c4c86c14478eee22f5aeecddf60c35ee6fdce73f385de91622466",
+            "width": 450,
+            "height": 450
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top",
+            "version": "1784275361",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top.jpg",
+            "bytes": 53019
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-detail-frame-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 5,
+          "isPrimary": false,
+          "altText": "Powder-coated frame and undercarriage of the Portland Indoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame.jpg",
+            "sha256": "8e73855a895e744e13252676a1aaf559a0a325eaaa8ac94963ea055caca43971",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame",
+            "version": "1784275361",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame.jpg",
+            "bytes": 74925
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-detail-folding-system-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 6,
+          "isPrimary": false,
+          "altText": "Red handle for the Portland Indoor smart locking system",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275362/tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system.jpg",
+            "sha256": "b7d4f084f73bc2de9116ac80bf03b0e57b2f83bb88f90ac02d05c8fda295e913",
+            "width": 913,
+            "height": 1000
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system",
+            "version": "1784275362",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275362/tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system.jpg",
+            "bytes": 66381
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-detail-net-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 7,
+          "isPrimary": false,
+          "altText": "Fixed adjustable net attached to the Portland Indoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275363/tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net.jpg",
+            "sha256": "fc4d92a6bad16583dea46bfd896ddaa4f4f97ff3a119dcf5e9c5e93875b47485",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net",
+            "version": "1784275363",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275363/tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net.jpg",
+            "bytes": 125566
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-detail-wheels-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 8,
+          "isPrimary": false,
+          "altText": "Locking indoor wheel on the Portland Indoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels.jpg",
+            "sha256": "ff35b159b9f556dad59381849e06c6c9306e601335395c5e1b39a7cee9e6a056",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels",
+            "version": "1784275364",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels.jpg",
+            "bytes": 81906
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-detail-indoor-top-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 9,
+          "isPrimary": false,
+          "altText": "Close-up of the Portland Indoor table top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top.jpg",
+            "sha256": "ed8c7c2a380f57077c8713d32a0a27ecafc01f724dae67741abf9c627bcd9621",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top",
+            "version": "1784275364",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top.jpg",
+            "bytes": 58080
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-indoor-table-detail-storage-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 10,
+          "isPrimary": false,
+          "altText": "Built-in paddle and ball storage on the Portland Indoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage.webp",
+            "sha256": "f0fbea4af2e8d44c12fa44b4b0432b8f4e50c011dc190f76283232bd80987df0",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage",
+            "version": "1784275367",
+            "format": "webp",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage.webp",
+            "bytes": 84542
           }
         }
       ]
@@ -572,7 +964,8 @@
           "isPrimary": false,
           "altText": "Tiger Portland Outdoor table on a shaded garden patio",
           "rightsStatus": "owner_cleared",
-          "modelVerification": "verified_current_v2",
+          "modelVerification": "scene_only_requires_current_model_reskin",
+          "editorialReviewNote": "The patio environment is retained as a scene reference. The visible table construction is not approved as current-model product truth and must be reskinned before editorial use.",
           "qualityStatus": "approved",
           "uploadAction": "reuse",
           "source": {
@@ -588,6 +981,35 @@
             "version": "1784388274",
             "format": "jpg",
             "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784388274/tigerpingpong/storefront/tables/hero-portland-patio.jpg"
+          }
+        },
+        {
+          "mediaKey": "tiger-portland-outdoor-table-lifestyle-patio-v2-01",
+          "role": "lifestyle",
+          "variantKey": "tiger-portland-outdoor-table-v2-grey",
+          "sortOrder": 10,
+          "isPrimary": false,
+          "altText": "Grey Tiger Portland Outdoor V2 table on a shaded garden patio",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_v2",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "local_preview_only",
+          "catalogApplyEligible": false,
+          "localPublicPath": "/storefront/prototype/table-pages/portland-outdoor-v2-grey-patio.jpg",
+          "source": {
+            "type": "local_public",
+            "relativePath": "apps/web/public/storefront/prototype/table-pages/portland-outdoor-v2-grey-patio.jpg",
+            "sha256": "67d04533c5b506a9583bd554599ca536f2de0e7f7fa95c8b63c190c1a148c19c",
+            "width": 1448,
+            "height": 1086
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "",
+            "version": "",
+            "format": "jpg",
+            "secureUrl": "",
+            "bytes": 672891
           }
         }
       ]
@@ -679,6 +1101,146 @@
             "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515190/tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-lobby-v1.jpg",
             "bytes": 854767
           }
+        },
+        {
+          "mediaKey": "tiger-whistler-indoor-table-detail-playing-surface-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 4,
+          "isPrimary": false,
+          "altText": "Close-up of the Whistler table's one-inch chipboard top",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top.jpg",
+            "sha256": "b45c9dad878dd449289cefd609061be7f822f35989765796f53a01527991c770",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top",
+            "version": "1784275367",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top.jpg",
+            "bytes": 52910
+          }
+        },
+        {
+          "mediaKey": "tiger-whistler-indoor-table-detail-frame-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 5,
+          "isPrimary": false,
+          "altText": "Powder-coated frame and undercarriage of the Whistler table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame.jpg",
+            "sha256": "4393eab08d8b6720494431999d7492f2ee297296d899cb9b0ea61f6e81163629",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame",
+            "version": "1784275368",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame.jpg",
+            "bytes": 66978
+          }
+        },
+        {
+          "mediaKey": "tiger-whistler-indoor-table-detail-folding-system-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 6,
+          "isPrimary": false,
+          "altText": "Drawbar locking system underneath the Whistler table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system.jpg",
+            "sha256": "55c44d275ebd37177c1ccf281ddb960558f2859de53808530fffb4b183bd8ab9",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system",
+            "version": "1784275368",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system.jpg",
+            "bytes": 78530
+          }
+        },
+        {
+          "mediaKey": "tiger-whistler-indoor-table-detail-net-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 7,
+          "isPrimary": false,
+          "altText": "Fixed adjustable net attached to the Whistler table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275369/tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net.jpg",
+            "sha256": "77cecdb706c55f1ad0f6547a000ae021261db652cd58f58393781269485060e9",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net",
+            "version": "1784275369",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275369/tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net.jpg",
+            "bytes": 107012
+          }
+        },
+        {
+          "mediaKey": "tiger-whistler-indoor-table-detail-wheels-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 8,
+          "isPrimary": false,
+          "altText": "Locking indoor wheel on the Whistler table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275370/tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels.jpg",
+            "sha256": "2f5af66776ab4fccc628b86783eaeebe45e4f197c6366c9af3eaa31992497ca1",
+            "width": 450,
+            "height": 450
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels",
+            "version": "1784275370",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275370/tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels.jpg",
+            "bytes": 77681
+          }
         }
       ]
     },
@@ -765,6 +1327,118 @@
             "format": "jpg",
             "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515192/tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-urban-plaza-v1.jpg",
             "bytes": 1764304
+          }
+        },
+        {
+          "mediaKey": "tiger-plaza-outdoor-table-grey-detail-playing-surface-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 4,
+          "isPrimary": false,
+          "altText": "Close-up of the Plaza Outdoor table's 10mm resin playing surface",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface.jpg",
+            "sha256": "f5f1b540b3c44ecb354a9bbbbfe8af0089f10001f60fdb119801687d0bc9e33d",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface",
+            "version": "1784275358",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface.jpg",
+            "bytes": 52562
+          }
+        },
+        {
+          "mediaKey": "tiger-plaza-outdoor-table-grey-detail-frame-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 5,
+          "isPrimary": false,
+          "altText": "Galvanized steel frame underneath the Plaza Outdoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame.jpg",
+            "sha256": "5035ed27340f515db81befa73667c8d8f653760715b398db25dbdf657ad12331",
+            "width": 800,
+            "height": 600
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame",
+            "version": "1784275358",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame.jpg",
+            "bytes": 43995
+          }
+        },
+        {
+          "mediaKey": "tiger-plaza-outdoor-table-grey-detail-anchoring-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 6,
+          "isPrimary": false,
+          "altText": "Ground anchoring bracket on the Plaza Outdoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275359/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit.jpg",
+            "sha256": "80ed9693c6663b36b29e2a66e64014a8c3cfe75bb7907ecd04a0d5e3fa16d1c7",
+            "width": 800,
+            "height": 500
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit",
+            "version": "1784275359",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275359/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit.jpg",
+            "bytes": 44734
+          }
+        },
+        {
+          "mediaKey": "tiger-plaza-outdoor-table-grey-detail-net-01",
+          "role": "detail",
+          "variantKey": null,
+          "sortOrder": 7,
+          "isPrimary": false,
+          "altText": "Solid metal net on the Plaza Outdoor table",
+          "rightsStatus": "owner_cleared",
+          "modelVerification": "verified_current_model",
+          "qualityStatus": "best_available_current_model",
+          "uploadAction": "presentation_only",
+          "catalogApplyEligible": false,
+          "source": {
+            "type": "cloudinary",
+            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275360/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net.jpg",
+            "sha256": "1fe228d82ef07975b30c239a2a927f4114327d9a48e32dc9103fa9150edc1284",
+            "width": 800,
+            "height": 500
+          },
+          "cloudinary": {
+            "assetId": "",
+            "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net",
+            "version": "1784275360",
+            "format": "jpg",
+            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275360/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net.jpg",
+            "bytes": 49982
           }
         }
       ]

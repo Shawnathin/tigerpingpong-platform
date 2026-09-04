@@ -643,7 +643,7 @@
 }
 
 .resourcesSection nav a[data-resource-kind="support"] {
-  min-height: 36px;
+  min-height: 44px;
   padding: 4px 0;
   border: 0;
   border-radius: 4px;

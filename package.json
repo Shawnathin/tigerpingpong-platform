@@ -16,6 +16,7 @@
     "dev": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build && pnpm --parallel --filter @tigerpingpong/api --filter @tigerpingpong/web dev",
     "dev:api": "pnpm --filter @tigerpingpong/api dev",
     "dev:web": "pnpm --filter @tigerpingpong/web dev",
+    "email:previews": "pnpm --filter @tigerpingpong/api build && node scripts/email/render-order-email-previews.mjs",
     "build": "pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/db build && pnpm --filter @tigerpingpong/api build && pnpm --filter @tigerpingpong/web build",
     "typecheck": "pnpm --filter @tigerpingpong/shared typecheck && pnpm --filter @tigerpingpong/db typecheck && pnpm --filter @tigerpingpong/api typecheck && pnpm --filter @tigerpingpong/web typecheck",
     "lint": "eslint . --max-warnings=0",

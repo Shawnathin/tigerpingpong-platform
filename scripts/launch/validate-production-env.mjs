@@ -130,6 +130,30 @@ const API_VARIABLES = [
     validator: "present"
   },
   {
+    name: "RESEND_API_KEY",
+    surface: "api",
+    required: true,
+    validator: "resend-api-key"
+  },
+  {
+    name: "EMAIL_FROM",
+    surface: "api",
+    required: true,
+    validator: "present"
+  },
+  {
+    name: "ORDER_EMAIL_REPLY_TO",
+    surface: "api",
+    required: false,
+    validator: "present"
+  },
+  {
+    name: "ORDER_NOTIFICATION_EMAIL",
+    surface: "api",
+    required: true,
+    validator: "email"
+  },
+  {
     name: "CLOUDINARY_API_KEY",
     surface: "api",
     required: false,
@@ -309,6 +333,24 @@ function validatePresenceOnly(name, surface, required) {
     );
   }
   return makeResult(name, surface, required, "present", "present (non-empty)");
+}
+
+function validateEmail(name, surface, required, value) {
+  if (!hasValue(value)) {
+    return makeResult(
+      name,
+      surface,
+      required,
+      required ? "missing" : "needs review",
+      required ? "required variable is missing" : "optional variable not set"
+    );
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+    return makeResult(name, surface, required, "invalid", "must be a valid email address");
+  }
+
+  return makeResult(name, surface, required, "present", "valid email address shape");
 }
 
 function validateUrl(name, surface, required, value, expectedOrigin = null) {
@@ -585,6 +627,8 @@ function validateDefinition(definition, expectedMode, expectedOrigin) {
   switch (definition.validator) {
     case "present":
       return validatePresenceOnly(definition.name, definition.surface, definition.required);
+    case "email":
+      return validateEmail(definition.name, definition.surface, definition.required, value);
     case "public-url":
       return validateUrl(
         definition.name,
@@ -631,6 +675,8 @@ function validateDefinition(definition, expectedMode, expectedOrigin) {
         value,
         "whsec_"
       );
+    case "resend-api-key":
+      return validateSecret(definition.name, definition.surface, definition.required, value, "re_");
     case "livemode":
       return validateStripeExpectedMode(
         definition.name,

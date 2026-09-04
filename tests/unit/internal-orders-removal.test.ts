@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { InternalOrdersService } from "../../apps/api/src/internal-orders/internal-orders.service";
 
 const orderRecord = {
+  id: "order-test-001",
   publicReference: "TPP-TEST-001",
   status: "paid",
   currency: "CAD",
@@ -35,6 +36,7 @@ const orderRecord = {
   paidAt: new Date("2026-07-15T18:00:00.000Z"),
   createdAt: new Date("2026-07-15T17:00:00.000Z"),
   updatedAt: new Date("2026-07-16T00:00:00.000Z"),
+  emailDeliveries: [],
   items: [
     {
       productKey: "test-product",
@@ -90,6 +92,7 @@ describe("internal order access without shipment notification columns", () => {
     expect(selectedFields).not.toHaveProperty("shipmentNotificationStatus");
     expect(selectedFields).not.toHaveProperty("shipmentNotificationLastError");
     expect(result.order).not.toHaveProperty("shipmentNotification");
+    expect(result.order.emails).toEqual([]);
     expect(result.order.shipment).toMatchObject({
       carrier: "Canada Post",
       trackingNumber: "TRACK-001"

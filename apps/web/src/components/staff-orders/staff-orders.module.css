@@ -234,6 +234,7 @@
 }
 
 .field input,
+.field select,
 .fieldFull input,
 .fieldFull textarea {
   width: 100%;
@@ -244,6 +245,15 @@
   background: #ffffff;
   color: #26343a;
   font: inherit;
+}
+
+.fieldFull p,
+.summaryCard small {
+  margin: 0;
+  color: #60717a;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .fieldFull textarea {
@@ -271,6 +281,26 @@
 
 .button:hover {
   background: #104b2b;
+}
+
+.secondaryButton {
+  min-height: 34px;
+  width: fit-content;
+  margin-top: 6px;
+  border: 1px solid #b9c8d0;
+  border-radius: 6px;
+  padding: 0 11px;
+  background: #ffffff;
+  color: #26343a;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  border-color: #7f949f;
+  background: #f4f8fa;
 }
 
 .button:disabled {

@@ -16,6 +16,7 @@ pids
 *.pid.lock
 var/scrapes/
 var/import-validation/
+var/email-previews/
 var/reports/
 /images/
 /exports

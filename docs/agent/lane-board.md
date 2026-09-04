@@ -2,16 +2,17 @@
 
 ## In Progress
 
-- `TPP-NANOID-ZERO-SIZE-ADVISORY` on `codex/fix/nanoid-zero-size-advisory` -> `develop`: patch only the transitive lockfile resolution from `nanoid@3.3.17` to `3.3.18`, clear the high-severity dependency gate, and leave application and production behaviour unchanged.
+- `TPP-AUTOMATED-ORDER-EMAILS-RECOVERY` on `codex/feature/automated-order-shipment-emails` -> `develop`: review and prove the recovered Resend outbox, customer paid-order email, staff new-order alert, shipment email, carrier links, and protected retry/status controls on the patched dependency baseline. No DNS, environment, migration, deployment, or production send is part of this lane.
 
 ## Awaiting Review
 
-- `TPP-AUTOMATED-ORDER-EMAILS-RECOVERY` on `codex/feature/automated-order-shipment-emails` -> `develop` in draft PR #165: customer order-received and shipment emails are implemented and locally proven; review follows the nanoid hotfix, while Resend DNS, environment configuration, migration, deployment, and production email proof remain separately gated.
-- `TPP-PADDLEBUDDY-BRAND-SPELLING` on `codex/fix/paddlebuddy-brand-spelling` -> `develop`: correct the published PaddleBuddy policy's spaced brand references to the registered `Tiger PingPong` spelling and add regression proof. Production promotion is owner-approved after required checks pass.
 - Authenticated production admin products/orders proof requires a supervised protected login; unauthenticated route protection and public health are confirmed, but successful protected reads remain unproven.
 
 ## Done
 
+- PR #166 merged the focused `nanoid@3.3.18` high-severity advisory patch into `develop`; local and hosted release readiness passed and no application or production behaviour changed.
+- PR #164 promoted the PaddleBuddy privacy-policy dependency patch and brand-spelling correction from `develop` to production `main`; hosted release readiness passed.
+- PR #163 merged the PaddleBuddy brand-spelling correction into `develop`.
 - PR #160 merged the permanent promotion-lane repair into `develop`; the next `develop -> main` promotion remains separately approval-gated.
 - PR #157 merged the BigCommerce runtime-media decoupling into `develop`; production promotion and deployment remain separately approval-gated.
 - PR #153 promoted the reviewed admin API runtime connection cap to `main`; Render built it successfully but did not release it because the existing uncapped Prisma pre-deploy command exhausted the session pool.
@@ -27,7 +28,7 @@
 - PR #138 merged the focused table-accessory checkout browser-test stabilization into `develop`.
 - PR #133 merged the table-triggered 30% accessory offer, server-authoritative pricing snapshots, Stripe net-line handling, and protected savings presentation into `develop`; migration, targeted catalog write, Stripe test-mode proof, deployment, and promotion remain separately approval-gated.
 - PR #132 merged the Vice bundle catalog foundation with exact bundle SKU `15488` into `develop`; staging and production catalog writes remain separately approval-gated.
-- PR #130 merged Stripe successful-payment owner alerts and required hosted-Checkout phone collection into `develop`.
+- PR #130 merged Stripe successful-payment owner alerts and required hosted-Checkout phone collection into `develop`; the historical worklog records that Shawn's Stripe `Successful payments — Email` preference was enabled and rechecked in the Dashboard.
 - PR #128 merged the Part 40 commerce and replacement-parts foundation into `develop`; production catalog write and deployment remain separately approval-gated.
 - PR #127 merged the branch-policy enforcement task into `develop`; only a later explicitly approved `develop` pull request may promote it to `main`.
 - Created the dedicated `codex/enforce-development-branch-flow` branch from current `develop`; documented and automated the required `task branch -> develop -> main` promotion path.

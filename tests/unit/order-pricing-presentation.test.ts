@@ -6,6 +6,7 @@ import { TABLE_ACCESSORIES_PRICING_RULE_VERSION } from "../../packages/shared/sr
 
 function internalOrderRecord(overrides: Record<string, unknown> = {}) {
   return {
+    id: "order-pricing-001",
     publicReference: "TPP-PRICING-001",
     status: "paid",
     currency: "CAD",
@@ -38,6 +39,7 @@ function internalOrderRecord(overrides: Record<string, unknown> = {}) {
     paidAt: new Date("2026-07-23T18:00:00.000Z"),
     createdAt: new Date("2026-07-23T17:00:00.000Z"),
     updatedAt: new Date("2026-07-23T18:00:00.000Z"),
+    emailDeliveries: [],
     items: [
       {
         productKey: "discounted-accessory",

@@ -228,11 +228,17 @@ export function TigerTableProductPage({
                         <a
                           download={resource.kind === "manual" ? true : undefined}
                           href={resource.href}
+                          data-resource-kind={resource.kind}
+                          aria-label={resource.label}
                           key={resource.id}
                           rel={isExternalUrl(resource.href) ? "noopener noreferrer" : undefined}
                           target={isExternalUrl(resource.href) ? "_blank" : undefined}
                         >
-                          {resource.label}
+                          {resource.kind === "manual"
+                            ? "Installation guide"
+                            : resource.kind === "assembly"
+                              ? "Setup video"
+                              : resource.label}
                           <span aria-hidden="true">›</span>
                         </a>
                       ))}
@@ -257,11 +263,17 @@ export function TigerTableProductPage({
                   <a
                     download={resource.kind === "manual" ? true : undefined}
                     href={resource.href}
+                    data-resource-kind={resource.kind}
+                    aria-label={resource.label}
                     key={resource.id}
                     rel={isExternalUrl(resource.href) ? "noopener noreferrer" : undefined}
                     target={isExternalUrl(resource.href) ? "_blank" : undefined}
                   >
-                    {resource.label}
+                    {resource.kind === "manual"
+                      ? "Installation guide"
+                      : resource.kind === "assembly"
+                        ? "Setup video"
+                        : resource.label}
                     <span aria-hidden="true">›</span>
                   </a>
                 ))}

@@ -17,6 +17,8 @@ All five table definitions, the shared story/feature/comparison/specification re
 
 ## Before production promotion
 
+Owner annotation follow-up (2026-09-04): replaced the equal-height specification card grid with responsive label/value rows, preserving every factual value. Shortened visible resource action labels to Installation guide and Setup video while retaining descriptive accessible names and destinations. Parts/support are secondary text links. Confirmed the local desktop result in the in-app browser; lint and web typecheck pass. Production remains unchanged.
+
 - The recovered Portland patio composite is labelled `local_preview_only`, has no Cloudinary URL, and is excluded from catalog application. Resolve production media approval/storage before releasing this draft. Its local rendition is preserved for review.
 - Comparison requires all three configured models; Portland Indoor comparison therefore disappears while Whistler is absent from the public catalog. Decide whether to retain that behavior or support the remaining two models. Do not publish Whistler merely to complete a comparison.
 - Recovered fact sheets cite a July 28 owner decision and current product records. Review the recovered specifications, warranty language, and media with the page preview before promotion; recovery is not a new confirmation of those claims.

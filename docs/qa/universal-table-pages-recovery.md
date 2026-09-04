@@ -41,3 +41,14 @@ Review the dry-run first. The script targets only `tiger-whistler-indoor-table`,
 Fresh stock-change proof: `pnpm lint`, `pnpm typecheck`, `pnpm test` (190 tests), and production-style `pnpm build` pass. A backend regression test proves an active/public Whistler with checkout scope false is rejected. With `MOCK_WHISTLER_OUT_OF_STOCK=1`, the local browser shows the complete Whistler page, both colour images, Out of stock in the purchase panel and comparison, and no Add to cart button. The mock switch is opt-in and leaves ordinary browser fixtures unchanged. Full browser coverage was not rerun for this final stock-label change; the focused browser inspection supplements the recovery suite above.
 
 Release approval: Shawn said "okay lets move forward" after the production promotion and guarded activation steps were presented. The first hosted final gate passed 91 browser tests but caught support links below the established 44px touch-target threshold. Increased only their minimum clickable height from 36px to 44px, retaining the reviewed secondary-link presentation and unchanged assertions.
+
+## Production completion — 2026-09-04
+
+- PR #169 merged into develop as `67a1aa9`; approved promotion #170 merged into main as `8a124f63e4c5afa7e5e02a02b0142045d0b0295b`.
+- Corrected branch and production promotion both passed full hosted release readiness. Complete local browser suite: 92 passed, 11 existing evidence-only skips. Unit suite: 190 passed.
+- Render API deploy `dep-dadkjarm8hqs73cdf4v0` and web deploy `dep-dadkjarm8hqs73cdf4pg` both show the exact production commit live.
+- Ran the guarded script dry-run, reviewed the exact archived Whistler target, and applied it in the newly deployed API shell. Only status/public navigation/checkout scope changed; price, variants, and media stayed intact.
+- Public catalog confirms Whistler public=true, checkout=false. Homepage, Tables, Whistler, and Portland Outdoor return HTTP 200. Tables and Whistler show Out of stock; Portland renders the new universal table page and resources layout.
+- Live Whistler browser inspection confirms complete gallery/story/specifications and no Add to cart control. Direct POST `/checkout/sessions` for Whistler returns HTTP 400: requested item unavailable; no checkout session created. No paid transaction or email was triggered.
+- No DNS, auth, payment-truth, or email behavior change. The API health check returned HTTP 200. No outage was observed during the checks; this was not continuous uptime monitoring.
+- Deferred: move the owner-reviewed bundled Portland processed image to Cloudinary with preserved provenance, and any further copy/comparison polish. Do not use the current admin available-for-sale toggle to manage visible out-of-stock Whistler; it couples visibility and checkout.

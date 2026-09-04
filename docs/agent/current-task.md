@@ -1,8 +1,8 @@
 # Current Task
 
-## Active task
+## Completed task
 
-Recover and advance automated customer order, staff new-order, and shipment emails onto current `develop` without changing live production.
+Recover, review, activate, and prove automated customer order, staff new-order, and shipment emails.
 
 ## Stable task key
 
@@ -43,6 +43,8 @@ The recovered implementation preserves the current table-accessory pricing and s
 
 PR #166 merged the separate `nanoid@3.3.18` security hotfix into `develop` after complete local and hosted release-readiness proof. The email branch is rebased onto that patched baseline, and the complete local `pnpm launch:preflight` passes.
 
-The live storefront and API health endpoint returned HTTP 200. The owner confirmed on 2026-09-04 that `tigerpingpong.com` and `info@tigerpingpong.com` are already configured in Resend, replacing the abandoned `updates.tigerpingpong.ca` plan. The repository still has no evidence that the outbox migration, Resend API environment, application deployment, or controlled production inbox proof has occurred. Those steps remain separately controlled activation work.
+The owner confirmed on 2026-09-04 that `tigerpingpong.com` and `info@tigerpingpong.com` are configured in Resend, replacing the abandoned `updates.tigerpingpong.ca` plan. PR #165 merged the reviewed implementation into `develop`, and production PR #167 passed the complete hosted gate before merging `develop` into `main` as `79d7f7c`. Render applied `20260823210000_order_email_outbox`, initialized `OrderEmailModule`, and deployed that exact commit to both API and web services. API health, catalog health, and the storefront returned HTTP 200 after release.
+
+The first protected staff-only production proof used an existing paid order without contacting its customer or changing payment/shipment state. The API returned HTTP 201 with `staff_new_order` in `sent` status and a provider acceptance timestamp. Human confirmation that the message arrived in `info@tigerpingpong.com`, plus the first controlled customer order-received and shipment inbox proofs, remain operational follow-up rather than code/deployment blockers.
 
 Before activation, the three messages were moved into a reusable, side-effect-free template module with one shared Tiger email layout. The design and language follow the approved About/Contact treatment, customer messages expose the current support email and phone, and a local preview command renders representative HTML without contacting Resend. Template-focused tests cover shared branding, customer/staff separation, responsive markup, escaping, tracking links, and the pre-tax fallback label.

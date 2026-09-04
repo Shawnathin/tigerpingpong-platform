@@ -10,6 +10,25 @@ The API sends three transactional notifications through Resend:
 
 Email is never payment truth. A send failure cannot roll back or change the order's paid state.
 
+## Reusable templates
+
+All three messages use the shared, side-effect-free template module in
+`apps/api/src/order-emails/order-email.templates.ts`. Delivery concerns stay in the email service;
+the template functions only accept order data and return a subject, HTML body, and plain-text body.
+
+- `renderOrderReceivedEmail`: customer payment-confirmation message.
+- `renderShipmentEmail`: customer carrier and tracking message.
+- `renderStaffNewOrderEmail`: internal new-paid-order alert.
+- `renderTigerEmailLayout`: shared email-safe layout and responsive treatment.
+
+The visual and copy system is derived from the approved About and Contact surfaces: Pacific navy,
+restrained orange, misted background, direct human-support language, and the approved West Coast
+story lines. Customer messages include `info@tigerpingpong.com` and `1-888-552-5259`; the staff
+message uses an internal-only footer.
+
+Run `pnpm email:previews` to build the API and render safe sample HTML into ignored
+`var/email-previews/`. This command does not contact Resend or send email.
+
 ## Delivery and idempotency
 
 - `order_email_deliveries` is the database outbox.
@@ -53,6 +72,7 @@ Do not place these on the browser/web service except where an internal deploymen
 7. Confirm a duplicate webhook does not send another staff alert.
 8. In protected admin, select a carrier and save a test tracking number.
 9. Confirm the generated carrier link, shipment email, protected delivery status, and no duplicate email on webhook/admin retry.
+10. Open all three local previews and confirm desktop/mobile layout before the controlled inbox test.
 
 ## Failure handling
 

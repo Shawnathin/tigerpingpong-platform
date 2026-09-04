@@ -2,6 +2,12 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/commo
 import { createDatabaseConfig, Prisma, PrismaClient } from "@tigerpingpong/db";
 
 import { getOrderEmailConfig, getStaffOrderEmailRecipient, type OrderEmailConfig } from "../config";
+import {
+  renderOrderReceivedEmail,
+  renderShipmentEmail,
+  renderStaffNewOrderEmail,
+  type RenderedOrderEmail
+} from "./order-email.templates";
 
 export const ORDER_RECEIVED_EMAIL_KIND = "order_received";
 export const STAFF_NEW_ORDER_EMAIL_KIND = "staff_new_order";
@@ -31,12 +37,6 @@ interface ResendMessage {
   subject: string;
   text: string;
   to: string[];
-}
-
-interface RenderedMessage {
-  html: string;
-  subject: string;
-  text: string;
 }
 
 const EMAIL_STATUS_PENDING: OrderEmailStatus = "pending";
@@ -78,8 +78,6 @@ const emailOrderSelect = {
     }
   }
 } satisfies Prisma.OrderSelect;
-
-type EmailOrder = Prisma.OrderGetPayload<{ select: typeof emailOrderSelect }>;
 
 const emailDeliveryInclude = {
   order: {
@@ -444,7 +442,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
   private async sendWithResend(
     config: OrderEmailConfig,
     delivery: EmailDeliveryWithOrder,
-    rendered: RenderedMessage,
+    rendered: RenderedOrderEmail,
     recipientEmail: string
   ): Promise<string> {
     const message: ResendMessage = {
@@ -479,221 +477,16 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
     return body.id.trim();
   }
 
-  private renderMessage(delivery: EmailDeliveryWithOrder): RenderedMessage {
+  private renderMessage(delivery: EmailDeliveryWithOrder): RenderedOrderEmail {
     if (delivery.kind === ORDER_RECEIVED_EMAIL_KIND) {
-      return this.renderOrderReceived(delivery.order);
+      return renderOrderReceivedEmail(delivery.order);
     }
 
     if (delivery.kind === STAFF_NEW_ORDER_EMAIL_KIND) {
-      return this.renderStaffNewOrder(delivery.order);
+      return renderStaffNewOrderEmail(delivery.order);
     }
 
-    return this.renderShipment(delivery.order);
-  }
-
-  private renderOrderReceived(order: EmailOrder): RenderedMessage {
-    const reference = order.publicReference;
-    const hasStripeTotal = order.stripeAmountTotalCents !== null;
-    const displayedTotal = this.formatMoney(
-      order.stripeAmountTotalCents ?? order.totalCents,
-      order.currency
-    );
-    const greeting = this.createGreeting(order);
-    const subject = `We’ve got your Tiger PingPong order ${reference}`;
-    const detailRows = [
-      this.renderDetailRow("Order reference", reference),
-      this.renderDetailRow(hasStripeTotal ? "Total paid" : "Order total before tax", displayedTotal)
-    ].join("");
-    const html = this.renderLayout({
-      eyebrow: "Payment confirmed",
-      headline: "We’ve got your order.",
-      intro: `${greeting} Your payment is confirmed. We’ll review the details and get everything ready. We’ll send another email with tracking once it ships.`,
-      main: `${this.renderItems(order)}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;border-collapse:collapse">${detailRows}</table>`,
-      preheader: `Payment confirmed for Tiger PingPong order ${reference}.`,
-      reference
-    });
-    const text = [
-      "Payment confirmed",
-      "",
-      "We’ve got your order.",
-      "",
-      `${greeting} Your payment is confirmed. We’ll review the details and get everything ready. We’ll send another email with tracking once it ships.`,
-      "",
-      this.renderItemsText(order),
-      `Order reference: ${reference}`,
-      `${hasStripeTotal ? "Total paid" : "Order total before tax"}: ${displayedTotal}`,
-      "",
-      "Questions? Reply to this email and a real Tiger person will help."
-    ].join("\n");
-
-    return { html, subject, text };
-  }
-
-  private renderShipment(order: EmailOrder): RenderedMessage {
-    const reference = order.publicReference;
-    const carrier = order.shipmentCarrier?.trim() ?? "your carrier";
-    const trackingNumber = order.shipmentTrackingNumber?.trim() ?? "";
-    const trackingUrl = order.shipmentTrackingUrl?.trim() ?? "";
-    const shippedDate = this.formatDate(order.shipmentShippedAt);
-    const greeting = this.createGreeting(order);
-    const subject = `Your Tiger PingPong order is on the way — ${reference}`;
-    const detailRows = [
-      this.renderDetailRow("Carrier", carrier),
-      this.renderDetailRow("Tracking number", trackingNumber),
-      this.renderDetailRow("Shipped", shippedDate),
-      this.renderDetailRow("Order reference", reference)
-    ].join("");
-    const safeUrl = this.escapeHtmlAttribute(trackingUrl);
-    const html = this.renderLayout({
-      eyebrow: "Shipment update",
-      headline: "Your order is on the way.",
-      intro: `${greeting} Your order has shipped with ${carrier}. Use the link below for the latest tracking details from the carrier.`,
-      main: `<div style="margin:28px 0"><a href="${safeUrl}" style="display:inline-block;border-radius:999px;background:#f28a2e;color:#171b2e;font-size:16px;font-weight:800;line-height:20px;padding:15px 24px;text-decoration:none">Track your order</a></div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${detailRows}</table>`,
-      preheader: `Tracking is ready for Tiger PingPong order ${reference}.`,
-      reference
-    });
-    const text = [
-      "Shipment update",
-      "",
-      "Your order is on the way.",
-      "",
-      `${greeting} Your order has shipped with ${carrier}. Use the link below for the latest tracking details from the carrier.`,
-      "",
-      `Track your order: ${trackingUrl}`,
-      `Carrier: ${carrier}`,
-      `Tracking number: ${trackingNumber}`,
-      `Shipped: ${shippedDate}`,
-      `Order reference: ${reference}`,
-      "",
-      "Questions? Reply to this email and a real Tiger person will help."
-    ].join("\n");
-
-    return { html, subject, text };
-  }
-
-  private renderStaffNewOrder(order: EmailOrder): RenderedMessage {
-    const reference = order.publicReference;
-    const hasStripeTotal = order.stripeAmountTotalCents !== null;
-    const displayedTotal = this.formatMoney(
-      order.stripeAmountTotalCents ?? order.totalCents,
-      order.currency
-    );
-    const customerName = order.customerName?.trim() || order.shippingName?.trim() || "Not set";
-    const customerEmail = order.customerEmail?.trim() || "Not set";
-    const paidAt = this.formatDateTime(order.paidAt);
-    const subject = `New paid order ${reference} — ${displayedTotal}`;
-    const detailRows = [
-      this.renderDetailRow("Order reference", reference),
-      this.renderDetailRow("Customer", customerName),
-      this.renderDetailRow("Customer email", customerEmail),
-      this.renderDetailRow(
-        hasStripeTotal ? "Total paid" : "Order total before tax",
-        displayedTotal
-      ),
-      this.renderDetailRow("Paid", paidAt)
-    ].join("");
-    const html = this.renderLayout({
-      eyebrow: "Staff order alert",
-      headline: "A new paid order is ready.",
-      intro: "Stripe payment is confirmed and the order is ready for staff review and fulfillment.",
-      main: `${this.renderItems(order, "Order items")}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;border-collapse:collapse">${detailRows}</table>`,
-      preheader: `New paid Tiger PingPong order ${reference} for ${displayedTotal}.`,
-      reference,
-      staff: true
-    });
-    const text = [
-      "Staff order alert",
-      "",
-      "A new paid order is ready.",
-      "",
-      "Stripe payment is confirmed and the order is ready for staff review and fulfillment.",
-      "",
-      this.renderItemsText(order, "Order items"),
-      `Order reference: ${reference}`,
-      `Customer: ${customerName}`,
-      `Customer email: ${customerEmail}`,
-      `${hasStripeTotal ? "Total paid" : "Order total before tax"}: ${displayedTotal}`,
-      `Paid: ${paidAt}`,
-      "",
-      "Open the protected Tiger PingPong admin to review the complete order."
-    ].join("\n");
-
-    return { html, subject, text };
-  }
-
-  private renderLayout(input: {
-    eyebrow: string;
-    headline: string;
-    intro: string;
-    main: string;
-    preheader: string;
-    reference: string;
-    staff?: boolean;
-  }): string {
-    const footer = input.staff
-      ? '<strong style="color:#171b2e">Staff notification.</strong><br>Open the protected Tiger PingPong admin to review the complete order.'
-      : '<strong style="color:#171b2e">Good gear. Real help. No runaround.</strong><br>Questions? Reply to this email and a real Tiger person will help.';
-
-    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#edf9fc;color:#171b2e;font-family:Inter,Arial,sans-serif"><div style="display:none;max-height:0;overflow:hidden;opacity:0">${this.escapeHtml(input.preheader)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fffaf5,#edf9fc);border-collapse:collapse"><tr><td align="center" style="padding:32px 14px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;border-collapse:separate;border-spacing:0;border-radius:32px;background:#ffffff;box-shadow:0 22px 70px rgba(27,36,65,.14);overflow:hidden"><tr><td style="background:#102947;padding:34px 38px"><div style="color:#74c8f2;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Tiger PingPong</div><div style="margin-top:22px;color:#f28a2e;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">${this.escapeHtml(input.eyebrow)}</div><h1 style="margin:8px 0 0;color:#ffffff;font-size:34px;line-height:1.12;letter-spacing:-.03em">${this.escapeHtml(input.headline)}</h1></td></tr><tr><td style="padding:34px 38px"><p style="margin:0;color:#394258;font-size:17px;line-height:1.65">${this.escapeHtml(input.intro)}</p><div style="margin-top:28px">${input.main}</div><div style="margin-top:32px;border-top:1px solid #dce8ef;padding-top:24px;color:#5d6678;font-size:14px;line-height:1.6">${footer}<br><span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace">${this.escapeHtml(input.reference)}</span></div></td></tr></table></td></tr></table></body></html>`;
-  }
-
-  private renderItems(order: EmailOrder, heading = "Your order"): string {
-    const rows = order.items
-      .map(
-        (item) =>
-          `<tr><td style="border-bottom:1px solid #e7eef2;padding:14px 0;color:#171b2e;font-size:15px"><strong>${this.escapeHtml(item.name)}</strong><br><span style="color:#5d6678">Qty ${item.quantity}</span></td><td align="right" style="border-bottom:1px solid #e7eef2;padding:14px 0;color:#171b2e;font-size:15px;font-weight:700">${this.escapeHtml(this.formatMoney(item.lineTotalCents, order.currency))}</td></tr>`
-      )
-      .join("");
-
-    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr><td colspan="2" style="padding-bottom:4px;color:#5d6678;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">${this.escapeHtml(heading)}</td></tr>${rows}</table>`;
-  }
-
-  private renderItemsText(order: EmailOrder, heading = "Your order"): string {
-    const lines = order.items.map(
-      (item) =>
-        `- ${item.name} × ${item.quantity}: ${this.formatMoney(item.lineTotalCents, order.currency)}`
-    );
-
-    return [heading, ...lines, ""].join("\n");
-  }
-
-  private renderDetailRow(label: string, value: string): string {
-    return `<tr><td style="border-bottom:1px solid #e7eef2;padding:12px 0;color:#5d6678;font-size:14px">${this.escapeHtml(label)}</td><td align="right" style="border-bottom:1px solid #e7eef2;padding:12px 0;color:#171b2e;font-size:14px;font-weight:700">${this.escapeHtml(value)}</td></tr>`;
-  }
-
-  private createGreeting(order: EmailOrder): string {
-    const name = order.customerName?.trim() || order.shippingName?.trim();
-    return name ? `Hi ${name}.` : "Hi there.";
-  }
-
-  private formatMoney(cents: number, currency: string): string {
-    return new Intl.NumberFormat("en-CA", {
-      currency: currency.trim().toUpperCase(),
-      style: "currency"
-    }).format(cents / 100);
-  }
-
-  private formatDate(value: Date | null): string {
-    if (!value) {
-      return "Not set";
-    }
-
-    return new Intl.DateTimeFormat("en-CA", {
-      dateStyle: "long",
-      timeZone: "UTC"
-    }).format(value);
-  }
-
-  private formatDateTime(value: Date | null): string {
-    if (!value) {
-      return "Not set";
-    }
-
-    return new Intl.DateTimeFormat("en-CA", {
-      dateStyle: "long",
-      timeStyle: "short",
-      timeZone: "America/Vancouver"
-    }).format(value);
+    return renderShipmentEmail(delivery.order);
   }
 
   private getMissingRecipientError(kind: OrderEmailKind): string {
@@ -770,19 +563,6 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
     }
 
     return email;
-  }
-
-  private escapeHtml(value: string): string {
-    return value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  private escapeHtmlAttribute(value: string): string {
-    return this.escapeHtml(value);
   }
 
   private getPrisma(): PrismaClient {

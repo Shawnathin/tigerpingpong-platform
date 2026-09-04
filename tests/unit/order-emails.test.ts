@@ -7,6 +7,12 @@ import {
   STAFF_NEW_ORDER_EMAIL_KIND,
   SHIPMENT_EMAIL_KIND
 } from "../../apps/api/src/order-emails/order-email.service";
+import {
+  renderOrderReceivedEmail,
+  renderShipmentEmail,
+  renderStaffNewOrderEmail,
+  TIGER_EMAIL_THEME
+} from "../../apps/api/src/order-emails/order-email.templates";
 import { StripeWebhookService } from "../../apps/api/src/webhooks/stripe-webhook.service";
 import { buildCarrierTrackingUrl } from "../../packages/shared/src";
 
@@ -367,10 +373,7 @@ describe("transactional email outbox", () => {
   });
 
   it("escapes customer and item content in branded HTML", () => {
-    const service = new OrderEmailService() as unknown as {
-      renderOrderReceived(order: unknown): { html: string; subject: string; text: string };
-    };
-    const rendered = service.renderOrderReceived({
+    const rendered = renderOrderReceivedEmail({
       ...orderRecord,
       customerName: "<script>alert(1)</script>",
       items: [{ name: "Aqua <Red>", quantity: 1, lineTotalCents: 800 }]
@@ -382,11 +385,8 @@ describe("transactional email outbox", () => {
     expect(rendered.subject).toContain(orderRecord.publicReference);
   });
 
-  it("renders a staff alert with fulfillment details and no customer-service footer", () => {
-    const service = new OrderEmailService() as unknown as {
-      renderStaffNewOrder(order: unknown): { html: string; subject: string; text: string };
-    };
-    const rendered = service.renderStaffNewOrder(orderRecord);
+  it("renders a staff alert with fulfilment details and no customer-service footer", () => {
+    const rendered = renderStaffNewOrderEmail(orderRecord);
 
     expect(rendered.subject).toBe("New paid order TPP-TEST-001 — $23.00");
     expect(rendered.text).toContain("Customer: Test Customer");
@@ -394,6 +394,49 @@ describe("transactional email outbox", () => {
     expect(rendered.text).toContain("Order items");
     expect(rendered.html).toContain("Staff notification.");
     expect(rendered.html).not.toContain("Questions? Reply to this email");
+  });
+
+  it("uses one reusable Tiger layout across all order-email templates", () => {
+    const rendered = [
+      renderOrderReceivedEmail(orderRecord),
+      renderShipmentEmail(orderRecord),
+      renderStaffNewOrderEmail(orderRecord)
+    ];
+
+    for (const message of rendered) {
+      expect(message.html).toContain("Tiger <span");
+      expect(message.html).toContain("PingPong.</span>");
+      expect(message.html).toContain(TIGER_EMAIL_THEME.navy);
+      expect(message.html).toContain(TIGER_EMAIL_THEME.orange);
+      expect(message.html).toContain("@media only screen and (max-width: 640px)");
+      expect(message.html).toContain("Raised on the West Coast. Helping across Canada.");
+      expect(message.text).toBeTruthy();
+    }
+  });
+
+  it("carries the Contact page support language into customer emails", () => {
+    const rendered = [renderOrderReceivedEmail(orderRecord), renderShipmentEmail(orderRecord)];
+
+    for (const message of rendered) {
+      expect(message.html).toContain("Need a hand? We’ve got you.");
+      expect(message.html).toContain("info@tigerpingpong.com");
+      expect(message.html).toContain("1-888-552-5259");
+      expect(message.text).toContain("Good gear. Real help. No runaround.");
+    }
+  });
+
+  it("renders the shipment template with a safe escaped tracking action", () => {
+    const rendered = renderShipmentEmail({
+      ...orderRecord,
+      shipmentTrackingUrl: 'https://carrier.example/track?id=one&source="email"'
+    });
+
+    expect(rendered.html).toContain(
+      'href="https://carrier.example/track?id=one&amp;source=&quot;email&quot;"'
+    );
+    expect(rendered.text).toContain(
+      'Track your order: https://carrier.example/track?id=one&source="email"'
+    );
   });
 
   it("uses the configured staff recipient when manually retrying a staff alert", async () => {
@@ -434,10 +477,7 @@ describe("transactional email outbox", () => {
   });
 
   it("does not label a pre-tax fallback as the amount paid", () => {
-    const service = new OrderEmailService() as unknown as {
-      renderOrderReceived(order: unknown): { html: string; subject: string; text: string };
-    };
-    const rendered = service.renderOrderReceived({
+    const rendered = renderOrderReceivedEmail({
       ...orderRecord,
       stripeAmountTotalCents: null
     });

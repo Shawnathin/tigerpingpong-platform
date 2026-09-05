@@ -99,3 +99,13 @@ Freight presets use the existing protected custom-carrier contract (`carrierCode
 Local browser proof checks ACE, Day & Ross, and VanKam form data without submitting, required URL input, stale-link clearing, return to parcel URL generation, print-button sizing/focus, and desktop/mobile screenshots (`order-ltl-desktop.png`, `order-ltl-mobile.png`).
 
 LTL/button refinement verification: all 222 unit tests and 102 standard browser tests passed (12 existing gated skips); lint, typecheck, production build, and tracked-secret scan passed. The prior Prisma checks remain valid because no schema or database-facing implementation changed. No physical printing, shipment submissions, email sends, production writes, merges, or deployment occurred.
+
+## Approved production promotion
+
+Shawn explicitly authorized `develop` → `main` after all tests pass. Promotion PR [#173](https://github.com/Shawnathin/tigerpingpong-platform/pull/173) passed [Release readiness](https://github.com/Shawnathin/tigerpingpong-platform/actions/runs/33937862205) and branch-policy checks on exact source `7fdf22e631896c2bd3e7de0e605202890191db22`, then merged as `8d4c2cbed95de7fec029c99cab39fb63f8b53ce3` at 2026-09-05 02:11 UTC (2026-09-04 Vancouver). No auto-merge or bypass was used for production; every promotion check was explicitly confirmed successful before the merge command.
+
+The promotion passed 222 unit tests and 102 browser tests (12 gated skips), lint, typecheck, Prisma generation/validation, production build, secret scan, and the high/critical dependency gate. The separate local Whistler stock fixture passed again. An earlier task-head run timed out on the dashboard navigation assertion; both the subsequent task-head run and this promotion passed that test and the full suite without retries.
+
+Read-only live smoke: nine checks passed before promotion and nine immediately afterward (home, policy pages, protected admin/internal routes, API/catalog health, and CORS). The live Whistler product was visible with publication enabled and checkout disabled. No production records, checkout sessions, shipments, or emails were created during release verification.
+
+Render rollout completion for the new commit is not established by these immediate smoke checks. Confirm both services run the release before relying on new admin behavior; reload open editors after both update. The intentional mixed-version product-save rejection remains the release safeguard. Preserve existing draft #171 and the completed table-page release history.

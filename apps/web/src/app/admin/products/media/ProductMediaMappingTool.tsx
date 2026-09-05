@@ -57,9 +57,7 @@ export function ProductMediaMappingTool({
         <div className={styles.panelHeader}>
           <div>
             <h2 id="admin-product-media-select-title">Select product</h2>
-            <p>{products.length} products available from the protected admin API.</p>
           </div>
-          <span className={styles.badge}>Protected</span>
         </div>
 
         <form className={styles.controlGrid} method="get">
@@ -107,7 +105,8 @@ export function ProductMediaMappingTool({
                 : "Confirm the API service is reachable and the selected product can be loaded."}
             </p>
             <p className={styles.muted}>
-              Selected product ID: <span className={styles.mono}>{mediaResource.error.selectedProductId}</span>
+              Selected product ID:{" "}
+              <span className={styles.mono}>{mediaResource.error.selectedProductId}</span>
             </p>
           </div>
         </section>

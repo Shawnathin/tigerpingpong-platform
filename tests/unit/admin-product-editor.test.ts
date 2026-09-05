@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { CatalogService } from "../../apps/api/src/catalog/catalog.service";
+
 import { AdminService } from "../../apps/api/src/admin/admin.service";
 
 const updatedAt = new Date("2026-07-16T12:00:00.000Z");
@@ -46,35 +48,40 @@ function createProduct() {
       v1CheckoutScope: true,
       v1PublicNavigation: true
     },
-    media: [{
-      mediaKey: "media-1",
-      role: "primary",
-      cloudinarySecureUrl: "https://res.cloudinary.com/example/image/upload/product.png",
-      sourceUrl: null,
-      isPrimary: true,
-      isPublic: true,
-      isActive: true,
-      reviewStatus: "approved"
-    }],
-    variants: [{
-      id: "variant-1",
-      key: "variant-one",
-      sku: "SKU-1-A",
-      name: "One pack",
-      priceCents: 800,
-      currency: "CAD",
-      purchaseModeOverride: null,
-      isActive: true,
-      sourceUrl: null,
-      optionValues: []
-    }],
+    media: [
+      {
+        mediaKey: "media-1",
+        role: "primary",
+        cloudinarySecureUrl: "https://res.cloudinary.com/example/image/upload/product.png",
+        sourceUrl: null,
+        isPrimary: true,
+        isPublic: true,
+        isActive: true,
+        reviewStatus: "approved"
+      }
+    ],
+    variants: [
+      {
+        id: "variant-1",
+        key: "variant-one",
+        sku: "SKU-1-A",
+        name: "One pack",
+        priceCents: 800,
+        currency: "CAD",
+        purchaseModeOverride: null,
+        isActive: true,
+        sourceUrl: null,
+        optionValues: []
+      }
+    ],
     _count: { media: 1, variants: 1 }
   };
 }
 
 function updateInput(overrides: Record<string, unknown> = {}) {
   return {
-    availableForSale: true,
+    published: true,
+    inStock: true,
     expectedUpdatedAt: updatedAt.toISOString(),
     name: "Updated Product",
     priceCents: 900,
@@ -89,9 +96,9 @@ describe("protected product editor", () => {
       normalizeProductUpdateInput(value: unknown): unknown;
     };
 
-    expect(() => service.normalizeProductUpdateInput({ ...updateInput(), slug: "changed" })).toThrow(
-      "slug is not supported"
-    );
+    expect(() =>
+      service.normalizeProductUpdateInput({ ...updateInput(), slug: "changed" })
+    ).toThrow("slug is not supported");
     expect(() => service.normalizeProductUpdateInput(updateInput({ priceCents: -1 }))).toThrow(
       "priceCents must be null or an integer"
     );
@@ -108,7 +115,7 @@ describe("protected product editor", () => {
     expect(() =>
       service.normalizeProductUpdateInput(
         updateInput({
-          availableForSale: false,
+          inStock: false,
           priceCents: null,
           variants: [{ id: "variant-1", isActive: false, priceCents: null }]
         })
@@ -116,7 +123,7 @@ describe("protected product editor", () => {
     ).not.toThrow();
   });
 
-  it("atomically archives a product and updates its existing variants", async () => {
+  it("marks a published product out of stock without hiding it or clearing variants", async () => {
     const product = createProduct();
     const updateMany = vi.fn(async () => ({ count: 1 }));
     const updateVariant = vi.fn(async () => ({}));
@@ -129,20 +136,24 @@ describe("protected product editor", () => {
       updateProduct(id: string, input: unknown): Promise<unknown>;
     };
     service.prisma = {
-      $transaction: async (callback: (client: typeof transaction) => Promise<void>) => callback(transaction),
+      $transaction: async (callback: (client: typeof transaction) => Promise<void>) =>
+        callback(transaction),
       product: { findUnique: vi.fn(async () => product) }
     };
 
-    await service.updateProduct("product-1", updateInput({ availableForSale: false }));
+    await service.updateProduct("product-1", updateInput({ inStock: false }));
 
     expect(updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          status: "archived",
-          v1CheckoutScope: false,
-          v1PublicNavigation: false
+          v1CheckoutScope: false
         })
       })
+    );
+    expect(updateMany.mock.calls[0]).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ data: expect.objectContaining({ status: "archived" }) })
+      ])
     );
     expect(updateVariant).toHaveBeenCalledWith({
       where: { id: "variant-1" },
@@ -162,7 +173,8 @@ describe("protected product editor", () => {
       updateProduct(id: string, input: unknown): Promise<unknown>;
     };
     service.prisma = {
-      $transaction: async (callback: (client: typeof transaction) => Promise<void>) => callback(transaction)
+      $transaction: async (callback: (client: typeof transaction) => Promise<void>) =>
+        callback(transaction)
     };
 
     await expect(
@@ -181,7 +193,12 @@ describe("protected product editor", () => {
   });
 
   it("refuses to publish a product that has no active checkout variant", async () => {
-    const product = { ...createProduct(), status: "archived", v1PublicNavigation: false, v1CheckoutScope: false };
+    const product = {
+      ...createProduct(),
+      status: "archived",
+      v1PublicNavigation: false,
+      v1CheckoutScope: false
+    };
     const transaction = {
       product: { findUnique: vi.fn(async () => product), updateMany: vi.fn() },
       productVariant: { update: vi.fn() }
@@ -191,7 +208,8 @@ describe("protected product editor", () => {
       updateProduct(id: string, input: unknown): Promise<unknown>;
     };
     service.prisma = {
-      $transaction: async (callback: (client: typeof transaction) => Promise<void>) => callback(transaction)
+      $transaction: async (callback: (client: typeof transaction) => Promise<void>) =>
+        callback(transaction)
     };
 
     await expect(
@@ -203,7 +221,12 @@ describe("protected product editor", () => {
   });
 
   it("refuses to publish an active non-table variant without a price", async () => {
-    const product = { ...createProduct(), status: "archived", v1PublicNavigation: false, v1CheckoutScope: false };
+    const product = {
+      ...createProduct(),
+      status: "archived",
+      v1PublicNavigation: false,
+      v1CheckoutScope: false
+    };
     const transaction = {
       product: { findUnique: vi.fn(async () => product), updateMany: vi.fn() },
       productVariant: { update: vi.fn() }
@@ -213,7 +236,8 @@ describe("protected product editor", () => {
       updateProduct(id: string, input: unknown): Promise<unknown>;
     };
     service.prisma = {
-      $transaction: async (callback: (client: typeof transaction) => Promise<void>) => callback(transaction)
+      $transaction: async (callback: (client: typeof transaction) => Promise<void>) =>
+        callback(transaction)
     };
 
     await expect(
@@ -286,5 +310,178 @@ describe("protected product editor", () => {
     expect(service.getCheckoutEligibility(deferredWhistlerSystem).reasons).not.toContain(
       "replacement_part_deferred"
     );
+  });
+});
+
+describe("independent publication and stock", () => {
+  function harness(overrides: Record<string, unknown> = {}) {
+    const product = { ...createProduct(), ...overrides };
+    const updateMany = vi.fn(async ({ data }: { data: Record<string, unknown> }) => {
+      Object.assign(product, data);
+      return { count: 1 };
+    });
+    const updateVariant = vi.fn(
+      async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
+        Object.assign(product.variants.find((variant) => variant.id === where.id)!, data);
+      }
+    );
+    const transaction = {
+      product: { findUnique: vi.fn(async () => product), updateMany },
+      productVariant: { update: updateVariant }
+    };
+    const service = new AdminService() as unknown as {
+      prisma: unknown;
+      updateProduct(id: string, input: unknown): Promise<unknown>;
+    };
+    service.prisma = {
+      $transaction: async (callback: (client: typeof transaction) => Promise<void>) =>
+        callback(transaction),
+      product: transaction.product
+    };
+    return { service, product, updateMany, updateVariant };
+  }
+
+  it.each([true, false])("hides and republishes while preserving stock=%s", async (inStock) => {
+    const { service, product } = harness({ v1CheckoutScope: inStock });
+    await service.updateProduct(product.id, updateInput({ published: false, inStock }));
+    expect(product).toMatchObject({
+      status: "archived",
+      v1PublicNavigation: false,
+      v1CheckoutScope: inStock
+    });
+    await service.updateProduct(
+      product.id,
+      updateInput({ published: true, inStock, expectedUpdatedAt: product.updatedAt.toISOString() })
+    );
+    expect(product).toMatchObject({
+      status: "active",
+      v1PublicNavigation: true,
+      v1CheckoutScope: inStock
+    });
+  });
+
+  it("preserves published out-of-stock Whistler when changing only its name", async () => {
+    const { service, product } = harness({
+      key: "tiger-whistler-indoor-table",
+      productKind: "table",
+      v1CheckoutScope: false
+    });
+    await service.updateProduct(
+      product.id,
+      updateInput({
+        name: "Whistler",
+        inStock: false,
+        priceCents: product.priceCents,
+        variants: product.variants.map(({ id, isActive, priceCents }) => ({
+          id,
+          isActive,
+          priceCents
+        }))
+      })
+    );
+    expect(product).toMatchObject({
+      name: "Whistler",
+      status: "active",
+      v1PublicNavigation: true,
+      v1CheckoutScope: false
+    });
+    expect(product.variants[0].isActive).toBe(true);
+  });
+
+  it("restores only the variants previously in stock", async () => {
+    const variant = createProduct().variants[0];
+    const { service, product } = harness({
+      variants: [variant, { ...variant, id: "variant-2", isActive: false }]
+    });
+    const variants = product.variants.map(({ id, isActive, priceCents }) => ({
+      id,
+      isActive,
+      priceCents
+    }));
+    await service.updateProduct(product.id, updateInput({ inStock: false, variants }));
+    await service.updateProduct(
+      product.id,
+      updateInput({ inStock: true, variants, expectedUpdatedAt: product.updatedAt.toISOString() })
+    );
+    expect(product.variants.map((item) => item.isActive)).toEqual([true, false]);
+  });
+
+  it("preserves draft state on an unchanged hidden product", async () => {
+    const { service, product } = harness({
+      status: "draft",
+      v1PublicNavigation: false,
+      v1CheckoutScope: false
+    });
+    await service.updateProduct(product.id, updateInput({ published: false, inStock: false }));
+    expect(product.status).toBe("draft");
+  });
+
+  it("allows publishing out of stock without requiring a purchasable variant", async () => {
+    const { service, product } = harness({
+      status: "archived",
+      v1PublicNavigation: false,
+      v1CheckoutScope: false
+    });
+    await service.updateProduct(
+      product.id,
+      updateInput({
+        published: true,
+        inStock: false,
+        variants: [{ id: "variant-1", isActive: false, priceCents: null }]
+      })
+    );
+    expect(product).toMatchObject({
+      status: "active",
+      v1PublicNavigation: true,
+      v1CheckoutScope: false
+    });
+  });
+
+  it.each([
+    { availableForSale: false, expectedUpdatedAt: updatedAt.toISOString() },
+    { ...updateInput(), availableForSale: true },
+    { ...updateInput(), published: undefined },
+    { ...updateInput(), inStock: "true" }
+  ])("rejects obsolete, mixed, and malformed updates before mutation", async (input) => {
+    const { service, updateMany, updateVariant } = harness();
+    await expect(service.updateProduct("product-1", input)).rejects.toMatchObject({ status: 400 });
+    expect(updateMany).not.toHaveBeenCalled();
+    expect(updateVariant).not.toHaveBeenCalled();
+  });
+});
+
+describe("out-of-stock catalog visibility", () => {
+  it("lists and returns the published Whistler after stock is disabled", async () => {
+    const product = {
+      ...createProduct(),
+      key: "tiger-whistler-indoor-table",
+      slug: "tiger-whistler-indoor-table",
+      productKind: "table",
+      v1CheckoutScope: false,
+      media: [],
+      contentSections: [],
+      sourceRelationships: [],
+      targetRelationships: []
+    };
+    const findMany = vi.fn(async () => [product]);
+    const findFirst = vi.fn(async () => product);
+    const catalog = new CatalogService() as unknown as {
+      prisma: unknown;
+      getProducts(options: unknown): Promise<unknown>;
+      getProductBySlug(slug: string, options: unknown): Promise<unknown>;
+    };
+    catalog.prisma = { product: { findMany, findFirst } };
+    const options = { includeInternal: false, includeReplacementParts: false };
+    await expect(catalog.getProducts(options)).resolves.toMatchObject({
+      products: [{ slug: product.slug, v1PublicNavigation: true, v1CheckoutScope: false }]
+    });
+    await expect(catalog.getProductBySlug(product.slug, options)).resolves.toMatchObject({
+      product: { slug: product.slug, v1CheckoutScope: false }
+    });
+    for (const spy of [findMany, findFirst]) {
+      const query = spy.mock.calls[0] as unknown as [{ where: Record<string, unknown> }];
+      expect(query[0].where).toMatchObject({ status: "active", v1PublicNavigation: true });
+      expect(query[0].where).not.toHaveProperty("v1CheckoutScope");
+    }
   });
 });

@@ -260,6 +260,32 @@ describe("server-authoritative checkout", () => {
     expect(service.isProductCheckoutable({ ...whistler, v1CheckoutScope: true })).toBe(true);
   });
 
+  it("rejects out-of-stock Whistler before creating a pending order or Stripe session", async () => {
+    const service = new CheckoutService() as unknown as {
+      createCheckoutSession(body: unknown): Promise<unknown>;
+      readCheckoutConfig: () => unknown;
+      getPrisma: () => unknown;
+      loadCheckoutProducts: () => Promise<Map<string, unknown>>;
+      createPendingOrder: ReturnType<typeof vi.fn>;
+    };
+    const whistler = {
+      ...checkoutProduct,
+      slug: "tiger-whistler-indoor-table",
+      productKind: "table",
+      v1CheckoutScope: false
+    };
+    service.readCheckoutConfig = () => ({});
+    service.getPrisma = () => ({});
+    service.loadCheckoutProducts = async () => new Map([[whistler.slug, whistler]]);
+    service.createPendingOrder = vi.fn();
+    await expect(
+      service.createCheckoutSession({
+        items: [{ productSlug: whistler.slug, quantity: 1, selectedOptions: [] }]
+      })
+    ).rejects.toMatchObject({ status: 400 });
+    expect(service.createPendingOrder).not.toHaveBeenCalled();
+  });
+
   it("allows an approved replacement part while keeping deferred parts unavailable", async () => {
     const service = new CheckoutService() as unknown as {
       createCheckoutSession(body: unknown): Promise<unknown>;

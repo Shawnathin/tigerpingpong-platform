@@ -1,3 +1,4 @@
+import { webOrigin, apiOrigin } from "../e2e-endpoints";
 import { expect, test } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -487,24 +488,24 @@ test("protected shipment form generates the selected carrier tracking link", asy
 test("Nest 11 runtime preserves health, CORS, headers, auth, safe errors, and raw webhook bodies", async ({
   request
 }) => {
-  const health = await request.get("http://127.0.0.1:3102/health");
+  const health = await request.get(`${apiOrigin}/health`);
   expect(health.status()).toBe(200);
   expect(health.headers()["x-frame-options"]).toBe("DENY");
   expect(health.headers()["x-content-type-options"]).toBe("nosniff");
   expect(health.headers()["x-powered-by"]).toBeUndefined();
 
-  const cors = await request.fetch("http://127.0.0.1:3102/checkout/sessions", {
+  const cors = await request.fetch(`${apiOrigin}/checkout/sessions`, {
     headers: {
       "Access-Control-Request-Method": "POST",
-      Origin: "http://127.0.0.1:3100"
+      Origin: webOrigin
     },
     method: "OPTIONS"
   });
   expect(cors.ok()).toBeTruthy();
-  expect(cors.headers()["access-control-allow-origin"]).toBe("http://127.0.0.1:3100");
+  expect(cors.headers()["access-control-allow-origin"]).toBe(webOrigin);
 
   for (const token of [undefined, "wrong-token"]) {
-    const protectedResponse = await request.get("http://127.0.0.1:3102/internal/orders", {
+    const protectedResponse = await request.get(`${apiOrigin}/internal/orders`, {
       headers: token ? { "x-internal-orders-token": token } : undefined
     });
     expect(protectedResponse.status()).toBe(401);
@@ -513,19 +514,16 @@ test("Nest 11 runtime preserves health, CORS, headers, auth, safe errors, and ra
   }
 
   for (const token of [undefined, "wrong-token", "local-test-token"]) {
-    const productWrite = await request.patch(
-      "http://127.0.0.1:3102/api/admin/products/product-local-1",
-      {
-        data: {},
-        headers: token ? { "x-internal-orders-token": token } : undefined
-      }
-    );
+    const productWrite = await request.patch(`${apiOrigin}/api/admin/products/product-local-1`, {
+      data: {},
+      headers: token ? { "x-internal-orders-token": token } : undefined
+    });
     expect(productWrite.status(), `product write token ${token ?? "missing"}`).toBe(
       token === "local-test-token" ? 400 : 401
     );
   }
 
-  const webhook = await request.post("http://127.0.0.1:3102/webhooks/stripe", {
+  const webhook = await request.post(`${apiOrigin}/webhooks/stripe`, {
     data: { type: "checkout.session.completed" },
     headers: { "stripe-signature": "invalid-local-signature" }
   });
@@ -535,7 +533,7 @@ test("Nest 11 runtime preserves health, CORS, headers, auth, safe errors, and ra
   expect(webhookBody).not.toContain("whsec_local_test");
 
   const removedShipmentEmail = await request.post(
-    "http://127.0.0.1:3102/internal/orders/TPP-TEST-001/shipment-email",
+    `${apiOrigin}/internal/orders/TPP-TEST-001/shipment-email`,
     { headers: { "x-internal-orders-token": "local-test-token" } }
   );
   expect(removedShipmentEmail.status()).toBe(404);
@@ -688,7 +686,7 @@ test("staff can safely edit an existing product and stale carts require review",
   await page.goto("/admin/products");
   await Promise.all([
     page.waitForURL(/\/admin\/products\/[^/]+$/),
-    page.getByRole("link", { name: "Edit" }).click()
+    page.locator('a[href="/admin/products/product-local-1"]').click()
   ]);
   await expect(page.getByRole("heading", { name: /Edit Tiger PingPong/i })).toBeVisible({
     timeout: 15_000

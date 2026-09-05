@@ -1,14 +1,25 @@
 # Current Task
 
-## Current selected task: universal table-page recovery
+## Selected: admin safety and usability
+
+Task key: `TPP-ADMIN-SAFETY-USABILITY`. Shawn approved the jointly refined plan on 2026-09-04. Implement independent publication/stock, Vancouver shipment-date defaults, direct dashboard order links, a responsive lean product table, and copy reduction across admin.
+
+Branch: `codex/fix/admin-safety-usability`, isolated from current `develop`. Draft PR targets `develop`; no merge or deployment is authorized. Preserve Whistler as published/out of stock, existing variant choices, auth, checkout/payment/webhooks, and email behavior. All mutation proof uses local fixtures; never submit shipment/email forms or change production records.
+
+Required proof: unit/browser regression coverage, desktop/mobile screenshots, lint, typecheck, Prisma generation/validation, and production build. Status: implemented and locally verified. All 215 unit tests and 98 standard browser tests pass, plus the dedicated out-of-stock storefront test; lint, typecheck, Prisma generation/validation, production build, and security gates pass. Twelve gated browser cases are excluded from the standard run, including the separately exercised stock fixture. Evidence and release considerations: `docs/qa/admin-safety-usability.md`. Draft PR preparation is the remaining handoff step.
+
+Deferred: searchable Orders queue, fulfillment/email filters, audit history, media-editor improvements, quantity inventory, and broad redesign.
+
+
+## Historical completed task: universal table-page recovery
 
 Shawn selected recovery on 2026-09-04. Restore safety stash `ecd2dd5` onto current `develop` on `codex/feature/recover-universal-table-pages`, validate the horizontal feature cards and model-specific stories for all five models, and prepare a draft PR into `develop`.
 
-The stash applied cleanly and remains preserved. Shawn subsequently selected release preparation and asked to publish Whistler with checkout disabled and an Out of stock label. PR #169 includes the reviewed specification/resources layout and removal of the old Portland patio photo. The release preparation adds stock labels and a guarded catalog activation script; production has not changed. Local database initialization currently fails, so activation must run with the working production environment after deployment. Main promotion still requires explicit approval. Fresh screenshots and remaining review points are recorded in `docs/qa/universal-table-pages-recovery.md`.
+PR #169 merged into develop and the separately approved promotion #170 released the table pages on 2026-09-04. Whistler is published with checkout disabled. The detailed production release record remains in the separate draft documentation PR #171; this admin task does not alter that PR or repeat its production actions.
 
 ## Historical completed task: automated emails
 
-The following task card is retained as the previous email milestone, not the scope of the current table recovery.
+The following task card is retained as the previous email milestone, not the scope of the current admin task.
 
 Recover, review, activate, and prove automated customer order, staff new-order, and shipment emails.
 

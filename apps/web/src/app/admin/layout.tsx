@@ -60,7 +60,6 @@ export default function AdminLayout({ children }: Readonly<{ children: ReactNode
               <span>Staff admin</span>
             </span>
           </Link>
-          <span className={styles.readOnlyPill}>Protected V1</span>
         </div>
 
         <nav className={styles.nav} aria-label="Admin navigation">

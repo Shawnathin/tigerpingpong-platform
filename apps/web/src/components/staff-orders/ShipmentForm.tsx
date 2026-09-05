@@ -111,7 +111,7 @@ export default function ShipmentForm({
         )}
       </div>
       <label className={styles.field}>
-        <span>Shipped date</span>
+        <span>Shipped date (Vancouver)</span>
         <input name="shippedDate" type="date" required defaultValue={shippedDate} />
       </label>
       <label className={styles.fieldFull}>

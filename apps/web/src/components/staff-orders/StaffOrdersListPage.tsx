@@ -102,7 +102,6 @@ function getCustomerLabel(order: InternalOrderListItem): string {
 export default async function StaffOrdersListPage({
   adminOrdersHref,
   detailBasePath,
-  eyebrow,
   intro,
   searchParams,
   title
@@ -115,11 +114,10 @@ export default async function StaffOrdersListPage({
   return (
     <main className={styles.page}>
       <section className={styles.header} aria-labelledby="staff-orders-title">
-        <p className={styles.eyebrow}>{eyebrow}</p>
         <h1 className={styles.title} id="staff-orders-title">
           {title}
         </h1>
-        <p className={styles.intro}>{intro}</p>
+        {intro ? <p className={styles.intro}>{intro}</p> : null}
         {adminOrdersHref ? (
           <div className={styles.actions}>
             <Link className={styles.link} href={adminOrdersHref}>
@@ -141,15 +139,12 @@ export default async function StaffOrdersListPage({
           <span
             className={resource.error ? [styles.badge, styles.warning].join(" ") : styles.badge}
           >
-            {resource.error ? "API unavailable" : "Protected"}
+            {resource.error ? "Unavailable" : `${orders.length} orders`}
           </span>
         </div>
 
         {resource.error ? (
-          <p className={styles.emptyText}>
-            Internal orders could not be loaded. Confirm the API service is reachable and the
-            server-side internal token is configured.
-          </p>
+          <p className={styles.emptyText}>Orders could not be loaded. Try again.</p>
         ) : orders.length === 0 ? (
           <p className={styles.emptyText}>No matching orders were found.</p>
         ) : (

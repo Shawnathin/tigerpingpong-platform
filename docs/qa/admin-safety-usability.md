@@ -87,3 +87,15 @@ Changed implementation: `ShipmentForm`, `StaffOrderDetailPage`, the new print ro
 Evidence: `docs/qa/admin-safety/order-summary.png` and `order-summary-mobile.png`; generated local PDF in `output/admin-safety/order-summary-TPP-TEST-002.pdf`. The PDF and all pagination pages were rendered and visually inspected. A physical printer was not used, and shipment/email forms were never submitted.
 
 Follow-up verification: `pnpm test` passed 222 tests across 29 files; `pnpm test:e2e` passed 101 with the same 12 gated skips. Lint, typecheck, Prisma generation/validation, production build, and the tracked-secret scan passed. Build and full browser checks ran against an identical source snapshot in a temporary local directory on ports 3300-3302, preserving the office preview on 3200. Final print layout changes were rechecked in the preview before that complete build/test run. The earlier standalone stock proof and dependency audit remain applicable; neither area changed in this follow-up.
+
+## LTL carrier choices and print-button polish
+
+Shawn selected these refinements through browser comments on 2026-09-04. The order action is now a 44px printer-icon link with a short **Print / PDF** label, balanced padding, no underline, and a visible keyboard focus ring.
+
+The shipment select groups parcel options separately from 31 LTL/freight presets: ACE Courier (owner-selected) and the carriers in [Freightcom's published LTL roster](https://www.freightcom.com/claims), including Day & Ross, Manitoulin, Midland, GLS Freight, VanKam, and Vitran. This is a staff carrier picker, not live rate availability or a Freightcom account integration.
+
+Freight presets use the existing protected custom-carrier contract (`carrierCode: other` with the selected carrier name), so API validation, persistence, and sending behavior are unchanged. Saved names restore the matching preset. Staff paste the actual customer tracking URL from Freightcom or the carrier; no unverified number-to-link URL patterns were added. Parcel links continue to generate automatically. Changing carriers clears the previous custom URL. Unknown carriers remain supported through **Other carrier**.
+
+Local browser proof checks ACE, Day & Ross, and VanKam form data without submitting, required URL input, stale-link clearing, return to parcel URL generation, print-button sizing/focus, and desktop/mobile screenshots (`order-ltl-desktop.png`, `order-ltl-mobile.png`).
+
+LTL/button refinement verification: all 222 unit tests and 102 standard browser tests passed (12 existing gated skips); lint, typecheck, production build, and tracked-secret scan passed. The prior Prisma checks remain valid because no schema or database-facing implementation changed. No physical printing, shipment submissions, email sends, production writes, merges, or deployment occurred.

@@ -206,7 +206,7 @@ test("office can preview and print a protected order summary without mutation", 
   const unauthorized = await request.get("/admin/orders/TPP-TEST-002/print");
   expect(unauthorized.status()).toBe(401);
   await page.goto("/admin/orders/TPP-TEST-002");
-  await page.getByRole("link", { name: "Print order / PDF", exact: true }).click();
+  await page.getByRole("link", { name: "Print / PDF", exact: true }).click();
   await expect(page.getByRole("heading", { name: "TPP-TEST-002", exact: true })).toBeVisible();
   const document = page.getByRole("article", { name: "Printable order summary" });
   await expect(document.getByText("Order total before tax", { exact: true })).toBeVisible();
@@ -254,4 +254,61 @@ test("office can preview and print a protected order summary without mutation", 
   await expect(page.getByText("Tracking: LOCAL-TEST-TRACKING", { exact: true })).toBeVisible();
   await expect(page.getByRole("article")).not.toContainText("Local fixture only.");
   await expect(page.getByRole("article")).not.toContainText("Waiting for tracking");
+});
+
+test("LTL carrier choices preserve the carrier name and require a customer tracking link", async ({
+  page
+}) => {
+  await page.goto("/admin/orders/TPP-TEST-002");
+  const carrier = page.getByRole("combobox", { name: "Carrier", exact: true });
+  const tracking = page.getByLabel("Tracking number", { exact: true });
+  await tracking.fill("LOCAL-PRO-123");
+  for (const [code, label] of [
+    ["ace_courier", "ACE Courier"],
+    ["day_ross", "Day & Ross"],
+    ["vankam", "VanKam"]
+  ]) {
+    await carrier.selectOption(code);
+    await expect(page.locator('input[name="carrierCode"]')).toHaveValue("other");
+    await expect(page.locator('input[name="customCarrier"]')).toHaveValue(label);
+    await expect(page.getByRole("textbox", { name: "Carrier name", exact: true })).toHaveCount(0);
+    const url = page.getByLabel("Tracking URL", { exact: true });
+    await expect(url).toHaveValue("");
+    expect(await url.evaluate((input: HTMLInputElement) => input.validity.valueMissing)).toBe(true);
+    await url.fill("https://example.invalid/tracking/LOCAL-PRO-123");
+    const fields = await page
+      .locator("form")
+      .first()
+      .evaluate((form: HTMLFormElement) => Object.fromEntries(new FormData(form).entries()));
+    expect(fields).toMatchObject({
+      carrierCode: "other",
+      customCarrier: label,
+      trackingNumber: "LOCAL-PRO-123",
+      trackingUrl: "https://example.invalid/tracking/LOCAL-PRO-123"
+    });
+  }
+  await page.screenshot({
+    path: path.join(evidence, "order-ltl-desktop.png"),
+    fullPage: true,
+    style: "nextjs-portal { visibility: hidden; }"
+  });
+  await page.setViewportSize({ width: 390, height: 950 });
+  const print = page.getByRole("link", { name: "Print / PDF", exact: true });
+  await expect(print).toBeVisible();
+  expect(await print.evaluate((link) => getComputedStyle(link).textDecorationLine)).toBe("none");
+  expect((await print.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  await print.focus();
+  await page.screenshot({
+    path: path.join(evidence, "order-ltl-mobile.png"),
+    fullPage: true,
+    style: "nextjs-portal { visibility: hidden; }"
+  });
+  await carrier.selectOption("ups");
+  await expect(page.locator('input[name="customCarrier"]')).toHaveCount(0);
+  await expect(page.locator('input[name="trackingUrl"]')).toHaveValue(
+    "https://www.ups.com/track?loc=en_CA&tracknum=LOCAL-PRO-123"
+  );
+  await carrier.selectOption("other");
+  await expect(page.getByRole("textbox", { name: "Carrier name", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Tracking URL", { exact: true })).toHaveValue("");
 });

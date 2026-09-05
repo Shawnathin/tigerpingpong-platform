@@ -345,3 +345,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+.printLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #c9d2da;
+  border-radius: 9px;
+  color: #17334a;
+  background: #ffffff;
+  box-shadow: 0 2px 5px rgb(23 51 74 / 6%);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.printLink:hover {
+  background: #f3f7fa;
+  border-color: #879dad;
+}
+.printLink:focus-visible {
+  outline: 3px solid #e86f18;
+  outline-offset: 3px;
+}
+.printLink svg {
+  flex: none;
+}

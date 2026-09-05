@@ -1,14 +1,26 @@
 # Current Task
 
-## Current selected task: universal table-page recovery
+## Selected: admin safety and usability
+
+Task key: `TPP-ADMIN-SAFETY-USABILITY`. Shawn approved the jointly refined plan on 2026-09-04. Implement independent publication/stock, Vancouver shipment-date defaults, direct dashboard order links, a responsive lean product table, and copy reduction across admin.
+
+Branch: `codex/fix/admin-safety-usability`, isolated from current `develop`. PR targets `develop`. Shawn approved the verified local result on 2026-09-04 ("perfect - approved"), authorizing the task PR merge into `develop` after hosted checks pass. Production promotion to `main` and deployment remain separately unapproved. Preserve Whistler as published/out of stock, existing variant choices, auth, checkout/payment/webhooks, and email behavior. All mutation proof uses local fixtures; never submit shipment/email forms or change production records.
+
+Required proof: unit/browser regression coverage, desktop/mobile screenshots, lint, typecheck, Prisma generation/validation, and production build. Status: implemented and locally verified. All 222 unit tests and 102 standard browser tests pass, plus the dedicated out-of-stock storefront test; lint, typecheck, Prisma generation/validation, production build, and security gates pass. Twelve gated browser cases are excluded from the standard run, including the separately exercised stock fixture. Evidence and release considerations: `docs/qa/admin-safety-usability.md`. PR [#172](https://github.com/Shawnathin/tigerpingpong-platform/pull/172) targets `develop`. Shawn review is complete. Hosted checks and the approved merge commit into `develop` are pending; production promotion remains a separate approval.
+
+Shawn extended this task during local order review: clarify automatic carrier tracking links and add an office-printable order summary containing customer/address, items, prices, totals, and tracking. Missing tracking reads **Waiting for tracking**. Use the browser print dialog for paper or Save as PDF; no shipment/email submissions are authorized. Shawn then requested a cleaner print button and ACE/Day & Ross plus Freightcom LTL carrier choices; these are also authorized in this task.
+
+Deferred: searchable Orders queue, fulfillment/email filters, audit history, media-editor improvements, quantity inventory, and broad redesign.
+
+## Historical completed task: universal table-page recovery
 
 Shawn selected recovery on 2026-09-04. Restore safety stash `ecd2dd5` onto current `develop` on `codex/feature/recover-universal-table-pages`, validate the horizontal feature cards and model-specific stories for all five models, and prepare a draft PR into `develop`.
 
-The stash applied cleanly and remains preserved. Shawn subsequently selected release preparation and asked to publish Whistler with checkout disabled and an Out of stock label. PR #169 includes the reviewed specification/resources layout and removal of the old Portland patio photo. The release preparation adds stock labels and a guarded catalog activation script; production has not changed. Local database initialization currently fails, so activation must run with the working production environment after deployment. Main promotion still requires explicit approval. Fresh screenshots and remaining review points are recorded in `docs/qa/universal-table-pages-recovery.md`.
+PR #169 merged into develop and the separately approved promotion #170 released the table pages on 2026-09-04. Whistler is published with checkout disabled. The detailed production release record remains in the separate draft documentation PR #171; this admin task does not alter that PR or repeat its production actions.
 
 ## Historical completed task: automated emails
 
-The following task card is retained as the previous email milestone, not the scope of the current table recovery.
+The following task card is retained as the previous email milestone, not the scope of the current admin task.
 
 Recover, review, activate, and prove automated customer order, staff new-order, and shipment emails.
 

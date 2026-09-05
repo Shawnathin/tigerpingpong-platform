@@ -6,19 +6,14 @@ import {
   type AdminProductListItem,
   type AdminProductsResponse
 } from "../../../lib/admin-api";
-import {
-  formatBoolean,
-  formatMoney,
-  formatNullable,
-  formatStatus
-} from "../admin-format";
+import { formatMoney, formatStatus } from "../admin-format";
 import styles from "../admin.module.css";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Admin Products | Tiger Ping Pong",
-  description: "Protected read-only Tiger Ping Pong admin product list."
+  description: "Tiger PingPong product management."
 };
 
 interface ProductsResource {
@@ -39,75 +34,87 @@ async function loadProducts(): Promise<ProductsResource> {
   }
 }
 
-function getCheckoutEligibility(product: AdminProductListItem): string {
-  if (product.checkoutEligible) {
-    return "Eligible";
-  }
-
-  if (product.checkoutEligibilityReasons.length === 0) {
-    return "Not eligible";
-  }
-
-  return product.checkoutEligibilityReasons.map(formatStatus).join(", ");
-}
-
-function getImageWarning(product: AdminProductListItem): string {
-  if (product.imageStatus.status === "public_image_available") {
-    return "None";
-  }
-
-  return formatStatus(product.imageStatus.status);
-}
-
 function renderProductsTable(products: AdminProductListItem[]) {
-  if (products.length === 0) {
-    return <p className={styles.emptyText}>No admin products were returned.</p>;
-  }
-
+  if (products.length === 0) return <p className={styles.emptyText}>No products.</p>;
   return (
-    <div className={styles.tableWrap}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Product name</th>
-            <th>Slug</th>
-            <th>Price</th>
-            <th>Category / type</th>
-            <th>Visibility / status</th>
-            <th>Checkout eligibility</th>
-            <th>Image warning</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
+    <table className={styles.productTable}>
+      <thead>
+        <tr>
+          <th>Product / SKU</th>
+          <th>Price</th>
+          <th>Publication</th>
+          <th>Stock</th>
+          <th>
+            <span className={styles.srOnly}>Edit</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {products.map((product) => {
+          const published = product.status === "active" && product.visible;
+          const reasons = product.checkoutEligibilityReasons.filter(
+            (reason) =>
+              !["product_not_active", "not_public_navigation", "not_checkout_scope"].includes(
+                reason
+              )
+          );
+          const warnings = product.v1CheckoutScope
+            ? [...reasons.map(formatStatus), ...(product.stockWarnings ?? [])]
+            : [];
+          if (product.imageStatus.status !== "public_image_available")
+            warnings.push(formatStatus(product.imageStatus.status));
+          return (
             <tr key={product.id}>
-              <td>
-                <div>{product.name}</div>
-                <div className={styles.muted}>{formatNullable(product.sku)}</div>
+              <td className={styles.productIdentity}>
+                <strong>{product.name}</strong>
+                {product.sku ? <span className={styles.muted}>{product.sku}</span> : null}
+                {warnings.length ? (
+                  <span className={styles.stockWarning}>Needs attention</span>
+                ) : null}
+                <details className={styles.productDetails}>
+                  <summary>Details</summary>
+                  <dl>
+                    <div>
+                      <dt>Category</dt>
+                      <dd>{product.category.name}</dd>
+                    </div>
+                    <div>
+                      <dt>Slug</dt>
+                      <dd>{product.slug}</dd>
+                    </div>
+                    <div>
+                      <dt>Purchase mode</dt>
+                      <dd>{formatStatus(product.purchaseMode)}</dd>
+                    </div>
+                  </dl>
+                  {warnings.length ? (
+                    <ul>
+                      {warnings.map((warning) => (
+                        <li key={warning}>{warning}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </details>
               </td>
-              <td className={styles.mono}>{product.slug}</td>
-              <td>{formatMoney(product.priceCents, product.currency)}</td>
-              <td>
-                <div>{product.category.name}</div>
-                <div className={styles.muted}>{formatStatus(product.type)}</div>
+              <td data-label="Price" className={styles.productPrice}>
+                {formatMoney(product.priceCents, product.currency)}
               </td>
-              <td>
-                <div>{formatStatus(product.status)}</div>
-                <div className={styles.muted}>Visible: {formatBoolean(product.visible)}</div>
-              </td>
-              <td>{getCheckoutEligibility(product)}</td>
-              <td>{getImageWarning(product)}</td>
-              <td>
-                <Link className={styles.secondaryButton} href={`/admin/products/${product.id}`}>
+              <td data-label="Publication">{published ? "Published" : "Hidden"}</td>
+              <td data-label="Stock">{product.v1CheckoutScope ? "In stock" : "Out of stock"}</td>
+              <td className={styles.productAction}>
+                <Link
+                  className={styles.secondaryButton}
+                  href={`/admin/products/${encodeURIComponent(product.id)}`}
+                  aria-label={`Edit ${product.name}`}
+                >
                   Edit
                 </Link>
               </td>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }
 
@@ -118,32 +125,21 @@ export default async function AdminProductsPage() {
   return (
     <div className={styles.pageStack}>
       <section className={styles.pageHeader} aria-labelledby="admin-products-title">
-        <p className={styles.eyebrow}>Protected admin</p>
         <h1 className={styles.title} id="admin-products-title">
           Products
         </h1>
-        <p className={styles.intro}>
-          Review existing products and safely update names, prices, and availability.
-        </p>
       </section>
 
       <section className={styles.panel} aria-labelledby="admin-products-list-title">
-        <div className={styles.panelHeader}>
-          <div>
-            <h2 id="admin-products-list-title">Product list</h2>
-            <p>Catalog status, checkout scope, and image readiness from the protected admin API.</p>
-          </div>
-          <span className={styles.badge}>Protected editing</span>
-        </div>
+        <h2 id="admin-products-list-title" className={styles.srOnly}>
+          Product list
+        </h2>
 
         {resource.data ? (
           renderProductsTable(products)
         ) : (
           <div className={styles.alert}>
-            <p>
-              Admin products could not be loaded. Confirm the API service and server-side admin
-              token are configured.
-            </p>
+            <p>Products could not be loaded. Try again.</p>
           </div>
         )}
       </section>

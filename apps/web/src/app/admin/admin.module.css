@@ -709,3 +709,146 @@
     grid-column: 1;
   }
 }
+
+/* Product-specific layout: technical values may wrap; prices and actions never do. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.productTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.productTable th,
+.productTable td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #e5eadf;
+  text-align: left;
+  vertical-align: top;
+}
+.productTable th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+.productTable tr:last-child td {
+  border-bottom: 0;
+}
+.productIdentity {
+  width: 45%;
+  overflow-wrap: anywhere;
+}
+.productIdentity > strong,
+.productIdentity > span {
+  display: block;
+  margin-bottom: 6px;
+}
+.productPrice,
+.productAction,
+.productAction a {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+.productAction a {
+  min-width: 56px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.productDetails {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+.productDetails summary {
+  cursor: pointer;
+  width: fit-content;
+  padding: 6px 0;
+  color: #4b5563;
+}
+.productDetails dl {
+  margin: 12px 0;
+}
+.productDetails dt {
+  font-weight: 700;
+}
+.productDetails dd {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+.stockWarning {
+  color: #8a4a13;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.variantStatus {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+.editorGrid {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+@media (max-width: 640px) {
+  .productTable,
+  .productTable tbody,
+  .productTable tr,
+  .productTable td {
+    display: block;
+    width: auto;
+  }
+  .productTable thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+  .productTable tr {
+    padding: 16px 0;
+    border-bottom: 1px solid #e5eadf;
+  }
+  .productTable td {
+    border: 0;
+    padding: 6px 0;
+  }
+  .productTable td[data-label] {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .productTable td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 700;
+  }
+  .productAction {
+    text-align: right !important;
+  }
+  .editorGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media print {
+  .shell:has([data-order-print]) {
+    min-height: 0;
+    background: white;
+  }
+  .shell:has([data-order-print]) .topbar {
+    display: none;
+  }
+  .shell:has([data-order-print]) .content {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}

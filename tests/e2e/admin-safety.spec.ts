@@ -1,0 +1,314 @@
+import { mockOrigin } from "../e2e-endpoints";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
+import { expect, test } from "@playwright/test";
+import { getVancouverDate } from "../../apps/web/src/components/staff-orders/shipment-date";
+
+const fixtureHeaders = { "x-internal-orders-token": "local-test-token" };
+const evidence = path.resolve("output/admin-safety");
+
+test.beforeEach(async ({ page }) => {
+  await page.setExtraHTTPHeaders({
+    Authorization: `Basic ${Buffer.from("local-admin:local-password").toString("base64")}`
+  });
+  // Shipment/email forms are never submitted, including against the fixture service.
+  await page.route("**/admin/orders/**", (route) => {
+    if (route.request().method() === "POST")
+      throw new Error("Shipment/email submission is forbidden in this suite");
+    return route.continue();
+  });
+  await mkdir(evidence, { recursive: true });
+});
+
+for (const width of [1440, 1200, 768, 390]) {
+  test(`lean products remain readable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto("/admin/products");
+    await expect(page.getByRole("heading", { name: "Products", exact: true })).toBeVisible();
+    const row = page
+      .locator("tr")
+      .filter({ has: page.locator('a[href="/admin/products/whistler-local"]') });
+    await expect(row.getByText("Published", { exact: true })).toBeVisible();
+    await expect(row.getByText("Out of stock", { exact: true })).toBeVisible();
+    const edit = row.getByRole("link", { name: /^Edit / });
+    await expect(edit).toBeVisible();
+    const price = row.locator('[data-label="Price"]');
+    expect(
+      await price.evaluate((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        return Array.from(range.getClientRects()).length;
+      })
+    ).toBe(1);
+    expect(await edit.evaluate((element) => getComputedStyle(element).whiteSpace)).toBe("nowrap");
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    ).toBe(true);
+    const details = row.locator("details");
+    await details.locator("summary").focus();
+    await page.keyboard.press("Enter");
+    await expect(details).toHaveAttribute("open", "");
+    await expect(details.getByText("Slug", { exact: true })).toBeVisible();
+    await page.keyboard.press("Enter");
+    await page.screenshot({
+      path: path.join(evidence, `products-${width}.png`),
+      fullPage: true,
+      style: "nextjs-portal { visibility: hidden; }"
+    });
+  });
+}
+
+test("dashboard opens the selected order and shows Vancouver default without submitting", async ({
+  page
+}) => {
+  await page.goto("/admin");
+  await expect(page.getByText("TPP-TEST-002", { exact: true })).toHaveAttribute(
+    "href",
+    "/admin/orders/TPP-TEST-002"
+  );
+  await page.screenshot({
+    path: path.join(evidence, "dashboard.png"),
+    fullPage: true,
+    style: "nextjs-portal { visibility: hidden; }"
+  });
+  const before = getVancouverDate();
+  await page.getByRole("link", { name: "TPP-TEST-002", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Order TPP-TEST-002", exact: true })
+  ).toBeVisible();
+  expect([before, getVancouverDate()]).toContain(
+    await page.getByLabel("Shipped date (Vancouver)").inputValue()
+  );
+  await expect(page.getByRole("button", { name: "Save and email tracking" })).toBeVisible();
+  await page.screenshot({
+    path: path.join(evidence, "order.png"),
+    fullPage: true,
+    style: "nextjs-portal { visibility: hidden; }"
+  });
+  await page.goto("/admin/orders/TPP-TEST-001");
+  await expect(page.getByLabel("Shipped date (Vancouver)")).toHaveValue("2026-07-16");
+});
+
+test("Whistler publication and stock remain independent through fixture saves", async ({
+  page,
+  request
+}) => {
+  const reset = () =>
+    request.post(`${mockOrigin}/__test/admin-whistler/reset`, { headers: fixtureHeaders });
+  expect((await reset()).ok()).toBe(true);
+  try {
+    await page.goto("/admin/products/whistler-local");
+    await expect(page.getByLabel("Publication", { exact: true })).toHaveValue("true");
+    await expect(page.getByLabel("Stock", { exact: true })).toHaveValue("false");
+    const variants = page.locator('input[name^="variantActive:"]');
+    await expect(variants).toHaveCount(2);
+    await expect(variants.nth(0)).toBeChecked();
+    await expect(page.getByText("Blocked: product out of stock", { exact: true })).toHaveCount(2);
+    await page.getByLabel("Product name").fill("Tiger PingPong Whistler — local fixture");
+    await page.getByRole("button", { name: "Save product" }).click();
+    await expect(page.getByText("Product changes were saved.")).toBeVisible();
+    await expect(page.getByLabel("Publication", { exact: true })).toHaveValue("true");
+    await expect(page.getByLabel("Stock", { exact: true })).toHaveValue("false");
+    await variants.nth(1).uncheck();
+    await page.getByLabel("Stock", { exact: true }).selectOption("true");
+    await page.getByRole("button", { name: "Save product" }).click();
+    await expect(page.getByText("Product changes were saved.")).toBeVisible();
+    await expect(variants.nth(0)).toBeChecked();
+    await expect(variants.nth(1)).not.toBeChecked();
+    await page.getByLabel("Publication", { exact: true }).selectOption("false");
+    await expect(page.getByText("Blocked: product hidden", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Save product" }).click();
+    await expect(page.getByLabel("Stock", { exact: true })).toHaveValue("true");
+    await page.getByLabel("Publication", { exact: true }).selectOption("true");
+    await page.getByRole("button", { name: "Save product" }).click();
+    await expect(page.getByLabel("Stock", { exact: true })).toHaveValue("true");
+    await variants.nth(0).uncheck();
+    await expect(
+      page.getByRole("alert").filter({ hasText: "All variants are out of stock" })
+    ).toBeVisible();
+    await page.getByLabel("Stock", { exact: true }).selectOption("false");
+    await expect(
+      page.getByRole("alert").filter({ hasText: "All variants are out of stock" })
+    ).toHaveCount(0);
+    await page.getByRole("button", { name: "Save product" }).click();
+    await expect(page.getByText("Product changes were saved.")).toBeVisible();
+  } finally {
+    await reset();
+  }
+  await page.goto("/admin/products/whistler-local");
+  for (const width of [1200, 390]) {
+    await page.setViewportSize({ width, height: 950 });
+    await expect(page.getByLabel("Publication", { exact: true })).toHaveValue("true");
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    ).toBe(true);
+    await page.screenshot({
+      path: path.join(evidence, `editor-${width}.png`),
+      fullPage: true,
+      style: "nextjs-portal { visibility: hidden; }"
+    });
+  }
+});
+
+test("Orders preview opens a paid order awaiting shipment and an already shipped order", async ({
+  page
+}) => {
+  await page.goto("/admin/orders");
+  await page.getByRole("link", { name: "TPP-TEST-002", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Order TPP-TEST-002", exact: true })
+  ).toBeVisible();
+  await expect(page.getByLabel("Tracking number", { exact: true })).toHaveValue("");
+  await expect(
+    page.getByRole("button", { name: "Save and email tracking", exact: true })
+  ).toBeVisible();
+  const shipmentCard = page.getByText("Customer shipment", { exact: true }).locator("..");
+  await expect(shipmentCard).toContainText("Not queued");
+  await page.getByRole("link", { name: "Back to orders", exact: true }).click();
+  await page.getByRole("link", { name: "TPP-TEST-001", exact: true }).click();
+  await expect(page.getByLabel("Tracking number", { exact: true })).toHaveValue(
+    "LOCAL-TEST-TRACKING"
+  );
+  await expect(page.getByText("Customer shipment", { exact: true }).locator("..")).toContainText(
+    "Sent"
+  );
+});
+
+test("new shipment generates a tracking URL after choosing a carrier", async ({ page }) => {
+  await page.goto("/admin/orders/TPP-TEST-002");
+  await expect(page.getByRole("combobox", { name: "Carrier", exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Tracking URL", { exact: true })).toHaveCount(0);
+  await page.getByLabel("Tracking number", { exact: true }).fill("1Z 999");
+  await page.getByRole("combobox", { name: "Carrier", exact: true }).selectOption("ups");
+  await expect(
+    page.getByRole("link", {
+      name: "https://www.ups.com/track?loc=en_CA&tracknum=1Z%20999",
+      exact: true
+    })
+  ).toBeVisible();
+  await page.getByRole("combobox", { name: "Carrier", exact: true }).selectOption("fedex");
+  await expect(
+    page.getByRole("link", {
+      name: "https://www.fedex.com/fedextrack/?trknbr=1Z%20999",
+      exact: true
+    })
+  ).toBeVisible();
+  await page.getByLabel("Tracking number", { exact: true }).fill("");
+  await expect(page.locator('input[name="trackingUrl"]')).toHaveValue("");
+  await page.getByRole("combobox", { name: "Carrier", exact: true }).selectOption("other");
+  await expect(page.getByLabel("Tracking URL", { exact: true })).toBeVisible();
+});
+
+test("office can preview and print a protected order summary without mutation", async ({
+  page,
+  request
+}) => {
+  const unauthorized = await request.get("/admin/orders/TPP-TEST-002/print");
+  expect(unauthorized.status()).toBe(401);
+  await page.goto("/admin/orders/TPP-TEST-002");
+  await page.getByRole("link", { name: "Print / PDF", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "TPP-TEST-002", exact: true })).toBeVisible();
+  const document = page.getByRole("article", { name: "Printable order summary" });
+  await expect(document.getByText("Order total before tax", { exact: true })).toBeVisible();
+  await expect(document.getByText("Waiting for tracking", { exact: true })).toBeVisible();
+  await expect(document).not.toContainText("Local fixture only");
+  await expect(document).not.toContainText("cs_test");
+  await page.evaluate(() => {
+    window.print = () => {
+      document.body.dataset.printRequested = "true";
+    };
+  });
+  await page.getByRole("button", { name: "Print / Save PDF", exact: true }).click();
+  await expect(page.locator("body")).toHaveAttribute("data-print-requested", "true");
+  for (const width of [1440, 768, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    ).toBe(true);
+    await page.screenshot({
+      path: path.join(evidence, `order-print-${width}.png`),
+      fullPage: true,
+      style: "nextjs-portal { visibility: hidden; }"
+    });
+  }
+  await page.emulateMedia({ media: "print" });
+  await expect(page.getByRole("navigation", { name: "Admin navigation" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Print / Save PDF", exact: true })).toBeHidden();
+  await page.pdf({
+    path: path.join(evidence, "order-summary-TPP-TEST-002.pdf"),
+    preferCSSPageSize: true,
+    printBackground: true
+  });
+  // Stress pagination using only synthetic fixture rows; no order is changed.
+  await page.evaluate(() => {
+    const table = document.querySelector("article tbody")!;
+    const row = table.firstElementChild!;
+    for (let index = 0; index < 24; index++) table.append(row.cloneNode(true));
+  });
+  await page.pdf({
+    path: path.join(evidence, "order-summary-pagination.pdf"),
+    preferCSSPageSize: true,
+    printBackground: true
+  });
+  await page.goto("/admin/orders/TPP-TEST-001/print");
+  await expect(page.getByText("Tracking: LOCAL-TEST-TRACKING", { exact: true })).toBeVisible();
+  await expect(page.getByRole("article")).not.toContainText("Local fixture only.");
+  await expect(page.getByRole("article")).not.toContainText("Waiting for tracking");
+});
+
+test("LTL carrier choices preserve the carrier name and require a customer tracking link", async ({
+  page
+}) => {
+  await page.goto("/admin/orders/TPP-TEST-002");
+  const carrier = page.getByRole("combobox", { name: "Carrier", exact: true });
+  const tracking = page.getByLabel("Tracking number", { exact: true });
+  await tracking.fill("LOCAL-PRO-123");
+  for (const [code, label] of [
+    ["ace_courier", "ACE Courier"],
+    ["day_ross", "Day & Ross"],
+    ["vankam", "VanKam"]
+  ]) {
+    await carrier.selectOption(code);
+    await expect(page.locator('input[name="carrierCode"]')).toHaveValue("other");
+    await expect(page.locator('input[name="customCarrier"]')).toHaveValue(label);
+    await expect(page.getByRole("textbox", { name: "Carrier name", exact: true })).toHaveCount(0);
+    const url = page.getByLabel("Tracking URL", { exact: true });
+    await expect(url).toHaveValue("");
+    expect(await url.evaluate((input: HTMLInputElement) => input.validity.valueMissing)).toBe(true);
+    await url.fill("https://example.invalid/tracking/LOCAL-PRO-123");
+    const fields = await page
+      .locator("form")
+      .first()
+      .evaluate((form: HTMLFormElement) => Object.fromEntries(new FormData(form).entries()));
+    expect(fields).toMatchObject({
+      carrierCode: "other",
+      customCarrier: label,
+      trackingNumber: "LOCAL-PRO-123",
+      trackingUrl: "https://example.invalid/tracking/LOCAL-PRO-123"
+    });
+  }
+  await page.screenshot({
+    path: path.join(evidence, "order-ltl-desktop.png"),
+    fullPage: true,
+    style: "nextjs-portal { visibility: hidden; }"
+  });
+  await page.setViewportSize({ width: 390, height: 950 });
+  const print = page.getByRole("link", { name: "Print / PDF", exact: true });
+  await expect(print).toBeVisible();
+  expect(await print.evaluate((link) => getComputedStyle(link).textDecorationLine)).toBe("none");
+  expect((await print.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  await print.focus();
+  await page.screenshot({
+    path: path.join(evidence, "order-ltl-mobile.png"),
+    fullPage: true,
+    style: "nextjs-portal { visibility: hidden; }"
+  });
+  await carrier.selectOption("ups");
+  await expect(page.locator('input[name="customCarrier"]')).toHaveCount(0);
+  await expect(page.locator('input[name="trackingUrl"]')).toHaveValue(
+    "https://www.ups.com/track?loc=en_CA&tracknum=LOCAL-PRO-123"
+  );
+  await carrier.selectOption("other");
+  await expect(page.getByRole("textbox", { name: "Carrier name", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Tracking URL", { exact: true })).toHaveValue("");
+});

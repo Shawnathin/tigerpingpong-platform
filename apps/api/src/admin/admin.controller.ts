@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query, Res } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Res
+} from "@nestjs/common";
 
 import { AdminService } from "./admin.service";
 import { AdminAuthHeaderValue, assertAdminApiAuthorized } from "./admin-auth";
@@ -24,7 +35,8 @@ interface AdminProductMediaBody {
 }
 
 interface AdminProductUpdateBody {
-  availableForSale?: unknown;
+  published?: unknown;
+  inStock?: unknown;
   expectedUpdatedAt?: unknown;
   name?: unknown;
   priceCents?: unknown;
@@ -196,10 +208,7 @@ export class AdminController {
     return this.adminService.getAuditLog();
   }
 
-  private assertAuthorized(
-    response: HeaderResponse,
-    requestToken: AdminAuthHeaderValue
-  ): void {
+  private assertAuthorized(response: HeaderResponse, requestToken: AdminAuthHeaderValue): void {
     setAdminResponseHeaders(response);
     assertAdminApiAuthorized(requestToken);
   }

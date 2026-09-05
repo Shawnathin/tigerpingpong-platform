@@ -69,7 +69,7 @@ function renderRecentOrders(summary: AdminDashboardSummary) {
   const orders = getRecentOrders(summary);
 
   if (orders.length === 0) {
-    return <p className={styles.emptyText}>No recent orders were returned by the admin API.</p>;
+    return <p className={styles.emptyText}>No recent orders.</p>;
   }
 
   return (
@@ -91,7 +91,10 @@ function renderRecentOrders(summary: AdminDashboardSummary) {
           {orders.map((order) => (
             <tr key={order.id}>
               <td>
-                <Link className={styles.link} href="/admin/orders">
+                <Link
+                  className={styles.link}
+                  href={`/admin/orders/${encodeURIComponent(order.orderReference)}`}
+                >
                   {order.orderReference}
                 </Link>
               </td>
@@ -127,7 +130,7 @@ function renderProductWarnings(summary: AdminDashboardSummary) {
   ].filter((item) => item.count > 0);
 
   if (rows.length === 0) {
-    return <p className={styles.emptyText}>No product warnings from the admin summary.</p>;
+    return <p className={styles.emptyText}>No product warnings.</p>;
   }
 
   return (
@@ -148,22 +151,14 @@ export default async function AdminDashboardPage() {
   return (
     <div className={styles.pageStack}>
       <section className={styles.pageHeader} aria-labelledby="admin-dashboard-title">
-        <p className={styles.eyebrow}>Protected admin</p>
         <h1 className={styles.title} id="admin-dashboard-title">
           Dashboard
         </h1>
-        <p className={styles.intro}>
-          A lightweight read-only staff view for orders, products, customers, and operational
-          readiness.
-        </p>
       </section>
 
       {!summary ? (
         <section className={styles.alert} aria-label="Admin dashboard unavailable">
-          <p>
-            Admin dashboard data could not be loaded. Confirm the server-side admin token and API
-            service are configured.
-          </p>
+          <p>Dashboard data could not be loaded. Try again.</p>
         </section>
       ) : (
         <>
@@ -171,12 +166,13 @@ export default async function AdminDashboardPage() {
             <div className={styles.metricCard}>
               <span>Paid orders</span>
               <strong>{formatCount(summary.orders.paidCount)}</strong>
-              <small>{getStatusText(summary.orders.status, "Orders available")}</small>
+              {summary.orders.status !== "ok" ? (
+                <small>{getStatusText(summary.orders.status, "")}</small>
+              ) : null}
             </div>
             <div className={styles.metricCard}>
               <span>Pending checkout</span>
               <strong>{formatCount(summary.orders.pendingCheckoutCount)}</strong>
-              <small>Checkout or order count awaiting payment</small>
             </div>
             <div className={styles.metricCard}>
               <span>Products</span>
@@ -194,7 +190,6 @@ export default async function AdminDashboardPage() {
             <div className={styles.panelHeader}>
               <div>
                 <h2 id="admin-recent-orders-title">Recent orders</h2>
-                <p>Newest backend order records returned by the protected admin API.</p>
               </div>
               <span className={getBadgeClass(summary.orders.status)}>
                 {formatStatus(summary.orders.status)}
@@ -233,29 +228,19 @@ export default async function AdminDashboardPage() {
             </div>
 
             <div className={styles.statusPanel}>
-              <h2>
-                Inventory
-                <span className={getBadgeClass(summary.inventory.status)}>
-                  {formatStatus(summary.inventory.status)}
-                </span>
-              </h2>
+              <h2>Inventory</h2>
               <p className={styles.statusText}>
                 {summary.inventory.status === "not_configured"
-                  ? "Not configured yet"
+                  ? "Stock quantities aren’t tracked."
                   : summary.inventory.message}
               </p>
             </div>
 
             <div className={styles.statusPanel}>
-              <h2>
-                Audit log
-                <span className={getBadgeClass(summary.auditLog?.status ?? "not_configured")}>
-                  {formatStatus(summary.auditLog?.status ?? "not_configured")}
-                </span>
-              </h2>
+              <h2>Audit log</h2>
               <p className={styles.statusText}>
                 {(summary.auditLog?.status ?? "not_configured") === "not_configured"
-                  ? "Not configured yet"
+                  ? "Change history isn’t available yet."
                   : (summary.auditLog?.message ?? "Audit log status is unavailable.")}
               </p>
             </div>

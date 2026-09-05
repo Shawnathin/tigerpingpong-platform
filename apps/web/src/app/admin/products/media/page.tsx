@@ -86,23 +86,9 @@ export default async function AdminProductMediaPage({ searchParams }: AdminProdu
   return (
     <div className={styles.pageStack}>
       <section className={styles.pageHeader} aria-labelledby="admin-product-media-title">
-        <p className={styles.eyebrow}>Protected admin</p>
         <h1 className={styles.title} id="admin-product-media-title">
           Product media mapping
         </h1>
-        <p className={styles.intro}>
-          Assign existing Cloudinary product images to storefront products.
-        </p>
-      </section>
-
-      <section className={styles.alert} aria-label="Product media mapping warnings">
-        <ul className={styles.alertList}>
-          <li>This only changes which existing Cloudinary image is assigned to this product.</li>
-          <li>This does not upload or delete Cloudinary assets.</li>
-          <li>
-            Changes affect the storefront after refresh/deploy/API cache refresh as applicable.
-          </li>
-        </ul>
       </section>
 
       {productsResource ? (
@@ -116,12 +102,9 @@ export default async function AdminProductMediaPage({ searchParams }: AdminProdu
           <div className={styles.panelHeader}>
             <div>
               <h2 id="admin-product-media-error-title">Product media</h2>
-              <p>Product data could not be loaded from the protected admin API.</p>
+              <p>Products could not be loaded. Try again.</p>
             </div>
             <span className={`${styles.badge} ${styles.badgeWarning}`}>Unavailable</span>
-          </div>
-          <div className={styles.alert}>
-            <p>Confirm the API service and server-side admin token are configured.</p>
           </div>
         </section>
       )}

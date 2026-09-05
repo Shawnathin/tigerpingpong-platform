@@ -819,6 +819,20 @@ const internalOrder = {
   ]
 };
 
+const unshippedOrder = {
+  ...internalOrder,
+  publicReference: "TPP-TEST-002",
+  shipment: {
+    carrier: null,
+    internalNote: null,
+    shippedAt: null,
+    trackingNumber: null,
+    trackingUrl: null
+  },
+  emails: [internalOrder.emails[0], { ...internalOrder.emails[0], kind: "staff_new_order" }]
+};
+const previewOrders = [unshippedOrder, internalOrder];
+
 const server = createServer(async (request, response) => {
   response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.setHeader(
@@ -968,12 +982,12 @@ const server = createServer(async (request, response) => {
 
   if (request.url === "/api/admin/dashboard/summary") {
     if (!isAdminAuthorized(request)) return unauthorized(response);
-    const recent = ["TPP-TEST-001", "TPP-TEST-002"].map((reference) => ({
-      ...internalOrder,
-      id: reference,
-      orderReference: reference,
-      orderStatus: "paid",
-      customer: { name: "Local Test Customer", email: "customer@example.invalid" }
+    const recent = previewOrders.map((order) => ({
+      ...order,
+      id: order.publicReference,
+      orderReference: order.publicReference,
+      orderStatus: order.status,
+      customer: { name: order.customerName, email: order.customerEmail }
     }));
     response.end(
       JSON.stringify({
@@ -999,28 +1013,32 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  if (request.url === "/internal/orders/TPP-TEST-002") {
+  const orderRequestUrl = new URL(request.url, "http://127.0.0.1");
+  if (orderRequestUrl.pathname === "/internal/orders" && request.method === "GET") {
     if (!isAdminAuthorized(request)) return unauthorized(response);
+    const status = orderRequestUrl.searchParams.get("status") || "paid";
+    const requestedLimit = Number(orderRequestUrl.searchParams.get("limit") || 50);
+    const limit =
+      Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 50;
     response.end(
       JSON.stringify({
-        order: {
-          ...internalOrder,
-          publicReference: "TPP-TEST-002",
-          shipment: { ...internalOrder.shipment, shippedAt: null }
-        }
+        status,
+        limit,
+        orders: previewOrders
+          .filter((order) => order.status === status)
+          .slice(0, limit)
+          .map((order) => ({ ...order, itemCount: order.items.length }))
       })
     );
     return;
   }
 
-  if (request.url === `/internal/orders/${internalOrder.publicReference}`) {
-    if (request.headers["x-internal-orders-token"] !== "local-test-token") {
-      response.statusCode = 401;
-      response.end(JSON.stringify({ message: "Unauthorized" }));
-      return;
-    }
-
-    response.end(JSON.stringify({ order: internalOrder }));
+  const previewOrder = previewOrders.find(
+    (order) => orderRequestUrl.pathname === `/internal/orders/${order.publicReference}`
+  );
+  if (previewOrder && request.method === "GET") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    response.end(JSON.stringify({ order: previewOrder }));
     return;
   }
 

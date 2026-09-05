@@ -67,3 +67,9 @@ Additional local evidence, including the dashboard, order detail, other widths, 
 - Local browser proof uses Chromium viewport sizes, not physical-device or screen-reader certification. Local Node is 24.16.0; hosted release checks use the repository's Node 20.19.5 configuration.
 - The separate release documentation PR #171 is preserved. Both PRs touch the current-task record; reconcile that documentation when integrating without losing either release history or this task.
 - Searchable Orders, fulfillment/email filters, staff audit history, and media editing improvements remain separately selected follow-ups. No merge or deployment is authorized by this task.
+
+## Local Orders walkthrough follow-up
+
+Shawn requested an order workflow example in the local preview. Added the missing protected GET order-list fixture and made TPP-TEST-002 consistently unshipped (blank tracking fields, no shipment email). TPP-TEST-001 remains the already-shipped example. The dashboard, list, and detail now use the same two synthetic order records. Shipment/email mutation routes remain absent from the fixture server.
+
+The two affected browser scenarios (dashboard/date and list-to-unshipped/shipped details) passed against the running preview; targeted ESLint and diff checks passed. No production application code changed, so the prior full suite/build proof remains applicable to that code; the full suite was not repeated for this fixture-only follow-up. Preview navigation was also verified in the in-app browser.

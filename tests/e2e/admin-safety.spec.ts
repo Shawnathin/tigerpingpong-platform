@@ -149,3 +149,27 @@ test("Whistler publication and stock remain independent through fixture saves", 
     });
   }
 });
+
+test("Orders preview opens a paid order awaiting shipment and an already shipped order", async ({
+  page
+}) => {
+  await page.goto("/admin/orders");
+  await page.getByRole("link", { name: "TPP-TEST-002", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Order TPP-TEST-002", exact: true })
+  ).toBeVisible();
+  await expect(page.getByLabel("Tracking number", { exact: true })).toHaveValue("");
+  await expect(
+    page.getByRole("button", { name: "Save and email tracking", exact: true })
+  ).toBeVisible();
+  const shipmentCard = page.getByText("Customer shipment", { exact: true }).locator("..");
+  await expect(shipmentCard).toContainText("Not queued");
+  await page.getByRole("link", { name: "Back to orders", exact: true }).click();
+  await page.getByRole("link", { name: "TPP-TEST-001", exact: true }).click();
+  await expect(page.getByLabel("Tracking number", { exact: true })).toHaveValue(
+    "LOCAL-TEST-TRACKING"
+  );
+  await expect(page.getByText("Customer shipment", { exact: true }).locator("..")).toContainText(
+    "Sent"
+  );
+});

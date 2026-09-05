@@ -1,3 +1,4 @@
+import { getShipmentDate } from "./shipment-date";
 import Link from "next/link";
 
 import {
@@ -76,20 +77,6 @@ function formatDateTime(value: string | null): string {
   }).format(date);
 }
 
-function formatDateInputValue(value: string | null): string {
-  if (!value) {
-    return "";
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return date.toISOString().slice(0, 10);
-}
-
 function formatNullable(value: string | null | undefined): string {
   return value?.trim() || "Not set";
 }
@@ -134,19 +121,17 @@ function formatEmailStatus(delivery: InternalOrderEmailDelivery | null): string 
 function renderFallback(
   publicReference: string,
   error: boolean,
-  eyebrow: string,
   backHref: StaffOrderDetailPageProps["backHref"]
 ) {
   return (
     <main className={styles.page}>
       <section className={styles.header} aria-labelledby="staff-order-fallback-title">
-        <p className={styles.eyebrow}>{eyebrow}</p>
         <h1 className={styles.title} id="staff-order-fallback-title">
           Order unavailable
         </h1>
         <p className={styles.intro}>
           {error
-            ? "The internal orders API could not be reached for this protected staff view."
+            ? "Order could not be loaded. Try again."
             : "No order was found for that public reference."}
         </p>
       </section>
@@ -165,7 +150,6 @@ function renderFallback(
 
 export default async function StaffOrderDetailPage({
   backHref,
-  eyebrow,
   publicReference,
   retryOrderEmail,
   saveShipmentRecord,
@@ -180,24 +164,39 @@ export default async function StaffOrderDetailPage({
   const retriedEmailStatus = getSearchParam(searchParams?.emailStatus);
 
   if (!order) {
-    return renderFallback(publicReference, resource.error, eyebrow, backHref);
+    return renderFallback(publicReference, resource.error, backHref);
   }
 
   return (
     <main className={styles.page}>
       <section className={styles.header} aria-labelledby="staff-order-title">
-        <p className={styles.eyebrow}>{eyebrow}</p>
         <h1 className={styles.title} id="staff-order-title">
           Order {order.publicReference}
         </h1>
-        <p className={styles.intro}>
-          This protected staff page shows email delivery status, saves shipment details, and sends
-          customer tracking email. It does not mutate payment, refund, checkout, or customer data.
-        </p>
         <div className={styles.actions}>
           <Link className={styles.link} href={backHref}>
             Back to orders
           </Link>
+          {backHref === "/admin/orders" ? (
+            <Link
+              className={styles.printLink}
+              href={`/admin/orders/${encodeURIComponent(order.publicReference)}/print`}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                aria-hidden="true"
+              >
+                <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <path d="M6 14h12v7H6zM17 12h1" />
+              </svg>
+              Print / PDF
+            </Link>
+          ) : null}
         </div>
       </section>
 
@@ -205,9 +204,7 @@ export default async function StaffOrderDetailPage({
         <div className={styles.panelHeader}>
           <div>
             <h2 id="staff-order-summary-title">Summary</h2>
-            <p>Backend order status and Stripe references.</p>
           </div>
-          <span className={styles.badge}>Protected</span>
         </div>
 
         <div className={styles.summaryGrid}>
@@ -230,11 +227,7 @@ export default async function StaffOrderDetailPage({
         <div className={styles.panelHeader}>
           <div>
             <h2 id="staff-order-shipment-title">Shipment record</h2>
-            <p>
-              Select a carrier and enter its tracking number. The carrier link is built for you.
-            </p>
           </div>
-          <span className={styles.badge}>Automated</span>
         </div>
 
         {shipmentSaved ? (
@@ -253,9 +246,7 @@ export default async function StaffOrderDetailPage({
         <ShipmentForm
           action={saveShipmentRecord}
           publicReference={order.publicReference}
-          shippedDate={
-            formatDateInputValue(order.shipment.shippedAt) || new Date().toISOString().slice(0, 10)
-          }
+          shippedDate={getShipmentDate(order.shipment.shippedAt)}
           shipment={order.shipment}
         />
       </section>
@@ -264,9 +255,7 @@ export default async function StaffOrderDetailPage({
         <div className={styles.panelHeader}>
           <div>
             <h2 id="staff-order-emails-title">Email notifications</h2>
-            <p>Resend delivery handoff status. Payment state remains separate and authoritative.</p>
           </div>
-          <span className={styles.badge}>Protected</span>
         </div>
 
         {retriedEmailKind && retriedEmailStatus ? (
@@ -400,7 +389,6 @@ export default async function StaffOrderDetailPage({
         <div className={styles.panelHeader}>
           <div>
             <h2 id="staff-order-items-title">Item snapshots</h2>
-            <p>Rows reflect the order item snapshots stored at checkout time.</p>
           </div>
           <span className={styles.badge}>{order.items.length} items</span>
         </div>

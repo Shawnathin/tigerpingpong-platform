@@ -21,7 +21,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
     <StaffOrdersListPage
       detailBasePath="/admin/orders"
       eyebrow="Tiger Ping Pong admin"
-      intro="Protected staff view for reviewing backend-confirmed Stripe orders and shipment records."
+      intro=""
       searchParams={await searchParams}
       title="Paid order review"
     />

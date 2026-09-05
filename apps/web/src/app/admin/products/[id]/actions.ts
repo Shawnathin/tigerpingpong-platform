@@ -14,7 +14,8 @@ export async function saveProduct(formData: FormData): Promise<void> {
       .map((value) => (typeof value === "string" ? value.trim() : ""));
 
     await updateAdminProduct(productId, {
-      availableForSale: formData.get("availableForSale") === "on",
+      published: readChoice(formData, "published"),
+      inStock: readChoice(formData, "inStock"),
       expectedUpdatedAt: readRequiredString(formData, "expectedUpdatedAt"),
       name: readRequiredString(formData, "name"),
       priceCents: parseMoneyInput(formData.get("price"), "Product price"),
@@ -60,4 +61,10 @@ function parseMoneyInput(value: FormDataEntryValue | null, label: string): numbe
     throw new Error(`${label} is outside the supported range.`);
   }
   return valueCents;
+}
+
+function readChoice(formData: FormData, key: string): boolean {
+  const value = formData.get(key);
+  if (value !== "true" && value !== "false") throw new Error(`${key} is required.`);
+  return value === "true";
 }

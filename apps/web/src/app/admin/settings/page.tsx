@@ -34,20 +34,15 @@ export default async function AdminSettingsPage() {
   return (
     <div className={styles.pageStack}>
       <section className={styles.pageHeader} aria-labelledby="admin-settings-title">
-        <p className={styles.eyebrow}>Protected admin</p>
         <h1 className={styles.title} id="admin-settings-title">
           Settings
         </h1>
-        <p className={styles.intro}>
-          Safe operational settings only. Secrets, tokens, and full Stripe keys are never displayed.
-        </p>
       </section>
 
       <section className={styles.panel} aria-labelledby="admin-settings-list-title">
         <div className={styles.panelHeader}>
           <div>
             <h2 id="admin-settings-list-title">Safe settings</h2>
-            <p>Read-only values returned by the protected admin settings endpoint.</p>
           </div>
           <span className={styles.badge}>No secrets shown</span>
         </div>
@@ -100,10 +95,7 @@ export default async function AdminSettingsPage() {
           </dl>
         ) : (
           <div className={styles.alert}>
-            <p>
-              Admin settings could not be loaded. Confirm the API service and server-side admin
-              token are configured.
-            </p>
+            <p>Settings could not be loaded. Try again.</p>
           </div>
         )}
       </section>

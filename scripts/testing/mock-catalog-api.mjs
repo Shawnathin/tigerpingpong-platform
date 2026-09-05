@@ -682,34 +682,35 @@ function toOfferVariantItem(productFixture, variant, pricingSource) {
   };
 }
 
-function getAdminProduct() {
+function getAdminProduct(catalogProduct = product, id = "product-local-1") {
   return {
-    id: "product-local-1",
-    key: product.key,
-    slug: product.slug,
-    name: product.name,
+    id,
+    key: catalogProduct.key,
+    slug: catalogProduct.slug,
+    name: catalogProduct.name,
     sku: "LOCAL-TEST-SKU",
-    category: { id: "category-local-1", ...product.category },
-    type: product.productKind,
-    priceCents: product.priceCents,
-    currency: product.currency,
-    status: product.v1CheckoutScope ? "active" : "archived",
-    visible: product.v1PublicNavigation,
-    v1CheckoutScope: product.v1CheckoutScope,
-    purchaseMode: product.purchaseMode,
-    checkoutEligible: product.v1CheckoutScope,
+    category: { id: "category-local-1", ...catalogProduct.category },
+    type: catalogProduct.productKind,
+    priceCents: catalogProduct.priceCents,
+    currency: catalogProduct.currency,
+    status: catalogProduct.v1PublicNavigation ? "active" : "archived",
+    visible: catalogProduct.v1PublicNavigation,
+    v1CheckoutScope: catalogProduct.v1CheckoutScope,
+    purchaseMode: catalogProduct.purchaseMode,
+    checkoutEligible: catalogProduct.v1CheckoutScope,
     checkoutEligibilityReasons: [],
+    stockWarnings: [],
     imageStatus: {
-      primaryImageUrl: product.media[0].cloudinarySecureUrl,
+      primaryImageUrl: catalogProduct.media[0].cloudinarySecureUrl,
       status: "public_image_available"
     },
-    primaryImageUrl: product.media[0].cloudinarySecureUrl,
-    variantCount: product.variants.length,
-    mediaCount: product.media.length,
-    updatedAt: adminProductUpdatedAt,
+    primaryImageUrl: catalogProduct.media[0].cloudinarySecureUrl,
+    variantCount: catalogProduct.variants.length,
+    mediaCount: catalogProduct.media.length,
+    updatedAt: id === "product-local-1" ? adminProductUpdatedAt : adminWhistlerUpdatedAt,
     brand: { key: "tiger", name: "Tiger Ping Pong", slug: "tiger" },
-    family: { id: "family-local-1", ...product.family, isPublic: true, isActive: true },
-    variants: product.variants.map((variant) => ({
+    family: { id: "family-local-1", ...catalogProduct.family, isPublic: true, isActive: true },
+    variants: catalogProduct.variants.map((variant) => ({
       id: variant.id,
       key: variant.key,
       sku: null,
@@ -727,6 +728,18 @@ function getAdminProduct() {
     }))
   };
 }
+const originalWhistler = structuredClone(
+  tableDetailProducts.find((item) => item.slug === "tiger-whistler-indoor-table")
+);
+let adminWhistlerUpdatedAt = "2026-09-04T12:00:00.000Z";
+const adminWhistler = structuredClone(originalWhistler);
+adminWhistler.variants = adminWhistler.variants.map((variant, index) => ({
+  ...variant,
+  id: `whistler-local-${index}`
+}));
+adminWhistler.v1PublicNavigation = true;
+adminWhistler.v1CheckoutScope = false;
+
 const internalOrder = {
   publicReference: "TPP-TEST-001",
   status: "paid",
@@ -805,6 +818,20 @@ const internalOrder = {
     }
   ]
 };
+
+const unshippedOrder = {
+  ...internalOrder,
+  publicReference: "TPP-TEST-002",
+  shipment: {
+    carrier: null,
+    internalNote: null,
+    shippedAt: null,
+    trackingNumber: null,
+    trackingUrl: null
+  },
+  emails: [internalOrder.emails[0], { ...internalOrder.emails[0], kind: "staff_new_order" }]
+};
+const previewOrders = [unshippedOrder, internalOrder];
 
 const server = createServer(async (request, response) => {
   response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -938,52 +965,146 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  if (request.url === `/internal/orders/${internalOrder.publicReference}`) {
-    if (request.headers["x-internal-orders-token"] !== "local-test-token") {
-      response.statusCode = 401;
-      response.end(JSON.stringify({ message: "Unauthorized" }));
-      return;
-    }
+  if (request.url === "/__test/admin-whistler/reset" && request.method === "POST") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    Object.assign(adminWhistler, structuredClone(originalWhistler), {
+      v1PublicNavigation: true,
+      v1CheckoutScope: false
+    });
+    adminWhistler.variants = adminWhistler.variants.map((variant, index) => ({
+      ...variant,
+      id: `whistler-local-${index}`
+    }));
+    adminWhistlerUpdatedAt = "2026-09-04T12:00:00.000Z";
+    response.end(JSON.stringify({ ok: true }));
+    return;
+  }
 
-    response.end(JSON.stringify({ order: internalOrder }));
+  if (request.url === "/api/admin/dashboard/summary") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    const recent = previewOrders.map((order) => ({
+      ...order,
+      id: order.publicReference,
+      orderReference: order.publicReference,
+      orderStatus: order.status,
+      customer: { name: order.customerName, email: order.customerEmail }
+    }));
+    response.end(
+      JSON.stringify({
+        orders: { status: "ok", paidCount: 2, pendingCheckoutCount: 0, recent },
+        products: {
+          status: "ok",
+          totalCount: 2,
+          activeCount: 2,
+          checkoutScopeCount: 1,
+          variantCount: 4,
+          warnings: { missingCheckoutPriceCount: 0, missingPublicImageCount: 0 }
+        },
+        inventory: { status: "not_configured" },
+        auditLog: { status: "not_configured" },
+        payments: {
+          status: "tracked",
+          webhookEventsTracked: true,
+          totalWebhookEventsCount: 2,
+          unprocessedWebhookEventsCount: 0
+        }
+      })
+    );
+    return;
+  }
+
+  const orderRequestUrl = new URL(request.url, "http://127.0.0.1");
+  if (orderRequestUrl.pathname === "/internal/orders" && request.method === "GET") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    const status = orderRequestUrl.searchParams.get("status") || "paid";
+    const requestedLimit = Number(orderRequestUrl.searchParams.get("limit") || 50);
+    const limit =
+      Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 50;
+    response.end(
+      JSON.stringify({
+        status,
+        limit,
+        orders: previewOrders
+          .filter((order) => order.status === status)
+          .slice(0, limit)
+          .map((order) => ({ ...order, itemCount: order.items.length }))
+      })
+    );
+    return;
+  }
+
+  const previewOrder = previewOrders.find(
+    (order) => orderRequestUrl.pathname === `/internal/orders/${order.publicReference}`
+  );
+  if (previewOrder && request.method === "GET") {
+    if (!isAdminAuthorized(request)) return unauthorized(response);
+    response.end(JSON.stringify({ order: previewOrder }));
     return;
   }
 
   if (request.url?.startsWith("/api/admin/products?") && request.method === "GET") {
     if (!isAdminAuthorized(request)) return unauthorized(response);
-    response.end(JSON.stringify({ count: 1, items: [getAdminProduct()] }));
+    response.end(
+      JSON.stringify({
+        count: 2,
+        items: [getAdminProduct(), getAdminProduct(adminWhistler, "whistler-local")]
+      })
+    );
     return;
   }
 
-  if (request.url === "/api/admin/products/product-local-1" && request.method === "GET") {
+  const adminProductId = request.url?.match(
+    /^\/api\/admin\/products\/(product-local-1|whistler-local)$/
+  )?.[1];
+  if (adminProductId && ["GET", "PATCH"].includes(request.method)) {
     if (!isAdminAuthorized(request)) return unauthorized(response);
-    response.end(JSON.stringify({ product: getAdminProduct() }));
-    return;
-  }
-
-  if (request.url === "/api/admin/products/product-local-1" && request.method === "PATCH") {
-    if (!isAdminAuthorized(request)) return unauthorized(response);
+    const target = adminProductId === "product-local-1" ? product : adminWhistler;
+    if (request.method === "GET") {
+      response.end(JSON.stringify({ product: getAdminProduct(target, adminProductId) }));
+      return;
+    }
     const body = await readJsonBody(request);
-    if (body.expectedUpdatedAt !== adminProductUpdatedAt) {
+    if (
+      typeof body.published !== "boolean" ||
+      typeof body.inStock !== "boolean" ||
+      "availableForSale" in body
+    ) {
+      response.statusCode = 400;
+      response.end(JSON.stringify({ message: "Explicit publication and stock are required." }));
+      return;
+    }
+    const currentUpdatedAt = getAdminProduct(target, adminProductId).updatedAt;
+    if (body.expectedUpdatedAt !== currentUpdatedAt) {
       response.statusCode = 409;
       response.end(
         JSON.stringify({ message: "This product changed after the editor was opened." })
       );
       return;
     }
-    product.name = body.name;
-    product.priceCents = body.priceCents;
-    product.v1PublicNavigation = body.availableForSale;
-    product.v1CheckoutScope = body.availableForSale;
+    if (
+      body.inStock &&
+      body.variants.length &&
+      !body.variants.some((variant) => variant.isActive)
+    ) {
+      response.statusCode = 400;
+      response.end(JSON.stringify({ message: "Set product out of stock." }));
+      return;
+    }
+    target.name = body.name;
+    target.priceCents = body.priceCents;
+    target.v1PublicNavigation = body.published;
+    target.v1CheckoutScope = body.inStock;
     for (const update of body.variants ?? []) {
-      const variant = product.variants.find((item) => item.id === update.id);
+      const variant = target.variants.find((item) => item.id === update.id);
       if (variant) {
         variant.priceCents = update.priceCents;
         variant.isActive = update.isActive;
       }
     }
-    adminProductUpdatedAt = new Date(Date.parse(adminProductUpdatedAt) + 1000).toISOString();
-    response.end(JSON.stringify({ product: getAdminProduct() }));
+    const nextUpdatedAt = new Date(Date.parse(currentUpdatedAt) + 1000).toISOString();
+    if (adminProductId === "product-local-1") adminProductUpdatedAt = nextUpdatedAt;
+    else adminWhistlerUpdatedAt = nextUpdatedAt;
+    response.end(JSON.stringify({ product: getAdminProduct(target, adminProductId) }));
     return;
   }
 

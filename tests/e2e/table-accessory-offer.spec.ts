@@ -1,3 +1,4 @@
+import { mockOrigin } from "../e2e-endpoints";
 import { expect, test } from "@playwright/test";
 
 const CART_STORAGE_KEY = "tigerpingpong.cart.v1";
@@ -334,7 +335,7 @@ test("Plaza omits the cover, and offer failure never blocks the confirmed table"
   await page.keyboard.press("Escape");
 
   const failedSlug = "tiger-whistler-indoor-table";
-  await request.post("http://127.0.0.1:3101/__test/table-accessory-offer-failure", {
+  await request.post(`${mockOrigin}/__test/table-accessory-offer-failure`, {
     data: { fail: true, slug: failedSlug }
   });
 
@@ -366,7 +367,7 @@ test("Plaza omits the cover, and offer failure never blocks the confirmed table"
       ])
     );
   } finally {
-    await request.post("http://127.0.0.1:3101/__test/table-accessory-offer-failure", {
+    await request.post(`${mockOrigin}/__test/table-accessory-offer-failure`, {
       data: { fail: false, slug: failedSlug }
     });
   }

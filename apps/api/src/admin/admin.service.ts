@@ -62,7 +62,8 @@ interface NormalizedProductMediaInput {
 }
 
 interface AdminProductUpdateInput {
-  availableForSale?: unknown;
+  published?: unknown;
+  inStock?: unknown;
   expectedUpdatedAt?: unknown;
   name?: unknown;
   priceCents?: unknown;
@@ -76,7 +77,8 @@ interface NormalizedProductVariantUpdate {
 }
 
 interface NormalizedProductUpdate {
-  availableForSale: boolean;
+  published: boolean;
+  inStock: boolean;
   expectedUpdatedAt: Date;
   name: string;
   priceCents: number | null;
@@ -213,6 +215,9 @@ const adminProductListSelect = {
       reviewStatus: true
     },
     take: 3
+  },
+  variants: {
+    select: { isActive: true, priceCents: true, currency: true, purchaseModeOverride: true }
   },
   _count: {
     select: {
@@ -801,22 +806,18 @@ export class AdminService implements OnModuleDestroy {
         this.assertCompleteVariantUpdate(product, update.variants);
         this.assertProposedProductIsSafe(product, update);
 
-        const isCurrentlyAvailable = this.isProductAvailableForSale(product);
         const productData: Prisma.ProductUpdateManyMutationInput = {
           name: update.name,
           priceCents: update.priceCents,
           updatedAt: new Date()
         };
 
-        if (update.availableForSale) {
-          productData.status = "active";
-          productData.v1PublicNavigation = true;
-          productData.v1CheckoutScope = true;
-        } else if (isCurrentlyAvailable) {
-          productData.status = "archived";
-          productData.v1PublicNavigation = false;
-          productData.v1CheckoutScope = false;
+        // Publication and stock are independent. Preserve non-public legacy status on no-op saves.
+        if (update.published !== this.isProductPublished(product)) {
+          productData.status = update.published ? "active" : "archived";
+          productData.v1PublicNavigation = update.published;
         }
+        productData.v1CheckoutScope = update.inStock;
 
         const productUpdate = await transaction.product.updateMany({
           where: { id: productId, updatedAt: update.expectedUpdatedAt },
@@ -1221,6 +1222,20 @@ export class AdminService implements OnModuleDestroy {
   private serializeProductListItem(product: AdminProductListRecord) {
     const checkoutEligibility = this.getCheckoutEligibility(product);
     const imageStatus = this.getImageStatus(product);
+    const stockWarnings =
+      product.v1CheckoutScope &&
+      product.variants.length > 0 &&
+      !product.variants.some(
+        (variant) =>
+          variant.isActive &&
+          variant.currency.toLowerCase() === "cad" &&
+          (!variant.purchaseModeOverride ||
+            CHECKOUT_PURCHASE_MODES.has(variant.purchaseModeOverride)) &&
+          (variant.priceCents !== null ||
+            (product.productKind === "table" && product.priceCents !== null))
+      )
+        ? ["No purchasable variants"]
+        : [];
 
     return {
       id: product.id,
@@ -1243,6 +1258,7 @@ export class AdminService implements OnModuleDestroy {
       purchaseMode: product.purchaseMode,
       checkoutEligible: checkoutEligibility.eligible,
       checkoutEligibilityReasons: checkoutEligibility.reasons,
+      stockWarnings,
       imageStatus,
       primaryImageUrl: imageStatus.primaryImageUrl,
       variantCount: product._count.variants,
@@ -1408,7 +1424,8 @@ export class AdminService implements OnModuleDestroy {
     }
 
     this.assertAllowedKeys(input, [
-      "availableForSale",
+      "published",
+      "inStock",
       "expectedUpdatedAt",
       "name",
       "priceCents",
@@ -1426,8 +1443,10 @@ export class AdminService implements OnModuleDestroy {
       });
     }
 
-    if (typeof input.availableForSale !== "boolean") {
-      throw new BadRequestException({ message: "availableForSale must be a boolean." });
+    for (const field of ["published", "inStock"] as const) {
+      if (typeof input[field] !== "boolean") {
+        throw new BadRequestException({ message: `${field} must be a boolean.` });
+      }
     }
 
     if (typeof input.expectedUpdatedAt !== "string") {
@@ -1475,7 +1494,8 @@ export class AdminService implements OnModuleDestroy {
     });
 
     return {
-      availableForSale: input.availableForSale,
+      published: input.published as boolean,
+      inStock: input.inStock as boolean,
       expectedUpdatedAt,
       name,
       priceCents: this.normalizeProductPrice(input.priceCents, "priceCents"),
@@ -1529,7 +1549,7 @@ export class AdminService implements OnModuleDestroy {
     product: AdminProductDetailRecord,
     update: NormalizedProductUpdate
   ): void {
-    if (!update.availableForSale) {
+    if (!update.inStock) {
       return;
     }
 
@@ -1585,8 +1605,8 @@ export class AdminService implements OnModuleDestroy {
     }
   }
 
-  private isProductAvailableForSale(product: AdminProductListRecord): boolean {
-    return product.status === "active" && product.v1PublicNavigation && product.v1CheckoutScope;
+  private isProductPublished(product: AdminProductListRecord): boolean {
+    return product.status === "active" && product.v1PublicNavigation;
   }
 
   private getProductChangedFields(
@@ -1596,9 +1616,8 @@ export class AdminService implements OnModuleDestroy {
     const changedFields: string[] = [];
     if (product.name !== update.name) changedFields.push("name");
     if (product.priceCents !== update.priceCents) changedFields.push("priceCents");
-    if (this.isProductAvailableForSale(product) !== update.availableForSale) {
-      changedFields.push("availableForSale");
-    }
+    if (this.isProductPublished(product) !== update.published) changedFields.push("published");
+    if (product.v1CheckoutScope !== update.inStock) changedFields.push("inStock");
     const variantsById = new Map(product.variants.map((variant) => [variant.id, variant]));
     if (
       update.variants.some((variant) => {

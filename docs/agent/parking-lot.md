@@ -37,3 +37,7 @@
   - Put each table's five most-requested parts first instead of exposing one giant grid.
   - Explore interactive table diagrams that show where a selected part goes and link to installation guidance.
   - Add the Canada Post Part 40 story photo after Shawn captures the nearly four-foot opening rod outside a recognizable location; use the caption “This is why we stock the little part.”
+
+## After admin safety/usability
+
+Defer searchable Orders queue, fulfillment/email filters, staff audit history, and media-editor improvements to separately selected tasks. No quantity inventory or broad admin redesign in this first fix.

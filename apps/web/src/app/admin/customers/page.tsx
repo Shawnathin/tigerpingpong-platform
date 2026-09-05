@@ -76,33 +76,23 @@ export default async function AdminCustomersPage() {
   return (
     <div className={styles.pageStack}>
       <section className={styles.pageHeader} aria-labelledby="admin-customers-title">
-        <p className={styles.eyebrow}>Protected admin</p>
         <h1 className={styles.title} id="admin-customers-title">
           Customers
         </h1>
-        <p className={styles.intro}>
-          Customer summaries are derived from order records only. This is not a customer account or
-          CRM system.
-        </p>
       </section>
 
       <section className={styles.panel} aria-labelledby="admin-customers-list-title">
         <div className={styles.panelHeader}>
           <div>
-            <h2 id="admin-customers-list-title">Customer summaries</h2>
-            <p>Derived from protected order data by email address.</p>
+            <h2 id="admin-customers-list-title">Customers from orders</h2>
           </div>
-          <span className={styles.badge}>Read-only</span>
         </div>
 
         {resource.data ? (
           renderCustomersTable(customers)
         ) : (
           <div className={styles.alert}>
-            <p>
-              Admin customers could not be loaded. Confirm the API service and server-side admin
-              token are configured.
-            </p>
+            <p>Customers could not be loaded. Try again.</p>
           </div>
         )}
       </section>

@@ -11,7 +11,7 @@ Keep this file short, current, and project-specific. If a rule becomes wrong, fi
 - **Package manager:** `pnpm@9.12.0`
 - **Runtime:** Node `>=20.11.0`
 - **Primary language:** TypeScript
-- **Frontend:** Next.js 14 in `apps/web`
+- **Frontend:** Next.js 15 in `apps/web`
 - **Backend/API:** NestJS in `apps/api`
 - **Database:** Supabase Postgres through Prisma in `packages/db`
 - **Payments:** Stripe Checkout and Stripe webhooks

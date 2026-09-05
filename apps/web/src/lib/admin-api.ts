@@ -66,6 +66,7 @@ export interface AdminProductListItem {
   purchaseMode: string;
   checkoutEligible: boolean;
   checkoutEligibilityReasons: string[];
+  stockWarnings: string[];
   imageStatus: {
     primaryImageUrl: string | null;
     status: string;
@@ -116,7 +117,8 @@ export interface AdminProductResponse {
 }
 
 export interface AdminProductUpdateInput {
-  availableForSale: boolean;
+  published: boolean;
+  inStock: boolean;
   expectedUpdatedAt: string;
   name: string;
   priceCents: number | null;

@@ -2,7 +2,7 @@
 
 Date: 2026-09-04
 Branch: `codex/fix/admin-safety-usability`
-Status: all local checks passed; draft PR targets `develop`.
+Status: all local checks passed; draft PR [#172](https://github.com/Shawnathin/tigerpingpong-platform/pull/172) targets `develop`. Hosted checks pending at handoff. Runtime proof is for commit `ae9d80b`; the follow-up commit only records the PR link.
 
 ## Result
 

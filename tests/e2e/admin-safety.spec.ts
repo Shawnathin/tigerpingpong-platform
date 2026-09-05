@@ -173,3 +173,85 @@ test("Orders preview opens a paid order awaiting shipment and an already shipped
     "Sent"
   );
 });
+
+test("new shipment generates a tracking URL after choosing a carrier", async ({ page }) => {
+  await page.goto("/admin/orders/TPP-TEST-002");
+  await expect(page.getByRole("combobox", { name: "Carrier", exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Tracking URL", { exact: true })).toHaveCount(0);
+  await page.getByLabel("Tracking number", { exact: true }).fill("1Z 999");
+  await page.getByRole("combobox", { name: "Carrier", exact: true }).selectOption("ups");
+  await expect(
+    page.getByRole("link", {
+      name: "https://www.ups.com/track?loc=en_CA&tracknum=1Z%20999",
+      exact: true
+    })
+  ).toBeVisible();
+  await page.getByRole("combobox", { name: "Carrier", exact: true }).selectOption("fedex");
+  await expect(
+    page.getByRole("link", {
+      name: "https://www.fedex.com/fedextrack/?trknbr=1Z%20999",
+      exact: true
+    })
+  ).toBeVisible();
+  await page.getByLabel("Tracking number", { exact: true }).fill("");
+  await expect(page.locator('input[name="trackingUrl"]')).toHaveValue("");
+  await page.getByRole("combobox", { name: "Carrier", exact: true }).selectOption("other");
+  await expect(page.getByLabel("Tracking URL", { exact: true })).toBeVisible();
+});
+
+test("office can preview and print a protected order summary without mutation", async ({
+  page,
+  request
+}) => {
+  const unauthorized = await request.get("/admin/orders/TPP-TEST-002/print");
+  expect(unauthorized.status()).toBe(401);
+  await page.goto("/admin/orders/TPP-TEST-002");
+  await page.getByRole("link", { name: "Print order / PDF", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "TPP-TEST-002", exact: true })).toBeVisible();
+  const document = page.getByRole("article", { name: "Printable order summary" });
+  await expect(document.getByText("Order total before tax", { exact: true })).toBeVisible();
+  await expect(document.getByText("Waiting for tracking", { exact: true })).toBeVisible();
+  await expect(document).not.toContainText("Local fixture only");
+  await expect(document).not.toContainText("cs_test");
+  await page.evaluate(() => {
+    window.print = () => {
+      document.body.dataset.printRequested = "true";
+    };
+  });
+  await page.getByRole("button", { name: "Print / Save PDF", exact: true }).click();
+  await expect(page.locator("body")).toHaveAttribute("data-print-requested", "true");
+  for (const width of [1440, 768, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    ).toBe(true);
+    await page.screenshot({
+      path: path.join(evidence, `order-print-${width}.png`),
+      fullPage: true,
+      style: "nextjs-portal { visibility: hidden; }"
+    });
+  }
+  await page.emulateMedia({ media: "print" });
+  await expect(page.getByRole("navigation", { name: "Admin navigation" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Print / Save PDF", exact: true })).toBeHidden();
+  await page.pdf({
+    path: path.join(evidence, "order-summary-TPP-TEST-002.pdf"),
+    preferCSSPageSize: true,
+    printBackground: true
+  });
+  // Stress pagination using only synthetic fixture rows; no order is changed.
+  await page.evaluate(() => {
+    const table = document.querySelector("article tbody")!;
+    const row = table.firstElementChild!;
+    for (let index = 0; index < 24; index++) table.append(row.cloneNode(true));
+  });
+  await page.pdf({
+    path: path.join(evidence, "order-summary-pagination.pdf"),
+    preferCSSPageSize: true,
+    printBackground: true
+  });
+  await page.goto("/admin/orders/TPP-TEST-001/print");
+  await expect(page.getByText("Tracking: LOCAL-TEST-TRACKING", { exact: true })).toBeVisible();
+  await expect(page.getByRole("article")).not.toContainText("Local fixture only.");
+  await expect(page.getByRole("article")).not.toContainText("Waiting for tracking");
+});

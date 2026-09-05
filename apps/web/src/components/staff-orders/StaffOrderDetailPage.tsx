@@ -177,6 +177,14 @@ export default async function StaffOrderDetailPage({
           <Link className={styles.link} href={backHref}>
             Back to orders
           </Link>
+          {backHref === "/admin/orders" ? (
+            <Link
+              className={styles.button}
+              href={`/admin/orders/${encodeURIComponent(order.publicReference)}/print`}
+            >
+              Print order / PDF
+            </Link>
+          ) : null}
         </div>
       </section>
 

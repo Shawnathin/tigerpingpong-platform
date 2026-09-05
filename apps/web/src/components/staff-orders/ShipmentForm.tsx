@@ -25,8 +25,8 @@ export default function ShipmentForm({
   shippedDate,
   shipment
 }: ShipmentFormProps) {
-  const initialCarrierCode = inferShippingCarrierCode(shipment.carrier);
-  const [carrierCode, setCarrierCode] = useState<ShippingCarrierCode>(initialCarrierCode);
+  const initialCarrierCode = shipment.carrier ? inferShippingCarrierCode(shipment.carrier) : "";
+  const [carrierCode, setCarrierCode] = useState<ShippingCarrierCode | "">(initialCarrierCode);
   const [trackingNumber, setTrackingNumber] = useState(shipment.trackingNumber ?? "");
   const [customTrackingUrl, setCustomTrackingUrl] = useState(
     initialCarrierCode === "other" ? (shipment.trackingUrl ?? "") : ""
@@ -36,7 +36,7 @@ export default function ShipmentForm({
       return customTrackingUrl.trim();
     }
 
-    if (!trackingNumber.trim()) {
+    if (!carrierCode || !trackingNumber.trim()) {
       return "";
     }
 
@@ -52,8 +52,11 @@ export default function ShipmentForm({
           name="carrierCode"
           required
           value={carrierCode}
-          onChange={(event) => setCarrierCode(event.target.value as ShippingCarrierCode)}
+          onChange={(event) => setCarrierCode(event.target.value as ShippingCarrierCode | "")}
         >
+          <option value="" disabled>
+            Select carrier
+          </option>
           {SHIPPING_CARRIERS.map((carrier) => (
             <option key={carrier.code} value={carrier.code}>
               {carrier.label}
@@ -107,7 +110,7 @@ export default function ShipmentForm({
             {trackingUrl}
           </a>
         ) : (
-          <p>Enter a tracking number to build the link.</p>
+          <p>Waiting for tracking</p>
         )}
       </div>
       <label className={styles.field}>

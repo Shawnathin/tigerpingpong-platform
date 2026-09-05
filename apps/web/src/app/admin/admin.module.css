@@ -836,3 +836,19 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+@media print {
+  .shell:has([data-order-print]) {
+    min-height: 0;
+    background: white;
+  }
+  .shell:has([data-order-print]) .topbar {
+    display: none;
+  }
+  .shell:has([data-order-print]) .content {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}

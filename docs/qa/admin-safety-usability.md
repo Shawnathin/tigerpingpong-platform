@@ -73,3 +73,17 @@ Additional local evidence, including the dashboard, order detail, other widths, 
 Shawn requested an order workflow example in the local preview. Added the missing protected GET order-list fixture and made TPP-TEST-002 consistently unshipped (blank tracking fields, no shipment email). TPP-TEST-001 remains the already-shipped example. The dashboard, list, and detail now use the same two synthetic order records. Shipment/email mutation routes remain absent from the fixture server.
 
 The two affected browser scenarios (dashboard/date and list-to-unshipped/shipped details) passed against the running preview; targeted ESLint and diff checks passed. No production application code changed, so the prior full suite/build proof remains applicable to that code; the full suite was not repeated for this fixture-only follow-up. Preview navigation was also verified in the in-app browser.
+
+## Office order summary and tracking follow-up
+
+Shawn authorized automatic tracking URL usability and an office-printable order summary during local review on 2026-09-04, then selected customer/address, items, prices, totals, and tracking. Missing tracking reads **Waiting for tracking**.
+
+New shipments start with **Select carrier**. Existing supported-carrier URL generation remains unchanged: choose the carrier and enter a tracking number; only **Other carrier** requires a manual URL. Existing saved carrier choices remain intact.
+
+The order detail now links to a protected `/admin/orders/{reference}/print` preview. **Print / Save PDF** opens the browser print dialog for paper or PDF output. The Letter layout uses saved order snapshots, retains the pre-tax fallback when the final charged total is missing, and never infers paid status from a checkout amount. It includes saved shipment tracking and excludes internal notes, email delivery errors, and Stripe identifiers. Browser headers/footers and printer settings remain controlled by the office's print dialog. No runtime dependencies were added.
+
+Changed implementation: `ShipmentForm`, `StaffOrderDetailPage`, the new print route/document/button/stylesheet/total helper, and print-only admin shell styles. Tests cover carrier selection and URL changes, print authorization, pending tracking, saved tracking, no mutation, responsive widths, and confirmed versus pre-tax totals. A 25-row synthetic layout stress test renders four pages with repeated item headers and order references; it does not alter any order record.
+
+Evidence: `docs/qa/admin-safety/order-summary.png` and `order-summary-mobile.png`; generated local PDF in `output/admin-safety/order-summary-TPP-TEST-002.pdf`. The PDF and all pagination pages were rendered and visually inspected. A physical printer was not used, and shipment/email forms were never submitted.
+
+Follow-up verification: `pnpm test` passed 222 tests across 29 files; `pnpm test:e2e` passed 101 with the same 12 gated skips. Lint, typecheck, Prisma generation/validation, production build, and the tracked-secret scan passed. Build and full browser checks ran against an identical source snapshot in a temporary local directory on ports 3300-3302, preserving the office preview on 3200. Final print layout changes were rechecked in the preview before that complete build/test run. The earlier standalone stock proof and dependency audit remain applicable; neither area changed in this follow-up.

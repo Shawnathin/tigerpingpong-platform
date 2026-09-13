@@ -1,0 +1,30 @@
+name: Regenerate dependency lockfile
+
+on:
+  pull_request:
+    paths:
+      - package.json
+      - apps/**/package.json
+      - pnpm-lock.yaml
+      - .github/workflows/regenerate-dependency-lockfile.yml
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.5
+      - run: rm pnpm-lock.yaml && pnpm install --lockfile-only --no-frozen-lockfile
+      - run: |
+          echo LOCKFILE_BASE64_BEGIN
+          base64 --wrap=0 pnpm-lock.yaml
+          echo
+          echo LOCKFILE_BASE64_END

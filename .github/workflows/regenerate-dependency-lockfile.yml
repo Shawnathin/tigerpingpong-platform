@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: 20.19.5
       - run: pnpm install --lockfile-only --no-frozen-lockfile
-      - uses: actions/upload-artifact@v4
-        with:
-          name: regenerated-pnpm-lockfile
-          path: pnpm-lock.yaml
-          retention-days: 1
+      - run: |
+          echo LOCKFILE_BASE64_BEGIN
+          base64 --wrap=0 pnpm-lock.yaml
+          echo
+          echo LOCKFILE_BASE64_END

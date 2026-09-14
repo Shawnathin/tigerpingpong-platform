@@ -4,7 +4,12 @@
   "generatedAt": "2026-07-19T00:00:00.000Z",
   "sourceRoot": "exports/table-gallery-media",
   "delivery": {
-    "widths": [480, 800, 1200, 1600],
+    "widths": [
+      480,
+      800,
+      1200,
+      1600
+    ],
     "transformation": "f_auto,q_auto,c_limit",
     "minimumUsefulSourceEdge": 1600,
     "neverUpscale": true
@@ -23,7 +28,10 @@
         "tiger-expo-outdoor-table-color-blue",
         "tiger-expo-outdoor-table-color-grey"
       ],
-      "obsoleteVariantLabels": ["Green", "Black"],
+      "obsoleteVariantLabels": [
+        "Green",
+        "Black"
+      ],
       "assets": [
         {
           "mediaKey": "tiger-expo-outdoor-table-primary-01",
@@ -129,33 +137,6 @@
             "format": "jpg",
             "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575463/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-poolside-blue-owner-01.jpg",
             "bytes": 5810965
-          }
-        },
-        {
-          "mediaKey": "tiger-expo-outdoor-table-lifestyle-sunset-01",
-          "role": "lifestyle",
-          "variantKey": "tiger-expo-outdoor-table-color-grey",
-          "sortOrder": 5,
-          "isPrimary": false,
-          "altText": "Grey Tiger Expo Outdoor PingPong table on a deck overlooking the Pacific at sunset",
-          "rightsStatus": "owner_cleared",
-          "modelVerification": "verified_current_model",
-          "qualityStatus": "best_available_current_model",
-          "uploadAction": "upload",
-          "source": {
-            "type": "local",
-            "relativePath": "expo-sunset-grey-owner-01.jpg",
-            "sha256": "98d199442bf1dd47b4c75e69cdf90b2b0cc5a9662dde87ad9ce6e72052418a79",
-            "width": 1448,
-            "height": 1086
-          },
-          "cloudinary": {
-            "assetId": "7c9ab68ed24beb6333dbde9194fde344",
-            "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-sunset-grey-owner-01",
-            "version": "1784575465",
-            "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575465/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-sunset-grey-owner-01.jpg",
-            "bytes": 2066262
           }
         },
         {
@@ -1220,7 +1201,9 @@
     {
       "productSlug": "tiger-plaza-outdoor-table-grey",
       "catalogLeadVariantKey": "tiger-plaza-outdoor-table-grey-color-grey",
-      "approvedVariantKeys": ["tiger-plaza-outdoor-table-grey-color-grey"],
+      "approvedVariantKeys": [
+        "tiger-plaza-outdoor-table-grey-color-grey"
+      ],
       "assets": [
         {
           "mediaKey": "tiger-plaza-outdoor-table-grey-primary-01",

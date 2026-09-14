@@ -11,6 +11,15 @@ The speculative production API retry from the first version of #178 is removed;
 this PR makes no net application runtime changes. Browser failure traces are
 retained in GitHub Actions for three days to make future failures diagnosable.
 
+The diagnostic hosted run #34804799705 captured the dashboard still visible at
+timeout, an HTTP 200 order-navigation response, and development-server rebuilds
+during the wait. This supports fixing navigation synchronization, not API retry.
+
+An additional combined gallery run exposed a manual-link test waiting for the
+full page load while unrelated Cloudinary downloads took 7–10 seconds each. That
+test now waits for DOM content, then retains all manual/video and section-order
+assertions. Image-specific gallery checks remain unchanged.
+
 Local proof:
 
 - A temporary 6.5-second delay of the order navigation reproduced the old
@@ -18,6 +27,9 @@ Local proof:
   delay. The artificial delay is not included in the committed test.
 - Original API loader: ten repeated targeted tests passed.
 - Corrected test: full browser suite passed, 102 passed / 12 existing gated skips.
+- Combined admin/gallery suite after the manual-link wait repair: 17 passed / one
+  existing gated screenshot capture skipped.
+- Production build passed.
 - Lint, type checking, 222 unit tests, and tracked-secret scan passed.
 - Production dependency audit reported no known vulnerabilities.
 - Live read-only smoke: all nine checks passed, including API/catalog health,

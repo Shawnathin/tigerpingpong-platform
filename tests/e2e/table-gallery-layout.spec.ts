@@ -1,5 +1,18 @@
 import { expect, test, type Page } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  // Exercise intrinsic image sizing deterministically, without making this
+  // geometry regression depend on CDN timing or format decoding. Other gallery tests and
+  // the visual review still use the real product photos.
+  await page.route("https://res.cloudinary.com/**", async (route) => {
+    if (route.request().resourceType() !== "image") return route.continue();
+    await route.fulfill({
+      contentType: "image/svg+xml",
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><rect width="1600" height="900" fill="#ddd"/></svg>'
+    });
+  });
+});
+
 async function expectContainedGallery(page: Page) {
   const gallery = page.locator('[data-gallery-presentation="table"]');
   const image = page.getByTestId("product-main-image");

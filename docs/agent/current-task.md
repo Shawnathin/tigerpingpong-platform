@@ -1,5 +1,19 @@
 # Current Task
 
+## Selected: Safari table-gallery sizing regression
+
+Shawn reported on 2026-09-13 that the Expo photo remains oversized beneath the
+purchase rail after release #177. The fresh screenshot confirms a layout issue,
+not a request to remove another image. Branch:
+`codex/fix/safari-table-gallery-sizing`, based on current `develop`.
+
+WebKit reproduces the live failure: an 814px gallery contains a 1267px figure.
+Constrain the table gallery's grid column with `minmax(0, 1fr)`; preserve all
+product images, copy, commerce, and the existing visual design. Add dedicated
+WebKit/Chromium geometry tests and WebKit installation to CI. Local red/green
+proof and checks are recorded in `docs/qa/safari-table-gallery-sizing.md`.
+Task PR targets `develop`; production promotion remains Shawn's merge step.
+
 ## Selected: admin safety and usability
 
 Task key: `TPP-ADMIN-SAFETY-USABILITY`. Shawn approved the jointly refined plan on 2026-09-04. Implement independent publication/stock, Vancouver shipment-date defaults, direct dashboard order links, a responsive lean product table, and copy reduction across admin.

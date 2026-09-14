@@ -150,7 +150,8 @@ test("each table specification section contains its matching manual and setup vi
   page
 }) => {
   for (const table of TABLES) {
-    await page.goto(productPath(table.slug));
+    // This checks document links and section order, not external image delivery.
+    await page.goto(productPath(table.slug), { waitUntil: "domcontentloaded" });
 
     const resources = page.getByTestId("table-support-resources");
     const manualLink = resources.getByRole("link", {

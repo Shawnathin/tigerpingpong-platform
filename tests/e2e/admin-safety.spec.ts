@@ -72,7 +72,12 @@ test("dashboard opens the selected order and shows Vancouver default without sub
     style: "nextjs-portal { visibility: hidden; }"
   });
   const before = getVancouverDate();
-  await page.getByRole("link", { name: "TPP-TEST-002", exact: true }).click();
+  // Next's dev server may compile this route on first visit in CI. Wait for
+  // navigation before starting the heading assertion's shorter timeout.
+  await Promise.all([
+    page.waitForURL("**/admin/orders/TPP-TEST-002"),
+    page.getByRole("link", { name: "TPP-TEST-002", exact: true }).click()
+  ]);
   await expect(
     page.getByRole("heading", { name: "Order TPP-TEST-002", exact: true })
   ).toBeVisible();

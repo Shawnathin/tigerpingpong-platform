@@ -32,23 +32,17 @@ interface OrderResource {
 }
 
 async function loadOrder(publicReference: string): Promise<OrderResource> {
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      return {
-        error: false,
-        order: await getInternalOrder(publicReference)
-      };
-    } catch {
-      if (attempt === 0) {
-        await new Promise((resolve) => setTimeout(resolve, 150));
-      }
-    }
+  try {
+    return {
+      error: false,
+      order: await getInternalOrder(publicReference)
+    };
+  } catch {
+    return {
+      error: true,
+      order: null
+    };
   }
-
-  return {
-    error: true,
-    order: null
-  };
 }
 
 function formatMoney(cents: number, currency: string): string {

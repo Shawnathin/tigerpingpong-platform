@@ -1430,6 +1430,12 @@
   padding: clamp(18px, 3vw, 34px);
 }
 
+.gallery[data-gallery-presentation="table"] {
+  /* Keep Safari's intrinsic image width from expanding the implicit grid track
+     underneath the adjacent purchase rail. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .gallery[data-gallery-presentation="table"] .mainMedia,
 .gallery[data-gallery-presentation="table"] .thumbnailImage {
   background: #ffffff;

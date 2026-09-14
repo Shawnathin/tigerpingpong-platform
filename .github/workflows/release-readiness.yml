@@ -30,7 +30,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_BASE_URL: https://tigerpingpong-platform.onrender.com
           NEXT_PUBLIC_SITE_URL: https://tigerpingpong.ca
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright install --with-deps chromium webkit
       - run: pnpm test:e2e
       - name: Preserve browser failure evidence
         if: failure()

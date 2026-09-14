@@ -35,6 +35,11 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] }
+    },
+    {
+      name: "webkit-gallery",
+      testMatch: "table-gallery-layout.spec.ts",
+      use: { ...devices["Desktop Safari"] }
     }
   ]
 });

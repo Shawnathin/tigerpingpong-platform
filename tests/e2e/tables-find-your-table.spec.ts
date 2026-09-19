@@ -214,7 +214,7 @@ test("tables use a distinct hero while home uses Club Night and about keeps the 
   await page.goto("/");
   await expect(page.locator("#home img").first()).toHaveAttribute(
     "src",
-    /about(?:%2F|\\/)04-game-night-connection/
+    /about(?:%2F|\/)04-game-night-connection/
   );
 
   await page.goto("/about");

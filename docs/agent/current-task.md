@@ -1,5 +1,16 @@
 # Current Task
 
+## Selected: homepage fall refresh release packaging
+
+Shawn authorized the bounded fall-refresh release from a fresh branch based on current
+`origin/main`: `codex/feature/homepage-fall-refresh-v2`. Preserve the approved local
+homepage direction in place—no redesign, architecture work, dependency changes, branch
+reconciliation, or changes outside the homepage and directly required proof. The seasonal
+refresh replaces summer emphasis with game-night copy, retains the existing sections and
+customer journeys, and uses the already approved Cloudinary `NIT-034` Tiger Club Night
+image rather than a machine-local preview asset. The PR targets `main`; no merge or deploy
+is authorized.
+
 ## Selected: Safari table-gallery sizing regression
 
 Shawn reported on 2026-09-13 that the Expo photo remains oversized beneath the

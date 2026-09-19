@@ -201,7 +201,7 @@ test("tables retain live catalog order, prices, product links, and outdoor educa
   expect(loadingValues.every((value) => value === "lazy")).toBeTruthy();
 });
 
-test("tables use a distinct hero while home and about keep the Vancouver mountain image", async ({
+test("tables use a distinct hero while home uses Club Night and about keeps the Vancouver mountain image", async ({
   page
 }) => {
   await page.goto("/tables");
@@ -214,7 +214,7 @@ test("tables use a distinct hero while home and about keep the Vancouver mountai
   await page.goto("/");
   await expect(page.locator("#home img").first()).toHaveAttribute(
     "src",
-    /category-heroes(?:%2F|\/)ping-pong-tables/
+    /about(?:%2F|\/)04-game-night-connection/
   );
 
   await page.goto("/about");

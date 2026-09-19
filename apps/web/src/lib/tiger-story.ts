@@ -93,7 +93,7 @@ interface TigerTableProductGalleryManifest {
   }>;
 }
 
-export type TigerHomepageAquaCampaignId = "evergreen" | "summer-canada";
+export type TigerHomepageAquaCampaignId = "evergreen" | "summer-canada" | "fall-game-nights";
 
 interface TigerHomepageAquaCampaign {
   body: string;
@@ -456,7 +456,30 @@ const realNetProductImage: TigerStoryImage = {
 };
 const portlandProductImage = requireHomepageSummerImage("HOM-SUM-002");
 
+const homepageIndoorImage: TigerStoryImage = {
+  ...requireStoryImage("NIT-034"),
+  caption: "Tiger PingPong Club Night · Vancouver",
+  role: "homepage-fall-hero"
+};
+
+const homepageFallAquaImage: TigerStoryImage = {
+  assetId: "homepage-aqua-two-pack-original",
+  altText: "Two Tiger Aqua paddles with three white balls.",
+  caption: "Aqua. Two paddles, three balls.",
+  cloudinaryPublicId: "",
+  finalUrl: "/storefront/products/aqua/two-paddles-three-balls-original.jpg",
+  role: "homepage-fall-paddles",
+  sourceDimensions: { width: 1000, height: 1000 }
+};
+
 export const tigerHomepageAquaCampaigns = {
+  "fall-game-nights": {
+    id: "fall-game-nights",
+    eyebrow: "Aqua paddles",
+    heading: "Who’s up for a game?",
+    body: "For rec rooms, community centres, and one more rally.",
+    cta: "Meet Aqua"
+  },
   "summer-canada": {
     id: "summer-canada",
     eyebrow: "Summer in Canada",
@@ -473,7 +496,7 @@ export const tigerHomepageAquaCampaigns = {
   }
 } satisfies Record<TigerHomepageAquaCampaignId, TigerHomepageAquaCampaign>;
 
-export const activeTigerHomepageAquaCampaignId: TigerHomepageAquaCampaignId = "summer-canada";
+export const activeTigerHomepageAquaCampaignId: TigerHomepageAquaCampaignId = "fall-game-nights";
 
 export const tigerTablesProductStories = {
   "tiger-expo-outdoor-table": {
@@ -1015,19 +1038,19 @@ export const tigerStory = {
   homepage: {
     hero: {
       anchor: "home",
-      eyebrow: "Our home court",
-      heading: "Raised on the West Coast.",
-      body: "Vancouver is our home court. For more than 15 years, we’ve been helping people play—and shipping Tiger gear across Canada.",
-      image: requireStoryImage("MAY-011"),
+      eyebrow: "Game nights start here",
+      heading: "Good nights. Great rallies.",
+      body: "PingPong for basements, rec rooms, and getting together.",
+      image: homepageIndoorImage,
       actions: [
-        { href: "/tables/", label: "Find Your Table" },
+        { href: "/tables/indoor-tables/", label: "Shop indoor tables" },
         { href: "tel:+18885525259", label: "Call 1-888-552-5259" }
       ]
     },
     shop: {
       anchor: "shop",
-      eyebrow: "Shop your summer",
-      heading: "Shop Your Summer",
+      eyebrow: "Find your next rally",
+      heading: "Find your next rally",
       items: [
         {
           heading: "Tables",
@@ -1037,12 +1060,12 @@ export const tigerStory = {
         },
         {
           heading: "Aqua Paddles",
-          body: "Made for summer",
+          body: "Ready for game night",
           href: "/catalog/products/tiger-aqua-outdoor-indoor-paddle",
-          image: aquaProductImage
+          image: homepageFallAquaImage
         },
         {
-          heading: "Outdoor Gear",
+          heading: "Accessories",
           body: "Ready for real life",
           href: "/accessories/",
           image: realCoverProductImage,
@@ -1053,9 +1076,8 @@ export const tigerStory = {
     vancouver: {
       anchor: "vancouver",
       eyebrow: "Vancouver born",
-      heading: "The city was our product test.",
-      body: "Food Cart Fest. Science World. The Shipyards. Schools, universities, and community centres. Real rallies have shaped the gear we make.",
-      pullLine: "We build gear that works where people actually play.",
+      heading: "Raised on the West Coast.",
+      body: "Vancouver is our home court. For more than 15 years, we’ve been helping people play—and shipping Tiger gear across Canada. Real rallies have shaped the gear we make.",
       action: {
         href: "/about#vancouver",
         label: "See where we’ve played"
@@ -1066,19 +1088,17 @@ export const tigerStory = {
       anchor: "aqua",
       activeCampaign: tigerHomepageAquaCampaigns[activeTigerHomepageAquaCampaignId],
       href: "/catalog/products/tiger-aqua-outdoor-indoor-paddle",
-      productImage: aquaProductImage,
-      backgroundImage: requireHomepageSummerImage("HOM-SUM-001")
+      productImage: homepageFallAquaImage
     },
     portland: {
       anchor: "portland",
       eyebrow: "Portland Outdoor",
-      heading: "Take it Outside.",
-      body: "Made for patios, garages, and real life.",
+      heading: "Tough outside. Smart inside.",
+      body: "For rec rooms, garages, and life indoors or out.",
       action: {
         href: "/catalog/products/tiger-portland-outdoor-table",
         label: "Meet Portland"
       },
-      backgroundImage: requireHomepageSummerImage("HOM-SUM-003"),
       image: portlandProductImage
     },
     cover: {

@@ -22,11 +22,11 @@ No ignored or machine-local preview asset is referenced.
 
 ## Validation
 
-- `pnpm exec prettier --check` on all seven changed files: passed.
+- Focused Prettier on the original bounded homepage release files: passed.
 - `pnpm lint`: passed.
 - `pnpm typecheck`: passed after the standard local Prisma client generation.
 - `NEXT_PUBLIC_API_BASE_URL=https://tigerpingpong-platform.onrender.com pnpm build`: passed.
-- `pnpm test:e2e tests/e2e/homepage-summer.spec.ts`: 3 passed; 1 intentional evidence-capture skip.
+- `pnpm test:e2e tests/e2e/homepage-summer.spec.ts`: 3 passed; 1 intentional evidence-capture skip.\n- Hosted full E2E exposed one stale cross-page assertion that still expected the old homepage mountain hero; the assertion is updated to the approved NIT-034 Club Night hero and will be reverified by hosted CI.
 - Tracked-secret scan: 0 findings. The NIT-034 Cloudinary delivery URL returned HTTP 200; code/docs contain no local-preview dependency.
 - Repository-wide formatting remains out of scope because its existing failures are unrelated to this bounded change.
 

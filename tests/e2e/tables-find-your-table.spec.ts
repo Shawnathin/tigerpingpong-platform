@@ -201,7 +201,7 @@ test("tables retain live catalog order, prices, product links, and outdoor educa
   expect(loadingValues.every((value) => value === "lazy")).toBeTruthy();
 });
 
-test("tables use a distinct hero while home and about keep the Vancouver mountain image", async ({
+test("tables use a distinct hero while home uses Club Night and about keeps the Vancouver mountain image", async ({
   page
 }) => {
   await page.goto("/tables");

@@ -3,6 +3,15 @@
 Date: 2026-07-18
 Status: About, Contact, Summer in Canada homepage, all three table category experiences, six gear category experiences, and cart reassurance/empty state implemented; product and footer excerpts remain planning only
 
+## Homepage fall refresh — September 2026
+
+The approved in-place homepage refresh replaces summer wording and decorative seasonal
+backgrounds with a game-night introduction, indoor-shopping action, and short Aqua and
+Portland support copy. It preserves section order, components, navigation, commerce, and
+SEO. The hero uses existing owner-cleared `NIT-034` Tiger Club Night photography from the
+tracked About-story media map and its durable Cloudinary delivery URL; no local-only media
+is required.
+
 ## Purpose
 
 Give customers the Tiger story during a normal shopping visit without making them read the About page or sit through a brand manifesto.

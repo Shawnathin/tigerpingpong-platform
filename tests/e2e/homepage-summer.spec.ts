@@ -5,7 +5,7 @@ import path from "node:path";
 const HOMEPAGE_DESCRIPTION =
   "Shop Tiger PingPong tables, paddles, balls, and outdoor gear from a Vancouver company serving players across Canada for more than 15 years.";
 
-test("homepage opens on established Vancouver roots and a summer-in-Canada campaign", async ({
+test("homepage keeps the existing structure with the fall game-night campaign", async ({
   page
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -21,20 +21,22 @@ test("homepage opens on established Vancouver roots and a summer-in-Canada campa
   const hero = page.locator("#home");
   const heroHeading = hero.getByRole("heading", {
     level: 1,
-    name: "Raised on the West Coast."
+    name: "Good nights. Great rallies."
   });
   const heroImage = hero.getByRole("img");
-  const findTable = hero.getByRole("link", { name: "Find Your Table" });
+  const findTable = hero.getByRole("link", { name: "Shop indoor tables" });
   const callTiger = hero.getByRole("link", { name: "Call 1-888-552-5259" });
 
   await expect(heroHeading).toBeInViewport();
-  await expect(heroImage).toHaveAttribute("src", /category-heroes(?:%2F|\/)ping-pong-tables/);
+  await expect(heroImage).toHaveAttribute("src", /about(?:%2F|\/)04-game-night-connection/);
   await expect(heroImage).toHaveAttribute(
     "alt",
-    "Blue Tiger Expo Outdoor table on a Vancouver terrace overlooking the water and North Shore mountains."
+    "Two players smiling and tapping paddles after a game in a crowded Vancouver venue."
   );
-  await expect(hero.getByText(/For more than 15 years/)).toBeVisible();
-  await expect(findTable).toHaveAttribute("href", "/tables/");
+  await expect(
+    hero.getByText("PingPong for basements, rec rooms, and getting together.")
+  ).toBeVisible();
+  await expect(findTable).toHaveAttribute("href", "/tables/indoor-tables/");
   await expect(callTiger).toHaveAttribute("href", "tel:+18885525259");
 
   const heroCrop = await heroImage.evaluate((image) => {
@@ -47,7 +49,7 @@ test("homepage opens on established Vancouver roots and a summer-in-Canada campa
   await expect(page.locator('#shop a[href="/tables/"]')).toContainText("Find the right table");
   await expect(
     page.locator('#shop a[href="/catalog/products/tiger-aqua-outdoor-indoor-paddle"]')
-  ).toContainText("Made for summer");
+  ).toContainText("Ready for game night");
   await expect(page.locator('#shop a[href="/accessories/"]')).toContainText("Ready for real life");
   await expect(page.locator('#vancouver a[href="/about#vancouver"]')).toHaveText(
     "See where we’ve played"
@@ -62,8 +64,7 @@ test("homepage opens on established Vancouver roots and a summer-in-Canada campa
     "Cover It Up"
   );
 
-  await expect(page.getByText("Summer in Canada", { exact: true })).toBeVisible();
-  await expect(page.getByText(/Aqua was made for summer in Canada/)).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(/summer|poolside|BBQs/i);
   await expect(page.getByText("Our Story", { exact: true })).toHaveCount(0);
   await expect(page.getByText(/now heading across Canada/i)).toHaveCount(0);
   await expect(page.getByText("Need a hand? We’ve got you.", { exact: true })).toHaveCount(0);
@@ -71,10 +72,10 @@ test("homepage opens on established Vancouver roots and a summer-in-Canada campa
 
   await expect(page.locator("main h1")).toHaveCount(1);
   await expect(page.locator("main h2")).toHaveText([
-    "Shop Your Summer",
-    "Make a Splash.",
-    "Take it Outside.",
-    "The city was our product test.",
+    "Find your next rally",
+    "Who’s up for a game?",
+    "Tough outside. Smart inside.",
+    "Raised on the West Coast.",
     "Ultra Protection."
   ]);
 
@@ -97,15 +98,14 @@ test("homepage opens on established Vancouver roots and a summer-in-Canada campa
       "People playing on an early Tiger table in the rain beneath a white event tent."
     )
   ).toHaveAttribute("src", /f_auto%2Cq_auto%2Cw_640|f_auto,q_auto,w_640/);
-  await expect(page.getByAltText("Red and blue Tiger Aqua outdoor PingPong paddles.")).toHaveCount(
-    1
-  );
+  await expect(page.getByAltText("Two Tiger Aqua paddles with three white balls.")).toHaveCount(1);
   await expect(
     page.getByAltText("Tiger Portland Outdoor PingPong table in black and grey.")
   ).toHaveAttribute("src", /e_background_removal(?:%2F|\/)f_png/);
-  await expect(page.locator('#portland > img[alt=""]')).toHaveAttribute(
+  await expect(page.locator('#portland > img[alt=""], #aqua > img[alt=""]')).toHaveCount(0);
+  await expect(page.locator("#aqua img")).toHaveAttribute(
     "src",
-    /portland-summer-lifestyle-background-v1/
+    /two-paddles-three-balls-original/
   );
   await expect(
     page.getByAltText("Black Tiger PingPong cover fitted over a table with natural fabric folds.")
@@ -115,6 +115,7 @@ test("homepage opens on established Vancouver roots and a summer-in-Canada campa
 test("homepage keeps the hero actions immediate and never overflows", async ({ page }) => {
   for (const viewport of [
     { width: 390, height: 844 },
+    { width: 417, height: 844 },
     { width: 768, height: 1024 },
     { width: 1280, height: 900 },
     { width: 1440, height: 900 }
@@ -125,10 +126,10 @@ test("homepage keeps the hero actions immediate and never overflows", async ({ p
     const hero = page.locator("#home");
     const heroHeading = hero.getByRole("heading", {
       level: 1,
-      name: "Raised on the West Coast."
+      name: "Good nights. Great rallies."
     });
     const actions = [
-      hero.getByRole("link", { name: "Find Your Table" }),
+      hero.getByRole("link", { name: "Shop indoor tables" }),
       hero.getByRole("link", { name: "Call 1-888-552-5259" })
     ];
 
@@ -158,7 +159,7 @@ test("homepage focus and reduced-motion behavior stay accessible", async ({ page
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
 
-  const findTable = page.locator("#home").getByRole("link", { name: "Find Your Table" });
+  const findTable = page.locator("#home").getByRole("link", { name: "Shop indoor tables" });
   const callTiger = page.locator("#home").getByRole("link", { name: "Call 1-888-552-5259" });
   await findTable.focus();
   await expect(findTable).toBeFocused();
@@ -180,9 +181,9 @@ test("homepage focus and reduced-motion behavior stay accessible", async ({ page
   }
 });
 
-test("capture Summer in Canada homepage evidence", async ({ page }) => {
+test("capture fall homepage evidence", async ({ page }) => {
   test.skip(process.env.CAPTURE_HOMEPAGE_SCREENSHOTS !== "1", "Local evidence capture only.");
-  const outputDirectory = path.resolve("exports/homepage-summer-qa/playwright");
+  const outputDirectory = path.resolve("exports/homepage-fall-qa/playwright");
   await mkdir(outputDirectory, { recursive: true });
 
   for (const viewport of [

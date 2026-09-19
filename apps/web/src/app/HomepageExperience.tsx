@@ -57,7 +57,7 @@ export function HomepageExperience() {
             </ActionLink>
           </div>
         </div>
-        <p className={styles.heroCaption}>Home court, Vancouver.</p>
+        <p className={styles.heroCaption}>{homepage.hero.image.caption}</p>
       </section>
 
       <section
@@ -112,14 +112,6 @@ export function HomepageExperience() {
         className={`${styles.aquaCampaign} ${styles.storySection}`}
         id={homepage.aqua.anchor}
       >
-        <Image
-          alt=""
-          className={styles.aquaBackground}
-          fill
-          loading="lazy"
-          sizes="(max-width: 1490px) 100vw, 1440px"
-          src={homepage.aqua.backgroundImage.finalUrl}
-        />
         <div aria-hidden="true" className={styles.aquaWash} />
         <div className={styles.aquaCopy}>
           <Eyebrow>{activeAquaCampaign.eyebrow}</Eyebrow>
@@ -144,14 +136,6 @@ export function HomepageExperience() {
         className={`${styles.portland} ${styles.storySection}`}
         id={homepage.portland.anchor}
       >
-        <Image
-          alt=""
-          className={styles.portlandBackground}
-          fill
-          loading="lazy"
-          sizes="(max-width: 1490px) 100vw, 1440px"
-          src={homepage.portland.backgroundImage.finalUrl}
-        />
         <div aria-hidden="true" className={styles.portlandWash} />
         <div className={styles.portlandProduct}>
           <Image
@@ -182,7 +166,6 @@ export function HomepageExperience() {
           <Eyebrow>{homepage.vancouver.eyebrow}</Eyebrow>
           <h2 id="homepage-vancouver-title">{homepage.vancouver.heading}</h2>
           <p className={styles.sectionBody}>{homepage.vancouver.body}</p>
-          <blockquote>{homepage.vancouver.pullLine}</blockquote>
           <ActionLink href={homepage.vancouver.action.href} tone="quiet">
             {homepage.vancouver.action.label}
           </ActionLink>

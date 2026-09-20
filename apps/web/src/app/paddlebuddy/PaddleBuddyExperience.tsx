@@ -3,23 +3,24 @@
 import { FormEvent, type UIEvent, useEffect, useRef, useState } from "react";
 
 import { createPaddleBuddySubmission, type PaddleBuddyIntent } from "../../lib/paddlebuddy-api";
+import { paddleBuddyMedia } from "../../lib/paddlebuddy-media";
 import styles from "./page.module.css";
 
 const galleryItems = [
   {
     alt: "Paddle Buddy's current connect screen",
     label: "Connect",
-    src: "/paddlebuddy/paddlebuddy-home-connect.png"
+    src: paddleBuddyMedia.homeConnect
   },
   {
     alt: "Paddle Buddy's drill session screen",
     label: "Run a drill",
-    src: "/paddlebuddy/paddlebuddy-drill.png"
+    src: paddleBuddyMedia.drill
   },
   {
     alt: "Paddle Buddy's drill catalogue screen",
     label: "Browse drills",
-    src: "/paddlebuddy/paddlebuddy-secondary.png"
+    src: paddleBuddyMedia.browseDrills
   }
 ] as const;
 
@@ -151,7 +152,7 @@ export function PaddleBuddyExperience() {
             <img
               alt="Paddle Buddy home and connect screen in the iPhone simulator"
               className={styles.phoneCapture}
-              src="/paddlebuddy/paddlebuddy-home-connect.png"
+              src={paddleBuddyMedia.homeConnect}
             />
           </div>
           <div className={styles.orbit} aria-hidden="true">
@@ -176,11 +177,11 @@ export function PaddleBuddyExperience() {
             loop
             muted
             playsInline
-            poster="/paddlebuddy/paddlebuddy-connected-still.png"
+            poster={paddleBuddyMedia.connectedPoster}
             ref={connectionVideoRef}
           >
-            <source src="/paddlebuddy/paddlebuddy-connect-loop.webm" type="video/webm" />
-            <source src="/paddlebuddy/paddlebuddy-connect-loop.mp4" type="video/mp4" />
+            <source src={paddleBuddyMedia.connectionLoopWebm} type="video/webm" />
+            <source src={paddleBuddyMedia.connectionLoopMp4} type="video/mp4" />
           </video>
         </div>
       </section>

@@ -16,7 +16,7 @@ export const metadata: Metadata = getPathMetadata({
 export default function PaddleBuddyPage() {
   return (
     <>
-      <PublicStorefrontNav activeItem="support" />
+      <PublicStorefrontNav activeItem="paddlebuddy" />
       <main className={styles.page}>
         <PaddleBuddyExperience />
       </main>

@@ -1,14 +1,26 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { createPaddleBuddySubmission, type PaddleBuddyIntent } from "../../lib/paddlebuddy-api";
 import styles from "./page.module.css";
 
 const galleryItems = [
-  { label: "PLACEHOLDER — HOME / CONNECT SCREEN", type: "phone" },
-  { label: "PLACEHOLDER — DRILL EXPERIENCE", type: "wide" },
-  { label: "PLACEHOLDER — CONNECTION VIDEO", type: "video" },
+  {
+    label: "REAL CAPTURE — HOME / CONNECT SCREEN",
+    src: "/paddlebuddy/paddlebuddy-home-connect.png",
+    type: "phone"
+  },
+  {
+    label: "REAL CAPTURE — DRILL SESSION",
+    src: "/paddlebuddy/paddlebuddy-drill.png",
+    type: "wide"
+  },
+  {
+    label: "REAL CAPTURE — DRILL CATALOGUE",
+    src: "/paddlebuddy/paddlebuddy-secondary.png",
+    type: "video"
+  },
   { label: "PLACEHOLDER — IPAD VIEW", type: "tablet" }
 ] as const;
 
@@ -43,10 +55,27 @@ const faqs = [
 ] as const;
 
 export function PaddleBuddyExperience() {
+  const connectionVideoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [intent, setIntent] = useState<PaddleBuddyIntent>("follow_project");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => {
+      const video = connectionVideoRef.current;
+      if (!video) return;
+      if (preference.matches) {
+        video.pause();
+      } else {
+        void video.play().catch(() => undefined);
+      }
+    };
+    updateMotion();
+    preference.addEventListener("change", updateMotion);
+    return () => preference.removeEventListener("change", updateMotion);
+  }, []);
 
   async function handleSubmission(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -112,19 +141,11 @@ export function PaddleBuddyExperience() {
           </span>
           <span className={`${styles.annotation} ${styles.nameAnnotation}`}>Name: provisional</span>
           <div className={styles.phone}>
-            <div className={styles.phoneNotch} aria-hidden="true" />
-            <div className={styles.phoneScreen}>
-              <div className={styles.phoneChrome}>
-                <span>09:41</span>
-                <span>PB</span>
-              </div>
-              <div className={styles.phonePlaceholder}>
-                <span className={styles.connectionOrb} aria-hidden="true" />
-                <p>App connection preview</p>
-                <small>Replace with Paddle Buddy iPhone capture</small>
-              </div>
-              <div className={styles.phoneFootnote}>Development build</div>
-            </div>
+            <img
+              alt="Paddle Buddy home and connect screen in the iPhone simulator"
+              className={styles.phoneCapture}
+              src="/paddlebuddy/paddlebuddy-home-connect.png"
+            />
           </div>
           <div className={styles.orbit} aria-hidden="true">
             <span className={styles.ball} />
@@ -140,12 +161,23 @@ export function PaddleBuddyExperience() {
           </p>
           <p className={styles.disclosure}>Development build preview.</p>
         </div>
-        <div className={styles.connectionMedia} aria-label="Connection animation placeholder">
-          <div className={styles.connectionScan} aria-hidden="true" />
-          <span className={styles.connectionBall} aria-hidden="true" />
-          <div className={styles.placeholderLabel}>
-            <strong>Connection animation placeholder</strong>
-            <span>Future asset: real Paddle Buddy one-touch connection capture</span>
+        <div className={styles.connectionMedia} aria-label="Paddle Buddy connection capture">
+          <video
+            aria-label="Paddle Buddy connection interaction in the current app simulator"
+            autoPlay
+            className={styles.connectionVideo}
+            loop
+            muted
+            playsInline
+            poster="/paddlebuddy/paddlebuddy-connected-still.png"
+            ref={connectionVideoRef}
+          >
+            <source src="/paddlebuddy/paddlebuddy-connect-loop.webm" type="video/webm" />
+            <source src="/paddlebuddy/paddlebuddy-connect-loop.mp4" type="video/mp4" />
+          </video>
+          <div className={styles.connectionMediaCaption}>
+            <strong>Current Paddle Buddy connection loop</strong>
+            <span>Real app simulator capture · no physical robot shown</span>
           </div>
         </div>
       </section>
@@ -226,9 +258,13 @@ export function PaddleBuddyExperience() {
         <div className={styles.galleryGrid}>
           {galleryItems.map((item) => (
             <figure className={styles.galleryItem} data-type={item.type} key={item.label}>
-              <div className={styles.galleryGhost} aria-hidden="true">
-                <span />
-              </div>
+              {"src" in item ? (
+                <img alt="" className={styles.galleryCapture} src={item.src} />
+              ) : (
+                <div className={styles.galleryGhost} aria-hidden="true">
+                  <span />
+                </div>
+              )}
               <figcaption>{item.label}</figcaption>
             </figure>
           ))}

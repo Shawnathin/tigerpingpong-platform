@@ -56,8 +56,6 @@ const faqs = [
 export function PaddleBuddyExperience() {
   const connectionVideoRef = useRef<HTMLVideoElement>(null);
   const galleryItemRefs = useRef<Array<HTMLElement | null>>([]);
-  const roadmapBallRef = useRef<HTMLSpanElement>(null);
-  const roadmapPanelRef = useRef<HTMLDivElement>(null);
   const [activeGallerySlide, setActiveGallerySlide] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [intent, setIntent] = useState<PaddleBuddyIntent>("follow_project");
@@ -78,87 +76,6 @@ export function PaddleBuddyExperience() {
     updateMotion();
     preference.addEventListener("change", updateMotion);
     return () => preference.removeEventListener("change", updateMotion);
-  }, []);
-
-  useEffect(() => {
-    const panel = roadmapPanelRef.current;
-    const ball = roadmapBallRef.current;
-    if (!panel || !ball) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mobileLayout = window.matchMedia("(max-width: 620px)");
-    let hasPlayed = false;
-
-    const getStops = () => {
-      const stopNames = mobileLayout.matches
-        ? ["working", "focus", "building", "early"]
-        : ["working", "focus", "building"];
-      const panelBounds = panel.getBoundingClientRect();
-
-      return stopNames.flatMap((stopName) => {
-        const anchor = panel.querySelector<HTMLElement>(`[data-roadmap-stop="${stopName}"]`);
-        if (!anchor) return [];
-        const bounds = anchor.getBoundingClientRect();
-        return [
-          {
-            x: Math.min(bounds.right - panelBounds.left - 30, panelBounds.width - 30),
-            y: bounds.top - panelBounds.top + Math.min(bounds.height * 0.42, 54)
-          }
-        ];
-      });
-    };
-
-    const placeAtFinalStop = () => {
-      const finalStop = getStops().at(-1);
-      if (!finalStop) return;
-      ball.style.opacity = "1";
-      ball.style.transform = `translate(${finalStop.x}px, ${finalStop.y}px)`;
-    };
-
-    const playRoadmap = async () => {
-      if (hasPlayed) return;
-      hasPlayed = true;
-      const stops = getStops();
-      if (!stops.length) return;
-      if (reducedMotion.matches) {
-        placeAtFinalStop();
-        return;
-      }
-
-      let previous = { x: stops[0].x - 66, y: stops[0].y - 38 };
-      ball.style.opacity = "1";
-      ball.style.transform = `translate(${previous.x}px, ${previous.y}px)`;
-      for (const stop of stops) {
-        const peak = { x: stop.x, y: stop.y - 24 };
-        try {
-          await ball
-            .animate(
-              [
-                { transform: `translate(${previous.x}px, ${previous.y}px)` },
-                { offset: 0.62, transform: `translate(${peak.x}px, ${peak.y}px)` },
-                { transform: `translate(${stop.x}px, ${stop.y}px)` }
-              ],
-              { duration: 390, easing: "cubic-bezier(.22,.8,.25,1)", fill: "forwards" }
-            )
-            .finished;
-        } catch {
-          return;
-        }
-        previous = stop;
-      }
-      ball.style.transform = `translate(${previous.x}px, ${previous.y}px)`;
-    };
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        void playRoadmap();
-        observer.disconnect();
-      },
-      { threshold: 0.35 }
-    );
-    observer.observe(panel);
-    return () => observer.disconnect();
   }, []);
 
   function handleGalleryScroll(event: UIEvent<HTMLDivElement>) {
@@ -298,22 +215,16 @@ export function PaddleBuddyExperience() {
             experience before bringing more people in.
           </p>
         </header>
-        <div className={styles.statusPanel} ref={roadmapPanelRef}>
-          <span
-            aria-hidden="true"
-            className={styles.roadmapBall}
-            data-roadmap-ball
-            ref={roadmapBallRef}
-          />
+        <div className={styles.statusPanel}>
           <section className={styles.statusNow} aria-labelledby="status-now-title">
             <p className={styles.statusPhase}>Now</p>
             <div className={styles.statusNowContent}>
-              <article data-roadmap-stop="working">
+              <article>
                 <p className={styles.statusMeta}>Working in development</p>
                 <h3 id="status-now-title">Robot connection and drills</h3>
                 <p>Current connection and drills are working in the development build.</p>
               </article>
-              <article data-roadmap-stop="focus">
+              <article>
                 <p className={styles.statusMeta}>Current focus</p>
                 <h3>Enhancing reliability and drill experience</h3>
                 <p>We’re refining reliability and the experience of getting into and running drills.</p>
@@ -321,13 +232,13 @@ export function PaddleBuddyExperience() {
             </div>
           </section>
           <div className={styles.statusFuture}>
-            <section aria-labelledby="status-building-title" data-roadmap-stop="building">
+            <section aria-labelledby="status-building-title">
               <p className={styles.statusPhase}>Building</p>
               <p className={styles.statusMeta}>Active development</p>
               <h3 id="status-building-title">Warm-up system</h3>
               <p>A more guided way to start a practice session.</p>
             </section>
-            <section aria-labelledby="status-early-title" data-roadmap-stop="early">
+            <section aria-labelledby="status-early-title">
               <p className={styles.statusPhase}>Early</p>
               <p className={styles.statusMeta}>Very early development</p>
               <h3 id="status-early-title">Smart Progression</h3>
@@ -338,9 +249,6 @@ export function PaddleBuddyExperience() {
             </section>
           </div>
         </div>
-        <p className={styles.statusDisclaimer}>
-          No release dates here — just what’s working and what we’re building.
-        </p>
       </section>
 
       <section className={styles.gallery} aria-labelledby="gallery-title">
@@ -389,7 +297,7 @@ export function PaddleBuddyExperience() {
             Follow the project, ask a question, report a problem or tell us what would make your
             next practice better.
           </p>
-          <p>App questions stay here. Tiger’s phone line is for Tiger product enquiries.</p>
+          <p>For Paddle Buddy questions, this form is the best way to reach us.</p>
         </div>
         <form className={styles.signupForm} onSubmit={handleSubmission}>
           {submitted ? (
@@ -414,6 +322,7 @@ export function PaddleBuddyExperience() {
                   What brings you here? <em>Required</em>
                 </span>
                 <select
+                  name="intent"
                   value={intent}
                   onChange={(event) => setIntent(event.target.value as PaddleBuddyIntent)}
                 >
@@ -496,8 +405,8 @@ export function PaddleBuddyExperience() {
 
       <section className={styles.faq} aria-labelledby="faq-title">
         <header>
-          <p className={styles.sectionKicker}>A few useful answers</p>
-          <h2 id="faq-title">Before you ask.</h2>
+          <p className={styles.sectionKicker}>Before you ask</p>
+          <h2 id="faq-title">A few useful answers.</h2>
         </header>
         <div className={styles.faqList}>
           {faqs.map((faq) => (
@@ -510,10 +419,6 @@ export function PaddleBuddyExperience() {
             </details>
           ))}
         </div>
-        <p className={styles.privacyLink}>
-          Looking for the app’s data details? Read the existing{" "}
-          <a href="/paddlebuddy/privacy-policy">Paddle Buddy privacy policy</a>.
-        </p>
       </section>
     </div>
   );

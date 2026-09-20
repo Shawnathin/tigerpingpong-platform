@@ -33,6 +33,10 @@ const ADMIN_NAV_ITEMS = [
     label: "Customers"
   },
   {
+    href: "/admin/paddlebuddy",
+    label: "Paddle Buddy"
+  },
+  {
     href: "/admin/inventory",
     label: "Inventory"
   },

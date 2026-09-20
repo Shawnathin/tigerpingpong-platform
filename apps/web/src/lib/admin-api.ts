@@ -191,6 +191,33 @@ export interface AdminCustomersResponse {
   items: AdminCustomerSummary[];
 }
 
+export type PaddleBuddyFeedbackState = "new" | "reviewing" | "considering" | "planned" | "shipped";
+
+export interface AdminPaddleBuddySubmission {
+  id: string;
+  email: string;
+  intent: string;
+  message: string | null;
+  wantsUpdates: boolean;
+  earlyTesting: boolean;
+  has3050xl: string;
+  primaryDevice: string | null;
+  playingLevel: string | null;
+  feedbackState: PaddleBuddyFeedbackState;
+  createdAt: string;
+}
+
+export interface AdminPaddleBuddySubmissionsResponse {
+  count: number;
+  state: PaddleBuddyFeedbackState | "all";
+  digest: {
+    earlyTestingCount: number;
+    robotAccessCount: number;
+    updateOptInCount: number;
+  };
+  items: AdminPaddleBuddySubmission[];
+}
+
 export interface AdminWebhookEvent {
   createdAt: string | null;
   processedAt: string | null;
@@ -383,6 +410,26 @@ export function unassignAdminProductMedia(
 
 export function getAdminCustomers(): Promise<AdminCustomersResponse> {
   return fetchAdmin<AdminCustomersResponse>("/api/admin/customers");
+}
+
+export function getAdminPaddleBuddySubmissions(
+  state?: PaddleBuddyFeedbackState
+): Promise<AdminPaddleBuddySubmissionsResponse> {
+  const searchParams = new URLSearchParams({ limit: "100" });
+  if (state) searchParams.set("state", state);
+  return fetchAdmin<AdminPaddleBuddySubmissionsResponse>(
+    `/api/admin/paddlebuddy/submissions?${searchParams}`
+  );
+}
+
+export function updateAdminPaddleBuddySubmission(
+  submissionId: string,
+  feedbackState: PaddleBuddyFeedbackState
+): Promise<{ submission: AdminPaddleBuddySubmission }> {
+  return fetchAdmin<{ submission: AdminPaddleBuddySubmission }>(
+    `/api/admin/paddlebuddy/submissions/${encodeURIComponent(submissionId)}`,
+    { body: { feedbackState }, method: "PATCH" }
+  );
 }
 
 export function getAdminSettings(): Promise<AdminSettingsResponse> {

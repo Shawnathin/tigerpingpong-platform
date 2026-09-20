@@ -23,6 +23,15 @@ interface AdminListQuery {
   status?: string;
 }
 
+interface AdminPaddleBuddyListQuery {
+  limit?: string;
+  state?: string;
+}
+
+interface AdminPaddleBuddyUpdateBody {
+  feedbackState?: unknown;
+}
+
 interface AdminProductMediaBody {
   altText?: unknown;
   caption?: unknown;
@@ -176,6 +185,29 @@ export class AdminController {
     this.assertAuthorized(response, requestToken);
 
     return this.adminService.listCustomers();
+  }
+
+  @Get("paddlebuddy/submissions")
+  listPaddleBuddySubmissions(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Query() query: AdminPaddleBuddyListQuery
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.listPaddleBuddySubmissions(query);
+  }
+
+  @Patch("paddlebuddy/submissions/:id")
+  updatePaddleBuddySubmission(
+    @Res({ passthrough: true }) response: HeaderResponse,
+    @Headers("x-internal-orders-token") requestToken: AdminAuthHeaderValue,
+    @Param("id") id: string,
+    @Body() body: AdminPaddleBuddyUpdateBody
+  ): Promise<unknown> {
+    this.assertAuthorized(response, requestToken);
+
+    return this.adminService.updatePaddleBuddySubmission(id, body);
   }
 
   @Get("inventory")

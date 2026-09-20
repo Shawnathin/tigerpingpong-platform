@@ -118,6 +118,16 @@ enum PaddleBuddyRobotAccess {
   @@map("paddle_buddy_robot_access")
 }
 
+enum PaddleBuddyFeedbackState {
+  new
+  reviewing
+  considering
+  planned
+  shipped
+
+  @@map("paddle_buddy_feedback_state")
+}
+
 enum RedirectStatus {
   draft
   approved
@@ -607,6 +617,7 @@ model PaddleBuddySubmission {
   has3050xl                     PaddleBuddyRobotAccess @default(unanswered) @map("has_3050xl")
   primaryDevice                 String?           @map("primary_device")
   playingLevel                  String?           @map("playing_level") @db.Text
+  feedbackState                 PaddleBuddyFeedbackState @default(new) @map("feedback_state")
   sourcePage                    String            @map("source_page")
   notificationStatus            String            @default("not_required") @map("notification_status")
   notificationAttemptedAt       DateTime?         @map("notification_attempted_at")
@@ -618,6 +629,7 @@ model PaddleBuddySubmission {
   @@index([createdAt])
   @@index([email])
   @@index([intent, createdAt])
+  @@index([feedbackState, createdAt])
   @@map("paddle_buddy_submissions")
 }
 

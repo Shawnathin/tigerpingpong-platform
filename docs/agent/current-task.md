@@ -1,3 +1,28 @@
+# Systems 4.1 canary handoff
+
+## Selected: local/GitHub collaboration loop adoption
+
+Issue [#187](https://github.com/Shawnathin/tigerpingpong-platform/issues/187)
+selects a wrapper adoption task, not a production rebuild. Candidate branch:
+`codex/docs/systems-4-1-review-loop-canary`, based on `develop`, with a draft
+PR targeting `develop`. It adds only a public-safe local/GitHub review contract
+and a local SHA-bound GitHub review-readback wrapper.
+
+No production deployment, runtime, architecture, database, payment, admin,
+secret, or release behavior change is authorized. Keep the existing canonical
+local Tiger system in place. The local Phase 1 baseline must remain local-only
+and must not include secret values, machine paths, local database data, or
+private operational evidence in GitHub.
+
+Status: candidate prepared for cloud review. Local validation is not claimed in
+this candidate because the current session has no usable local terminal. Cloud
+review must use the exact review contract in `docs/agent/systems-4.1.md`.
+After a SHA-bound `FIX_REQUIRED` review, continue the same branch and run the
+existing relevant local checks before requesting another review. Do not merge or
+deploy this canary as part of Systems 4.1 adoption.
+
+---
+
 # Current Task
 
 ## Selected: homepage fall refresh release packaging

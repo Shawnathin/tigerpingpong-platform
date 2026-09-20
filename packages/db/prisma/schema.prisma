@@ -98,6 +98,26 @@ enum OrderStatus {
   @@map("order_status")
 }
 
+enum PaddleBuddyIntent {
+  follow_project
+  early_testing
+  question_support
+  bug_problem
+  feature_idea
+  other
+
+  @@map("paddle_buddy_intent")
+}
+
+enum PaddleBuddyRobotAccess {
+  yes
+  no
+  not_yet
+  unanswered
+
+  @@map("paddle_buddy_robot_access")
+}
+
 enum RedirectStatus {
   draft
   approved
@@ -575,6 +595,30 @@ model OrderEmailDelivery {
   @@index([status, nextAttemptAt])
   @@index([sentAt])
   @@map("order_email_deliveries")
+}
+
+model PaddleBuddySubmission {
+  id                            String            @id @default(cuid())
+  email                         String
+  intent                        PaddleBuddyIntent
+  message                       String?           @db.Text
+  wantsUpdates                  Boolean           @default(false) @map("wants_updates")
+  earlyTesting                  Boolean           @default(false) @map("early_testing")
+  has3050xl                     PaddleBuddyRobotAccess @default(unanswered) @map("has_3050xl")
+  primaryDevice                 String?           @map("primary_device")
+  playingLevel                  String?           @map("playing_level") @db.Text
+  sourcePage                    String            @map("source_page")
+  notificationStatus            String            @default("not_required") @map("notification_status")
+  notificationAttemptedAt       DateTime?         @map("notification_attempted_at")
+  notificationSentAt            DateTime?         @map("notification_sent_at")
+  notificationProviderMessageId String?           @map("notification_provider_message_id")
+  notificationLastError         String?           @map("notification_last_error") @db.Text
+  createdAt                     DateTime          @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([email])
+  @@index([intent, createdAt])
+  @@map("paddle_buddy_submissions")
 }
 
 model OrderItem {

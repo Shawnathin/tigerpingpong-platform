@@ -122,3 +122,9 @@ export function getOrderEmailConfig(env: NodeJS.ProcessEnv = process.env): Order
 export function getStaffOrderEmailRecipient(env: NodeJS.ProcessEnv = process.env): string | null {
   return env.ORDER_NOTIFICATION_EMAIL?.trim() || env.STAFF_ORDER_EMAIL_TO?.trim() || null;
 }
+
+export function getPaddleBuddyNotificationRecipient(
+  env: NodeJS.ProcessEnv = process.env
+): string | null {
+  return env.PADDLE_BUDDY_NOTIFICATION_EMAIL?.trim() || env.ORDER_EMAIL_REPLY_TO?.trim() || null;
+}

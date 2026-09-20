@@ -12,6 +12,7 @@ export type PublicStorefrontNavItem =
   | "balls"
   | "accessories"
   | "resources"
+  | "paddlebuddy"
   | "contact"
   | "cart"
   | "support";
@@ -40,6 +41,11 @@ const NAV_ITEMS: Array<{
     href: "/accessories/",
     id: "accessories",
     label: "Accessories"
+  },
+  {
+    href: "/paddlebuddy",
+    id: "paddlebuddy",
+    label: "PaddleBuddy"
   },
   {
     href: "/contact",
@@ -72,6 +78,11 @@ const MOBILE_NAV_ITEMS: Array<{
     href: "/accessories/",
     id: "accessories",
     label: "Accessories"
+  },
+  {
+    href: "/paddlebuddy",
+    id: "paddlebuddy",
+    label: "PaddleBuddy"
   },
   {
     href: "/contact/",

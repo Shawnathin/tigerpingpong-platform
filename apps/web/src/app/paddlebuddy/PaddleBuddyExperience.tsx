@@ -5,34 +5,6 @@ import { FormEvent, useState } from "react";
 import { createPaddleBuddySubmission, type PaddleBuddyIntent } from "../../lib/paddlebuddy-api";
 import styles from "./page.module.css";
 
-const statusItems = [
-  {
-    detail: "Current connection and drills are working in the development build.",
-    label: "Working in development",
-    title: "Robot connection and drills",
-    tone: "working"
-  },
-  {
-    detail: "We’re refining reliability and the experience of getting into and running drills.",
-    label: "Current focus",
-    title: "Enhancing reliability and drill experience",
-    tone: "focus"
-  },
-  {
-    detail: "A more guided start to a practice session.",
-    label: "Active development",
-    title: "Warm-up system",
-    tone: "active"
-  },
-  {
-    detail:
-      "An adaptive progression layer we’re exploring to help shape future practice suggestions over time.",
-    label: "Very early development",
-    title: "Smart Progression",
-    tone: "early"
-  }
-] as const;
-
 const galleryItems = [
   { label: "PLACEHOLDER — HOME / CONNECT SCREEN", type: "phone" },
   { label: "PLACEHOLDER — DRILL EXPERIENCE", type: "wide" },
@@ -206,20 +178,42 @@ export function PaddleBuddyExperience() {
             experience before bringing more people in.
           </p>
         </header>
-        <div className={styles.statusRoadmap}>
-          {statusItems.map((item) => (
-            <article className={styles.statusItem} data-tone={item.tone} key={item.title}>
-              <div className={styles.statusCardCopy}>
-                <h3>{item.title}</h3>
-                <p>{item.detail}</p>
-              </div>
-              <span className={styles.statusLabel}>{item.label}</span>
-            </article>
-          ))}
+        <div className={styles.statusPanel}>
+          <section className={styles.statusNow} aria-labelledby="status-now-title">
+            <p className={styles.statusPhase}>Now</p>
+            <div className={styles.statusNowContent}>
+              <article>
+                <p className={styles.statusMeta}>Working in development</p>
+                <h3 id="status-now-title">Robot connection and drills</h3>
+                <p>Current connection and drills are working in the development build.</p>
+              </article>
+              <article>
+                <p className={styles.statusMeta}>Current focus</p>
+                <h3>Enhancing reliability and drill experience</h3>
+                <p>We’re refining reliability and the experience of getting into and running drills.</p>
+              </article>
+            </div>
+          </section>
+          <div className={styles.statusFuture}>
+            <section aria-labelledby="status-building-title">
+              <p className={styles.statusPhase}>Building</p>
+              <p className={styles.statusMeta}>Active development</p>
+              <h3 id="status-building-title">Warm-up system</h3>
+              <p>A more guided way to start a practice session.</p>
+            </section>
+            <section aria-labelledby="status-early-title">
+              <p className={styles.statusPhase}>Early</p>
+              <p className={styles.statusMeta}>Very early development</p>
+              <h3 id="status-early-title">Smart Progression</h3>
+              <p>
+                An adaptive layer being explored to help shape future practice suggestions over
+                time.
+              </p>
+            </section>
+          </div>
         </div>
         <p className={styles.statusDisclaimer}>
-          This is the current direction, not a release-date promise. We’ll show what’s changed as it
-          becomes available.
+          No release dates here — just what’s working and what we’re building.
         </p>
       </section>
 

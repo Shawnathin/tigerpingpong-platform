@@ -6,6 +6,7 @@ import { CheckoutModule } from "./checkout/checkout.module";
 import { HealthController } from "./health.controller";
 import { InternalOrdersModule } from "./internal-orders/internal-orders.module";
 import { OrderEmailModule } from "./order-emails/order-email.module";
+import { PaddleBuddyModule } from "./paddlebuddy/paddlebuddy.module";
 import { StripeWebhookModule } from "./webhooks/stripe-webhook.module";
 
 @Module({
@@ -14,6 +15,7 @@ import { StripeWebhookModule } from "./webhooks/stripe-webhook.module";
     CatalogModule,
     CheckoutModule,
     OrderEmailModule,
+    PaddleBuddyModule,
     InternalOrdersModule,
     StripeWebhookModule
   ],

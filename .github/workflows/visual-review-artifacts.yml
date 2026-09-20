@@ -1,0 +1,42 @@
+name: Visual review artifacts
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: publish-review-images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out candidate
+        uses: actions/checkout@v4
+
+      - name: Detect review images
+        id: review_images
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find docs/review-artifacts -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \) -print -quit 2>/dev/null | grep -q .; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload visual review artifact
+        if: steps.review_images.outputs.found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-review-${{ github.event.pull_request.number || github.run_number }}
+          path: |
+            docs/review-artifacts/**/*.png
+            docs/review-artifacts/**/*.jpg
+            docs/review-artifacts/**/*.jpeg
+            docs/review-artifacts/**/*.webp
+          if-no-files-found: error
+          retention-days: 7

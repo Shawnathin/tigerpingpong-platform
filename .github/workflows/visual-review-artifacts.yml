@@ -1,6 +1,13 @@
 name: Visual review artifacts
 
 on:
+  push:
+    branches-ignore:
+      - main
+      - develop
+    paths:
+      - "docs/review-artifacts/**"
+      - ".github/workflows/visual-review-artifacts.yml"
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:

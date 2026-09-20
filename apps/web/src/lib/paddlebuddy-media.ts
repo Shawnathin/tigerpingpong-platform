@@ -1,8 +1,7 @@
-const cloudName = process.env.NEXT_PUBLIC_PADDLE_BUDDY_CLOUDINARY_CLOUD_NAME;
-
-if (!cloudName) {
-  throw new Error("NEXT_PUBLIC_PADDLE_BUDDY_CLOUDINARY_CLOUD_NAME is required for Paddle Buddy media.");
-}
+// Cloud names are public delivery identifiers, not credentials. The default keeps
+// static builds (including CI) able to render the public PaddleBuddy page; deploy
+// environments can still set the public variable explicitly.
+const cloudName = process.env.NEXT_PUBLIC_PADDLE_BUDDY_CLOUDINARY_CLOUD_NAME ?? "svl1myo8";
 
 const imageBase = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto`;
 const videoBase = `https://res.cloudinary.com/${cloudName}/video/upload/q_auto`;

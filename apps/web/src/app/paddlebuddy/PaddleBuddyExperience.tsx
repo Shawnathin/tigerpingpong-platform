@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
+import { createPaddleBuddySubmission, type PaddleBuddyIntent } from "../../lib/paddlebuddy-api";
 import styles from "./page.module.css";
 
 const statusItems = [
@@ -49,7 +50,7 @@ const faqs = [
   },
   {
     answer:
-      "We’ll invite small groups of testers as the build is ready for broader use. Join the development list if you want to hear about testing opportunities.",
+      "We’ll invite small groups of testers as the build is ready for broader use. Use the Paddle Buddy form if you want to hear about testing opportunities.",
     question: "Can I test it?"
   },
   {
@@ -69,19 +70,40 @@ const faqs = [
 ] as const;
 
 export function PaddleBuddyExperience() {
-  const [signupSubmitted, setSignupSubmitted] = useState(false);
-  const [supportSubmitted, setSupportSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [intent, setIntent] = useState<PaddleBuddyIntent>("follow_project");
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSignupSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmission(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // TODO(paddlebuddy): replace this local-only confirmation with the approved list integration.
-    setSignupSubmitted(true);
-  }
-
-  function handleSupportSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // TODO(paddlebuddy): connect to an approved support workflow only after privacy review.
-    setSupportSubmitted(true);
+    const form = new FormData(event.currentTarget);
+    const message = String(form.get("message") ?? "").trim();
+    if (["question_support", "bug_problem", "feature_idea", "other"].includes(intent) && !message) {
+      setError("Please include a message so we know how to help.");
+      return;
+    }
+    setError(null);
+    setSubmitting(true);
+    try {
+      await createPaddleBuddySubmission({
+        company: String(form.get("company") ?? ""),
+        earlyTesting: form.get("earlyTesting") === "on",
+        email: String(form.get("email") ?? ""),
+        has3050xl:
+          form.get("has3050xl") === "yes" ? true : form.get("has3050xl") === "no" ? false : null,
+        intent,
+        message,
+        playingLevel: String(form.get("playingLevel") ?? ""),
+        primaryDevice: String(form.get("primaryDevice") ?? "") as "iphone" | "ipad" | "both" | "",
+        wantsUpdates: form.get("wantsUpdates") === "on"
+      });
+      setSubmitted(true);
+    } catch (submissionError) {
+      setError(submissionError instanceof Error ? submissionError.message : "Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -240,21 +262,26 @@ export function PaddleBuddyExperience() {
 
       <section className={styles.signup} id="development-list" aria-labelledby="signup-title">
         <div className={styles.signupIntro}>
-          <p className={styles.sectionKicker}>Development list</p>
+          <p className={styles.sectionKicker}>Paddle Buddy contact</p>
           <h2 id="signup-title">Let’s get connected.</h2>
           <p>
-            Follow the project, hear about testing opportunities and tell us what would make your
+            Follow the project, ask a question, report a problem or tell us what would make your
             next practice better.
           </p>
+          <p>App questions stay here. Tiger’s phone line is for Tiger product enquiries.</p>
         </div>
-        <form className={styles.signupForm} onSubmit={handleSignupSubmit}>
-          {signupSubmitted ? (
+        <form className={styles.signupForm} onSubmit={handleSubmission}>
+          {submitted ? (
             <div className={styles.localSuccess} role="status">
-              <strong>You’re on the local prototype list.</strong>
-              <span>Nothing was sent anywhere. A future approved integration will live here.</span>
+              <strong>Thanks. Your Paddle Buddy note is in.</strong>
+              <span>{"We’ll use your update preference exactly as you chose it."}</span>
             </div>
           ) : (
             <>
+              <label className={styles.honeypot} aria-hidden="true">
+                <span>Company</span>
+                <input autoComplete="off" name="company" tabIndex={-1} type="text" />
+              </label>
               <label>
                 <span>
                   Email address <em>Required</em>
@@ -263,16 +290,37 @@ export function PaddleBuddyExperience() {
               </label>
               <label>
                 <span>
-                  What matters most to you? <em>Optional</em>
+                  What brings you here? <em>Required</em>
                 </span>
-                <textarea
-                  name="what-matters"
-                  placeholder="What do you wish you could do with your robot—or what currently gets in the way?"
-                  rows={4}
-                />
+                <select
+                  value={intent}
+                  onChange={(event) => setIntent(event.target.value as PaddleBuddyIntent)}
+                >
+                  <option value="follow_project">Follow the project</option>
+                  <option value="early_testing">Early testing</option>
+                  <option value="question_support">Question / support</option>
+                  <option value="bug_problem">Bug / problem</option>
+                  <option value="feature_idea">Feature idea</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+              <label>
+                <span>
+                  Message{" "}
+                  {["question_support", "bug_problem", "feature_idea", "other"].includes(intent) ? (
+                    <em>Required</em>
+                  ) : (
+                    <em>Optional</em>
+                  )}
+                </span>
+                <textarea name="message" placeholder="What would you like us to know?" rows={4} />
               </label>
               <label className={styles.checkboxLabel}>
-                <input name="early-builds" type="checkbox" />
+                <input name="wantsUpdates" type="checkbox" />
+                <span>Send me Paddle Buddy development, beta and launch updates.</span>
+              </label>
+              <label className={styles.checkboxLabel}>
+                <input name="earlyTesting" type="checkbox" />
                 <span>I’m interested in testing early builds.</span>
               </label>
               <details className={styles.moreDetails}>
@@ -282,100 +330,42 @@ export function PaddleBuddyExperience() {
                 <div>
                   <label>
                     <span>Do you currently have access to a Robo-Pong 3050XL?</span>
-                    <select defaultValue="">
+                    <select defaultValue="" name="has3050xl">
                       <option disabled value="">
                         Choose one
                       </option>
-                      <option>Yes</option>
-                      <option>No</option>
-                      <option>Not yet</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                      <option value="not_yet">Not yet</option>
                     </select>
                   </label>
                   <label>
                     <span>Would you primarily use iPhone or iPad?</span>
-                    <select defaultValue="">
+                    <select defaultValue="" name="primaryDevice">
                       <option disabled value="">
                         Choose one
                       </option>
-                      <option>iPhone</option>
-                      <option>iPad</option>
-                      <option>Both</option>
+                      <option value="iphone">iPhone</option>
+                      <option value="ipad">iPad</option>
+                      <option value="both">Both</option>
                     </select>
                   </label>
                   <label>
                     <span>Playing experience / level</span>
-                    <input placeholder="Optional" type="text" />
+                    <input name="playingLevel" placeholder="Optional" type="text" />
                   </label>
                 </div>
               </details>
-              <button className={styles.primaryAction} type="submit">
-                Join the development list
+              {error ? (
+                <p className={styles.formError} role="alert">
+                  {error}
+                </p>
+              ) : null}
+              <button className={styles.primaryAction} disabled={submitting} type="submit">
+                {submitting ? "Sending…" : "Send to Paddle Buddy"}
               </button>
               <p className={styles.formFinePrint}>
-                By joining, you agree to receive Project Paddle Buddy development, beta and launch
-                emails from Tiger PingPong. You can unsubscribe at any time.
-              </p>
-              <p className={styles.formFinePrint}>
-                This is a development list, not an app account or a guaranteed beta place. No
-                purchase is required to join.
-              </p>
-            </>
-          )}
-        </form>
-      </section>
-
-      <section className={styles.support} aria-labelledby="support-title">
-        <div className={styles.supportCopy}>
-          <p className={styles.sectionKicker}>Separate support route</p>
-          <h2 id="support-title">App questions? Write to us.</h2>
-          <p>
-            Paddle Buddy is a side project, and all app questions and support are handled by email
-            or through the form below.
-          </p>
-          <p>
-            Please don’t call Tiger’s toll-free number about the app. The phone team can’t
-            troubleshoot it and will direct you back here.
-          </p>
-          <p>
-            Looking for a Tiger table, paddles or other gear? We’d love to talk. Our usual product
-            support is still there for that.
-          </p>
-        </div>
-        <form className={styles.supportForm} onSubmit={handleSupportSubmit}>
-          {supportSubmitted ? (
-            <div className={styles.localSuccess} role="status">
-              <strong>Your local message is ready for review.</strong>
-              <span>This prototype has not sent an email or stored your message.</span>
-            </div>
-          ) : (
-            <>
-              <label>
-                <span>Email address</span>
-                <input autoComplete="email" name="support-email" required type="email" />
-              </label>
-              <label>
-                <span>Enquiry type</span>
-                <select defaultValue="" name="enquiry-type" required>
-                  <option disabled value="">
-                    Choose an enquiry type
-                  </option>
-                  <option>General question</option>
-                  <option>Beta/testing</option>
-                  <option>Bug/problem</option>
-                  <option>Feature idea</option>
-                  <option>Other</option>
-                </select>
-              </label>
-              <label>
-                <span>Message</span>
-                <textarea name="support-message" required rows={5} />
-              </label>
-              <button className={styles.darkAction} type="submit">
-                Send a Paddle Buddy message
-              </button>
-              <p className={styles.supportFinePrint}>
-                This support form is separate from the development list. A support message does not
-                subscribe you to project emails.
+                Updates are opt-in. Sending a question does not subscribe you to project emails.
               </p>
             </>
           )}

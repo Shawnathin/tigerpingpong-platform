@@ -792,6 +792,19 @@
   height: 18px;
   accent-color: var(--pb-orange);
 }
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.formError {
+  margin: 0;
+  color: #ffd1af;
+  font-size: 0.85rem;
+  font-weight: 750;
+}
 .moreDetails {
   border-top: 1px solid rgb(188 222 241 / 20%);
   padding-top: 14px;

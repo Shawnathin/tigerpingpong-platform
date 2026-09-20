@@ -430,14 +430,15 @@
   line-height: 1.62;
 }
 .disclosure {
+  justify-self: start;
   margin: 4px 0 0;
-  padding: 14px 16px;
-  border-left: 3px solid var(--pb-orange);
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--pb-orange);
   color: #48566a;
   font-size: 0.84rem;
   font-weight: 760;
   line-height: 1.5;
-  background: rgb(255 255 255 / 58%);
+  background: rgb(255 245 234 / 76%);
 }
 
 .connectionMedia {
@@ -503,18 +504,11 @@
 .story {
   position: relative;
   display: grid;
-  grid-template-columns: 0.28fr 0.9fr 1fr;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
   gap: clamp(24px, 5vw, 80px);
   width: min(1100px, 100%);
   margin-inline: auto;
   padding: clamp(20px, 4vw, 56px) 0;
-}
-.storyNumber {
-  color: rgb(23 27 46 / 10%);
-  font-size: clamp(4rem, 10vw, 10rem);
-  font-weight: 950;
-  letter-spacing: -0.08em;
-  line-height: 0.7;
 }
 .storyCopy {
   display: grid;
@@ -544,23 +538,53 @@
   gap: 18px;
   max-width: 760px;
 }
-.statusList {
-  overflow: hidden;
-  border-top: 1px solid rgb(23 27 46 / 16%);
+.statusRoadmap {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
 }
 .statusItem {
+  position: relative;
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) auto;
-  gap: 18px;
-  align-items: center;
-  padding: 24px 10px;
-  border-bottom: 1px solid rgb(23 27 46 / 16%);
+  min-height: 194px;
+  align-content: space-between;
+  gap: 30px;
+  overflow: hidden;
+  border: 1px solid rgb(23 27 46 / 13%);
+  border-radius: 20px;
+  padding: clamp(24px, 3vw, 36px);
+  background:
+    linear-gradient(rgb(23 27 46 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(23 27 46 / 4%) 1px, transparent 1px),
+    rgb(255 255 255 / 54%);
+  background-size: 28px 28px;
 }
-.statusIndex {
-  color: #9ba8b5;
-  font-size: 0.76rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+.statusItem::after {
+  position: absolute;
+  right: -50px;
+  bottom: -50px;
+  width: 150px;
+  aspect-ratio: 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  content: "";
+  opacity: 0.13;
+  pointer-events: none;
+}
+.statusItem:nth-child(1),
+.statusItem:nth-child(2) {
+  grid-column: span 6;
+  min-height: 276px;
+}
+.statusItem:nth-child(3) {
+  grid-column: span 5;
+}
+.statusItem:nth-child(4) {
+  grid-column: span 7;
+}
+.statusCardCopy {
+  position: relative;
+  z-index: 1;
 }
 .statusItem h3,
 .statusItem p {
@@ -576,9 +600,13 @@
   margin-top: 5px;
   color: #697586;
   font-size: 0.88rem;
-  font-weight: 640;
+  font-weight: 650;
+  line-height: 1.5;
 }
 .statusLabel {
+  position: relative;
+  z-index: 1;
+  justify-self: start;
   border: 1px solid currentColor;
   border-radius: 999px;
   padding: 8px 11px;
@@ -595,11 +623,11 @@
   color: #a44715;
   background: #fff0dd;
 }
-.statusItem[data-tone="planned"] .statusLabel {
+.statusItem[data-tone="active"] .statusLabel {
   color: #21638a;
   background: #e7f5ff;
 }
-.statusItem[data-tone="considering"] .statusLabel {
+.statusItem[data-tone="early"] .statusLabel {
   color: #5c5974;
   background: #f0eff8;
 }
@@ -611,21 +639,6 @@
   font-weight: 650;
   line-height: 1.55;
 }
-.progression {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px;
-  margin: 0;
-  color: var(--tiger-ink);
-  font-size: 0.9rem;
-  font-weight: 900;
-}
-.progression b {
-  color: var(--pb-orange);
-  font-size: 1.3em;
-}
-
 .gallery {
   display: grid;
   grid-template-columns: minmax(260px, 0.62fr) minmax(0, 1.38fr);
@@ -836,6 +849,11 @@
   font-weight: 600;
   line-height: 1.5;
 }
+.formFinePrint a {
+  color: #d7efff;
+  font-weight: 850;
+  text-underline-offset: 0.17em;
+}
 .localSuccess {
   display: grid;
   gap: 7px;
@@ -993,10 +1011,7 @@
     padding-bottom: 38px;
   }
   .story {
-    grid-template-columns: 0.2fr 1fr;
-  }
-  .storyCopy {
-    grid-column: 2;
+    grid-template-columns: 1fr 1fr;
   }
   .gallery header {
     position: static;
@@ -1083,34 +1098,19 @@
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  .storyNumber {
-    position: absolute;
-    top: 4px;
-    right: 8px;
-  }
-  .story > div:nth-child(2),
-  .storyCopy {
-    grid-column: auto;
-  }
   .story h2 {
     max-width: 310px;
   }
-  .statusItem {
-    grid-template-columns: 38px 1fr;
-    gap: 10px;
+  .statusRoadmap {
+    grid-template-columns: 1fr;
   }
-  .statusLabel {
-    grid-column: 2;
-    justify-self: start;
-  }
-  .progression {
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .progression b {
-    width: 100%;
-    padding-left: 10px;
-    transform: rotate(90deg);
+  .statusItem,
+  .statusItem:nth-child(1),
+  .statusItem:nth-child(2),
+  .statusItem:nth-child(3),
+  .statusItem:nth-child(4) {
+    grid-column: auto;
+    min-height: 0;
   }
   .galleryGrid {
     grid-template-columns: 1fr;

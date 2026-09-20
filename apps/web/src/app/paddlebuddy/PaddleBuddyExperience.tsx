@@ -7,28 +7,29 @@ import styles from "./page.module.css";
 
 const statusItems = [
   {
-    detail: "The current development build connects to the robot and runs drills.",
+    detail: "Current connection and drills are working in the development build.",
     label: "Working in development",
     title: "Robot connection and drills",
     tone: "working"
   },
   {
-    detail: "We’re refining the experience before bringing more people in.",
+    detail: "We’re refining reliability and the experience of getting into and running drills.",
     label: "Current focus",
-    title: "Connection reliability and drill experience",
+    title: "Enhancing reliability and drill experience",
     tone: "focus"
   },
   {
     detail: "A more guided start to a practice session.",
-    label: "Planned",
+    label: "Active development",
     title: "Warm-up system",
-    tone: "planned"
+    tone: "active"
   },
   {
-    detail: "A useful layer of help, if it earns its place.",
-    label: "Considering",
-    title: "Coaching support",
-    tone: "considering"
+    detail:
+      "An adaptive progression layer we’re exploring to help shape future practice suggestions over time.",
+    label: "Very early development",
+    title: "Smart Progression",
+    tone: "early"
   }
 ] as const;
 
@@ -111,7 +112,6 @@ export function PaddleBuddyExperience() {
       <section className={styles.hero} aria-labelledby="paddlebuddy-title">
         <div className={styles.heroGrid} aria-hidden="true" />
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>A Tiger PingPong side project · In development</p>
           <h1 id="paddlebuddy-title">
             <span>Codename:</span>
             Paddle Buddy.
@@ -129,10 +129,6 @@ export function PaddleBuddyExperience() {
               See what’s working <span aria-hidden="true">↓</span>
             </a>
           </div>
-          <p className={styles.supportNote}>
-            App questions? Please use email or the project contact form. Tiger’s phone line is for
-            product enquiries.
-          </p>
         </div>
 
         <div className={styles.heroPhoneArea} aria-label="Paddle Buddy app preview placeholder">
@@ -166,14 +162,11 @@ export function PaddleBuddyExperience() {
 
       <section className={styles.connection} aria-labelledby="connection-title">
         <div className={styles.connectionCopy}>
-          <p className={styles.sectionKicker}>Connection, without the performance</p>
           <h2 id="connection-title">Less setup. More PingPong.</h2>
           <p>
             One tap to start connecting. Your drills close by. Less getting in the way of practice.
           </p>
-          <p className={styles.disclosure}>
-            Development build preview. This webpage does not search for or connect to your robot.
-          </p>
+          <p className={styles.disclosure}>Development build preview.</p>
         </div>
         <div className={styles.connectionMedia} aria-label="Connection animation placeholder">
           <div className={styles.connectionScan} aria-hidden="true" />
@@ -186,23 +179,21 @@ export function PaddleBuddyExperience() {
       </section>
 
       <section className={styles.story} aria-labelledby="story-title">
-        <div className={styles.storyNumber} aria-hidden="true">
-          02
-        </div>
         <div>
           <p className={styles.sectionKicker}>A note on the working title</p>
           <h2 id="story-title">The name was supposed to be temporary.</h2>
         </div>
         <div className={styles.storyCopy}>
           <p>
-            We needed something to call the project so we could get on with building it. Paddle
-            Buddy would do. Temporarily.
+            We needed something to call the project, so Paddle Buddy became the codename. It was
+            supposed to be temporary.
           </p>
           <p>
-            Then it made its way into the privacy policy. Then people started asking how to get it.
+            Then it ended up in the privacy policy. Then people started asking about it. Now people
+            actually call us and say “Paddle Buddy” like that was always the plan.
           </p>
-          <p>So here we are. The app is in development. The name is still under review.</p>
-          <strong>The name is the joke. The app is the proof.</strong>
+          <p>We still find that pretty funny.</p>
+          <strong>At this point, the codename may be winning.</strong>
         </div>
       </section>
 
@@ -215,11 +206,10 @@ export function PaddleBuddyExperience() {
             experience before bringing more people in.
           </p>
         </header>
-        <div className={styles.statusList}>
-          {statusItems.map((item, index) => (
+        <div className={styles.statusRoadmap}>
+          {statusItems.map((item) => (
             <article className={styles.statusItem} data-tone={item.tone} key={item.title}>
-              <span className={styles.statusIndex}>{String(index + 1).padStart(2, "0")}</span>
-              <div>
+              <div className={styles.statusCardCopy}>
                 <h3>{item.title}</h3>
                 <p>{item.detail}</p>
               </div>
@@ -230,15 +220,6 @@ export function PaddleBuddyExperience() {
         <p className={styles.statusDisclaimer}>
           This is the current direction, not a release-date promise. We’ll show what’s changed as it
           becomes available.
-        </p>
-        <p className={styles.progression}>
-          <span>Small test group</span>
-          <b aria-hidden="true">→</b>
-          <span>Wider test waves</span>
-          <b aria-hidden="true">→</b>
-          <span>Public beta</span>
-          <b aria-hidden="true">→</b>
-          <span>Release</span>
         </p>
       </section>
 
@@ -365,7 +346,8 @@ export function PaddleBuddyExperience() {
                 {submitting ? "Sending…" : "Send to Paddle Buddy"}
               </button>
               <p className={styles.formFinePrint}>
-                Updates are opt-in. Sending a question does not subscribe you to project emails.
+                Updates are opt-in. Sending a question does not subscribe you to project emails.{" "}
+                <a href="/privacy-policy">Tiger PingPong privacy policy</a>
               </p>
             </>
           )}

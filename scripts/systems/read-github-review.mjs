@@ -60,7 +60,17 @@ if (!/^\d+$/.test(pullRequest ?? '')) {
   fail('pull request number is required');
 }
 
-const repository = run('gh', ['repo', 'view', '--json', 'nameWithOwner', '--jq', '.nameWithOwner']);
+const repository = JSON.parse(
+  run('gh', ['repo', 'view', '--json', 'nameWithOwner,owner']),
+);
+const trustedReviewers = new Set(
+  [
+    repository.owner.login,
+    ...(process.env.TIGER_SYSTEMS_TRUSTED_REVIEWERS ?? '').split(','),
+  ]
+    .map((login) => login.trim().toLowerCase())
+    .filter(Boolean),
+);
 const localHead = run('git', ['rev-parse', 'HEAD']);
 const pull = JSON.parse(
   run('gh', [
@@ -68,22 +78,31 @@ const pull = JSON.parse(
     'view',
     pullRequest,
     '--repo',
-    repository,
+    repository.nameWithOwner,
     '--json',
     'number,url,headRefOid',
   ]),
 );
-const reviews = JSON.parse(
+const reviewPages = JSON.parse(
   run('gh', [
     'api',
     '--paginate',
-    `repos/${repository}/pulls/${pull.number}/reviews?per_page=100`,
+    '--slurp',
+    `repos/${repository.nameWithOwner}/pulls/${pull.number}/reviews?per_page=100`,
   ]),
 );
+const reviews = reviewPages.flat();
+const submittedStates = new Set(['APPROVED', 'CHANGES_REQUESTED', 'COMMENTED']);
 
 const latest = reviews
   .map((review) => ({ ...review, contract: parseReview(review.body ?? '') }))
-  .filter((review) => review.contract)
+  .filter(
+    (review) =>
+      review.contract &&
+      review.submitted_at &&
+      submittedStates.has(review.state) &&
+      trustedReviewers.has(review.user?.login?.toLowerCase()),
+  )
   .sort(
     (left, right) =>
       new Date(right.submitted_at ?? 0).getTime() -

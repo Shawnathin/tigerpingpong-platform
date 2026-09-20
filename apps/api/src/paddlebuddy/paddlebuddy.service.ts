@@ -1,4 +1,11 @@
-import { BadRequestException, Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  OnModuleDestroy
+} from "@nestjs/common";
 import { createDatabaseConfig, PrismaClient } from "@tigerpingpong/db";
 
 import { getOrderEmailConfig, getPaddleBuddyNotificationRecipient } from "../config";
@@ -12,6 +19,8 @@ const INTENTS = [
   "other"
 ] as const;
 type PaddleBuddyIntent = (typeof INTENTS)[number];
+const ROBOT_ACCESS_VALUES = ["yes", "no", "not_yet", "unanswered"] as const;
+type PaddleBuddyRobotAccess = (typeof ROBOT_ACCESS_VALUES)[number];
 const MESSAGE_REQUIRED_INTENTS = new Set<PaddleBuddyIntent>([
   "question_support",
   "bug_problem",
@@ -21,12 +30,14 @@ const MESSAGE_REQUIRED_INTENTS = new Set<PaddleBuddyIntent>([
 const MAX_MESSAGE_LENGTH = 4000;
 const MAX_PLAYING_LEVEL_LENGTH = 160;
 const MAX_HONEYPOT_LENGTH = 200;
+const RATE_LIMIT_MAX_SUBMISSIONS = 6;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const SOURCE_PAGE = "/paddlebuddy";
 
 interface SubmissionInput {
   email: string;
   earlyTesting: boolean;
-  has3050xl: boolean | null;
+  has3050xl: PaddleBuddyRobotAccess;
   intent: PaddleBuddyIntent;
   message: string | null;
   playingLevel: string | null;
@@ -38,12 +49,14 @@ interface SubmissionInput {
 export class PaddleBuddyService implements OnModuleDestroy {
   private readonly logger = new Logger(PaddleBuddyService.name);
   private prisma: PrismaClient | null = null;
+  private readonly rateLimits = new Map<string, { count: number; expiresAt: number }>();
 
   async onModuleDestroy(): Promise<void> {
     await this.prisma?.$disconnect();
   }
 
-  async createSubmission(body: unknown): Promise<{ accepted: true }> {
+  async createSubmission(body: unknown, clientKey = "unknown"): Promise<{ accepted: true }> {
+    this.enforceRateLimit(clientKey);
     const input = validatePaddleBuddySubmission(body);
     const submission = await this.getPrisma().paddleBuddySubmission.create({
       data: { ...input, sourcePage: SOURCE_PAGE }
@@ -60,6 +73,27 @@ export class PaddleBuddyService implements OnModuleDestroy {
 
   private requiresStaffNotification(input: SubmissionInput): boolean {
     return MESSAGE_REQUIRED_INTENTS.has(input.intent) || Boolean(input.message);
+  }
+
+  private enforceRateLimit(clientKey: string): void {
+    const now = Date.now();
+    const key = clientKey.slice(0, 200) || "unknown";
+    const existing = this.rateLimits.get(key);
+    if (!existing || existing.expiresAt <= now) {
+      this.rateLimits.set(key, { count: 1, expiresAt: now + RATE_LIMIT_WINDOW_MS });
+      return;
+    }
+    if (existing.count >= RATE_LIMIT_MAX_SUBMISSIONS)
+      throw new HttpException(
+        "Please wait before sending another Paddle Buddy message.",
+        HttpStatus.TOO_MANY_REQUESTS
+      );
+    existing.count += 1;
+    if (this.rateLimits.size > 1024) {
+      for (const [storedKey, entry] of this.rateLimits) {
+        if (entry.expiresAt <= now) this.rateLimits.delete(storedKey);
+      }
+    }
   }
 
   private async notifyStaff(submissionId: string, input: SubmissionInput): Promise<void> {
@@ -161,7 +195,7 @@ export function validatePaddleBuddySubmission(body: unknown): SubmissionInput {
   return {
     email,
     earlyTesting: readBoolean(body, "earlyTesting"),
-    has3050xl: readNullableBoolean(body, "has3050xl"),
+    has3050xl: readRobotAccess(body, "has3050xl"),
     intent,
     message: message || null,
     playingLevel: playingLevel || null,
@@ -188,9 +222,15 @@ function readBoolean(value: Record<string, unknown>, key: string): boolean {
   if (typeof value[key] !== "boolean") throw new BadRequestException(`Invalid ${key}.`);
   return value[key] as boolean;
 }
-function readNullableBoolean(value: Record<string, unknown>, key: string): boolean | null {
-  if (value[key] === null || value[key] === undefined) return null;
-  return readBoolean(value, key);
+function readRobotAccess(
+  value: Record<string, unknown>,
+  key: string
+): PaddleBuddyRobotAccess {
+  const result = readOptionalString(value, key);
+  if (!result) return "unanswered";
+  if (!ROBOT_ACCESS_VALUES.includes(result as PaddleBuddyRobotAccess))
+    throw new BadRequestException("Choose a valid 3050XL access option.");
+  return result as PaddleBuddyRobotAccess;
 }
 function formatIntent(intent: PaddleBuddyIntent): string {
   return intent.replace(/_/g, " ");
@@ -207,7 +247,7 @@ function renderStaffNotificationText(input: SubmissionInput): string {
     `Intent: ${formatIntent(input.intent)}`,
     `Updates: ${input.wantsUpdates ? "yes" : "no"}`,
     `Early testing: ${input.earlyTesting ? "yes" : "no"}`,
-    `3050XL access: ${input.has3050xl === null ? "not provided" : input.has3050xl ? "yes" : "no"}`,
+    `3050XL access: ${input.has3050xl.replace(/_/g, " ")}`,
     `Primary device: ${input.primaryDevice ?? "not provided"}`,
     `Playing level: ${input.playingLevel ?? "not provided"}`,
     "",

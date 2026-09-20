@@ -20,8 +20,7 @@ const galleryItems = [
     label: "REAL CAPTURE — DRILL CATALOGUE",
     src: "/paddlebuddy/paddlebuddy-secondary.png",
     type: "video"
-  },
-  { label: "PLACEHOLDER — IPAD VIEW", type: "tablet" }
+  }
 ] as const;
 
 const faqs = [
@@ -92,8 +91,9 @@ export function PaddleBuddyExperience() {
         company: String(form.get("company") ?? ""),
         earlyTesting: form.get("earlyTesting") === "on",
         email: String(form.get("email") ?? ""),
-        has3050xl:
-          form.get("has3050xl") === "yes" ? true : form.get("has3050xl") === "no" ? false : null,
+        has3050xl: (
+          String(form.get("has3050xl") ?? "") || "unanswered"
+        ) as "yes" | "no" | "not_yet" | "unanswered",
         intent,
         message,
         playingLevel: String(form.get("playingLevel") ?? ""),
@@ -175,10 +175,6 @@ export function PaddleBuddyExperience() {
             <source src="/paddlebuddy/paddlebuddy-connect-loop.webm" type="video/webm" />
             <source src="/paddlebuddy/paddlebuddy-connect-loop.mp4" type="video/mp4" />
           </video>
-          <div className={styles.connectionMediaCaption}>
-            <strong>Current Paddle Buddy connection loop</strong>
-            <span>Real app simulator capture · no physical robot shown</span>
-          </div>
         </div>
       </section>
 
@@ -211,6 +207,7 @@ export function PaddleBuddyExperience() {
           </p>
         </header>
         <div className={styles.statusPanel}>
+          <span className={styles.roadmapBall} aria-hidden="true" />
           <section className={styles.statusNow} aria-labelledby="status-now-title">
             <p className={styles.statusPhase}>Now</p>
             <div className={styles.statusNowContent}>
@@ -251,9 +248,9 @@ export function PaddleBuddyExperience() {
 
       <section className={styles.gallery} aria-labelledby="gallery-title">
         <header>
-          <p className={styles.sectionKicker}>Future capture bay</p>
-          <h2 id="gallery-title">A place for the real thing.</h2>
-          <p>The structure is ready. The app captures are the next layer.</p>
+          <p className={styles.sectionKicker}>Current app</p>
+          <h2 id="gallery-title">Okay, here’s the actual thing.</h2>
+          <p>Real screens from the current development build.</p>
         </header>
         <div className={styles.galleryGrid}>
           {galleryItems.map((item) => (

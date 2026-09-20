@@ -21,9 +21,16 @@ describe("Paddle Buddy public submissions", () => {
   it("normalizes a valid follow-project submission and keeps explicit update consent", () => {
     expect(validatePaddleBuddySubmission(followProject)).toMatchObject({
       email: "player@example.com",
+      has3050xl: "unanswered",
       intent: "follow_project",
       wantsUpdates: true
     });
+  });
+
+  it("preserves the distinct not-yet robot-access response", () => {
+    expect(
+      validatePaddleBuddySubmission({ ...followProject, has3050xl: "not_yet" })
+    ).toMatchObject({ has3050xl: "not_yet" });
   });
 
   it("requires a message for support-style intents but not project follows", () => {
@@ -93,5 +100,24 @@ describe("Paddle Buddy public submissions", () => {
       paddleBuddySubmission: { create: vi.fn().mockRejectedValue(new Error("db offline")) }
     });
     await expect(service.createSubmission(followProject)).rejects.toThrow("db offline");
+  });
+
+  it("rate limits repeated public submissions from one client", async () => {
+    const create = vi.fn().mockResolvedValue({ id: "submission-rate-limit" });
+    const service = new PaddleBuddyService() as unknown as {
+      createSubmission(body: unknown, clientKey?: string): Promise<unknown>;
+      getPrisma: () => unknown;
+    };
+    service.getPrisma = () => ({ paddleBuddySubmission: { create } });
+
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      await expect(service.createSubmission(followProject, "203.0.113.9")).resolves.toEqual({
+        accepted: true
+      });
+    }
+    await expect(service.createSubmission(followProject, "203.0.113.9")).rejects.toThrow(
+      "Please wait before sending another Paddle Buddy message."
+    );
+    expect(create).toHaveBeenCalledTimes(6);
   });
 });

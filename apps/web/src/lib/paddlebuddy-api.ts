@@ -12,7 +12,7 @@ export interface PaddleBuddySubmissionInput {
   company: string;
   earlyTesting: boolean;
   email: string;
-  has3050xl: boolean | null;
+  has3050xl: "yes" | "no" | "not_yet" | "unanswered";
   intent: PaddleBuddyIntent;
   message: string;
   playingLevel: string;

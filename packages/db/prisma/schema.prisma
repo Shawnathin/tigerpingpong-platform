@@ -109,6 +109,15 @@ enum PaddleBuddyIntent {
   @@map("paddle_buddy_intent")
 }
 
+enum PaddleBuddyRobotAccess {
+  yes
+  no
+  not_yet
+  unanswered
+
+  @@map("paddle_buddy_robot_access")
+}
+
 enum RedirectStatus {
   draft
   approved
@@ -595,7 +604,7 @@ model PaddleBuddySubmission {
   message                       String?           @db.Text
   wantsUpdates                  Boolean           @default(false) @map("wants_updates")
   earlyTesting                  Boolean           @default(false) @map("early_testing")
-  has3050xl                     Boolean?          @map("has_3050xl")
+  has3050xl                     PaddleBuddyRobotAccess @default(unanswered) @map("has_3050xl")
   primaryDevice                 String?           @map("primary_device")
   playingLevel                  String?           @map("playing_level") @db.Text
   sourcePage                    String            @map("source_page")

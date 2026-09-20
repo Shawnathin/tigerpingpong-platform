@@ -52,8 +52,11 @@ risk, and that no deployment is authorized.
 
 ## Cloud review contract
 
-A cloud reviewer works directly from the GitHub PR and submits a formal GitHub
-review. The review body must include these exact lines, with the PR's current
+A trusted cloud reviewer works directly from the GitHub PR and submits a formal
+GitHub review. The repository owner is trusted by default. To trust another
+Tiger reviewer, set the local-only comma-separated
+`TIGER_SYSTEMS_TRUSTED_REVIEWERS` environment variable to their GitHub login.
+The review body must include these exact lines, with the PR's current
 40-character head SHA:
 
 ```text
@@ -74,7 +77,11 @@ node scripts/systems/read-github-review.mjs <pull-request-number>
 ```
 
 The wrapper reads the PR and formal reviews directly from GitHub using the
-authenticated `gh` CLI. It compares:
+authenticated `gh` CLI. It trusts only submitted `APPROVED`,
+`CHANGES_REQUESTED`, or `COMMENTED` reviews from the repository owner or an
+explicitly trusted Tiger reviewer; it ignores untrusted, `PENDING`, and
+`DISMISSED` reviews. It uses `gh api --paginate --slurp` and normalizes all
+pages before choosing the latest eligible review. It compares:
 
 1. the local `HEAD`;
 2. the current PR head SHA;

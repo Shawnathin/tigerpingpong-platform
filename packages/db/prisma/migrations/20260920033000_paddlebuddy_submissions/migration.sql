@@ -7,6 +7,13 @@ CREATE TYPE "paddle_buddy_intent" AS ENUM (
   'other'
 );
 
+CREATE TYPE "paddle_buddy_robot_access" AS ENUM (
+  'yes',
+  'no',
+  'not_yet',
+  'unanswered'
+);
+
 CREATE TABLE "paddle_buddy_submissions" (
   "id" TEXT NOT NULL,
   "email" TEXT NOT NULL,
@@ -14,7 +21,7 @@ CREATE TABLE "paddle_buddy_submissions" (
   "message" TEXT,
   "wants_updates" BOOLEAN NOT NULL DEFAULT false,
   "early_testing" BOOLEAN NOT NULL DEFAULT false,
-  "has_3050xl" BOOLEAN,
+  "has_3050xl" "paddle_buddy_robot_access" NOT NULL DEFAULT 'unanswered',
   "primary_device" TEXT,
   "playing_level" TEXT,
   "source_page" TEXT NOT NULL,

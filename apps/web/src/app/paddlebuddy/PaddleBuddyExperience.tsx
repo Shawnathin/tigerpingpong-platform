@@ -290,6 +290,23 @@ export function PaddleBuddyExperience() {
         </div>
       </section>
 
+      <section className={styles.story} aria-labelledby="community-title">
+        <div>
+          <p className={styles.sectionKicker}>Paddle Buddy community</p>
+          <h2 id="community-title">Help shape what comes next.</h2>
+        </div>
+        <div className={styles.storyCopy}>
+          <p>
+            Join us on Reddit to follow development, share your robot setup, and tell us what
+            you’d like from a PingPong app. You don’t need access to Paddle Buddy to join in.
+          </p>
+          <a className={styles.storyPrompt} href="https://www.reddit.com/r/ProjectPaddleBuddy/">
+            Join the community on Reddit
+          </a>
+          <p>For private questions or app support, use the form below.</p>
+        </div>
+      </section>
+
       <section className={styles.signup} id="development-list" aria-labelledby="signup-title">
         <div className={styles.signupIntro}>
           <p className={styles.sectionKicker}>Paddle Buddy contact</p>

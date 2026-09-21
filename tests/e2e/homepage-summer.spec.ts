@@ -28,10 +28,10 @@ test("homepage keeps the existing structure with the fall game-night campaign", 
   const callTiger = hero.getByRole("link", { name: "Call 1-888-552-5259" });
 
   await expect(heroHeading).toBeInViewport();
-  await expect(heroImage).toHaveAttribute("src", /about(?:%2F|\/)04-game-night-connection/);
+  await expect(heroImage).toHaveAttribute("src", /homepage(?:%2F|\/)game-night-paddle-tap/);
   await expect(heroImage).toHaveAttribute(
     "alt",
-    "Two players smiling and tapping paddles after a game in a crowded Vancouver venue."
+    "Two players tapping red paddles together across an indoor PingPong table."
   );
   await expect(
     hero.getByText("PingPong for basements, rec rooms, and getting together.")

@@ -159,6 +159,14 @@ export function PaddleBuddyExperience() {
             <span className={styles.ball} />
           </div>
         </div>
+        <div className={styles.heroMobileActions} aria-label="Paddle Buddy actions">
+          <a className={styles.primaryAction} href="#development-list">
+            Join the development list
+          </a>
+          <a className={styles.secondaryAction} href="#development-status">
+            See what’s working <span aria-hidden="true">↓</span>
+          </a>
+        </div>
       </section>
 
       <section className={styles.connection} aria-labelledby="connection-title">
@@ -402,6 +410,27 @@ export function PaddleBuddyExperience() {
             </>
           )}
         </form>
+      </section>
+
+      <section className={styles.community} aria-labelledby="community-title">
+        <div className={styles.communityCopy}>
+          <p className={styles.sectionKicker}>Paddle Buddy community</p>
+          <h2 id="community-title">Build it with us.</h2>
+          <p>
+            Share what you are working on, compare Robo-Pong setups and help steer the next Paddle
+            Buddy improvements with the community.
+          </p>
+        </div>
+        <a
+          className={styles.communityLink}
+          href="https://www.reddit.com/r/ProjectPaddleBuddy/"
+          rel="noreferrer"
+          target="_blank"
+        >
+          <span>Join the conversation</span>
+          <strong>r/ProjectPaddleBuddy</strong>
+          <span aria-hidden="true">↗</span>
+        </a>
       </section>
 
       <section className={styles.faq} aria-labelledby="faq-title">

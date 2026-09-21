@@ -57,6 +57,14 @@ export function HomepageExperience() {
             </ActionLink>
           </div>
         </div>
+        <div aria-label="Homepage actions" className={styles.heroMobileActions}>
+          <ActionLink href={homepage.hero.actions[0].href}>
+            {homepage.hero.actions[0].label}
+          </ActionLink>
+          <ActionLink href={homepage.hero.actions[1].href} tone="secondary">
+            {homepage.hero.actions[1].label}
+          </ActionLink>
+        </div>
         <p className={styles.heroCaption}>{homepage.hero.image.caption}</p>
       </section>
 

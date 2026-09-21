@@ -457,9 +457,13 @@ const realNetProductImage: TigerStoryImage = {
 const portlandProductImage = requireHomepageSummerImage("HOM-SUM-002");
 
 const homepageIndoorImage: TigerStoryImage = {
-  ...requireStoryImage("NIT-034"),
+  assetId: "homepage-game-night-paddle-tap",
+  altText: "Two players tapping red paddles together across an indoor PingPong table.",
   caption: "Tiger PingPong Club Night · Vancouver",
-  role: "homepage-fall-hero"
+  cloudinaryPublicId: "",
+  finalUrl: "/homepage/game-night-paddle-tap.jpg",
+  role: "homepage-fall-hero",
+  sourceDimensions: { width: 750, height: 500 }
 };
 
 const homepageFallAquaImage: TigerStoryImage = {

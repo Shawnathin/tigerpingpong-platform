@@ -417,8 +417,8 @@ export function PaddleBuddyExperience() {
           <p className={styles.sectionKicker}>Paddle Buddy community</p>
           <h2 id="community-title">Build it with us.</h2>
           <p>
-            Share what you are working on, compare Robo-Pong setups and help steer the next Paddle
-            Buddy improvements with the community.
+            Share your PingPong stories, compare Robo-Pong setups and help shape where Paddle Buddy goes
+            next.
           </p>
         </div>
         <a

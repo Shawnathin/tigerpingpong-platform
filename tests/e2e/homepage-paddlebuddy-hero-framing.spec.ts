@@ -84,6 +84,7 @@ test("matches the Paddle Buddy mobile capture to the phone aperture", async ({ p
 
     if (viewport.width <= 620) {
       expect(framing).toEqual({ objectFit: "cover", objectPosition: "50% 50%" });
+      await expect(capture).toHaveCSS("border-radius", "19px");
       const aspectRatio = await capture.evaluate((image) => ({
         rendered: image.clientWidth / image.clientHeight,
         source: image.naturalWidth / image.naturalHeight

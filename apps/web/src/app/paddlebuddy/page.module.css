@@ -1075,6 +1075,8 @@
     border-width: 6px;
   }
   .phoneCapture {
+    /* The screen sits 13px inside the outer 32px mobile device radius. */
+    border-radius: 19px;
     object-fit: cover;
   }
   .phoneScreen {

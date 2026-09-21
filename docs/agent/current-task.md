@@ -1,3 +1,9 @@
+# Paddle Buddy community review — issue #189
+
+Shawn selected packaging the existing community work for cloud review, including a public Reddit link. Branch: `codex/issue-189-paddlebuddy-community-rollout`; PR targets `develop`. Review the protected intake queue/API/migration, the public community link, approved final Reddit exports, and `docs/launch/paddlebuddy-community-rollout-package.md` for live configuration and handoff details. Use the SHA-bound formal review contract in `docs/agent/systems-4.1.md`. No deployment or production migration is authorized by this handoff. Earlier task records below are retained as history.
+
+---
+
 # Systems 4.1 canary handoff
 
 ## Selected: local/GitHub collaboration loop adoption

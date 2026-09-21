@@ -278,6 +278,31 @@
   vertical-align: top;
 }
 
+.messagePreview {
+  max-width: 360px;
+  margin-top: 6px;
+  color: #566273;
+  white-space: pre-wrap;
+}
+
+.inlineForm {
+  display: grid;
+  gap: 8px;
+  min-width: 138px;
+}
+
+.inlineForm select {
+  min-height: 36px;
+  border: 1px solid #cfd8cb;
+  border-radius: 6px;
+  padding: 7px 8px;
+  color: #171b2e;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: #ffffff;
+}
+
 .table td {
   overflow-wrap: anywhere;
 }

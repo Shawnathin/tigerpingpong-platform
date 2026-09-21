@@ -36,6 +36,15 @@ interface AdminListQuery {
   status?: string;
 }
 
+interface AdminPaddleBuddyListQuery {
+  limit?: string;
+  state?: string;
+}
+
+interface AdminPaddleBuddyUpdateInput {
+  feedbackState?: unknown;
+}
+
 interface AdminProductMediaInput {
   altText?: unknown;
   caption?: unknown;
@@ -134,6 +143,14 @@ const ADMIN_ORDER_STATUSES: readonly AdminOrderStatus[] = [
   "expired",
   "refunded"
 ];
+const PADDLE_BUDDY_FEEDBACK_STATES = [
+  "new",
+  "reviewing",
+  "considering",
+  "planned",
+  "shipped"
+] as const;
+type PaddleBuddyFeedbackState = (typeof PADDLE_BUDDY_FEEDBACK_STATES)[number];
 const CHECKOUT_PURCHASE_MODES = new Set(["online_checkout", "online_checkout_candidate"]);
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
@@ -1180,6 +1197,102 @@ export class AdminService implements OnModuleDestroy {
     }
   }
 
+  async listPaddleBuddySubmissions(query: AdminPaddleBuddyListQuery): Promise<unknown> {
+    const feedbackState = this.parseOptionalPaddleBuddyFeedbackState(query.state);
+    const limit = this.parseLimit(query.limit);
+    const where = feedbackState ? { feedbackState } : undefined;
+
+    try {
+      const [submissions, totalCount, updateOptInCount, earlyTestingCount, robotAccessCount] =
+        await Promise.all([
+          this.getPrisma().paddleBuddySubmission.findMany({
+            where,
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              email: true,
+              intent: true,
+              message: true,
+              wantsUpdates: true,
+              earlyTesting: true,
+              has3050xl: true,
+              primaryDevice: true,
+              playingLevel: true,
+              feedbackState: true,
+              createdAt: true
+            },
+            take: limit
+          }),
+          this.getPrisma().paddleBuddySubmission.count({ where }),
+          this.getPrisma().paddleBuddySubmission.count({
+            where: { ...(feedbackState ? { feedbackState } : {}), wantsUpdates: true }
+          }),
+          this.getPrisma().paddleBuddySubmission.count({
+            where: { ...(feedbackState ? { feedbackState } : {}), earlyTesting: true }
+          }),
+          this.getPrisma().paddleBuddySubmission.count({
+            where: { ...(feedbackState ? { feedbackState } : {}), has3050xl: "yes" }
+          })
+        ]);
+
+      return {
+        count: totalCount,
+        state: feedbackState ?? "all",
+        digest: {
+          earlyTestingCount,
+          robotAccessCount,
+          updateOptInCount
+        },
+        items: submissions.map((submission) => this.serializePaddleBuddySubmission(submission))
+      };
+    } catch {
+      throw new ServiceUnavailableException({
+        message: "Paddle Buddy submissions are unavailable."
+      });
+    }
+  }
+
+  async updatePaddleBuddySubmission(
+    idParam: string,
+    input: AdminPaddleBuddyUpdateInput
+  ): Promise<unknown> {
+    const id = this.parseRouteIdentifier(idParam, "Paddle Buddy submission");
+    const feedbackState = this.parsePaddleBuddyFeedbackState(input.feedbackState);
+
+    try {
+      const submission = await this.getPrisma().paddleBuddySubmission.update({
+        where: { id },
+        data: { feedbackState },
+        select: {
+          id: true,
+          email: true,
+          intent: true,
+          message: true,
+          wantsUpdates: true,
+          earlyTesting: true,
+          has3050xl: true,
+          primaryDevice: true,
+          playingLevel: true,
+          feedbackState: true,
+          createdAt: true
+        }
+      });
+
+      this.logger.log(
+        JSON.stringify({ event: "admin_paddlebuddy_submission_updated", id, feedbackState })
+      );
+      return { submission: this.serializePaddleBuddySubmission(submission) };
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        throw new NotFoundException({ message: "Paddle Buddy submission was not found." });
+      }
+
+      throw new ServiceUnavailableException({
+        message: "Paddle Buddy submission could not be updated."
+      });
+    }
+  }
+
   async getSettings(): Promise<unknown> {
     return {
       settings: {
@@ -1718,6 +1831,34 @@ export class AdminService implements OnModuleDestroy {
     };
   }
 
+  private serializePaddleBuddySubmission(submission: {
+    id: string;
+    email: string;
+    intent: string;
+    message: string | null;
+    wantsUpdates: boolean;
+    earlyTesting: boolean;
+    has3050xl: string;
+    primaryDevice: string | null;
+    playingLevel: string | null;
+    feedbackState: string;
+    createdAt: Date;
+  }) {
+    return {
+      id: submission.id,
+      email: submission.email,
+      intent: submission.intent,
+      message: submission.message,
+      wantsUpdates: submission.wantsUpdates,
+      earlyTesting: submission.earlyTesting,
+      has3050xl: submission.has3050xl,
+      primaryDevice: submission.primaryDevice,
+      playingLevel: submission.playingLevel,
+      feedbackState: submission.feedbackState,
+      createdAt: this.serializeDate(submission.createdAt)
+    };
+  }
+
   private serializeDetailOrder(order: AdminOrderDetailRecord) {
     const useLegacyPricingFallback =
       order.pricingRuleVersion === null &&
@@ -2033,6 +2174,24 @@ export class AdminService implements OnModuleDestroy {
     throw new BadRequestException({
       message: "status is invalid."
     });
+  }
+
+  private parseOptionalPaddleBuddyFeedbackState(
+    value: string | undefined
+  ): PaddleBuddyFeedbackState | undefined {
+    if (!value?.trim()) return undefined;
+    return this.parsePaddleBuddyFeedbackState(value);
+  }
+
+  private parsePaddleBuddyFeedbackState(value: unknown): PaddleBuddyFeedbackState {
+    if (
+      typeof value === "string" &&
+      PADDLE_BUDDY_FEEDBACK_STATES.includes(value.trim() as PaddleBuddyFeedbackState)
+    ) {
+      return value.trim() as PaddleBuddyFeedbackState;
+    }
+
+    throw new BadRequestException({ message: "feedbackState is invalid." });
   }
 
   private parseLimit(value: string | undefined): number {

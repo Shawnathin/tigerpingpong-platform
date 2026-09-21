@@ -24,6 +24,7 @@
 .gallery,
 .signup,
 .support,
+.community,
 .faq {
   scroll-margin-top: 104px;
 }
@@ -122,6 +123,7 @@
 .gallery h2,
 .signup h2,
 .support h2,
+.community h2,
 .faq h2 {
   margin: 0;
   font-weight: 950;
@@ -158,6 +160,9 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 4px;
+}
+.heroMobileActions {
+  display: none;
 }
 
 .primaryAction,
@@ -345,6 +350,81 @@
 .faq {
   width: min(1240px, 100%);
   margin-inline: auto;
+}
+
+.community {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(320px, 1.18fr);
+  gap: clamp(30px, 7vw, 100px);
+  align-items: center;
+  border: 1px solid rgb(23 27 46 / 12%);
+  border-radius: 34px;
+  padding: clamp(32px, 5vw, 62px);
+  color: #edf8ff;
+  background:
+    radial-gradient(circle at 88% 12%, rgb(92 183 226 / 28%), transparent 30%),
+    linear-gradient(135deg, #0d304d, #071c31);
+  box-shadow: 0 24px 70px rgb(15 39 66 / 14%);
+}
+.communityCopy {
+  display: grid;
+  gap: 16px;
+}
+.community .sectionKicker {
+  color: #c7e4f3;
+}
+.community h2 {
+  color: #ffffff;
+}
+.communityCopy > p:not(.sectionKicker) {
+  max-width: 530px;
+  margin: 0;
+  color: #c3d8e6;
+  font-weight: 650;
+  line-height: 1.6;
+}
+.communityLink {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 18px;
+  align-items: center;
+  border: 1px solid rgb(205 235 251 / 36%);
+  border-radius: 20px;
+  padding: 26px 28px;
+  color: #ffffff;
+  text-decoration: none;
+  background: rgb(255 255 255 / 9%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 16%);
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
+}
+.communityLink:hover,
+.communityLink:focus-visible {
+  border-color: rgb(255 189 117 / 86%);
+  background: rgb(255 255 255 / 15%);
+  transform: translateY(-2px);
+}
+.communityLink > span:first-child {
+  color: #b8d5e6;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.communityLink strong {
+  grid-column: 1;
+  font-size: clamp(1.4rem, 2.7vw, 2.2rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+.communityLink > span:last-child {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  color: var(--pb-orange);
+  font-size: 2rem;
+  line-height: 1;
 }
 
 .connection {
@@ -943,6 +1023,7 @@
   .signup,
   .support,
   .gallery,
+  .community,
   .faq {
     grid-template-columns: 1fr;
   }
@@ -958,6 +1039,9 @@
   .signup,
   .support {
     gap: 44px;
+  }
+  .community {
+    grid-template-columns: 1fr;
   }
   .faq .privacyLink {
     grid-column: auto;
@@ -984,8 +1068,14 @@
   }
   .phone {
     width: 190px;
+    /* 190px outer width gives the 1206 × 2622 capture an exact fit inside
+       the phone after its 6px border and 7px inset. */
+    aspect-ratio: 190 / 382;
     border-radius: 32px;
     border-width: 6px;
+  }
+  .phoneCapture {
+    object-fit: cover;
   }
   .phoneScreen {
     border-radius: 23px;
@@ -999,8 +1089,12 @@
     width: 355px;
   }
   .heroActions {
+    display: none;
+  }
+  .heroMobileActions {
     display: grid;
     grid-template-columns: 1fr;
+    gap: 12px;
   }
   .primaryAction,
   .secondaryAction {
@@ -1090,12 +1184,14 @@
     background: var(--pb-orange);
   }
   .signup,
-  .support {
+  .support,
+  .community {
     border-radius: 26px;
     padding: 32px 22px;
   }
   .signup h2,
   .support h2,
+  .community h2,
   .faq h2,
   .gallery h2,
   .status h2,

@@ -154,6 +154,12 @@ const API_VARIABLES = [
     validator: "email"
   },
   {
+    name: "PADDLE_BUDDY_NOTIFICATION_EMAIL",
+    surface: "api",
+    required: true,
+    validator: "email"
+  },
+  {
     name: "CLOUDINARY_API_KEY",
     surface: "api",
     required: false,

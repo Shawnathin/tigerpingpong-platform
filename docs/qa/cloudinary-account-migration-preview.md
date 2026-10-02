@@ -95,6 +95,13 @@ had not been pushed, merged or deployed. Full hosted CI, WebKit/tablet checks,
 payment tests and production DB/env changes were not run; no payment tests are
 needed to justify media-only preview.
 
+## Deployment receipt
+
+The web response includes `X-Tiger-Release` only when Render supplies a valid
+40-character `RENDER_GIT_COMMIT`, allowing the deployed commit to be verified
+directly from the storefront. This exposes only the public repository commit SHA;
+no credential or service settings change is required.
+
 ## Rollback and go/no-go
 
 Keep the previous production commit/Render release and old `djfcisldm` delivery

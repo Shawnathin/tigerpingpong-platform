@@ -19,6 +19,13 @@ const securityHeaders = [
   }
 ];
 
+// Render supplies this public Git SHA; expose it only when valid for release proof.
+const releaseCommit = process.env.RENDER_GIT_COMMIT;
+const releaseHeaders =
+  releaseCommit && /^[a-f0-9]{40}$/i.test(releaseCommit)
+    ? [{ key: "X-Tiger-Release", value: releaseCommit }]
+    : [];
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -45,7 +52,7 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        headers: securityHeaders
+        headers: [...securityHeaders, ...releaseHeaders]
       }
     ];
   }

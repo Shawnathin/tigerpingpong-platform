@@ -23,9 +23,12 @@
       "mediaKey": "aqua-01-main",
       "file": "images/aqua/processed/finals/01-main.jpg",
       "sha256": "ba38e756eec05271c984ffb957a0b9bdbc702a7055d26e6a2f8921dd1d65f3d0",
-      "dimensions": { "width": 1600, "height": 1600 },
+      "dimensions": {
+        "width": 1600,
+        "height": 1600
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/01-main",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784416233/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/01-main.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974911/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/01-main.jpg",
       "role": "primary",
       "variantKey": null,
       "sortOrder": 1,
@@ -36,9 +39,12 @@
       "mediaKey": "aqua-02-single-ocean-blue",
       "file": "images/aqua/processed/finals/02-single-ocean-blue.jpg",
       "sha256": "a8c1d5ea921dd8ad3ded27b656b1ccb86fed1f569a6d1b2ba8bf23efc8c9fdbf",
-      "dimensions": { "width": 1600, "height": 1600 },
+      "dimensions": {
+        "width": 1600,
+        "height": 1600
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/02-single-ocean-blue",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784416234/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/02-single-ocean-blue.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974912/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/02-single-ocean-blue.jpg",
       "role": "variant",
       "variantKey": "tiger-aqua-package-single-ocean-blue",
       "sortOrder": 2,
@@ -49,9 +55,12 @@
       "mediaKey": "aqua-03-single-canada-red",
       "file": "images/aqua/processed/finals/03-single-coral-red.jpg",
       "sha256": "6811770d5a55b779895385a215794ba2dfb27d9d9d2247d39d8b5a6f50ba4de4",
-      "dimensions": { "width": 1600, "height": 1600 },
+      "dimensions": {
+        "width": 1600,
+        "height": 1600
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/03-single-coral-red",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784416235/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/03-single-coral-red.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974913/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/03-single-coral-red.jpg",
       "role": "variant",
       "variantKey": "tiger-aqua-package-single-coral",
       "sortOrder": 3,
@@ -62,9 +71,12 @@
       "mediaKey": "aqua-04-two-pack",
       "file": "images/aqua/processed/finals/04-two-pack.jpg",
       "sha256": "7c5378ad3170e147a8dab9a20af81aafccd392633fdd7170b23d91b9da4b852c",
-      "dimensions": { "width": 1600, "height": 1600 },
+      "dimensions": {
+        "width": 1600,
+        "height": 1600
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/04-two-pack",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784416235/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/04-two-pack.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974914/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/04-two-pack.jpg",
       "role": "variant",
       "variantKey": "tiger-aqua-package-2-pack-3-balls",
       "sortOrder": 4,
@@ -75,9 +87,12 @@
       "mediaKey": "aqua-05-four-pack",
       "file": "images/aqua/processed/finals/05-four-pack.jpg",
       "sha256": "076ce96c7b9e6125c7ea67d8687de11cebb39d438ecb47aafd42b982ca7dcb42",
-      "dimensions": { "width": 1600, "height": 1600 },
+      "dimensions": {
+        "width": 1600,
+        "height": 1600
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/05-four-pack",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784416236/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/05-four-pack.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974916/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/05-four-pack.jpg",
       "role": "variant",
       "variantKey": "tiger-aqua-package-4-pack-3-balls",
       "sortOrder": 5,
@@ -88,9 +103,12 @@
       "mediaKey": "aqua-06-face-detail",
       "file": "images/aqua/processed/finals/06-face-detail.jpg",
       "sha256": "4caaa7a09e87b489dcfdf6f8eb8d4548392f2cd9baf4aa17cb70d375fb1eb8fb",
-      "dimensions": { "width": 1080, "height": 1080 },
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/06-face-detail",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784416237/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/06-face-detail.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974917/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/06-face-detail.jpg",
       "role": "detail",
       "variantKey": null,
       "sortOrder": 6,
@@ -101,9 +119,12 @@
       "mediaKey": "aqua-07-grip-detail",
       "file": "images/aqua/processed/finals/07-grip-detail.jpg",
       "sha256": "29b2b9bd38e205a476e77878b5c5bf1fe775ab3d76d45e4a04b9cfd5e237b0d5",
-      "dimensions": { "width": 1080, "height": 1080 },
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/07-grip-detail",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784416238/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/07-grip-detail.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974918/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/07-grip-detail.jpg",
       "role": "detail",
       "variantKey": null,
       "sortOrder": 7,
@@ -114,9 +135,12 @@
       "mediaKey": "aqua-08-packaging-window",
       "file": "images/aqua/processed/finals/08-packaging-window.jpg",
       "sha256": "532f2906c1bb177be40f02817afb7807a49b02f3558be5c016ecfca985428442",
-      "dimensions": { "width": 1080, "height": 1080 },
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
       "cloudinaryPublicId": "tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/08-packaging-window",
-      "cloudinarySecureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784419487/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/08-packaging-window.jpg",
+      "cloudinarySecureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974919/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/08-packaging-window.jpg",
       "role": "packaging",
       "variantKey": null,
       "sortOrder": 8,

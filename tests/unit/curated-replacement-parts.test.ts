@@ -5,6 +5,7 @@ import {
   resolveLiveCuratedReplacementParts
 } from "../../apps/web/src/lib/curated-replacement-parts";
 import type { CatalogProductSummary, ProductMediaSummary } from "../../apps/web/src/types/catalog";
+import { remapTigerMediaUrl } from "../../apps/web/src/lib/cloudinary-account-migration";
 
 const STANDARD_NET_URL =
   "https://res.cloudinary.com/djfcisldm/image/upload/v1785178768/tiger-pingpong/products/replacement-parts/replacement-nets/tiger-replacement-net-primary-01.jpg";
@@ -115,14 +116,14 @@ describe("curated replacement parts", () => {
       {
         anchorId: "standard-replacement-net",
         heading: "Standard PingPong Replacement Net",
-        imageUrl: STANDARD_NET_URL,
+        imageUrl: remapTigerMediaUrl(STANDARD_NET_URL),
         priceCents: 2_000,
         slug: "tiger-replacement-net"
       },
       {
         anchorId: "expo-portland-net-upgrade",
         heading: "Expo & Portland Net Upgrade System",
-        imageUrl: EXPO_PORTLAND_SYSTEM_URL,
+        imageUrl: remapTigerMediaUrl(EXPO_PORTLAND_SYSTEM_URL),
         priceCents: 14_999,
         slug: "tiger-table-net-replacement-set"
       }

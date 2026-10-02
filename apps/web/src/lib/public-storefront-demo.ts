@@ -27,7 +27,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Expo Outdoor table",
       caption: "Expo Outdoor table",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974933/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
       title: "Expo Outdoor table"
     }
   ],
@@ -36,7 +36,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong net and post set",
       caption: "Net and post set",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303667/tigerpingpong/products/tiger-net-post-set/01-main.png",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974935/tigerpingpong/products/tiger-net-post-set/01-main.png",
       title: "Net and post set"
     }
   ],
@@ -45,7 +45,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Plaza Outdoor table in grey",
       caption: "Plaza Outdoor table",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974947/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg",
       title: "Plaza Outdoor table"
     }
   ],
@@ -54,7 +54,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Portland Indoor table",
       caption: "Portland Indoor table",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303684/tigerpingpong/products/tiger-portland-indoor-table/01-main.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974948/tigerpingpong/products/tiger-portland-indoor-table/01-main.jpg",
       title: "Portland Indoor table"
     }
   ],
@@ -63,28 +63,28 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Portland Outdoor V2 PingPong table with a blue top",
       caption: "Portland Outdoor table",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790975021/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg",
       title: "Portland Outdoor table"
     },
     {
       alt: "Tiger Portland Outdoor V2 grey table set up for single-player practice",
       caption: "Playback position",
       role: "alternate",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974970/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg",
       title: "Portland Outdoor playback position"
     },
     {
       alt: "Portland Outdoor adjustable net detail",
       caption: "Adjustable net",
       role: "detail",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974971/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg",
       title: "Portland Outdoor adjustable net"
     },
     {
       alt: "Paddle and ball storage built into the Tiger Portland Outdoor V2 table",
       caption: "Paddle and ball storage",
       role: "detail",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974973/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg",
       title: "Portland Outdoor paddle and ball storage"
     }
   ],
@@ -93,7 +93,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong balls 140 pack",
       caption: "140 pack balls",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269868/tigerpingpong/products/tiger-premium-balls-140/refresh-20260716-primary.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974982/tigerpingpong/products/tiger-premium-balls-140/refresh-20260716-primary.jpg",
       title: "Tiger Ping Pong balls"
     }
   ],
@@ -102,7 +102,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong orange balls 6 pack",
       caption: "Orange 6 pack balls",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269869/tigerpingpong/products/tiger-premium-balls-6-orange/refresh-20260716-primary.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974989/tigerpingpong/products/tiger-premium-balls-6-orange/refresh-20260716-primary.jpg",
       title: "Orange ping pong balls"
     }
   ],
@@ -111,7 +111,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger Ping Pong white balls 6 pack",
       caption: "White 6 pack balls",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303660/tigerpingpong/products/tiger-premium-balls-6-white/01-main.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974990/tigerpingpong/products/tiger-premium-balls-6-white/01-main.jpg",
       title: "White ping pong balls"
     }
   ],
@@ -129,14 +129,14 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Tiger PingPong Vice paddle in pink with a white ball.",
       caption: "Vice paddle",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781303652/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974995/tigerpingpong/products/tiger-vice-paddle/01-main.jpg",
       title: "Tiger PingPong Vice paddle"
     },
     {
       alt: "Pink Tiger PingPong Vice paddle on a transparent background.",
       caption: "Vice paddle",
       role: "alternate",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1781745073/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-02.png",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790975023/tigerpingpong/recovered/products/vice-paddle/tpp-vice-paddle-gallery-02.png",
       title: "Tiger PingPong Vice paddle cutout"
     }
   ],
@@ -146,7 +146,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "Ocean Blue and Canada Red Aqua paddles",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-primary-01",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416233/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/01-main.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974911/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/01-main.jpg",
       title: "Aqua paddles"
     },
     {
@@ -154,7 +154,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "Single · Ocean Blue",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-01",
       role: "variant",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416234/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/02-single-ocean-blue.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974912/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/02-single-ocean-blue.jpg",
       title: "Aqua Ocean Blue single paddle",
       variantKey: "tiger-aqua-package-single-ocean-blue"
     },
@@ -163,7 +163,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "Single · Canada Red",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-02",
       role: "variant",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416235/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/03-single-coral-red.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974913/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/03-single-coral-red.jpg",
       title: "Aqua Canada Red single paddle",
       variantKey: "tiger-aqua-package-single-coral"
     },
@@ -172,7 +172,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "2 paddles + 3 balls",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-03",
       role: "variant",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416235/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/04-two-pack.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974914/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/04-two-pack.jpg",
       title: "Aqua two-paddle package",
       variantKey: "tiger-aqua-package-2-pack-3-balls"
     },
@@ -181,7 +181,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "4 paddles + 3 balls",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-04",
       role: "variant",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416236/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/05-four-pack.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974916/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/05-four-pack.jpg",
       title: "Aqua four-paddle package",
       variantKey: "tiger-aqua-package-4-pack-3-balls"
     },
@@ -190,7 +190,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "Moulded face detail",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-05",
       role: "detail",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416237/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/06-face-detail.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974917/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/06-face-detail.jpg",
       title: "Aqua face texture and Tiger mark"
     },
     {
@@ -198,7 +198,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "Grip and curved openings",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-06",
       role: "detail",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784416238/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/07-grip-detail.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974918/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/07-grip-detail.jpg",
       title: "Aqua grip detail"
     },
     {
@@ -206,7 +206,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       caption: "Package lid and fitted window",
       mediaKey: "tiger-aqua-outdoor-indoor-paddle-gallery-07",
       role: "packaging",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784419487/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/08-packaging-window.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974919/tigerpingpong/products/tiger-aqua-outdoor-indoor-paddle/08-packaging-window.jpg",
       title: "Aqua package lid and fitted paddle window"
     }
   ],
@@ -215,7 +215,7 @@ const PRODUCT_MEDIA_FALLBACKS: Record<string, ProductMediaFallback[]> = {
       alt: "Whistler Indoor table",
       caption: "Whistler Indoor table",
       role: "primary",
-      src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269867/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg",
+      src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790975017/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg",
       title: "Whistler Indoor table"
     }
   ]

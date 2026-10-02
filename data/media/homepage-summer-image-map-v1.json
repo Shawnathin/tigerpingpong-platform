@@ -12,7 +12,7 @@
         "height": 941
       },
       "cloudinaryPublicId": "tigerpingpong/storefront/homepage-campaigns/aqua-summer-canada-pool-v1",
-      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784362585/tigerpingpong/storefront/homepage-campaigns/aqua-summer-canada-pool-v1.png",
+      "finalUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976913/tigerpingpong/storefront/homepage-campaigns/aqua-summer-canada-pool-v1.png",
       "role": "aqua-summer-background",
       "caption": "Summer in Canada.",
       "altText": "Sunlit pale-blue pool water with soft ripples and a splash.",
@@ -30,7 +30,7 @@
       },
       "cloudinaryPublicId": "tigerpingpong/storefront/homepage-campaigns/portland-outdoor-clean-v1",
       "deliveryTransformation": "e_background_removal/f_png",
-      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png/v1784362586/tigerpingpong/storefront/homepage-campaigns/portland-outdoor-clean-v1.png",
+      "finalUrl": "https://res.cloudinary.com/scp4c76g/image/upload/e_background_removal/f_png/v1790976910/tigerpingpong/storefront/homepage-campaigns/portland-outdoor-clean-v1.png",
       "role": "portland-clean-product",
       "caption": "Portland Outdoor.",
       "altText": "Tiger Portland Outdoor PingPong table in black and grey.",
@@ -47,7 +47,7 @@
         "height": 941
       },
       "cloudinaryPublicId": "tigerpingpong/storefront/homepage-campaigns/portland-summer-lifestyle-background-v1",
-      "finalUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784363995/tigerpingpong/storefront/homepage-campaigns/portland-summer-lifestyle-background-v1.png",
+      "finalUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976911/tigerpingpong/storefront/homepage-campaigns/portland-summer-lifestyle-background-v1.png",
       "role": "portland-summer-lifestyle-background",
       "caption": "Summer, outside.",
       "altText": "Soft-focus summer patio with trees and late-afternoon light.",

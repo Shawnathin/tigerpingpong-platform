@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { getTigerTableVariantSelectorMedia } from "../../apps/web/src/lib/tiger-story";
+import migration from "../../data/media/cloudinary-account-migration-v1.json";
 
 interface ManifestAsset {
   catalogApplyEligible?: boolean;
@@ -153,7 +154,11 @@ describe("table gallery media manifest", () => {
         });
         expect(detail.cloudinary.secureUrl).toMatch(/^https:\/\/res\.cloudinary\.com\//);
         expect(detail.cloudinary.publicId).toContain(`/products/${productSlug}/details/`);
-        expect(detail.cloudinary.assetId).toBe("");
+        const copied = migration.assets.find(
+          (asset) => asset.publicId === detail.cloudinary.publicId
+        );
+        expect(copied).toBeDefined();
+        expect(detail.cloudinary.assetId).toBe(copied?.assetId);
       }
     }
   });

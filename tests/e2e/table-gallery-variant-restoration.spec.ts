@@ -23,7 +23,7 @@ const TABLES: TableCase[] = [
     manualRevision: "MA 212 - v.14.05.13-03",
     manualTitle: "Expo Outdoor",
     manualUrl:
-      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Expo-Outdoor-Installation-Guide/v1784409337/tiger-pingpong/resources/manuals/expo-outdoor-installation-guide.pdf",
+      "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Expo-Outdoor-Installation-Guide/v1790975026/tiger-pingpong/resources/manuals/expo-outdoor-installation-guide.pdf",
     price: "$1,300.00",
     slug: "tiger-expo-outdoor-table",
     videoUrl: "https://www.youtube.com/watch?v=3WAdtN03EJ4"
@@ -35,7 +35,7 @@ const TABLES: TableCase[] = [
     manualRevision: "MA 205 - v.25.05.16-01",
     manualTitle: "Portland Indoor",
     manualUrl:
-      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Portland-Indoor-Installation-Guide/v1784409346/tiger-pingpong/resources/manuals/portland-indoor-installation-guide.pdf",
+      "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Portland-Indoor-Installation-Guide/v1790975029/tiger-pingpong/resources/manuals/portland-indoor-installation-guide.pdf",
     price: "$1,300.00",
     slug: "tiger-portland-indoor-table",
     videoUrl: "https://www.youtube.com/watch?v=EDCxiCuWoIo"
@@ -47,7 +47,7 @@ const TABLES: TableCase[] = [
     manualRevision: "MA 213 - v.30.04.13-03",
     manualTitle: "Portland Outdoor",
     manualUrl:
-      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Portland-Outdoor-Installation-Guide/v1784409348/tiger-pingpong/resources/manuals/portland-outdoor-installation-guide.pdf",
+      "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Portland-Outdoor-Installation-Guide/v1790975032/tiger-pingpong/resources/manuals/portland-outdoor-installation-guide.pdf",
     price: "$1,500.00",
     slug: "tiger-portland-outdoor-table",
     videoUrl: "https://www.youtube.com/watch?v=mUmB-HPWHHs"
@@ -59,7 +59,7 @@ const TABLES: TableCase[] = [
     manualRevision: "MA 258.4-7 - v.30.07.09-01",
     manualTitle: "Whistler Indoor",
     manualUrl:
-      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Whistler-Indoor-Assembly-Guide/v1784409349/tiger-pingpong/resources/manuals/whistler-indoor-installation-guide.pdf",
+      "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Whistler-Indoor-Assembly-Guide/v1790975033/tiger-pingpong/resources/manuals/whistler-indoor-installation-guide.pdf",
     price: "$1,600.00",
     slug: "tiger-whistler-indoor-table",
     videoUrl: "https://www.youtube.com/watch?v=tuvacihKUCk"
@@ -71,7 +71,7 @@ const TABLES: TableCase[] = [
     manualRevision: "MA 244 - v.25.05.16-01",
     manualTitle: "Plaza Outdoor",
     manualUrl:
-      "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Plaza-Outdoor-Installation-and-Parts-Guide/v1784409350/tiger-pingpong/resources/manuals/plaza-outdoor-installation-guide.pdf",
+      "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Plaza-Outdoor-Installation-and-Parts-Guide/v1790975028/tiger-pingpong/resources/manuals/plaza-outdoor-installation-guide.pdf",
     price: "$2,600.00",
     slug: "tiger-plaza-outdoor-table-grey"
   }

@@ -74,7 +74,7 @@ test("replacement-parts page welcomes people into the parts finder before Part 4
   );
   await expect(part40Visual.locator("img")).toHaveAttribute(
     "src",
-    /v1784409335\/tiger-pingpong\/replacement-parts\/part-40\.jpg/
+    /v1790974909\/tiger-pingpong\/replacement-parts\/part-40\.jpg/
   );
   await expect(
     part40.getByText(
@@ -207,7 +207,7 @@ test("replacement-net cards distinguish the net-only fix from the complete upgra
   );
   await expect(standardNet.locator("img")).toHaveAttribute(
     "src",
-    /v1785178768\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-replacement-net-primary-01\.jpg/
+    /v1790974907\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-replacement-net-primary-01\.jpg/
   );
   await expect(
     standardNet.getByRole("link", { name: "Net or full system? We can help.", exact: true })
@@ -244,7 +244,7 @@ test("replacement-net cards distinguish the net-only fix from the complete upgra
   );
   await expect(upgrade.locator("img")).toHaveAttribute(
     "src",
-    /v1785178770\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-table-net-replacement-set-primary-01\.jpg/
+    /v1790974908\/tiger-pingpong\/products\/replacement-parts\/replacement-nets\/tiger-table-net-replacement-set-primary-01\.jpg/
   );
   await expect(
     upgrade.getByRole("link", {

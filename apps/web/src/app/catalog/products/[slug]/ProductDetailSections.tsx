@@ -7,6 +7,7 @@ import {
   type TableSupportResource
 } from "../../../../lib/table-support-resources";
 import { tigerTablesProductStories } from "../../../../lib/tiger-story";
+import { remapTigerMediaUrl } from "../../../../lib/cloudinary-account-migration";
 import type {
   CatalogProductDetail,
   CatalogProductSummary,
@@ -154,7 +155,7 @@ const CLOUDINARY_PRODUCT_DETAIL_BASE =
 function detailVisual(productSlug: string, assetSlug: string, alt: string): ProductFeatureVisual {
   return {
     alt,
-    src: `${CLOUDINARY_PRODUCT_DETAIL_BASE}/${productSlug}/details/${assetSlug}`
+    src: remapTigerMediaUrl(`${CLOUDINARY_PRODUCT_DETAIL_BASE}/${productSlug}/details/${assetSlug}`)
   };
 }
 
@@ -235,7 +236,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         value: "Fold one side up and practice solo between matches.",
         visual: {
           alt: "Blue Expo Outdoor table with one side raised for solo playback",
-          src: "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,c_limit,w_800/v1784575467/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01.jpg"
+          src: "https://res.cloudinary.com/scp4c76g/image/upload/f_auto,q_auto,c_limit,w_800/v1790974932/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01.jpg"
         }
       },
       {
@@ -303,7 +304,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "Made for Shared Spaces",
         visual: {
           alt: "Plaza Outdoor permanent table",
-          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg"
+          src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974947/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg"
         }
       }
     ],
@@ -439,7 +440,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "6mm Indoor / Outdoor Top",
         visual: {
           alt: "Portland Outdoor 6mm table top in playback position",
-          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg"
+          src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974970/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg"
         }
       },
       {
@@ -461,7 +462,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "Adjustable Net",
         visual: {
           alt: "Portland Outdoor adjustable net",
-          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg"
+          src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974971/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg"
         }
       },
       {
@@ -471,7 +472,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         title: "Paddle & Ball Storage",
         visual: {
           alt: "Portland Outdoor paddle and ball storage",
-          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg"
+          src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974973/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg"
         }
       }
     ],
@@ -482,7 +483,7 @@ const TABLE_DISPLAY_CONTENT: Record<string, TableDisplayContent> = {
         value: "Fold one side up and practice against the back board.",
         visual: {
           alt: "Portland Outdoor playback position",
-          src: "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg"
+          src: "https://res.cloudinary.com/scp4c76g/image/upload/v1790974970/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg"
         }
       },
       {

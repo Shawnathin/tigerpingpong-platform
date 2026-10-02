@@ -4,12 +4,7 @@
   "generatedAt": "2026-07-19T00:00:00.000Z",
   "sourceRoot": "exports/table-gallery-media",
   "delivery": {
-    "widths": [
-      480,
-      800,
-      1200,
-      1600
-    ],
+    "widths": [480, 800, 1200, 1600],
     "transformation": "f_auto,q_auto,c_limit",
     "minimumUsefulSourceEdge": 1600,
     "neverUpscale": true
@@ -28,10 +23,7 @@
         "tiger-expo-outdoor-table-color-blue",
         "tiger-expo-outdoor-table-color-grey"
       ],
-      "obsoleteVariantLabels": [
-        "Green",
-        "Black"
-      ],
+      "obsoleteVariantLabels": ["Green", "Black"],
       "assets": [
         {
           "mediaKey": "tiger-expo-outdoor-table-primary-01",
@@ -46,17 +38,17 @@
           "uploadAction": "reuse",
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974933/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg",
             "sha256": "ccfa9fff309f028a16a2dbcdede972f17b8f9b13793e18d8e786b9c6a842c88c",
             "width": 5000,
             "height": 2500
           },
           "cloudinary": {
-            "assetId": "38aeb2c68d9e14ca6231ea1b2c8b715f",
+            "assetId": "ab4ab5ed9dfc864e56b08cbf6b559973",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary",
-            "version": "1784269865",
+            "version": 1790974933,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269865/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974933/tigerpingpong/products/tiger-expo-outdoor-table/refresh-20260716-primary.jpg"
           }
         },
         {
@@ -78,11 +70,11 @@
             "height": 2500
           },
           "cloudinary": {
-            "assetId": "e5f5453e11f340ae585d6f44d19b129d",
+            "assetId": "f1d87ba0153c4654eec07b2e22816dfc",
             "publicId": "tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1",
-            "version": "1784390092",
+            "version": 1790976926,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784390092/tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976926/tigerpingpong/storefront/tables/cutouts/expo-outdoor-grey-v1.jpg"
           }
         },
         {
@@ -104,11 +96,11 @@
             "height": 1800
           },
           "cloudinary": {
-            "assetId": "4f2e0eb8483d55a6025fcf723edb36d3",
+            "assetId": "ee022ee4331176bc7b92a33ad76df780",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/gallery-restoration/expo-event-vancouver-v1",
-            "version": "1784515184",
+            "version": 1790976932,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515184/tigerpingpong/products/tiger-expo-outdoor-table/gallery-restoration/expo-event-vancouver-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976932/tigerpingpong/products/tiger-expo-outdoor-table/gallery-restoration/expo-event-vancouver-v1.jpg",
             "bytes": 1719439
           }
         },
@@ -131,11 +123,11 @@
             "height": 3024
           },
           "cloudinary": {
-            "assetId": "13119ab72440f800c5f886165d4bd1e9",
+            "assetId": "8d80f063da8554b5365212bf5e35f883",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-poolside-blue-owner-01",
-            "version": "1784575463",
+            "version": 1790976935,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575463/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-poolside-blue-owner-01.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976935/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-poolside-blue-owner-01.jpg",
             "bytes": 5810965
           }
         },
@@ -158,11 +150,11 @@
             "height": 500
           },
           "cloudinary": {
-            "assetId": "c18eda8df26ba6cf9e10b64965da827f",
+            "assetId": "a05adfe52f258d559b4f4fb5847107ee",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-folded-owner-01",
-            "version": "1784575465",
+            "version": 1790976947,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575465/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-folded-owner-01.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976947/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-folded-owner-01.jpg",
             "bytes": 50894
           }
         },
@@ -185,11 +177,11 @@
             "height": 500
           },
           "cloudinary": {
-            "assetId": "d495c3400f2e8f0882c3d161441c994f",
+            "assetId": "6f23128db29ece6641baec30d0657605",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-grey-owner-01",
-            "version": "1784575466",
+            "version": 1790976941,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575466/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-grey-owner-01.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976941/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-grey-owner-01.jpg",
             "bytes": 72898
           }
         },
@@ -212,11 +204,11 @@
             "height": 500
           },
           "cloudinary": {
-            "assetId": "c7be74c443085a8cc80751cb7944073a",
+            "assetId": "63e35e4b5c0062d8c89e89980deab4b0",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01",
-            "version": "1784575467",
+            "version": 1790974932,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784575467/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974932/tigerpingpong/products/tiger-expo-outdoor-table/owner-gallery/expo-playback-blue-owner-01.jpg",
             "bytes": 135578
           }
         },
@@ -234,17 +226,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275352/tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top.webp",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974926/tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top.webp",
             "sha256": "33a87c24917dd624eb96db4c68b25fa7d319c739e2952a0756754a03ec5e1825",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "2edb77c61603834adec037112518ba91",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top",
-            "version": "1784275352",
+            "version": 1790974926,
             "format": "webp",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275352/tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top.webp",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974926/tigerpingpong/products/tiger-expo-outdoor-table/details/5mm-melamine-resin-top.webp",
             "bytes": 57540
           }
         },
@@ -262,17 +254,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275353/tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame.webp",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974925/tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame.webp",
             "sha256": "7fa9ad14b731bf485bee6b6f33ffa6e72d7c7538ee23daef6619981cf4aa3751",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "a167219b64a7a75f146d1daecd26fc50",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame",
-            "version": "1784275353",
+            "version": 1790974925,
             "format": "webp",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275353/tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame.webp",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974925/tigerpingpong/products/tiger-expo-outdoor-table/details/50mm-powder-coated-frame.webp",
             "bytes": 64534
           }
         },
@@ -290,17 +282,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974930/tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system.jpg",
             "sha256": "b7d4f084f73bc2de9116ac80bf03b0e57b2f83bb88f90ac02d05c8fda295e913",
             "width": 913,
             "height": 1000
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "543b8d237bfe7aaeda1d2bf52857c91f",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system",
-            "version": "1784275354",
+            "version": 1790974930,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974930/tigerpingpong/products/tiger-expo-outdoor-table/details/quick-lock-folding-system.jpg",
             "bytes": 66381
           }
         },
@@ -318,17 +310,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974929/tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net.jpg",
             "sha256": "960dd0b056d9783657756bf1d4b400a97458e426ef4d1c42bf63bc6fc7c0531b",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "84f6e7f863388f7511b661200d27d1a3",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net",
-            "version": "1784275354",
+            "version": 1790974929,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275354/tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974929/tigerpingpong/products/tiger-expo-outdoor-table/details/fixed-adjustable-net.jpg",
             "bytes": 135513
           }
         },
@@ -346,17 +338,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275355/tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974928/tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels.jpg",
             "sha256": "4cb9a9c9847479477698c5ced2b0aea89e16b4bbb083cd00030b6fcec1e16c6d",
             "width": 6144,
             "height": 4096
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "172b42815cfb3abac7483d1bb0c58e9a",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels",
-            "version": "1784275355",
+            "version": 1790974928,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275355/tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974928/tigerpingpong/products/tiger-expo-outdoor-table/details/double-outdoor-wheels.jpg",
             "bytes": 2872536
           }
         },
@@ -374,17 +366,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275356/tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974931/tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway.jpg",
             "sha256": "33f7f76b45793fbf58b6442cf32f6c7694fb37dd94fb7f9c612c7488bb905a53",
             "width": 800,
             "height": 500
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "0b0335e3e8651fad916ed039f63bcc83",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway",
-            "version": "1784275356",
+            "version": 1790974931,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275356/tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974931/tigerpingpong/products/tiger-expo-outdoor-table/details/single-frame-rollaway.jpg",
             "bytes": 50894
           }
         },
@@ -402,17 +394,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275357/tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage.webp",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974927/tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage.webp",
             "sha256": "f0fbea4af2e8d44c12fa44b4b0432b8f4e50c011dc190f76283232bd80987df0",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "e7dbc7247f03d0cef51622427e928dc1",
             "publicId": "tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage",
-            "version": "1784275357",
+            "version": 1790974927,
             "format": "webp",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275357/tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage.webp",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974927/tigerpingpong/products/tiger-expo-outdoor-table/details/built-in-storage.webp",
             "bytes": 84542
           }
         }
@@ -445,11 +437,11 @@
             "height": 1200
           },
           "cloudinary": {
-            "assetId": "789349e50f21f40bc8a348f5e494ec40",
+            "assetId": "5884526eb17d37cd750e83ed69351100",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-green-v1",
-            "version": "1784515185",
+            "version": 1790976944,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515185/tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-green-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976944/tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-green-v1.jpg",
             "bytes": 326622
           }
         },
@@ -472,11 +464,11 @@
             "height": 1200
           },
           "cloudinary": {
-            "assetId": "24e7d5fd2f3ab0de9eda146daedf7add",
+            "assetId": "f135f48ffbc6f635d462d91811414644",
             "publicId": "tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1",
-            "version": "1784390093",
+            "version": 1790976914,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784390093/tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976914/tigerpingpong/storefront/tables/cutouts/portland-indoor-grey-v1.jpg"
           }
         },
         {
@@ -498,11 +490,11 @@
             "height": 1800
           },
           "cloudinary": {
-            "assetId": "b44c74ed231e4f1bda27e80260c25c8b",
+            "assetId": "c9f5833cc2ed0e101763b78779dd2381",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-lobby-v1",
-            "version": "1784515186",
+            "version": 1790976943,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515186/tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-lobby-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976943/tigerpingpong/products/tiger-portland-indoor-table/gallery-restoration/portland-indoor-lobby-v1.jpg",
             "bytes": 1123916
           }
         },
@@ -520,17 +512,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974960/tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top.jpg",
             "sha256": "71409351cc7c4c86c14478eee22f5aeecddf60c35ee6fdce73f385de91622466",
             "width": 450,
             "height": 450
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "127a1b9ea9a6b78da727c583284abe64",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top",
-            "version": "1784275361",
+            "version": 1790974960,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974960/tigerpingpong/products/tiger-portland-indoor-table/details/seven-eighths-inch-chipboard-top.jpg",
             "bytes": 53019
           }
         },
@@ -548,17 +540,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974954/tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame.jpg",
             "sha256": "8e73855a895e744e13252676a1aaf559a0a325eaaa8ac94963ea055caca43971",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "5680afddccc8cb197c2b1732fd02987a",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame",
-            "version": "1784275361",
+            "version": 1790974954,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275361/tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974954/tigerpingpong/products/tiger-portland-indoor-table/details/50mm-powder-coated-frame.jpg",
             "bytes": 74925
           }
         },
@@ -576,17 +568,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275362/tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974961/tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system.jpg",
             "sha256": "b7d4f084f73bc2de9116ac80bf03b0e57b2f83bb88f90ac02d05c8fda295e913",
             "width": 913,
             "height": 1000
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "8f1b918b32dcf92723f529c5e9d5245d",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system",
-            "version": "1784275362",
+            "version": 1790974961,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275362/tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974961/tigerpingpong/products/tiger-portland-indoor-table/details/smart-locking-system.jpg",
             "bytes": 66381
           }
         },
@@ -604,17 +596,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275363/tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974958/tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net.jpg",
             "sha256": "fc4d92a6bad16583dea46bfd896ddaa4f4f97ff3a119dcf5e9c5e93875b47485",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "d356bdf840ca83a6e34a20fb2c60e40c",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net",
-            "version": "1784275363",
+            "version": 1790974958,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275363/tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974958/tigerpingpong/products/tiger-portland-indoor-table/details/fixed-adjustable-net.jpg",
             "bytes": 125566
           }
         },
@@ -632,17 +624,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974957/tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels.jpg",
             "sha256": "ff35b159b9f556dad59381849e06c6c9306e601335395c5e1b39a7cee9e6a056",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "e0b7be2c50f447507c0864e0ae1c4c62",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels",
-            "version": "1784275364",
+            "version": 1790974957,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974957/tigerpingpong/products/tiger-portland-indoor-table/details/easy-roll-locking-wheels.jpg",
             "bytes": 81906
           }
         },
@@ -660,17 +652,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974959/tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top.jpg",
             "sha256": "ed8c7c2a380f57077c8713d32a0a27ecafc01f724dae67741abf9c627bcd9621",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "a4f3c17f24a8af74275f44915625920b",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top",
-            "version": "1784275364",
+            "version": 1790974959,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275364/tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974959/tigerpingpong/products/tiger-portland-indoor-table/details/indoor-top.jpg",
             "bytes": 58080
           }
         },
@@ -688,17 +680,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage.webp",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974956/tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage.webp",
             "sha256": "f0fbea4af2e8d44c12fa44b4b0432b8f4e50c011dc190f76283232bd80987df0",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "dbeceae1f1fe41c790f791621b8fe6ac",
             "publicId": "tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage",
-            "version": "1784275367",
+            "version": 1790974956,
             "format": "webp",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage.webp",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974956/tigerpingpong/products/tiger-portland-indoor-table/details/built-in-storage.webp",
             "bytes": 84542
           }
         }
@@ -711,7 +703,7 @@
         "tiger-portland-outdoor-table-v2-blue",
         "tiger-portland-outdoor-table-v2-grey"
       ],
-      "qualityException": "Owner approved the current V2 views. Exact current-model originals top out at 800–1280 pixels; they are preserved without upscaling. The local Portland Outdoor v1 archive is prohibited.",
+      "qualityException": "Owner approved the current V2 views. Exact current-model originals top out at 800\u20131280 pixels; they are preserved without upscaling. The local Portland Outdoor v1 archive is prohibited.",
       "assets": [
         {
           "mediaKey": "tiger-portland-outdoor-table-gallery-01",
@@ -726,7 +718,7 @@
           "uploadAction": "reuse",
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975021/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg",
             "sha256": "8693831df8693ba12fef602fbad17313704fab7738735281c9e4fec1549b4e98",
             "width": 1280,
             "height": 853,
@@ -734,11 +726,11 @@
             "publishedCanvasHeight": 1600
           },
           "cloudinary": {
-            "assetId": "8b54e9c01ec284d1a5fd4779ce707e0c",
+            "assetId": "0814b6db58f637737e156e90a812e505",
             "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01",
-            "version": "1781745057",
+            "version": 1790975021,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975021/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg"
           }
         },
         {
@@ -762,11 +754,11 @@
             "publishedCanvasHeight": 1600
           },
           "cloudinary": {
-            "assetId": "c616d8f508a1707a8c7b41841f5a8598",
+            "assetId": "3bc4eb3a36818bc887e682cbe77d53c0",
             "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02",
-            "version": "1781745058",
+            "version": 1790976931,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745058/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976931/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-02.jpg"
           }
         },
         {
@@ -789,11 +781,11 @@
             "height": 750
           },
           "cloudinary": {
-            "assetId": "f931e6bce087760e6b970d571f3eba04",
+            "assetId": "9fd42e8ea5f70c479b61ca69e3a08237",
             "publicId": "tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1",
-            "version": "1784515187",
+            "version": 1790974970,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515187/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974970/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/grey-playback-v1.jpg",
             "bytes": 112078
           }
         },
@@ -818,11 +810,11 @@
             "publishedCanvasHeight": 1600
           },
           "cloudinary": {
-            "assetId": "4195d28d8b3d5629aaa31669fbdb3423",
+            "assetId": "9529f5d0a43104246bddcbe53e769c20",
             "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03",
-            "version": "1781745059",
+            "version": 1790976936,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976936/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-03.jpg"
           }
         },
         {
@@ -846,11 +838,11 @@
             "publishedCanvasHeight": 1600
           },
           "cloudinary": {
-            "assetId": "5b1d07d73c7d9021f29e2a39b053304f",
+            "assetId": "e40456022ba1988e87ceae5398ebde0e",
             "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04",
-            "version": "1781745059",
+            "version": 1790976946,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745059/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976946/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-04.jpg"
           }
         },
         {
@@ -873,11 +865,11 @@
             "height": 750
           },
           "cloudinary": {
-            "assetId": "c793761a44e934ee6852db83870bdd45",
+            "assetId": "c525792b584223283a1f3b585f23570e",
             "publicId": "tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1",
-            "version": "1784515188",
+            "version": 1790974971,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974971/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/net-detail-v1.jpg",
             "bytes": 145866
           }
         },
@@ -901,11 +893,11 @@
             "height": 750
           },
           "cloudinary": {
-            "assetId": "554d2c1902586a848fa47f7c16068099",
+            "assetId": "194c927db244880464bd7257c899a8aa",
             "publicId": "tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1",
-            "version": "1784515188",
+            "version": 1790974973,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515188/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974973/tigerpingpong/products/tiger-portland-outdoor-table/gallery-restoration/storage-detail-v1.jpg",
             "bytes": 117221
           }
         },
@@ -930,11 +922,11 @@
             "publishedCanvasHeight": 1600
           },
           "cloudinary": {
-            "assetId": "6bda0c863fbeda8d21b3ca3e91c162a2",
+            "assetId": "ae7b8401589a9886864b2aa9f9c4218a",
             "publicId": "tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05",
-            "version": "1781745060",
+            "version": 1790976934,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1781745060/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976934/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-05.jpg"
           }
         },
         {
@@ -989,17 +981,17 @@
           "uploadAction": "reuse",
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269867/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975017/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg",
             "sha256": "3025b851bd544cb132ef67d76dde926da253b2f08f928b552a5b50cad81f3b8a",
             "width": 5000,
             "height": 2500
           },
           "cloudinary": {
-            "assetId": "70758fbb26ef4944ec3568ddcfecbdad",
+            "assetId": "1d626ebc37ee2397ca8b42c14fe071f5",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary",
-            "version": "1784269867",
+            "version": 1790975017,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269867/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975017/tigerpingpong/products/tiger-whistler-indoor-table/refresh-20260716-primary.jpg"
           }
         },
         {
@@ -1021,11 +1013,11 @@
             "height": 1200
           },
           "cloudinary": {
-            "assetId": "0e34530fec9c4b4e18732b108be65c2c",
+            "assetId": "77b436e1593f5302a270ab89c3e9dc6c",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-green-v1",
-            "version": "1784515189",
+            "version": 1790976938,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515189/tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-green-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976938/tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-green-v1.jpg",
             "bytes": 357879
           }
         },
@@ -1048,11 +1040,11 @@
             "height": 2400
           },
           "cloudinary": {
-            "assetId": "818334dfc1f1fbc14d8616bc96343da4",
+            "assetId": "f5d3c5a36ab557b6704c5dccb9b27d8f",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-lobby-v1",
-            "version": "1784515190",
+            "version": 1790976945,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515190/tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-lobby-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976945/tigerpingpong/products/tiger-whistler-indoor-table/gallery-restoration/whistler-indoor-lobby-v1.jpg",
             "bytes": 854767
           }
         },
@@ -1070,17 +1062,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975015/tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top.jpg",
             "sha256": "b45c9dad878dd449289cefd609061be7f822f35989765796f53a01527991c770",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "2554476beda5de125efb925a76f116d7",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top",
-            "version": "1784275367",
+            "version": 1790975015,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275367/tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975015/tigerpingpong/products/tiger-whistler-indoor-table/details/one-inch-chipboard-top.jpg",
             "bytes": 52910
           }
         },
@@ -1098,17 +1090,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975012/tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame.jpg",
             "sha256": "4393eab08d8b6720494431999d7492f2ee297296d899cb9b0ea61f6e81163629",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "def79edc80f86ef562289cab9161d251",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame",
-            "version": "1784275368",
+            "version": 1790975012,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975012/tigerpingpong/products/tiger-whistler-indoor-table/details/60mm-powder-coated-frame.jpg",
             "bytes": 66978
           }
         },
@@ -1126,17 +1118,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975013/tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system.jpg",
             "sha256": "55c44d275ebd37177c1ccf281ddb960558f2859de53808530fffb4b183bd8ab9",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "06a9133eec67eb9c3389acf3571b9969",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system",
-            "version": "1784275368",
+            "version": 1790975013,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275368/tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975013/tigerpingpong/products/tiger-whistler-indoor-table/details/drawbar-locking-system.jpg",
             "bytes": 78530
           }
         },
@@ -1154,17 +1146,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275369/tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975014/tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net.jpg",
             "sha256": "77cecdb706c55f1ad0f6547a000ae021261db652cd58f58393781269485060e9",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "104d9cb3971d9721e1b16ac393d814bc",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net",
-            "version": "1784275369",
+            "version": 1790975014,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275369/tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975014/tigerpingpong/products/tiger-whistler-indoor-table/details/fixed-adjustable-net.jpg",
             "bytes": 107012
           }
         },
@@ -1182,17 +1174,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275370/tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975014/tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels.jpg",
             "sha256": "2f5af66776ab4fccc628b86783eaeebe45e4f197c6366c9af3eaa31992497ca1",
             "width": 450,
             "height": 450
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "3143e0813b86d70a7f63c20b618c48e3",
             "publicId": "tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels",
-            "version": "1784275370",
+            "version": 1790975014,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275370/tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790975014/tigerpingpong/products/tiger-whistler-indoor-table/details/locking-indoor-wheels.jpg",
             "bytes": 77681
           }
         }
@@ -1201,9 +1193,7 @@
     {
       "productSlug": "tiger-plaza-outdoor-table-grey",
       "catalogLeadVariantKey": "tiger-plaza-outdoor-table-grey-color-grey",
-      "approvedVariantKeys": [
-        "tiger-plaza-outdoor-table-grey-color-grey"
-      ],
+      "approvedVariantKeys": ["tiger-plaza-outdoor-table-grey-color-grey"],
       "assets": [
         {
           "mediaKey": "tiger-plaza-outdoor-table-grey-primary-01",
@@ -1218,17 +1208,17 @@
           "uploadAction": "reuse",
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974947/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg",
             "sha256": "ba2104ee07facf61b3903bd336bce028b05dc7cb9b46ac8eb3793cdb685a1b8c",
             "width": 5000,
             "height": 2500
           },
           "cloudinary": {
-            "assetId": "cc74b09a143b898a11b551eee819922f",
+            "assetId": "0500c940437d76ef318481127ca8c597",
             "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary",
-            "version": "1784269866",
+            "version": 1790974947,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784269866/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg"
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974947/tigerpingpong/products/tiger-plaza-outdoor-table-grey/refresh-20260716-primary.jpg"
           }
         },
         {
@@ -1250,11 +1240,11 @@
             "height": 2400
           },
           "cloudinary": {
-            "assetId": "5b2b24c2fde15b181b0125cce5f8ac58",
+            "assetId": "4e6e2477837c0fc05cc4027569c37572",
             "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-community-space-v1",
-            "version": "1784515191",
+            "version": 1790976939,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515191/tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-community-space-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976939/tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-community-space-v1.jpg",
             "bytes": 2404315
           }
         },
@@ -1277,11 +1267,11 @@
             "height": 1713
           },
           "cloudinary": {
-            "assetId": "c5faab217d9f117b51ef68c5fac77ca2",
+            "assetId": "eafa5d16d516f5e632ce512a3e4945c4",
             "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-urban-plaza-v1",
-            "version": "1784515192",
+            "version": 1790976940,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784515192/tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-urban-plaza-v1.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790976940/tigerpingpong/products/tiger-plaza-outdoor-table-grey/gallery-restoration/plaza-urban-plaza-v1.jpg",
             "bytes": 1764304
           }
         },
@@ -1299,17 +1289,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974942/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface.jpg",
             "sha256": "f5f1b540b3c44ecb354a9bbbbfe8af0089f10001f60fdb119801687d0bc9e33d",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "7bc55033e106fed8c59be07df2e7f5ba",
             "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface",
-            "version": "1784275358",
+            "version": 1790974942,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974942/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/10mm-resin-playing-surface.jpg",
             "bytes": 52562
           }
         },
@@ -1327,17 +1317,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974943/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame.jpg",
             "sha256": "5035ed27340f515db81befa73667c8d8f653760715b398db25dbdf657ad12331",
             "width": 800,
             "height": 600
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "355c600d562316ffdb34e0f9b7257fa8",
             "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame",
-            "version": "1784275358",
+            "version": 1790974943,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275358/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974943/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/galvanized-steel-frame.jpg",
             "bytes": 43995
           }
         },
@@ -1355,17 +1345,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275359/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974945/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit.jpg",
             "sha256": "80ed9693c6663b36b29e2a66e64014a8c3cfe75bb7907ecd04a0d5e3fa16d1c7",
             "width": 800,
             "height": 500
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "a9e24e07d830e8909b660ff428fae93f",
             "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit",
-            "version": "1784275359",
+            "version": 1790974945,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275359/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974945/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/ground-anchoring-kit.jpg",
             "bytes": 44734
           }
         },
@@ -1383,17 +1373,17 @@
           "catalogApplyEligible": false,
           "source": {
             "type": "cloudinary",
-            "url": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275360/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net.jpg",
+            "url": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974946/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net.jpg",
             "sha256": "1fe228d82ef07975b30c239a2a927f4114327d9a48e32dc9103fa9150edc1284",
             "width": 800,
             "height": 500
           },
           "cloudinary": {
-            "assetId": "",
+            "assetId": "8cc69af543aa91a0465e9d04a09aa615",
             "publicId": "tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net",
-            "version": "1784275360",
+            "version": 1790974946,
             "format": "jpg",
-            "secureUrl": "https://res.cloudinary.com/djfcisldm/image/upload/v1784275360/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net.jpg",
+            "secureUrl": "https://res.cloudinary.com/scp4c76g/image/upload/v1790974946/tigerpingpong/products/tiger-plaza-outdoor-table-grey/details/solid-metal-net.jpg",
             "bytes": 49982
           }
         }

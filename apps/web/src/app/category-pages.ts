@@ -93,7 +93,7 @@ export function getCategoryPageConfig(key: string): CategoryLandingPageConfig {
       heroImage: {
         alt: "Tiger Expo Outdoor ping pong table overlooking the Okanagan landscape",
         fit: "cover",
-        src: "https://res.cloudinary.com/djfcisldm/image/upload/f_auto,q_auto,w_1200/v1784301152/tigerpingpong/storefront/category-heroes/ping-pong-tables.jpg"
+        src: "https://res.cloudinary.com/scp4c76g/image/upload/f_auto,q_auto,w_1200/v1790975024/tigerpingpong/storefront/category-heroes/ping-pong-tables.jpg"
       },
       mobileCategoryNavLinks: tableNavLinks,
       navLinks: tableNavLinks,

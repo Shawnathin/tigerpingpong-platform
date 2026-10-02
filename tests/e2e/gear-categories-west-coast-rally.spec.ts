@@ -218,7 +218,7 @@ test.describe("Tiger gear categories", () => {
 
     await expect(page.locator("#gear img")).toHaveAttribute(
       "src",
-      "https://res.cloudinary.com/djfcisldm/image/upload/v1781745091/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01.jpg"
+      "https://res.cloudinary.com/scp4c76g/image/upload/v1790975019/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01.jpg"
     );
 
     await expect(

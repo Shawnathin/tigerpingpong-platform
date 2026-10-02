@@ -359,7 +359,7 @@ const UNIVERSAL_PACK_CONFIGURATIONS = {
       }
     ],
     manual: {
-      href: "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Expo-Outdoor-Installation-Guide/v1784409337/tiger-pingpong/resources/manuals/expo-outdoor-installation-guide.pdf",
+      href: "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Expo-Outdoor-Installation-Guide/v1790975026/tiger-pingpong/resources/manuals/expo-outdoor-installation-guide.pdf",
       label: "Expo Outdoor installation guide"
     },
     setupVideo: {
@@ -444,7 +444,7 @@ const UNIVERSAL_PACK_CONFIGURATIONS = {
       }
     ],
     manual: {
-      href: "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Portland-Indoor-Installation-Guide/v1784409346/tiger-pingpong/resources/manuals/portland-indoor-installation-guide.pdf",
+      href: "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Portland-Indoor-Installation-Guide/v1790975029/tiger-pingpong/resources/manuals/portland-indoor-installation-guide.pdf",
       label: "Portland Indoor installation guide"
     },
     setupVideo: {
@@ -539,7 +539,7 @@ const UNIVERSAL_PACK_CONFIGURATIONS = {
       }
     ],
     manual: {
-      href: "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Portland-Outdoor-Installation-Guide/v1784409348/tiger-pingpong/resources/manuals/portland-outdoor-installation-guide.pdf",
+      href: "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Portland-Outdoor-Installation-Guide/v1790975032/tiger-pingpong/resources/manuals/portland-outdoor-installation-guide.pdf",
       label: "Portland Outdoor installation guide"
     },
     setupVideo: {
@@ -613,7 +613,7 @@ const UNIVERSAL_PACK_CONFIGURATIONS = {
       }
     ],
     manual: {
-      href: "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Whistler-Indoor-Assembly-Guide/v1784409349/tiger-pingpong/resources/manuals/whistler-indoor-installation-guide.pdf",
+      href: "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Whistler-Indoor-Assembly-Guide/v1790975033/tiger-pingpong/resources/manuals/whistler-indoor-installation-guide.pdf",
       label: "Whistler Indoor assembly guide"
     },
     setupVideo: {
@@ -701,7 +701,7 @@ const UNIVERSAL_PACK_CONFIGURATIONS = {
       }
     ],
     manual: {
-      href: "https://res.cloudinary.com/djfcisldm/raw/upload/fl_attachment:Tiger-Plaza-Outdoor-Installation-and-Parts-Guide/v1784409350/tiger-pingpong/resources/manuals/plaza-outdoor-installation-guide.pdf",
+      href: "https://res.cloudinary.com/scp4c76g/raw/upload/fl_attachment:Tiger-Plaza-Outdoor-Installation-and-Parts-Guide/v1790975028/tiger-pingpong/resources/manuals/plaza-outdoor-installation-guide.pdf",
       label: "Plaza Outdoor installation and parts guide"
     },
     storyMedia: {

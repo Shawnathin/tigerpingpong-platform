@@ -1,3 +1,26 @@
+# Selected: Cloudinary account migration preview
+
+Shawn approved the initial 114 Tiger assets and then the exact additional 46 images
+on 2026-10-02 at 21:33:23 UTC. Combined approved scope is 160 assets (155 images and
+five raw PDF manuals) from `djfcisldm` to `scp4c76g`. This isolated branch starts from
+current `develop` at `470084557323b3fe6e373bcdc22dfc6abfad5d77`. All 160 uploaded with
+overwrite disabled. All 155 image hashes and 158 observed image delivery URLs verify.
+Initial public PDF downloads returned 401. After Shawn reported enabling delivery,
+all five public originals and attachment URLs return 200 and their hashes match.
+All 160 originals and 163 observed delivery URLs are now verified.
+Read-only account config does not expose the PDF delivery toggle.
+Evidence: `docs/qa/cloudinary-account-migration-preview.md`.
+
+Preview URL mapping bridges only copied public IDs, using actual destination versions,
+without writing back to production catalog records. PaddleBuddy `svl1myo8` stays unchanged.
+Shawn explicitly authorized production promotion/deployment despite the five known
+public PDF 401 failures, which he will address afterward. Follow task branch ->
+develop -> main using reviewed PRs and merge commits. Preserve old cloud/assets
+for rollback. Database writes, deletion and Cloudinary security changes remain
+excluded. No unrelated open PR is part of this release.
+
+---
+
 # Systems 4.1 canary handoff
 
 ## Selected: local/GitHub collaboration loop adoption

@@ -1,7 +1,8 @@
 import type { ProductMediaSummary } from "../types/catalog";
+import { remapTigerMediaUrl } from "./cloudinary-account-migration";
 
 const CLOUDINARY_CLOUD_NAME =
-  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? process.env.CLOUDINARY_CLOUD_NAME ?? "djfcisldm";
+  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? process.env.CLOUDINARY_CLOUD_NAME ?? "scp4c76g";
 const CLOUDINARY_PRODUCT_FOLDER = "tigerpingpong/products";
 export const PRODUCT_MEDIA_RESPONSIVE_WIDTHS = [480, 800, 1200, 1600] as const;
 
@@ -31,7 +32,7 @@ export function resolveProductMediaUrl(
 
 export function normalizeMediaSrc(src: string | null | undefined): string | null {
   const normalizedSrc = src?.trim();
-  return normalizedSrc ? normalizedSrc : null;
+  return normalizedSrc ? remapTigerMediaUrl(normalizedSrc) : null;
 }
 
 export function buildResponsiveCloudinaryUrl(src: string, width: number): string {

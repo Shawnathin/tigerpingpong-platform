@@ -245,7 +245,7 @@ const ballsCategoryHeroImage: TigerStoryImage = {
     "tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01",
   displayMaxWidth: 1600,
   finalUrl:
-    "https://res.cloudinary.com/djfcisldm/image/upload/v1781745091/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01.jpg",
+    "https://res.cloudinary.com/scp4c76g/image/upload/v1790975019/tigerpingpong/recovered/categorys/category-balls/tpp-category-balls-gallery-01.jpg",
   role: "category-hero",
   sourceDimensions: {
     height: 1600,
@@ -433,7 +433,7 @@ const realCoverProductImage: TigerStoryImage = {
   caption: "Tiger table cover.",
   cloudinaryPublicId: "tigerpingpong/products/tiger-table-cover-black-polyester/01-main",
   finalUrl:
-    "https://res.cloudinary.com/djfcisldm/image/upload/v1781303672/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg",
+    "https://res.cloudinary.com/scp4c76g/image/upload/v1790974992/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg",
   role: "product",
   sourceDimensions: { height: 386, width: 386 }
 };
@@ -442,7 +442,7 @@ const homepageCoverCutoutImage: TigerStoryImage = {
   assetId: "HOM-COVER-001",
   caption: "Tiger table cover cutout.",
   finalUrl:
-    "https://res.cloudinary.com/djfcisldm/image/upload/e_background_removal/f_png/v1781303672/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg"
+    "https://res.cloudinary.com/scp4c76g/image/upload/e_background_removal/f_png/v1790974992/tigerpingpong/products/tiger-table-cover-black-polyester/01-main.jpg"
 };
 const realNetProductImage: TigerStoryImage = {
   altText: "Tiger PingPong net and post set in its clear carrying case.",
@@ -450,7 +450,7 @@ const realNetProductImage: TigerStoryImage = {
   caption: "Tiger net and post set.",
   cloudinaryPublicId: "tigerpingpong/products/tiger-net-post-set/01-main",
   finalUrl:
-    "https://res.cloudinary.com/djfcisldm/image/upload/v1781303667/tigerpingpong/products/tiger-net-post-set/01-main.png",
+    "https://res.cloudinary.com/scp4c76g/image/upload/v1790974935/tigerpingpong/products/tiger-net-post-set/01-main.png",
   role: "product",
   sourceDimensions: { height: 386, width: 386 }
 };

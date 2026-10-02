@@ -12,6 +12,7 @@ import type {
   CatalogTableAccessoryOffer,
   CatalogTableAccessoryOfferResponse
 } from "../types/catalog";
+import { remapCatalogMedia } from "./cloudinary-account-migration";
 
 const DEFAULT_API_BASE_URL = "http://localhost:3001";
 
@@ -67,7 +68,7 @@ async function fetchCatalog<TResponse>(path: string): Promise<TResponse> {
     );
   }
 
-  return response.json() as Promise<TResponse>;
+  return remapCatalogMedia((await response.json()) as TResponse);
 }
 
 export function getCatalogHealth(): Promise<CatalogHealth> {

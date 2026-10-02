@@ -35,7 +35,7 @@ export const metadata: Metadata = getPathMetadata({
 });
 
 const PORTLAND_IMAGE =
-  "https://res.cloudinary.com/djfcisldm/image/upload/v1781745057/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg";
+  "https://res.cloudinary.com/scp4c76g/image/upload/v1790975021/tigerpingpong/recovered/products/portland-outdoor/tpp-portland-outdoor-gallery-01.jpg";
 const CATALOG_SHIPPING_MESSAGE = "Free Canada-wide shipping on tables and orders over $100.";
 
 interface CatalogResource<TData> {

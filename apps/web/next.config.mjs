@@ -1,3 +1,5 @@
+import process from "node:process";
+
 /** @type {import("next").NextConfig} */
 const securityHeaders = [
   {
@@ -19,9 +21,21 @@ const securityHeaders = [
   }
 ];
 
+// Render supplies this public Git SHA; expose it only when valid for release proof.
+const releaseCommit = process.env.RENDER_GIT_COMMIT;
+const releaseHeaders =
+  releaseCommit && /^[a-f0-9]{40}$/i.test(releaseCommit)
+    ? [{ key: "X-Tiger-Release", value: releaseCommit }]
+    : [];
+
 const nextConfig = {
   images: {
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/scp4c76g/image/upload/**"
+      },
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
@@ -40,7 +54,7 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        headers: securityHeaders
+        headers: [...securityHeaders, ...releaseHeaders]
       }
     ];
   }

@@ -1,0 +1,15 @@
+.git
+node_modules
+**/node_modules
+**/.next
+**/dist
+.env*
+!.env.example
+exports
+var
+output
+images
+.tools
+.pnpm-store
+test-results
+playwright-report

@@ -4,6 +4,7 @@ import { NestFactory } from "@nestjs/core";
 
 import { AppModule } from "./app.module";
 import { getApiConfig } from "./config";
+import { previewReadOnlyGate, verifyPreviewDatabase } from "./preview-safety";
 
 const SECURITY_HEADERS = {
   "Permissions-Policy":
@@ -18,6 +19,7 @@ interface HeaderResponse {
 }
 
 async function bootstrap() {
+  await verifyPreviewDatabase();
   const app = await NestFactory.create(AppModule, {
     rawBody: true
   });
@@ -29,6 +31,11 @@ async function bootstrap() {
       response.setHeader(key, value);
     }
 
+    if (process.env.TIGER_PREVIEW_MODE === "true") {
+      response.setHeader("X-Tiger-Preview", "synthetic-read-only");
+      response.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive");
+    }
+
     next();
   });
 
@@ -36,7 +43,14 @@ async function bootstrap() {
     origin: config.corsOrigins
   });
 
-  await app.listen(config.port);
+  if (process.env.TIGER_PREVIEW_MODE === "true") app.use(previewReadOnlyGate);
+
+  await app.listen(
+    config.port,
+    process.env.TIGER_PREVIEW_MODE === "true"
+      ? (process.env.TIGER_PREVIEW_BIND_HOST ?? "127.0.0.1")
+      : "0.0.0.0"
+  );
 }
 
 void bootstrap();

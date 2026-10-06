@@ -1,4 +1,22 @@
-# Selected: Cloudinary account migration preview
+# Selected: isolated all-Railway review version — 2026-10-06
+
+Shawn selected all-Railway and authorized a working nonproduction version before DNS.
+This task is based on verified production release a7abdf53719ce547e0d535f5f59bd305f567b0aa,
+on codex/chore/railway-isolated-preview, rather than unshipped develop features.
+Prepare a synthetic-only Next/Nest/Postgres preview with provider credentials absent,
+outbound API HTTP blocked, email worker disabled and write/payment/webhook routes
+rejected before handlers. Preserve staff authentication and completed Cloudinary
+PR #198. Production DNS, providers, data, credentials, domains, payments and customer
+email remain untouched. Account/project creation, spend and persistent access grants
+need a bounded owner handoff if unavailable. No new credentials are created here.
+
+Configuration and proof: deploy/railway/PREVIEW-HANDOFF.txt. This review artifact
+does not establish production migration/cutover readiness. The Cloudinary task below
+is completed history and must not be reopened.
+
+---
+
+# Completed historical task: Cloudinary account migration preview
 
 Shawn approved the initial 114 Tiger assets and then the exact additional 46 images
 on 2026-10-02 at 21:33:23 UTC. Combined approved scope is 160 assets (155 images and

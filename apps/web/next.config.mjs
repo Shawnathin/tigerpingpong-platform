@@ -22,13 +22,22 @@ const securityHeaders = [
 ];
 
 // Render supplies this public Git SHA; expose it only when valid for release proof.
-const releaseCommit = process.env.RENDER_GIT_COMMIT;
+const releaseCommit = process.env.RENDER_GIT_COMMIT ?? process.env.TIGER_RELEASE_COMMIT;
 const releaseHeaders =
   releaseCommit && /^[a-f0-9]{40}$/i.test(releaseCommit)
-    ? [{ key: "X-Tiger-Release", value: releaseCommit }]
+    ? [
+        {
+          key:
+            process.env.TIGER_PREVIEW_MODE === "true"
+              ? "X-Tiger-Preview-Base-Release"
+              : "X-Tiger-Release",
+          value: releaseCommit
+        }
+      ]
     : [];
 
 const nextConfig = {
+  ...(process.env.TIGER_PREVIEW_MODE === "true" ? { experimental: { cpus: 1 } } : {}),
   images: {
     remotePatterns: [
       {
@@ -54,7 +63,16 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        headers: [...securityHeaders, ...releaseHeaders]
+        headers: [
+          ...securityHeaders,
+          ...releaseHeaders,
+          ...(process.env.TIGER_PREVIEW_MODE === "true"
+            ? [
+                { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+                { key: "X-Tiger-Preview", value: "synthetic-read-only" }
+              ]
+            : [])
+        ]
       }
     ];
   }

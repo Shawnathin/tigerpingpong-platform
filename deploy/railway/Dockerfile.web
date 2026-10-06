@@ -1,0 +1,17 @@
+FROM node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN npm install --global pnpm@9.12.0
+WORKDIR /app
+COPY . .
+RUN pnpm install --frozen-lockfile
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_SITE_URL
+ENV TIGER_PREVIEW_MODE=true
+ENV TIGER_PREVIEW_BIND_HOST=0.0.0.0
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV TIGER_RELEASE_COMMIT=a7abdf53719ce547e0d535f5f59bd305f567b0aa
+RUN node --input-type=module -e "import {assertPreviewEnvironment} from './scripts/railway/preview-environment.mjs'; assertPreviewEnvironment(process.env,'web')" && pnpm --filter @tigerpingpong/shared build && pnpm --filter @tigerpingpong/web build
+RUN chown -R node:node /app/apps/web/.next
+USER node
+CMD ["node", "scripts/railway/start-preview-web.mjs"]

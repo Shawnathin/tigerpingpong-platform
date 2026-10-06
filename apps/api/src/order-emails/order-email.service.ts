@@ -96,6 +96,7 @@ export class OrderEmailService implements OnModuleDestroy, OnModuleInit {
   private prisma: PrismaClient | null = null;
 
   onModuleInit(): void {
+    if (process.env.TIGER_PREVIEW_MODE === "true") return;
     this.outboxTimer = setInterval(() => {
       void this.drainOutbox().catch(() => {
         this.logger.warn("Order email outbox retry pass failed.");

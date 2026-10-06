@@ -1,0 +1,143 @@
+Tiger isolated all-Railway review version — October 6, 2026
+
+Owner selected all-Railway and authorized a working nonproduction version before
+DNS. This package prepares Next.js web, NestJS API and PostgreSQL. It is NOT a
+production cutover package. Production credentials/domain transition remain with
+Shawn and Diego; no custom DNS or provider changes are part of deployment here.
+
+Source: verified live base a7abdf53719ce547e0d535f5f59bd305f567b0aa, completed
+Cloudinary PR #198. Local branch codex/chore/railway-isolated-preview. Only preview
+guards, deployment configuration, fixtures and verification were added. Neither
+the old September checkout nor unshipped develop features are deployed.
+
+Current outcome
+Local review version built and verified at http://127.0.0.1:4187, API :4188.
+Synthetic fixture only: one catalog product/variant and one example.invalid
+checkout-pending order. No production records, Stripe IDs, provider keys or
+customer addresses. Existing homepage, brand layout and Cloudinary/Paddle Buddy
+media release are preserved. Fixture product explicitly says not for sale.
+Staff pages still reject unauthenticated access; authenticated staff review needs
+owner-provided preview-only access later. No new access credentials were created.
+
+Railway deployment not performed: no Railway connector/browser-control tool or
+authenticated deployment route is exposed. Earlier dashboard check reached Login.
+No account, project, database service, paid resource or persistent credential was
+created in Railway. Internal account/billing arrangements are not being reopened.
+Exact bounded next handoff: provide an already-authorized Railway deployment
+route and approved Tiger workspace/project identifier. If Diego's suggested new
+Tiger account/project must first be created, owner handles its terms/access/spend
+decision; that suggestion is not automatic authority to create it.
+
+Isolation that must stay enabled for this review
+- Start only through the checked preview launchers in scripts/railway.
+- TIGER_PREVIEW_MODE must equal true. Startup rejects Stripe/Resend/Supabase/
+  Cloudinary API credentials, even test keys. No live/test provider traffic needed.
+- API rejects outbound HTTP/HTTPS/fetch before loading Nest and Stripe.
+- Only local or private *.railway.internal database host is accepted, and must
+  equal TIGER_PREVIEW_DATABASE_HOST. API connection_limit must be explicit.
+- Predeploy refuses populated non-fixture databases BEFORE migrating. Startup
+  requires a synthetic-v1 dataset marker. Do not point to an existing website DB.
+- The one-minute email worker is disabled. HTTP mutations, checkout, webhook,
+  submission and retry routes return 409 before handlers. Staff auth is retained.
+- CORS/web origins must be loopback or generated *.up.railway.app preview origins.
+- Preview headers include noindex and synthetic-read-only. Legacy path redirects
+  stay on preview origin. Production redirect behavior is unchanged outside mode.
+- X-Tiger-Preview-Base-Release identifies the original production baseline; it
+  does not claim preview modifications are that unmodified production commit.
+- No production data copy is authorized. No destructive restore/seed is performed
+  by predeploy; fixtures are created only when all application tables are empty.
+
+Prepared Railway setup (only after target access/resource scope is resolved)
+1. Use the approved isolated Tiger project. Obtain all source files including
+   changes in this package; deploying plain public main omits the preview guards.
+   Root/build context is the whole monorepo, NOT apps/api or apps/web separately.
+2. Add isolated PostgreSQL 17 with its own volume/private service host. This is
+   later provisioning, not performed now. Do not reuse another site's database.
+3. Create API and Web preview services. Select custom config paths:
+   /deploy/railway/preview-api.json and /deploy/railway/preview-web.json.
+   Configs use separate Dockerfiles, one replica, no sleep, health checks and
+   three failed-start retries. Node image digest and pnpm 9.12.0 are pinned.
+4. Generate Railway preview domains for API and Web. No GoDaddy/custom-domain
+   change. Record the actual two origins before configuring/building the web.
+5. API variables, using the ACTUAL service names for references:
+   TIGER_PREVIEW_MODE=true
+   TIGER_PREVIEW_BIND_HOST=0.0.0.0 (also baked into preview image)
+   TIGER_PREVIEW_DATABASE_HOST=${{Postgres.PGHOST}}
+   DATABASE_URL=${{Postgres.DATABASE_URL}}?connection_limit=2
+   CORS_ORIGIN=https://${{Web.RAILWAY_PUBLIC_DOMAIN}}
+   APP_ENV=preview
+   Railway supplies PORT. Verify DB reference uses the private host and append
+   connection_limit correctly if its URL already has query parameters.
+   No Stripe, Resend, Supabase or Cloudinary API credentials; no prod env group.
+6. Web variables at BUILD AND RUNTIME:
+   TIGER_PREVIEW_MODE=true
+   TIGER_PREVIEW_BIND_HOST=0.0.0.0
+   NEXT_PUBLIC_API_BASE_URL=https://${{API.RAILWAY_PUBLIC_DOMAIN}}
+   NEXT_PUBLIC_SITE_URL=https://${{Web.RAILWAY_PUBLIC_DOMAIN}}
+   TIGER_RELEASE_COMMIT=a7abdf53719ce547e0d535f5f59bd305f567b0aa (base receipt)
+   No database/provider credentials on Web. Verify Docker build args resolve;
+   startup cannot repair a wrong URL compiled into browser assets.
+7. Deploy API first. Its predeploy checks isolation/empty DB, applies the nine
+   release migrations and seeds synthetic-v1. Repeat deploy preserves fixtures.
+   API must pass /catalog/health with fixture counts before Web is reviewed.
+8. Build/deploy Web against that preview API. Verify noindex, marker and base
+   receipt; home/catalog/product/cart/Paddle Buddy pages; protected UI/API denial;
+   CORS and blocked mutations. Run smoke-preview.mjs with both actual origins.
+   The script verifies preview identity BEFORE any blocked-side-effect test.
+9. Capture screenshots/read-only review and retain source/config hashes. Do not
+   enable payments, real intake, email or production credentials for this review.
+
+Local reproducibility
+Use pinned pnpm 9.12.0, Node 24.16.0 (verified local/runtime image). Actual Render
+runtime version remains unverified; this preview runtime is not a production
+major-version upgrade approval. Frozen install, Prisma generation, shared/db/API
+builds are required before prepare-preview-db.mjs. An empty, task-owned local
+Postgres is used at :55487. Standard environment for local API:
+  TIGER_PREVIEW_MODE=true
+  TIGER_PREVIEW_DATABASE_HOST=127.0.0.1
+  DATABASE_URL=postgresql://tiger_preview@127.0.0.1:55487/tiger_preview?connection_limit=2
+  CORS_ORIGIN=http://127.0.0.1:4187
+  PORT=4188
+Run node scripts/railway/prepare-preview-db.mjs, then start-preview-api.mjs.
+Web build/run environment:
+  TIGER_PREVIEW_MODE=true
+  NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:4188
+  NEXT_PUBLIC_SITE_URL=http://127.0.0.1:4187
+  TIGER_RELEASE_COMMIT=a7abdf53719ce547e0d535f5f59bd305f567b0aa
+Build pnpm --filter @tigerpingpong/web build; run start-preview-web.mjs with
+PORT=4187. Local launchers default to loopback. No shared/server work is touched.
+
+Verification completed
+- Frozen dependency install; Prisma client 5.22.0 from existing lockfile.
+- Lint, typecheck, API/shared/db builds and optimized Next build pass.
+- All 240 unit tests pass, including preview worker/mutation guard tests.
+- Preview env tests reject provider credentials, production URLs, wrong DB host
+  and missing connection limits; preserve valid generated preview origins.
+- Nineteen local integration checks pass; no accepted writes/payments/webhooks.
+- Six headless desktop/mobile route checks pass without horizontal overflow.
+  Screenshots at exports/railway-preview; synthetic product mobile inspected.
+- PostgreSQL 16 locally available: all nine release migrations apply.
+  Synthetic logical dump/restore matches counts and content hashes across all
+  24 tables. This is NOT Supabase production backup proof or PostgreSQL 17 restore
+  certification. Railway/source PostgreSQL 17 rehearsal remains a later gate.
+- Predeploy tested against a separate DB with one synthetic foreign row: it
+  rejects before migration. Original row remains, no migration table created.
+- Railway JSON properties validated against official downloaded schema; Docker
+  image tag/digest verified in official library/node registry.
+
+Unrun checks and material limits
+No Railway deployment or generated review URL yet. Docker builds were not run:
+Docker is not installed in this environment. Linux/PG17/native engine/container
+readiness therefore still needs Railway build/runtime proof. Staff credentialed
+UI, production-data/full-catalog parity, live Stripe/Resend and production
+backup/restore are deliberately untested. Browser review uses synthetic data;
+unit payment tests use existing mocks, not charges. No costs/savings promised.
+
+Before later production cutover
+Read actual Render deployed API SHA/DB binding/env NAMES/resources and complete
+provider/DNS config inventory. Rehearse fresh encrypted production backup/restore
+only after explicit scope, single-DB authority, outbox/provider reconciliation,
+all current catalog/order/features parity, controlled write freeze, signed Stripe
+endpoint transition, domain/TLS/CORS and post-write rollback. Shawn/Diego retain
+security-credential/domain go/no-go. Keep old services inert/available through
+agreed recovery window; DNS rollback alone cannot preserve new target orders.

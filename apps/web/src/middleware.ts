@@ -20,13 +20,19 @@ export const config = {
 };
 
 export function middleware(request: NextRequest) {
+  const preview = process.env.TIGER_PREVIEW_MODE === "true";
+  if (preview && !["GET", "HEAD", "OPTIONS"].includes(request.method)) {
+    return NextResponse.json({ message: "Preview is read-only." }, { status: 409 });
+  }
   const pathDestination = getLegacyPathRedirect(request.nextUrl.pathname);
 
   if (pathDestination) {
+    if (preview)
+      return NextResponse.redirect(new URL(pathDestination, request.nextUrl.origin), 301);
     return NextResponse.redirect(toCanonicalRedirectUrl(pathDestination), 301);
   }
 
-  if (isLegacyRedirectHost(getRequestHostname(request))) {
+  if (!preview && isLegacyRedirectHost(getRequestHostname(request))) {
     const canonicalUrl = new URL(request.nextUrl.pathname, `${CANONICAL_SITE_ORIGIN}/`);
     canonicalUrl.search = request.nextUrl.search;
 

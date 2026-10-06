@@ -19,16 +19,34 @@ media release are preserved. Fixture product explicitly says not for sale.
 Staff pages still reject unauthenticated access; authenticated staff review needs
 owner-provided preview-only access later. No new access credentials were created.
 
-Railway deployment not performed. Follow-up access check on Oct 6 confirmed
-Chrome's existing session reaches https://railway.com/dashboard but presents
-"Continue with GitHub", no project links and no team links. Read-only AppleScript
-DOM access works with existing permissions; no browser cookies/tokens were read
-or exported. Railway CLI is absent, and ~/.railway/config.json is absent. No
-account/project/database/paid resource/persistent credential was created.
-Minimal next handoff: sign in in the already-open Chrome Railway tab, then select
-the approved Tiger project/environment. We can read its identity and resource
-scope from that session afterward; do not send tokens. Account/billing remains
-owner-handled. No live deployment until target and cost scope are verified.
+Railway project creation completed — Oct 6, 18:41 UTC
+Workspace shown: Tiger Ping Pong's Projects, Limited Trial, $5.00 / 30 days left.
+Created PRIVATE empty project Tiger PingPong Preview:
+https://railway.com/project/be407546-f840-4ed8-b58e-7c254d77c6dd
+The default empty environment is still named production; it is NOT the live
+Render production system. Rename attempt was not confirmed and is not claimed.
+No runtime service, database, volume, domain, paid plan or persistent access
+credential was created. Original systems and preview isolation remain intact.
+
+Existing GitHub access verified by authenticated read. Published ONLY task branch
+codex/chore/railway-isolated-preview to Shawnathin/tigerpingpong-platform;
+verified remote source commit 11238aadb870e9e4aa53bf007192a54b3128295d. No main or
+develop update, merge or production release. Later documentation receipts may
+advance this task branch; preview guard implementation remains identical.
+
+Concrete deployment blocker: Railway GitHub Repository picker says Connect GitHub
+Account / Connect your GitHub account to deploy repositories on Railway. This
+would establish a NEW persistent connection. Stopped BEFORE clicking Connect
+GitHub or granting access, per instruction to report new persistent access first.
+Required handoff: approve/complete that Railway-to-Shawnathin GitHub connection,
+limiting repository installation to tigerpingpong-platform when selection is
+available. Exact OAuth scopes have not been displayed or accepted; do not infer
+or accept broader access. No token export, CLI login or auth expansion performed.
+No paid commitment required/reported for empty project. Trial docs allow code/DB
+with restricted networking; no paid upgrade selected. Runtime fees/limits must
+still be checked before service provisioning; no spending ceiling assumed.
+After source access is approved, configure preview branch and custom config paths
+BEFORE build/start, then continue API/Postgres/Web deployment and proof below.
 
 Isolation that must stay enabled for this review
 - Start only through the checked preview launchers in scripts/railway.

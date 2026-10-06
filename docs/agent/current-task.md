@@ -1,3 +1,18 @@
+# Selected: secret-free PG17 copy preflight — 2026-10-06
+
+Shawn approved continued rollout and the bounded private rehearsal copy. The next
+step is a secret-free build in the existing Tiger Railway preview project, within
+the US$0.50 total rehearsal allocation. This isolated branch extends the verified
+synthetic preview branch; production main/develop and existing preview services
+are unchanged. The Docker build must pass all 18 synthetic integration/guard tests
+on pinned Postgres 17 before its image becomes eligible for the approved copy.
+
+For this build only: no volume, no public domain, no source or target passwords,
+no customer data. Override start command to print /job/pg17-synthetic-proof and
+exit; restart policy Never. Customer-data execution requires the owner private
+sealed source-password handoff after build verification. No credentials belong in
+Git or logs. No production freeze, DNS, Stripe, email, deletion or paid upgrade.
+
 # Selected: isolated all-Railway review version — 2026-10-06
 
 Shawn selected all-Railway and authorized a working nonproduction version before DNS.

@@ -19,14 +19,16 @@ media release are preserved. Fixture product explicitly says not for sale.
 Staff pages still reject unauthenticated access; authenticated staff review needs
 owner-provided preview-only access later. No new access credentials were created.
 
-Railway deployment not performed: no Railway connector/browser-control tool or
-authenticated deployment route is exposed. Earlier dashboard check reached Login.
-No account, project, database service, paid resource or persistent credential was
-created in Railway. Internal account/billing arrangements are not being reopened.
-Exact bounded next handoff: provide an already-authorized Railway deployment
-route and approved Tiger workspace/project identifier. If Diego's suggested new
-Tiger account/project must first be created, owner handles its terms/access/spend
-decision; that suggestion is not automatic authority to create it.
+Railway deployment not performed. Follow-up access check on Oct 6 confirmed
+Chrome's existing session reaches https://railway.com/dashboard but presents
+"Continue with GitHub", no project links and no team links. Read-only AppleScript
+DOM access works with existing permissions; no browser cookies/tokens were read
+or exported. Railway CLI is absent, and ~/.railway/config.json is absent. No
+account/project/database/paid resource/persistent credential was created.
+Minimal next handoff: sign in in the already-open Chrome Railway tab, then select
+the approved Tiger project/environment. We can read its identity and resource
+scope from that session afterward; do not send tokens. Account/billing remains
+owner-handled. No live deployment until target and cost scope are verified.
 
 Isolation that must stay enabled for this review
 - Start only through the checked preview launchers in scripts/railway.
@@ -127,7 +129,8 @@ Verification completed
 
 Unrun checks and material limits
 No Railway deployment or generated review URL yet. Docker builds were not run:
-Docker is not installed in this environment. Linux/PG17/native engine/container
+Docker CLI is a broken symlink to a missing Docker.app; no Podman/OrbStack or
+PostgreSQL17 server is installed. No software installed for this check. Linux/PG17/native engine/container
 readiness therefore still needs Railway build/runtime proof. Staff credentialed
 UI, production-data/full-catalog parity, live Stripe/Resend and production
 backup/restore are deliberately untested. Browser review uses synthetic data;

@@ -1,3 +1,18 @@
+# Selected: private copy logical-column regression — 2026-10-07
+
+The approved private copy on commit 91a2237 stopped with
+RESTORE_MANIFEST_MISMATCH and rolled back its restore transaction. Source orders
+has 36 live columns but max ordinal 42 from dropped-column slots; pg_dump restores
+live columns with compact positions. Normalize positions to live-column order while
+preserving names, types, defaults, constraints, indexes, RLS and row/hash checks.
+
+A synthetic dropped-column regression reproduces the exact failure on local PG16.
+This fix remains local only. Mandatory PG17 cloud build proof must pass before a
+new data-copy attempt. The failed private volume is retained with compute stopped;
+the temporary source password was removed. No reset, overwrite, deletion or copy
+retry is authorized by this local fix. A reviewed retry/target/credential handoff
+requires fresh approval. Production stays on Supabase/Render, DNS/Stripe unchanged.
+
 # Selected: secret-free PG17 copy preflight — 2026-10-06
 
 Shawn approved continued rollout and the bounded private rehearsal copy. The next

@@ -85,6 +85,16 @@ class Integration(unittest.TestCase):
         self.assertNotIn(SENTINEL,out.getvalue());self.assertNotIn(ROW,out.getvalue())
         self.assertTrue((self.marker_dir/job.MARKER).exists())
 
+    def test_dropped_column_slots_do_not_change_logical_schema(self):
+        self.sql('ALTER TABLE orders ADD COLUMN removed_fixture text; ALTER TABLE orders ADD COLUMN retained_fixture text; ALTER TABLE orders DROP COLUMN removed_fixture;', self.source, readonly=False)
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                receipt=self.run_copy()
+            self.assertTrue(receipt['validated'])
+            self.assertEqual(self.tables(),3)
+        finally:
+            self.sql('ALTER TABLE orders DROP COLUMN retained_fixture;', self.source, readonly=False)
+
     def test_corrupt_restore_rolls_back_schema_and_rows(self):
         cmd=self.fake_dump("printf 'CREATE SCHEMA public; CREATE TABLE public.orders(id text); INSERT INTO public.orders VALUES (\"'\"'partial\"'\"'); INVALID SQL;\\n'")
         with self.assertRaises(job.JobError):self.run_copy(dump_command=cmd)

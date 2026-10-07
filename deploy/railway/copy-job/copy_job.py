@@ -74,10 +74,12 @@ def quoted(value):
 
 def manifest(session):
     # pg_dump changes search_path; canonicalize names before comparing definitions.
+    # Logical dumps compact dropped-column slots. Preserve relative live-column
+    # order while comparing logical positions, not physical pg_attribute attnums.
     session.send("SET search_path=public,pg_catalog;\n")
     catalog = json.loads(session.query("""jsonb_build_object(
       'tables',(SELECT jsonb_agg(jsonb_build_object('name',c.relname,'rls',c.relrowsecurity,'forced',c.relforcerowsecurity) ORDER BY c.relname COLLATE "C") FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r'),
-      'columns',(SELECT jsonb_agg(jsonb_build_array(table_name,column_name,ordinal_position,udt_name,is_nullable,column_default) ORDER BY table_name COLLATE "C",ordinal_position) FROM information_schema.columns WHERE table_schema='public'),
+      'columns',(SELECT jsonb_agg(jsonb_build_array(table_name,column_name,logical_position,udt_name,is_nullable,column_default) ORDER BY table_name COLLATE "C",logical_position) FROM (SELECT *, row_number() OVER (PARTITION BY table_name ORDER BY ordinal_position) AS logical_position FROM information_schema.columns WHERE table_schema='public') AS logical_columns),
       'constraints',(SELECT jsonb_agg(jsonb_build_array(c.relname,k.conname,pg_get_constraintdef(k.oid)) ORDER BY c.relname COLLATE "C",k.conname COLLATE "C") FROM pg_constraint k JOIN pg_class c ON c.oid=k.conrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public'),
       'indexes',(SELECT jsonb_agg(jsonb_build_array(tablename,indexname,indexdef) ORDER BY tablename COLLATE "C",indexname COLLATE "C") FROM pg_indexes WHERE schemaname='public'),
       'enums',(SELECT jsonb_agg(jsonb_build_array(t.typname,e.enumlabel,e.enumsortorder) ORDER BY t.typname COLLATE "C",e.enumsortorder) FROM pg_enum e JOIN pg_type t ON t.oid=e.enumtypid JOIN pg_namespace n ON n.oid=t.typnamespace WHERE n.nspname='public'),

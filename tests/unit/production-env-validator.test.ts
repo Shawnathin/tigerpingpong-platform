@@ -16,6 +16,7 @@ const safeApiEnv = {
   PORT: "3001",
   RESEND_API_KEY: "re_redacted",
   ORDER_NOTIFICATION_EMAIL: "orders@example.invalid",
+  PADDLE_BUDDY_NOTIFICATION_EMAIL: "paddlebuddy@example.invalid",
   STRIPE_EXPECTED_LIVEMODE: "false",
   STRIPE_SECRET_KEY: "sk_test_redacted",
   STRIPE_TAX_ENABLED: "true",
@@ -83,6 +84,22 @@ describe("production environment validator", () => {
 
     expect(missing.status).toBe(1);
     expect(missing.stdout).toContain("ORDER_NOTIFICATION_EMAIL");
+    expect(invalid.status).toBe(1);
+    expect(invalid.stdout).toContain("must be a valid email address");
+  });
+
+  it("requires a valid Paddle Buddy notification recipient", () => {
+    const missing = runValidator({ ...safeApiEnv, PADDLE_BUDDY_NOTIFICATION_EMAIL: "" }, [
+      "--surface",
+      "api"
+    ]);
+    const invalid = runValidator(
+      { ...safeApiEnv, PADDLE_BUDDY_NOTIFICATION_EMAIL: "not-an-email" },
+      ["--surface", "api"]
+    );
+
+    expect(missing.status).toBe(1);
+    expect(missing.stdout).toContain("PADDLE_BUDDY_NOTIFICATION_EMAIL");
     expect(invalid.status).toBe(1);
     expect(invalid.stdout).toContain("must be a valid email address");
   });
